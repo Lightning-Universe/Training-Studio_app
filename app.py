@@ -23,7 +23,7 @@ class RootFlow(LightningFlow):
 
     def __init__(self):
         super().__init__()
-        self.optuna_hpo = OptunaPythonScript(
+        self.hpo_train = OptunaPythonScript(
             script_path=str(Path(__file__).parent / "scripts/train.py"),
             total_trials=4,
             simultaneous_trials=2,
@@ -40,12 +40,12 @@ class RootFlow(LightningFlow):
         )
 
     def run(self):
-        self.optuna_hpo.run()
+        self.hpo_train.run()
 
-        if self.optuna_hpo.best_model_path:
+        if self.hpo_train.best_model_path:
             pass
 
     def configure_layout(self):
-        return [{"name": "HiPlot", "content": self.optuna_hpo.hi_plot}]
+        return [{"name": "HiPlot", "content": self.hpo_train.hi_plot}]
 
 app = LightningApp(RootFlow())
