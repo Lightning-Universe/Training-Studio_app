@@ -1,6 +1,6 @@
 from lightning import LightningFlow, CloudCompute
 import optuna
-from lightning_hpo.objective import AbstractObjectiveWork
+from lightning_hpo.objective import BaseObjectiveWork
 from lightning_hpo.hyperplot import HiPlotFlow
 from typing import Optional, Union, Dict, Type, Any
 from lightning.storage.path import Path
@@ -13,7 +13,7 @@ class OptunaPythonScript(LightningFlow):
         script_path: str,
         total_trials: int,
         simultaneous_trials: int,
-        objective_work_cls: Type[AbstractObjectiveWork],
+        objective_work_cls: Type[BaseObjectiveWork],
         study: Optional[optuna.study.Study] = None,
         script_args: Optional[Union[list, str]] = None,
         env: Optional[Dict] = None,
@@ -84,6 +84,7 @@ class OptunaPythonScript(LightningFlow):
                 if trial.should_prune():
                     self._study.tell(trial, state=TrialState.PRUNED)
                     work_objective.pruned = True
+                    # work_objective.stop() TODO (tchaton) Implement this.
 
         if all(has_told_study):
             self.num_trials += self.simultaneous_trials

@@ -1,10 +1,10 @@
 from pathlib import Path
 import optuna
 from lightning import LightningFlow, CloudCompute, LightningApp
-from lightning_hpo import AbstractObjectiveWork, OptunaPythonScript
+from lightning_hpo import BaseObjectiveWork, OptunaPythonScript
 from lightning.storage.path import Path
 
-class MyCustomObjective(AbstractObjectiveWork):
+class MyCustomObjective(BaseObjectiveWork):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

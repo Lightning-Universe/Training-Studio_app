@@ -2,10 +2,10 @@ from pathlib import Path
 import optuna
 from functools import partial
 from lightning import LightningFlow, CloudCompute, LightningApp
-from lightning_hpo import AbstractObjectiveWork, OptunaPythonScript
+from lightning_hpo import BaseObjectiveWork, OptunaPythonScript
 from lightning.storage.path import Path
 
-class MyCustomObjective(AbstractObjectiveWork):
+class MyCustomObjective(BaseObjectiveWork):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -14,9 +14,6 @@ class MyCustomObjective(AbstractObjectiveWork):
     def configure_tracer(self):
         from pytorch_lightning import Trainer
         from pytorch_lightning.callbacks import Callback
-        from pytorch_lightning.loggers import WandbLogger
-
-        tracer = super().configure_tracer()
 
         class WorkCollector(Callback):
 

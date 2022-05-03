@@ -6,7 +6,7 @@ from typing import Dict
 from lightning.components.python import TracerPythonScript
 
 
-class AbstractObjectiveWork(TracerPythonScript, ABC):
+class BaseObjectiveWork(TracerPythonScript, ABC):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, raise_exception=True, **kwargs)

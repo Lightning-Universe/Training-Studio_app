@@ -1,8 +1,8 @@
 # Lightning HPO
 
-Lightning provides the most pythonic implementaiton for Scalable Hyperparameter Tuning.
+Lightning provides the most pythonic implementation for Scalable Hyperparameter Tuning.
 
-This library relies on [Optuna](https://optuna.readthedocs.io/en/stable/) for providing state-of-the-art sampling hyperparameters algorithms and efficient trial pruning strategies.
+This library relies on [Optuna](https://optuna.readthedocs.io/en/stable/) for providing state-of-the-art sampling hyper-parameters algorithms and efficient trial pruning strategies.
 
 ### Installation
 
@@ -13,31 +13,31 @@ pip install -e .
 
 ### How to use
 
+The only provided classes are: `BaseObjectiveWork` and `OptunaPythonScript`.
 
 ```py
 import optuna
-from lightning_hpo import AbstractObjectiveWork, OptunaPythonScript
+from lightning_hpo import BaseObjectiveWork, OptunaPythonScript
 
-class MyCustomObjective(AbstractObjectiveWork):
+class MyCustomObjective(BaseObjectiveWork):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.best_model_path = None
 
-    def on_after_run(self, res):
-        self.best_model_score = float(res["cli"].trainer.checkpoint_callback.best_model_score)
+    def on_after_run(self, result):
+        self.best_model_score = float(result["best_model_score"])
 
     @staticmethod
     def distributions():
-        return {"learning_reate": optuna.distributions.LogUniformDistribution(0.0001, 0.1)}
+        return {"learning_rate": optuna.distributions.LogUniformDistribution(0.0001, 0.1)}
 
 
 component = OptunaPythonScript(
-    script_path=`{PATH_TO_YOUR_SCRIPT}`,
-    total_trials=4,
-    simultaneous_trials=2,
+    script_path=`{RELATIVE_PATH_TO_YOUR_SCRIPT}`,
+    total_trials=100,
+    simultaneous_trials=5,
     objective_work_cls=MyCustomObjective,
-    script_args=`{YOUR_DEFAULT_ARGUMENTS}`,
 )
 ```
 
@@ -48,13 +48,15 @@ python -m lightning run app app.py
 ```
 
 
-### Customize your HPO with Optuna Activating Pruners
+### Customize your HPO training with Optuna advanced algorithms
+
+TODO [Hyperband paper](http://www.jmlr.org/papers/volume18/16-558/16-558.pdf)
 
 ```python
 import optuna
 
 OptunaPythonScript(
-    study = optuna.create_study(
+    study=optuna.create_study(
         direction="maximize",
         pruner=optuna.pruners.HyperbandPruner(
             min_resource=1, max_resource=n_train_iter, reduction_factor=3
