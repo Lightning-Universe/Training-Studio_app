@@ -4,6 +4,15 @@ Lightning provides the most pythonic implementaiton for Scalable Hyperparameter 
 
 This library relies on [Optuna](https://optuna.readthedocs.io/en/stable/) for the state-of-the-art algorithms for sampling hyperparameters and efficiently pruning unpromising trials.
 
+### Installation
+
+```
+git clone https://github.com/PyTorchLightning/lightning-hpo.git
+pip install -e .
+```
+
+### How to use
+
 
 ```py
 import optuna
