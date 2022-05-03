@@ -1,0 +1,28 @@
+# This is a comment.
+# Each line is a file pattern followed by one or more owners.
+
+# These owners will be the default owners for everything in
+# the repo. Unless a later match takes precedence,
+# @global-owner1 and @global-owner2 will be requested for
+# review when someone opens a pull request.
+* @tchaton @awaelchli
+
+# Packages
+/lightning/*                    @tchaton @awaelchli
+lightning/runners/cloud.py      @tchaton @awaelchli @hhsecond
+lightning/core/queues.py        @tchaton @awaelchli @hhsecond
+lightning/testing/*             @tchaton @ematta
+
+
+
+# End 2 End Cloud CI
+.github/workflows/ci_cloud_test.yml  @tchaton @ematta
+tests/examples/test_v0_app.py  @tchaton @ematta
+tests/examples/test_template_streamlit_ui.py @tchaton @ematta
+tests/examples/test_quick_start.py  @tchaton @ematta
+
+
+/.github/CODEOWNERS              @tchaton @awaelchli
+/README.md                       @tchaton @awaelchli
+/setup.py                        @tchaton @awaelchli
+/pytorch_lightning/__about__.py  @tchaton @awaelchli

@@ -9,11 +9,14 @@ from lightning.components.python import TracerPythonScript
 class AbstractObjectiveWork(TracerPythonScript, ABC):
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, raise_exception=True, **kwargs)
         self.trial_id = None
         self.best_model_score = None
         self.params = None
         self.has_told_study = False
+        self.reports = []
+        self.flow_reports = []
+        self.pruned = False
 
     def run(self, trial_id: int, **params):
         self.trial_id = trial_id

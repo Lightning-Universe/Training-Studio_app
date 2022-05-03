@@ -5,6 +5,7 @@ from lightning_hpo.hyperplot import HiPlotFlow
 from typing import Optional, Union, Dict, Type, Any
 from lightning.storage.path import Path
 from lightning.utilities.enum import WorkStageStatus
+from optuna.trial import TrialState
 
 class OptunaPythonScript(LightningFlow):
     def __init__(
@@ -67,12 +68,23 @@ class OptunaPythonScript(LightningFlow):
                 print(f"Starting work {trial_idx} with the following parameters {trial.params}")
                 work_objective.run(trial_id=trial._trial_id, **trial.params)
 
-            if work_objective.best_model_score and not work_objective.has_told_study:
+            if work_objective.best_model_score and not work_objective.has_told_study and not work_objective.pruned:
                 self._study.tell(work_objective.trial_id, work_objective.best_model_score)
                 self.hi_plot.data.append({"x": work_objective.best_model_score, **work_objective.params})
                 work_objective.has_told_study = True
 
             has_told_study.append(work_objective.has_told_study)
+
+            if work_objective.reports:
+                trial = self._study._storage.get_trial(work_objective.trial_id)
+                for report in work_objective.reports:
+                    if report not in work_objective.flow_reports:
+                        print(f"Adding the report {report}")
+                        trial.report(*report)
+                        work_objective.flow_reports.append(report)
+                if trial.should_prune():
+                    self._study.tell(trial, state=TrialState.PRUNED)
+                    work_objective.pruned = True
 
         if all(has_told_study):
             self.num_trials += self.simultaneous_trials

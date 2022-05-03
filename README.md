@@ -46,3 +46,24 @@ component = OptunaPythonScript(
 ```bash
 python -m lightning run app app.py --cloud
 ```
+
+
+### Customize your HPO with Optuna Activating Pruners
+
+```python
+import optuna
+
+component = OptunaPythonScript(
+    study = optuna.create_study(
+        direction="maximize",
+        pruner=optuna.pruners.HyperbandPruner(
+            min_resource=1, max_resource=n_train_iter, reduction_factor=3
+    ),
+)
+```
+
+```bash
+python -m lightning run app app_hyperband.py --cloud
+```
+
+Learn more [here](https://optuna.readthedocs.io/en/stable/tutorial/10_key_features/003_efficient_optimization_algorithms.html?highlight=hyperband#activating-pruners)
