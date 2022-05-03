@@ -1,4 +1,4 @@
-# Lightning Tune
+# Lightning HPO
 
 Lightning provides the most pythonic implementaiton for Scalable Hyperparameter Tuning.
 
