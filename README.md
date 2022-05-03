@@ -6,12 +6,12 @@ This library relies on [Optuna](https://optuna.readthedocs.io/en/stable/) for th
 
 ### Installation
 
-```
+```bash
 git clone https://github.com/PyTorchLightning/lightning-hpo.git
 pip install -e .
 ```
 
-### How to use
+### How to use
 
 
 ```py
