@@ -2,7 +2,7 @@
 
 Lightning provides the most pythonic implementaiton for Scalable Hyperparameter Tuning.
 
-This library relies on [Optuna](https://optuna.readthedocs.io/en/stable/) for the state-of-the-art algorithms for sampling hyperparameters and efficiently pruning unpromising trials.
+This library relies on [Optuna](https://optuna.readthedocs.io/en/stable/) for providing state-of-the-art sampling hyperparameters algorithms and efficient trial pruning strategies.
 
 ### Installation
 
