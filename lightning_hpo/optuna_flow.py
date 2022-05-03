@@ -48,7 +48,7 @@ class OptunaPythonScript(LightningFlow):
                 run_once=True,
                 **(objective_work_kwargs or {}),
             )
-            setattr(self, f"objective_work_{trial_idx}", objective_work)
+            setattr(self, f"w_{trial_idx}", objective_work)
 
         self.hi_plot = HiPlotFlow()
 
@@ -59,7 +59,7 @@ class OptunaPythonScript(LightningFlow):
         has_told_study = []
 
         for trial_idx in range(self.num_trials):
-            work_objective = getattr(self, f"objective_work_{trial_idx}")
+            work_objective = getattr(self, f"w_{trial_idx}")
             if work_objective.status.stage == WorkStageStatus.NOT_STARTED:
                 trial = self._study.ask(work_objective.distributions())
                 print(f"Starting work {trial_idx} with the following parameters {trial.params}")
@@ -89,4 +89,4 @@ class OptunaPythonScript(LightningFlow):
             return None
         for trial_idx, metric in enumerate(metrics):
             if metric == self.best_model_score:
-                return getattr(self, f"objective_work_{trial_idx}").best_model_path
+                return getattr(self, f"w_{trial_idx}").best_model_path
