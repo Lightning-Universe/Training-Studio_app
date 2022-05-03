@@ -40,3 +40,9 @@ component = OptunaPythonScript(
     script_args=`{YOUR_DEFAULT_ARGUMENTS}`,
 )
 ```
+
+### Example
+
+```bash
+python -m lightning run app app.py --cloud
+```
