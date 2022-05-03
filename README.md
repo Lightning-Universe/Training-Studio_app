@@ -53,7 +53,7 @@ python -m lightning run app app.py --cloud
 ```python
 import optuna
 
-component = OptunaPythonScript(
+OptunaPythonScript(
     study = optuna.create_study(
         direction="maximize",
         pruner=optuna.pruners.HyperbandPruner(
