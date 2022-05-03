@@ -36,7 +36,6 @@ class RootFlow(LightningFlow):
                 "--trainer.callbacks.monitor=val_acc",
             ],
             cloud_compute=CloudCompute("cpu", 1),
-            raise_exception=True,
         )
 
     def run(self):

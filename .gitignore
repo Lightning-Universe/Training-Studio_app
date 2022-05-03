@@ -128,7 +128,7 @@ data
 coverage.*
 # Frontend build artifacts
 
-lightning_logs
+*lightning_logs*
 .storage
 data
 *.pt
