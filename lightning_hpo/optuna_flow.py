@@ -79,7 +79,6 @@ class OptunaPythonScript(LightningFlow):
                 trial = self._study._storage.get_trial(work_objective.trial_id)
                 for report in work_objective.reports:
                     if report not in work_objective.flow_reports:
-                        print(f"Adding the report {report}")
                         trial.report(*report)
                         work_objective.flow_reports.append(report)
                 if trial.should_prune():

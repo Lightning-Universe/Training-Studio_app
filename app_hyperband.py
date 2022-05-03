@@ -1,6 +1,5 @@
 from pathlib import Path
 import optuna
-import os
 from functools import partial
 from lightning import LightningFlow, CloudCompute, LightningApp
 from lightning_hpo import AbstractObjectiveWork, OptunaPythonScript
@@ -69,7 +68,7 @@ class RootFlow(LightningFlow):
                 "--trainer.callbacks=ModelCheckpoint",
                 "--trainer.callbacks.monitor=val_acc",
             ],
-            cloud_compute=CloudCompute("cpu", 1, idle_timeout=0 # kill as soon as successfull.)
+            cloud_compute=CloudCompute("cpu", 1, idle_timeout=0) # kill as soon as successfull.
         )
 
     def run(self):
