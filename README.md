@@ -44,7 +44,7 @@ component = OptunaPythonScript(
 ### Example
 
 ```bash
-python -m lightning run app app.py --cloud
+python -m lightning run app app.py
 ```
 
 
