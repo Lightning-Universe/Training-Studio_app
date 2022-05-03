@@ -44,7 +44,7 @@ class ImageClassifier(LightningModule):
         self.log("val_loss", loss)
 
     def configure_optimizers(self):
-        return torch.optim.Adadelta(self.model.parameters(), lr=self.hparams.lr)
+        return torch.optim.Adam(self.model.parameters(), lr=self.hparams.lr)
 
 
 class MNISTDataModule(LightningDataModule):

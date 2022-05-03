@@ -52,8 +52,8 @@ class RootFlow(LightningFlow):
         super().__init__()
         self.hpo_train = OptunaPythonScript(
             script_path=str(Path(__file__).parent / "scripts/train.py"),
-            total_trials=2,
-            simultaneous_trials=1,
+            total_trials=100,
+            simultaneous_trials=4,
             study = optuna.create_study(
                 direction="maximize",
                 pruner=optuna.pruners.HyperbandPruner(
@@ -63,8 +63,6 @@ class RootFlow(LightningFlow):
             objective_work_cls=MyCustomObjective,
             script_args=[
                 "--trainer.max_epochs=10",
-                "--trainer.limit_train_batches=4",
-                "--trainer.limit_val_batches=4",
                 "--trainer.callbacks=ModelCheckpoint",
                 "--trainer.callbacks.monitor=val_acc",
             ],
