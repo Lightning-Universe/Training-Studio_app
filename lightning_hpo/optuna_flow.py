@@ -10,14 +10,14 @@ class OptunaPythonScript(LightningFlow):
     def __init__(
         self,
         script_path: str,
-        total_trials,
-        simultaneous_trials,
+        total_trials: int,
+        simultaneous_trials: int,
         objective_work_cls: Type[AbstractObjectiveWork],
-        objective_work_kwargs: Optional[Dict[str, Any]] = None,
         study: Optional[optuna.study.Study] = None,
         script_args: Optional[Union[list, str]] = None,
         env: Optional[Dict] = None,
-        cloud_compute: Optional[CloudCompute] = None
+        cloud_compute: Optional[CloudCompute] = None,
+        **objective_work_kwargs: Any,
 
     ):
         """The OptunaPythonScript class enables to easily run a Python Script with Lightning
@@ -25,13 +25,15 @@ class OptunaPythonScript(LightningFlow):
 
         Arguments:
             script_path: Path of the python script to run.
-            script_path: The arguments to be passed to the script.
+            total_trials: Number of HPO trials to run.
+            simultaneous_trials: Number of parallel trials to run.
+            objective_work_cls: Your custom base objective work.
+            study: Optional Optuna study to collect the parameters.
+            script_args: Optional script arguments.
             env: Environment variables to be passed to the script.
             cloud_compute: The cloud compute on which the Work should run on.
             blocking: Whether the Work should be blocking or asynchornous.
-            run_once: Whether the Work should run_once.
-            exposed_ports: Dictionary of ports exposed by this specific work.
-            raise_exception: Whether to raise any expection from the script_path execution.
+            objective_work_kwargs: Your custom keywords arguments passed to your custom objective work class.
         """
         super().__init__()
         self.total_trials = total_trials
@@ -46,7 +48,7 @@ class OptunaPythonScript(LightningFlow):
                 cloud_compute=cloud_compute,
                 blocking=False,
                 run_once=True,
-                **(objective_work_kwargs or {}),
+                **objective_work_kwargs,
             )
             setattr(self, f"w_{trial_idx}", objective_work)
 
