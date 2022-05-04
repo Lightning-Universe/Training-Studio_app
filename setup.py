@@ -42,8 +42,8 @@ setup(
     keywords=["deep learning", "pytorch", "AI"],
     python_requires=">=3.6",
     entry_points={
-        "console_scripts": [
-            "lightning = lightning.cli.lightning_cli:main",
+        "lightning.external_components": [
+            "lightning_hpo = lightning_hpo:exported_lightning_components",
         ],
     },
     setup_requires=["wheel"],

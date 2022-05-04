@@ -27,3 +27,7 @@ _PACKAGE_ROOT = os.path.dirname(__file__)
 _PROJECT_ROOT = os.path.dirname(_PACKAGE_ROOT)
 
 __all__ = ["BaseObjectiveWork", "OptunaPythonScript"]
+
+
+def exported_lightning_components():
+    return [OptunaPythonScript, BaseObjectiveWork]
