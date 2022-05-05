@@ -1,7 +1,8 @@
 from lightning.cli.lightning_cli import run_app
 from click.testing import CliRunner
 
-def test_lightning_import(caplog, monkeypatch):
+
+def test_lightning_can__component(caplog, monkeypatch):
 
     runner = CliRunner()
     result = runner.invoke(
