@@ -16,7 +16,7 @@ jobs:
     name: PY Test
     runs-on: ubuntu-20.04
 
-    timeout-minutes: 20
+    timeout-minutes: 5
 
     steps:
       - uses: actions/checkout@v2
@@ -32,4 +32,4 @@ jobs:
 
       - name: Tests
         run: |
-          pytest -m tests --timeout=300
+          pytest tests
