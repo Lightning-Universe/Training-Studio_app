@@ -6,7 +6,7 @@ on:  # Trigger the workflow on push to master branch with changes in __about__.p
     branches:
       - "master"
     paths:
-      - "lightning-hpo/__about__.py"
+      - "lightning_hpo/__about__.py"
 
 # based on https://github.com/pypa/gh-action-pypi-publish
 jobs:
