@@ -10,7 +10,7 @@ class RootFlow(LightningFlow):
         super().__init__()
 
     def run(self):
-        from lightning.external_components.lightning_hpo import OptunaPythonScript, BaseObjectiveWork
+        from lightning.components.extra.hpo import OptunaPythonScript, BaseObjectiveWork
         print(OptunaPythonScript)
         print(BaseObjectiveWork)
         exit(0)

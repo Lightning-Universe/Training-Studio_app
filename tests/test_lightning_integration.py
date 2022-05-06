@@ -2,8 +2,7 @@ from lightning.cli.lightning_cli import run_app
 from click.testing import CliRunner
 
 
-def test_lightning_can__component(caplog, monkeypatch):
-
+def test_lightning_can_use_external_component():
     runner = CliRunner()
     result = runner.invoke(
         run_app,
