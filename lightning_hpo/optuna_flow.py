@@ -71,7 +71,7 @@ class OptunaPythonScript(LightningFlow):
                 work_objective.run(trial_id=trial._trial_id, **trial.params)
 
             if work_objective.best_model_score and not work_objective.has_told_study and not work_objective.pruned:
-                self._study.tell(work_objective.trial_id, work_objective.best_model_score)
+                self._study.tell(work_objective.trial_id, -1 * work_objective.best_model_score)
                 self.hi_plot.data.append({"x": work_objective.best_model_score, **work_objective.params})
                 work_objective.has_told_study = True
                 work_objective.stop()
