@@ -74,6 +74,7 @@ class OptunaPythonScript(LightningFlow):
                 self._study.tell(work_objective.trial_id, work_objective.best_model_score)
                 self.hi_plot.data.append({"x": work_objective.best_model_score, **work_objective.params})
                 work_objective.has_told_study = True
+                work_objective.stop()
 
             has_told_study.append(work_objective.has_told_study)
 
@@ -86,7 +87,6 @@ class OptunaPythonScript(LightningFlow):
                 if trial.should_prune():
                     self._study.tell(trial, state=TrialState.PRUNED)
                     work_objective.pruned = True
-                    work_objective.stop()
 
         if all(has_told_study):
             self.num_trials += self.simultaneous_trials
