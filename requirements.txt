@@ -8,3 +8,4 @@ gradio
 click
 streamlit
 streamlit_autorefresh
+lightning
