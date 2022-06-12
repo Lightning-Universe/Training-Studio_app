@@ -8,14 +8,15 @@ class MyCustomObjective(BaseObjectiveWork):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        """TO BE IMPLEMENTED"""
+        self.best_model_path = None
 
-    def on_after_run(self, res):
-        """TO BE IMPLEMENTED"""
+    def on_after_run(self, globals):
+        self.best_model_score = float(globals["cli"].trainer.checkpoint_callback.best_model_score)
+        self.best_model_path = Path(globals["cli"].trainer.checkpoint_callback.best_model_path)
 
     @staticmethod
     def distributions():
-        """TO BE IMPLEMENTED"""
+        return {"model.lr": optuna.distributions.LogUniformDistribution(0.0001, 0.1)}
 
 
 class RootFlow(LightningFlow):
@@ -24,9 +25,9 @@ class RootFlow(LightningFlow):
         super().__init__()
         self.hpo_train = OptunaPythonScript(
             script_path=str(Path(__file__).parent / "scripts/train.py"),
-            total_trials=50,
+            total_trials=4,
             simultaneous_trials=2,
-            objective_work_cls=BaseObjectiveWork,
+            objective_work_cls=MyCustomObjective,
             script_args=[
                 "--trainer.max_epochs=5",
                 "--trainer.limit_train_batches=4",
@@ -40,8 +41,8 @@ class RootFlow(LightningFlow):
     def run(self):
         self.hpo_train.run()
 
-        if self.hpo_train.best_model_path:
-            pass
+        # if self.hpo_train.best_model_path:
+        #     pass
 
     def configure_layout(self):
         return [{"name": "HiPlot", "content": self.hpo_train.hi_plot}]

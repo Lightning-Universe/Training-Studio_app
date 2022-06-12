@@ -1,5 +1,6 @@
 from lightning import LightningFlow, CloudCompute
 import optuna
+from lightning.structures import Dict
 from lightning_hpo.objective import BaseObjectiveWork
 from lightning_hpo.hyperplot import HiPlotFlow
 from typing import Optional, Union, Dict, Type, Any
@@ -38,12 +39,34 @@ class OptunaPythonScript(LightningFlow):
             objective_work_kwargs: Your custom keywords arguments passed to your custom objective work class.
         """
         super().__init__()
-        """TO BE IMPLEMENTED"""
+        self.total_trials = total_trials
+        self.simultaneous_trials = simultaneous_trials
+        self._study = study or optuna.create_study()
+        self.workers = Dict()
 
+        for trial_id in range(self.total_trials):
+            self.workers[f"w_{trial_id}"] = objective_work_cls(
+                parallel=True,
+                script_path=script_path,
+                script_args=script_args,
+                env=env,
+                cloud_compute=cloud_compute,
+                **objective_work_kwargs,
+            )
+
+        self.hi_plot = HiPlotFlow()
 
     def run(self):
-        """TO BE IMPLEMENTED"""
+        for trial_id in range(self.total_trials):
+            worker = self.workers[f"w_{trial_id}"]
+            if not worker.has_started:
+                params = self._study.ask(worker.distributions())
+                worker.run(trial_id=trial_id, params=params)
 
+            if worker.has_succeeded:
+                self.hi_plot.data.append({"x": worker.best_model_score, **worker.params})
+                self._study.tell(trial_id, -1 * worker.best_model_score)
+                worker.stop()
 
     @property
     def best_model_score(self) -> Optional[float]:
