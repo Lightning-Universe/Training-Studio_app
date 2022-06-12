@@ -67,12 +67,10 @@ class OptunaPythonScript(LightningFlow):
 
     @property
     def best_model_score(self) -> Optional[float]:
-        """TO BE IMPLEMENTED"""
         return max(max(w.best_model_score for w in self.works() if w.best_model_score), 0)
 
     @property
     def best_model_path(self) -> Optional[Path]:
-        """TO BE IMPLEMENTED"""
         best_score = self.best_model_score
         for w in self.works():
             if w.best_model_score == best_score:

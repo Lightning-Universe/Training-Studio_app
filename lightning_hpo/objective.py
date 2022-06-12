@@ -22,4 +22,4 @@ class BaseObjectiveWork(TracerPythonScript, ABC):
 
     @abstractmethod
     def distributions():
-        """TO BE IMPLEMENTED"""
+        pass
