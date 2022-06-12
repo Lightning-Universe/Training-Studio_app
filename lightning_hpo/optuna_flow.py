@@ -69,7 +69,7 @@ class OptunaPythonScript(LightningFlow):
     def best_model_score(self) -> Optional[float]:
         best_model_score = None
         for w in self.works():
-            if w.best_model_score and w.best_model_score > best_model_score:
+            if w.best_model_score and best_model_score and w.best_model_score > best_model_score:
                 best_model_score = w.best_model_score
         return best_model_score
 
