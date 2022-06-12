@@ -18,6 +18,8 @@ def render_fn(state: AppState):
     import hiplot as hip
     import streamlit as st
 
+    st.set_page_config(layout="wide")
+
     if not state.data:
         st.write("No data available yet ! Stay tuned")
         return
