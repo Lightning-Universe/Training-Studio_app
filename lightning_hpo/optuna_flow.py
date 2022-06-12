@@ -1,13 +1,10 @@
 from lightning import LightningFlow, CloudCompute
 import optuna
-from lightning.structures import Dict
+import lightning
 from lightning_hpo.objective import BaseObjectiveWork
 from lightning_hpo.hyperplot import HiPlotFlow
 from typing import Optional, Union, Dict, Type, Any
 from lightning.storage.path import Path
-from lightning.utilities.enum import WorkStageStatus
-from optuna.trial import TrialState
-from lightning import structures
 
 class OptunaPythonScript(LightningFlow):
     def __init__(
@@ -42,7 +39,7 @@ class OptunaPythonScript(LightningFlow):
         self.total_trials = total_trials
         self.simultaneous_trials = simultaneous_trials
         self._study = study or optuna.create_study()
-        self.workers = Dict()
+        self.workers = lightning.structures.Dict()
 
         for trial_id in range(self.total_trials):
             self.workers[f"w_{trial_id}"] = objective_work_cls(
@@ -71,7 +68,12 @@ class OptunaPythonScript(LightningFlow):
     @property
     def best_model_score(self) -> Optional[float]:
         """TO BE IMPLEMENTED"""
+        return max(max(w.best_model_score for w in self.works() if w.best_model_score), 0)
 
     @property
     def best_model_path(self) -> Optional[Path]:
         """TO BE IMPLEMENTED"""
+        best_score = self.best_model_score
+        for w in self.works():
+            if w.best_model_score == best_score:
+                return w.best_model_path

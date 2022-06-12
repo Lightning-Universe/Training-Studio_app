@@ -41,8 +41,8 @@ class RootFlow(LightningFlow):
     def run(self):
         self.hpo_train.run()
 
-        # if self.hpo_train.best_model_path:
-        #     pass
+        if self.hpo_train.best_model_path:
+            pass
 
     def configure_layout(self):
         return [{"name": "HiPlot", "content": self.hpo_train.hi_plot}]
