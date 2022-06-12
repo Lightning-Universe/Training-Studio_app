@@ -57,8 +57,8 @@ class OptunaPythonScript(LightningFlow):
         for trial_id in range(self.total_trials):
             worker = self.workers[f"w_{trial_id}"]
             if not worker.has_started:
-                params = self._study.ask(worker.distributions())
-                worker.run(trial_id=trial_id, params=params)
+                trial = self._study.ask(worker.distributions())
+                worker.run(trial_id=trial_id, params=trial.params)
 
             if worker.has_succeeded:
                 self.hi_plot.data.append({"x": worker.best_model_score, **worker.params})
@@ -79,5 +79,5 @@ class OptunaPythonScript(LightningFlow):
         if best_model_score is None:
             return
         for w in self.works():
-            if w.best_model_score == best_model_score:
+            if w.best_model_score and w.best_model_score == best_model_score:
                 return w.best_model_path
