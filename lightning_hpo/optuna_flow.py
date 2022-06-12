@@ -1,12 +1,12 @@
 from lightning import LightningFlow, CloudCompute
-import optuna
+from lightning.core.lightning_work import LightningWork
 from lightning_hpo.objective import BaseObjectiveWork
+import optuna
 from lightning_hpo.hyperplot import HiPlotFlow
 from typing import Optional, Union, Dict, Type, Any
 from lightning.storage.path import Path
 from lightning.utilities.enum import WorkStageStatus
 from optuna.trial import TrialState
-from lightning import structures
 
 class OptunaPythonScript(LightningFlow):
     def __init__(
@@ -34,7 +34,7 @@ class OptunaPythonScript(LightningFlow):
             script_args: Optional script arguments.
             env: Environment variables to be passed to the script.
             cloud_compute: The cloud compute on which the Work should run on.
-            parallel: Whether the Work should be async from the flow perspective.
+            blocking: Whether the Work should be blocking or asynchornous.
             objective_work_kwargs: Your custom keywords arguments passed to your custom objective work class.
         """
         super().__init__()
@@ -42,18 +42,17 @@ class OptunaPythonScript(LightningFlow):
         self.simultaneous_trials = simultaneous_trials
         self.num_trials = simultaneous_trials
         self._study = study or optuna.create_study()
-        self.dict = structures.Dict()
-
         for trial_idx in range(total_trials):
-            self.dict[f"w_{trial_idx}"] = objective_work_cls(
+            objective_work = objective_work_cls(
                 script_path=script_path,
                 env=env,
                 script_args=script_args,
                 cloud_compute=cloud_compute,
                 parallel=True,
-                run_once=True,
+                cache_calls=True,
                 **objective_work_kwargs,
             )
+            setattr(self, f"w_{trial_idx}", objective_work)
 
         self.hi_plot = HiPlotFlow()
 
@@ -64,14 +63,14 @@ class OptunaPythonScript(LightningFlow):
         has_told_study = []
 
         for trial_idx in range(self.num_trials):
-            work_objective = self.dict[f"w_{trial_idx}"]
+            work_objective = getattr(self, f"w_{trial_idx}")
             if work_objective.status.stage == WorkStageStatus.NOT_STARTED:
                 trial = self._study.ask(work_objective.distributions())
                 print(f"Starting work {trial_idx} with the following parameters {trial.params}")
-                work_objective.run(trial_id=trial._trial_id, **trial.params)
+                work_objective.run(trial_id=trial._trial_id, params=trial.params)
 
             if work_objective.best_model_score and not work_objective.has_told_study and not work_objective.pruned:
-                self._study.tell(work_objective.trial_id, -1 * work_objective.best_model_score)
+                self._study.tell(work_objective.trial_id, work_objective.best_model_score)
                 self.hi_plot.data.append({"x": work_objective.best_model_score, **work_objective.params})
                 work_objective.has_told_study = True
                 work_objective.stop()
@@ -85,8 +84,9 @@ class OptunaPythonScript(LightningFlow):
                         trial.report(*report)
                         work_objective.flow_reports.append(report)
                 if trial.should_prune():
-                    self._study.tell(trial, state=TrialState.PRUNED)
+                    self._study.tell(trial_idx, state=TrialState.PRUNED)
                     work_objective.pruned = True
+                    work_objective.stop()
 
         if all(has_told_study):
             self.num_trials += self.simultaneous_trials
@@ -105,4 +105,7 @@ class OptunaPythonScript(LightningFlow):
             return None
         for trial_idx, metric in enumerate(metrics):
             if metric == self.best_model_score:
-                return self.dict[f"w_{trial_idx}"].best_model_path
+                return getattr(self, f"w_{trial_idx}").best_model_path
+
+    def configure_layout(self):
+        return [{"name": name, "content": w} for name, w in self.named_works()]

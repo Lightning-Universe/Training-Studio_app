@@ -1,8 +1,7 @@
-import os
 from abc import ABC, abstractmethod
 
 import optuna
-from typing import Dict
+from typing import Dict, Any
 from lightning.components.python import TracerPythonScript
 
 
@@ -18,7 +17,7 @@ class BaseObjectiveWork(TracerPythonScript, ABC):
         self.flow_reports = []
         self.pruned = False
 
-    def run(self, trial_id: int, **params):
+    def run(self, trial_id: int, params: Dict[str, Any]):
         self.trial_id = trial_id
         self.params = params
         self.script_args.extend([f"--{k}={v}" for k, v in params.items()])
