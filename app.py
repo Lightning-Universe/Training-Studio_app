@@ -8,15 +8,14 @@ class MyCustomObjective(BaseObjectiveWork):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.best_model_path = None
+        """TO BE IMPLEMENTED"""
 
     def on_after_run(self, res):
-        self.best_model_score = float(res["cli"].trainer.checkpoint_callback.best_model_score)
-        self.best_model_path = Path(res["cli"].trainer.checkpoint_callback.best_model_path)
+        """TO BE IMPLEMENTED"""
 
     @staticmethod
     def distributions():
-        return {"model.lr": optuna.distributions.LogUniformDistribution(0.0001, 0.1)}
+        """TO BE IMPLEMENTED"""
 
 
 class RootFlow(LightningFlow):
@@ -27,7 +26,7 @@ class RootFlow(LightningFlow):
             script_path=str(Path(__file__).parent / "scripts/train.py"),
             total_trials=50,
             simultaneous_trials=2,
-            objective_work_cls=MyCustomObjective,
+            objective_work_cls=BaseObjectiveWork,
             script_args=[
                 "--trainer.max_epochs=5",
                 "--trainer.limit_train_batches=4",

@@ -69,8 +69,6 @@ class MNISTDataModule(LightningDataModule):
 
 
 if __name__ == "__main__":
-    os.environ["WANDB_API_KEY"] = "0f7ef1a1fd67298367d8ebaf0ffae58272e6eb17"
-
     cli = LightningCLI(
         ImageClassifier, MNISTDataModule, seed_everything_default=42, save_config_overwrite=True, run=False
     )

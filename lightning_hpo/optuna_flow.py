@@ -38,71 +38,17 @@ class OptunaPythonScript(LightningFlow):
             objective_work_kwargs: Your custom keywords arguments passed to your custom objective work class.
         """
         super().__init__()
-        self.total_trials = total_trials
-        self.simultaneous_trials = simultaneous_trials
-        self.num_trials = simultaneous_trials
-        self._study = study or optuna.create_study()
-        self.dict = structures.Dict()
+        """TO BE IMPLEMENTED"""
 
-        for trial_idx in range(total_trials):
-            self.dict[f"w_{trial_idx}"] = objective_work_cls(
-                script_path=script_path,
-                env=env,
-                script_args=script_args,
-                cloud_compute=cloud_compute,
-                parallel=True,
-                run_once=True,
-                **objective_work_kwargs,
-            )
-
-        self.hi_plot = HiPlotFlow()
 
     def run(self):
-        if self.num_trials > self.total_trials:
-            return
+        """TO BE IMPLEMENTED"""
 
-        has_told_study = []
-
-        for trial_idx in range(self.num_trials):
-            work_objective = self.dict[f"w_{trial_idx}"]
-            if work_objective.status.stage == WorkStageStatus.NOT_STARTED:
-                trial = self._study.ask(work_objective.distributions())
-                print(f"Starting work {trial_idx} with the following parameters {trial.params}")
-                work_objective.run(trial_id=trial._trial_id, **trial.params)
-
-            if work_objective.best_model_score and not work_objective.has_told_study and not work_objective.pruned:
-                self._study.tell(work_objective.trial_id, -1 * work_objective.best_model_score)
-                self.hi_plot.data.append({"x": work_objective.best_model_score, **work_objective.params})
-                work_objective.has_told_study = True
-                work_objective.stop()
-
-            has_told_study.append(work_objective.has_told_study)
-
-            if work_objective.reports:
-                trial = self._study._storage.get_trial(work_objective.trial_id)
-                for report in work_objective.reports:
-                    if report not in work_objective.flow_reports:
-                        trial.report(*report)
-                        work_objective.flow_reports.append(report)
-                if trial.should_prune():
-                    self._study.tell(trial, state=TrialState.PRUNED)
-                    work_objective.pruned = True
-
-        if all(has_told_study):
-            self.num_trials += self.simultaneous_trials
 
     @property
     def best_model_score(self) -> Optional[float]:
-        metrics = [work.best_model_score for work in self.works()]
-        if not all(metrics):
-            return None
-        return max(metrics)
+        """TO BE IMPLEMENTED"""
 
     @property
     def best_model_path(self) -> Optional[Path]:
-        metrics = [work.best_model_score for work in self.works()]
-        if not all(metrics):
-            return None
-        for trial_idx, metric in enumerate(metrics):
-            if metric == self.best_model_score:
-                return self.dict[f"w_{trial_idx}"].best_model_path
+        """TO BE IMPLEMENTED"""
