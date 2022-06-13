@@ -63,14 +63,6 @@ class OptunaPythonScript(LightningFlow):
                 worker.stop()
 
     @property
-    def best_model_score(self) -> Optional[float]:
-        best_model_score = None
-        for w in self.works():
-            if w.best_model_score and best_model_score and w.best_model_score > best_model_score:
-                best_model_score = w.best_model_score
-        return best_model_score
-
-    @property
     def best_model_path(self) -> Optional[Path]:
         best_model_score = self.best_model_score
         if best_model_score is None:
@@ -78,3 +70,15 @@ class OptunaPythonScript(LightningFlow):
         for w in self.works():
             if w.best_model_score and w.best_model_score == best_model_score:
                 return w.best_model_path
+
+    @property
+    def best_model_score(self) -> Optional[float]:
+        best_model_score = None
+        for w in self.works():
+            if w.best_model_score is None:
+                continue
+            if best_model_score is None:
+                best_model_score = w.best_model_score
+            elif w.best_model_score > best_model_score:
+                best_model_score = w.best_model_score
+        return best_model_score
