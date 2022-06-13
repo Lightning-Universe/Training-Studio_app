@@ -26,7 +26,7 @@ class RootFlow(LightningFlow):
         self.hpo_train = OptunaPythonScript(
             script_path=str(pathlib.Path(__file__).parent / "scripts/train.py"),
             total_trials=4,
-            objective_work_cls=BaseObjectiveWork,
+            objective_work_cls=MyCustomObjective,
             script_args=[
                 "--trainer.max_epochs=5",
                 "--trainer.limit_train_batches=4",
