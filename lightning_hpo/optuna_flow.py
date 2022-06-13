@@ -1,3 +1,4 @@
+import lightning
 from lightning import LightningFlow, CloudCompute
 import optuna
 import lightning
@@ -11,7 +12,6 @@ class OptunaPythonScript(LightningFlow):
         self,
         script_path: str,
         total_trials: int,
-        simultaneous_trials: int,
         objective_work_cls: Type[BaseObjectiveWork],
         study: Optional[optuna.study.Study] = None,
         script_args: Optional[Union[list, str]] = None,
@@ -26,7 +26,6 @@ class OptunaPythonScript(LightningFlow):
         Arguments:
             script_path: Path of the python script to run.
             total_trials: Number of HPO trials to run.
-            simultaneous_trials: Number of parallel trials to run.
             objective_work_cls: Your custom base objective work.
             study: Optional Optuna study to collect the parameters.
             script_args: Optional script arguments.
@@ -37,7 +36,6 @@ class OptunaPythonScript(LightningFlow):
         """
         super().__init__()
         self.total_trials = total_trials
-        self.simultaneous_trials = simultaneous_trials
         self._study = study or optuna.create_study()
         self.workers = lightning.structures.Dict()
 
@@ -62,7 +60,6 @@ class OptunaPythonScript(LightningFlow):
 
             if worker.has_succeeded:
                 self.hi_plot.data.append({"x": worker.best_model_score, **worker.params})
-                self._study.tell(trial_id, -1 * worker.best_model_score)
                 worker.stop()
 
     @property
