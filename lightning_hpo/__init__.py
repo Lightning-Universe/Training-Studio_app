@@ -21,7 +21,7 @@ if not _root_logger.hasHandlers():
 
 from lightning_hpo.__about__ import *  # noqa: E402, F401, F403
 import lightning_hpo.optuna_flow.OptunaPythonScript  # noqa: E402
-import.lightning_hpo.objective.BaseObjectiveWork  # noqa: E402
+import lightning_hpo.objective.BaseObjectiveWork  # noqa: E402
 
 _PACKAGE_ROOT = os.path.dirname(__file__)
 _PROJECT_ROOT = os.path.dirname(_PACKAGE_ROOT)
