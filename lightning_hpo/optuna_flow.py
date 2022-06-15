@@ -2,7 +2,7 @@ import lightning as L
 import optuna
 from optuna.trial import TrialState
 from typing import Optional, Union, Dict, Type, Any
-from lightning_hpo as L_Hpo
+import lightning_hpo as L_Hpo
 
 class OptunaPythonScript(L.LightningFlow):
     def __init__(
