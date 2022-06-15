@@ -1,19 +1,18 @@
 import lightning as L
+import optuna
+from optuna.trial import TrialState
+from typing import Optional, Union, Dict, Type, Any
+from lightning.storage.path import Path
+from lightning.utilities.enum import WorkStageStatus
+from lightning_hpo as L_Hpo
 
 class OptunaPythonScript(L.LightningFlow):
-    import optuna
-    from optuna.trial import TrialState
-    from typing import Optional, Union, Dict, Type, Any
-    from lightning.storage.path import Path
-    from lightning.utilities.enum import WorkStageStatus
-    from lightning_hpo.hyperplot import HiPlotFlow
-    from lightning_hpo.objective import BaseObjectiveWork
     def __init__(
         self,
         script_path: str,
         total_trials: int,
         simultaneous_trials: int,
-        objective_work_cls: Type[BaseObjectiveWork],
+        objective_work_cls: Type[L_Hpo.objective.BaseObjectiveWork],
         study: Optional[optuna.study.Study] = None,
         script_args: Optional[Union[list, str]] = None,
         env: Optional[Dict] = None,
@@ -53,7 +52,7 @@ class OptunaPythonScript(L.LightningFlow):
             )
             setattr(self, f"w_{trial_idx}", objective_work)
 
-        self.hi_plot = HiPlotFlow()
+        self.hi_plot = L_Hp.hyperplot.HiPlotFlow()
 
     def run(self):
         if self.num_trials > self.total_trials:
