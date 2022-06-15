@@ -1,9 +1,9 @@
-from lightning import LightningFlow
+import lightning as L
 from lightning.frontend.stream_lit import StreamlitFrontend
 from lightning.utilities.state import AppState
 
 
-class HiPlotFlow(LightningFlow):
+class HiPlotFlow(L.LightningFlow):
     def __init__(self):
         super().__init__()
         self.data = []
