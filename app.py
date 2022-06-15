@@ -1,6 +1,6 @@
 from pathlib import Path
 import optuna
-from lightning import LightningFlow, CloudCompute, LightningApp
+import lightning as L
 from lightning_hpo import BaseObjectiveWork, OptunaPythonScript
 from lightning.storage.path import Path
 
@@ -19,7 +19,7 @@ class MyCustomObjective(BaseObjectiveWork):
         return {"model.lr": optuna.distributions.LogUniformDistribution(0.0001, 0.1)}
 
 
-class RootFlow(LightningFlow):
+class RootFlow(L.LightningFlow):
 
     def __init__(self):
         super().__init__()
@@ -35,7 +35,7 @@ class RootFlow(LightningFlow):
                 "--trainer.callbacks=ModelCheckpoint",
                 "--trainer.callbacks.monitor=val_acc",
             ],
-            cloud_compute=CloudCompute("cpu"),
+            cloud_compute=L.CloudCompute("cpu"),
         )
 
     def run(self):
@@ -47,4 +47,4 @@ class RootFlow(LightningFlow):
     def configure_layout(self):
         return [{"name": "HiPlot", "content": self.hpo_train.hi_plot}]
 
-app = LightningApp(RootFlow())
+app = L.LightningApp(RootFlow())
