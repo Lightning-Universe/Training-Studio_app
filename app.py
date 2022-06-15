@@ -1,10 +1,10 @@
 from pathlib import Path
 import optuna
 import lightning as L
-from lightning_hpo import BaseObjectiveWork, OptunaPythonScript
-from lightning.storage.path import Path
+import lightning_hpo as L_Hpo
 
-class MyCustomObjective(BaseObjectiveWork):
+
+class MyCustomObjective(L_Hpo.BaseObjectiveWork):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -12,7 +12,7 @@ class MyCustomObjective(BaseObjectiveWork):
 
     def on_after_run(self, res):
         self.best_model_score = float(res["cli"].trainer.checkpoint_callback.best_model_score)
-        self.best_model_path = Path(res["cli"].trainer.checkpoint_callback.best_model_path)
+        self.best_model_path = L.storage.path.Path(res["cli"].trainer.checkpoint_callback.best_model_path)
 
     @staticmethod
     def distributions():
@@ -23,8 +23,8 @@ class RootFlow(L.LightningFlow):
 
     def __init__(self):
         super().__init__()
-        self.hpo_train = OptunaPythonScript(
-            script_path=str(Path(__file__).parent / "scripts/train.py"),
+        self.hpo_train = L_Hpo.OptunaPythonScript(
+            script_path=str(L.storage.path.Path(__file__).parent / "scripts/train.py"),
             total_trials=50,
             simultaneous_trials=2,
             objective_work_cls=MyCustomObjective,
