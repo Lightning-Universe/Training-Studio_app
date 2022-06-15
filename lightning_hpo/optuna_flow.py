@@ -1,13 +1,13 @@
 import lightning as L
-from lightning_hpo.objective import BaseObjectiveWork
-import optuna
-from lightning_hpo.hyperplot import HiPlotFlow
-from typing import Optional, Union, Dict, Type, Any
-from lightning.storage.path import Path
-from lightning.utilities.enum import WorkStageStatus
-from optuna.trial import TrialState
 
 class OptunaPythonScript(L.LightningFlow):
+    from lightning_hpo.objective import BaseObjectiveWork
+    import optuna
+    from lightning_hpo.hyperplot import HiPlotFlow
+    from typing import Optional, Union, Dict, Type, Any
+    from lightning.storage.path import Path
+    from lightning.utilities.enum import WorkStageStatus
+    from optuna.trial import TrialState
     def __init__(
         self,
         script_path: str,
