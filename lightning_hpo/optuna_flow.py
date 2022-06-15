@@ -2,8 +2,6 @@ import lightning as L
 import optuna
 from optuna.trial import TrialState
 from typing import Optional, Union, Dict, Type, Any
-from lightning.storage.path import Path
-from lightning.utilities.enum import WorkStageStatus
 from lightning_hpo as L_Hpo
 
 class OptunaPythonScript(L.LightningFlow):
@@ -62,7 +60,7 @@ class OptunaPythonScript(L.LightningFlow):
 
         for trial_idx in range(self.num_trials):
             work_objective = getattr(self, f"w_{trial_idx}")
-            if work_objective.status.stage == WorkStageStatus.NOT_STARTED:
+            if work_objective.status.stage == L.utilities.enum.WorkStageStatus.NOT_STARTED:
                 trial = self._study.ask(work_objective.distributions())
                 print(f"Starting work {trial_idx} with the following parameters {trial.params}")
                 work_objective.run(trial_id=trial._trial_id, params=trial.params)
@@ -97,7 +95,7 @@ class OptunaPythonScript(L.LightningFlow):
         return max(metrics)
 
     @property
-    def best_model_path(self) -> Optional[Path]:
+    def best_model_path(self) -> Optional[L.storage.path.Path]:
         metrics = [work.best_model_score for work in self.works()]
         if not all(metrics):
             return None
