@@ -8,4 +8,4 @@ gradio
 click
 streamlit
 streamlit_autorefresh
-lightning
+lightning-app --pre
