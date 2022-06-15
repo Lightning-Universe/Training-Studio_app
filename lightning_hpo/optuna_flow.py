@@ -10,7 +10,7 @@ class OptunaPythonScript(L.LightningFlow):
         script_path: str,
         total_trials: int,
         simultaneous_trials: int,
-        objective_work_cls: Type[L_Hpo.objective.BaseObjectiveWork],
+        objective_work_cls: Type[L_Hpo.BaseObjectiveWork],
         study: Optional[optuna.study.Study] = None,
         script_args: Optional[Union[list, str]] = None,
         env: Optional[Dict] = None,
