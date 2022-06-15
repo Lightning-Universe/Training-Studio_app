@@ -4,7 +4,7 @@ import lightning as L
 import lightning_hpo as L_Hpo
 
 
-class MyCustomObjective(L_Hpo.BaseObjectiveWork):
+class MyCustomObjective(L_Hpo.objective.BaseObjectiveWork):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -23,7 +23,7 @@ class RootFlow(L.LightningFlow):
 
     def __init__(self):
         super().__init__()
-        self.hpo_train = L_Hpo.OptunaPythonScript(
+        self.hpo_train = L_Hpo.optuna_flow.OptunaPythonScript(
             script_path=str(L.storage.path.Path(__file__).parent / "scripts/train.py"),
             total_trials=50,
             simultaneous_trials=2,
