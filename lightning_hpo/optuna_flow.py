@@ -1,5 +1,4 @@
-from lightning import LightningFlow, CloudCompute
-from lightning.core.lightning_work import LightningWork
+import lightning as L
 from lightning_hpo.objective import BaseObjectiveWork
 import optuna
 from lightning_hpo.hyperplot import HiPlotFlow
@@ -8,7 +7,7 @@ from lightning.storage.path import Path
 from lightning.utilities.enum import WorkStageStatus
 from optuna.trial import TrialState
 
-class OptunaPythonScript(LightningFlow):
+class OptunaPythonScript(L.LightningFlow):
     def __init__(
         self,
         script_path: str,
@@ -18,7 +17,7 @@ class OptunaPythonScript(LightningFlow):
         study: Optional[optuna.study.Study] = None,
         script_args: Optional[Union[list, str]] = None,
         env: Optional[Dict] = None,
-        cloud_compute: Optional[CloudCompute] = None,
+        cloud_compute: Optional[L.CloudCompute] = None,
         **objective_work_kwargs: Any,
 
     ):
