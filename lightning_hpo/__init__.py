@@ -20,14 +20,13 @@ if not _root_logger.hasHandlers():
 
 
 from lightning_hpo.__about__ import *  # noqa: E402, F401, F403
-from lightning_hpo.optuna_flow import OptunaPythonScript  # noqa: E402
-from lightning_hpo.objective import BaseObjectiveWork  # noqa: E402
+import lightning_hpo as L_Hpo  # noqa: E402
 
 _PACKAGE_ROOT = os.path.dirname(__file__)
 _PROJECT_ROOT = os.path.dirname(_PACKAGE_ROOT)
 
-__all__ = ["BaseObjectiveWork", "OptunaPythonScript"]
+__all__ = ["L_Hpo.optuna.objective.BaseObjectiveWork", "L_Hpo.optuna_flow.OptunaPythonScript"]
 
 
 def exported_lightning_components():
-    return [OptunaPythonScript, BaseObjectiveWork]
+    return [L_Hpo.optuna_flow.OptunaPythonScript, L_Hpo.optuna.objective.BaseObjectiveWork]
