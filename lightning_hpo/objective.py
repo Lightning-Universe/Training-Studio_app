@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 import optuna
 from typing import Dict, Any
-from lightning.components.python import TracerPythonScript
+from lightning.app.components.python import TracerPythonScript
 
 
 class BaseObjectiveWork(TracerPythonScript, ABC):

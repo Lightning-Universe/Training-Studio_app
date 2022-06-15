@@ -1,11 +1,11 @@
 from lightning import LightningFlow, CloudCompute
-from lightning.core.lightning_work import LightningWork
+from lightning import LightningWork
 from lightning_hpo.objective import BaseObjectiveWork
 import optuna
 from lightning_hpo.hyperplot import HiPlotFlow
 from typing import Optional, Union, Dict, Type, Any
-from lightning.storage.path import Path
-from lightning.utilities.enum import WorkStageStatus
+from lightning.app.storage.path import Path
+from lightning.app.utilities.enum import WorkStageStatus
 from optuna.trial import TrialState
 
 class OptunaPythonScript(LightningFlow):
