@@ -2,7 +2,7 @@ from pathlib import Path
 import optuna
 from lightning import LightningFlow, CloudCompute, LightningApp
 from lightning_hpo import BaseObjectiveWork, OptunaPythonScript
-from lightning.storage.path import Path
+from lightning.app.storage.path import Path
 
 class MyCustomObjective(BaseObjectiveWork):
 
