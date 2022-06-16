@@ -2,7 +2,7 @@ import pathlib
 import optuna
 from lightning import LightningFlow, CloudCompute, LightningApp
 from lightning_hpo import BaseObjectiveWork, OptunaPythonScript
-from lightning.storage.path import Path
+from lightning.app.storage.path import Path
 
 class MyCustomObjective(BaseObjectiveWork):
 
@@ -34,7 +34,7 @@ class RootFlow(LightningFlow):
                 "--trainer.callbacks=ModelCheckpoint",
                 "--trainer.callbacks.monitor=val_acc",
             ],
-            cloud_compute=CloudCompute("cpu"),
+            cloud_compute=CloudCompute("default"),
         )
 
     def run(self):
