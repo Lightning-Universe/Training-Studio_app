@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
 import optuna
-from typing import Dict
-from lightning.components.python import TracerPythonScript
+from typing import Dict, Any
+from lightning.app.components.python import TracerPythonScript
 
 
 class BaseObjectiveWork(TracerPythonScript, ABC):
@@ -14,7 +14,7 @@ class BaseObjectiveWork(TracerPythonScript, ABC):
         self.best_model_score = None
         self.best_model_path = None
 
-    def run(self, trial_id: int, params):
+    def run(self, trial_id: int, params: Dict[str, Any]):
         self.trial_id = trial_id
         self.params = params
         self.script_args += [f"--{k}={v}" for k, v in params.items()]
