@@ -1,8 +1,7 @@
-import lightning
 from lightning import LightningFlow, CloudCompute
+from lightning.app import structures
 from lightning_hpo.objective import BaseObjectiveWork
 import optuna
-from lightning.app import structures
 from lightning_hpo.hyperplot import HiPlotFlow
 from typing import Optional, Union, Dict, Type, Any
 from lightning.app.storage.path import Path
