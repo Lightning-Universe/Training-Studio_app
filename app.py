@@ -35,7 +35,7 @@ class RootFlow(LightningFlow):
                 "--trainer.callbacks=ModelCheckpoint",
                 "--trainer.callbacks.monitor=val_acc",
             ],
-            cloud_compute=CloudCompute("cpu"),
+            cloud_compute=CloudCompute("default"),
         )
 
     def run(self):
