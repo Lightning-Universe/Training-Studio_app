@@ -1,13 +1,11 @@
 import lightning
 from lightning import LightningFlow, CloudCompute
-from lightning import LightningWork
+from lightning.app import structures
 from lightning_hpo.objective import BaseObjectiveWork
 import optuna
 from lightning_hpo.hyperplot import HiPlotFlow
 from typing import Optional, Union, Dict, Type, Any
 from lightning.app.storage.path import Path
-from lightning.app.utilities.enum import WorkStageStatus
-from optuna.trial import TrialState
 
 class OptunaPythonScript(LightningFlow):
     def __init__(
@@ -39,7 +37,7 @@ class OptunaPythonScript(LightningFlow):
         super().__init__()
         self.total_trials = total_trials
         self._study = study or optuna.create_study()
-        self.workers = lightning.structures.Dict()
+        self.workers = structures.Dict()
 
         for trial_id in range(self.total_trials):
             self.workers[f"w_{trial_id}"] = objective_work_cls(
