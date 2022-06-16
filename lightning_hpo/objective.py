@@ -1,6 +1,4 @@
 from abc import ABC, abstractmethod
-
-import optuna
 from typing import Dict, Any
 from lightning.app.components.python import TracerPythonScript
 

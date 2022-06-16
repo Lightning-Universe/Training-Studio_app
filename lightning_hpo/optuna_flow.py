@@ -1,4 +1,3 @@
-import lightning
 from lightning import LightningFlow, CloudCompute
 from lightning.app import structures
 from lightning_hpo.objective import BaseObjectiveWork
@@ -46,20 +45,31 @@ class OptunaPythonScript(LightningFlow):
                 script_args=script_args,
                 env=env,
                 cloud_compute=cloud_compute,
-                parallel=True,
                 cache_calls=True,
                 **objective_work_kwargs,
             )
 
         self.hi_plot = HiPlotFlow()
 
-
     def run(self):
-        """TO BE IMPLEMENTED"""
+        for trial_id in range(self.total_trials):
+            worker = self.workers[f"w_{trial_id}"]
+            if not worker.has_started:
+                trial = self._study.ask(worker.distributions())
+                worker.run(trial_id=trial_id, params=trial.params)
+
+            if worker.has_succeeded:
+                self.hi_plot.data.append({"x": worker.best_model_score, **worker.params})
+                worker.stop()
 
     @property
     def best_model_path(self) -> Optional[Path]:
-        """TO BE IMPLEMENTED"""
+        best_model_score = self.best_model_score
+        if best_model_score is None:
+            return
+        for w in self.works():
+            if w.best_model_score and w.best_model_score == best_model_score:
+                return w.best_model_path
 
     @property
     def best_model_score(self) -> Optional[float]:
