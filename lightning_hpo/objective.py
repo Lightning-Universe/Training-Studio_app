@@ -51,8 +51,7 @@ class BaseObjective(TracerPythonScript, ABC):
         tracer.add_traced(Trainer, "__init__", pre_fn=partial(trainer_pre_fn, work=self))
         return tracer
 
-    def run(self, trial_id: int, params: Dict[str, Any]):
-        self.trial_id = trial_id
+    def run(self, params: Dict[str, Any]):
         self.params = params
         self.script_args.extend([f"--{k}={v}" for k, v in params.items()])
         return super().run()

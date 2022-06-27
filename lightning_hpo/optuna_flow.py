@@ -82,7 +82,7 @@ class Optimizer(LightningFlow):
                 distributions = work_objective.distributions()
                 trial = self._study.ask(distributions)
                 self._trials[trial_idx] = trial
-                work_objective.run(trial_id=trial._trial_id, params=trial.params)
+                work_objective.run(params=trial.params)
 
             if work_objective.reports and not work_objective.pruned:
                 trial = self._trials[work_objective.trial_id]

@@ -9,10 +9,9 @@ from lightning import LightningApp, LightningFlow
 
 
 class Objective(BaseObjective):
-    def run(self, trial_id, params):
+    def run(self, params):
         # WARNING: Don't forget to assign those to self,
         # so they get tracked in the state.
-        self.trial_id = trial_id
         self.params = params
 
         iris = datasets.load_iris()
