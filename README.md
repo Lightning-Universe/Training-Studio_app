@@ -113,7 +113,7 @@ class RootFlow(LightningFlow):
 app = LightningApp(RootFlow())
 ```
 
-Now, your code can run at scale in the cloud if needed with (--cloud) and has a simple UI to track the optimization.
+Now, your code can run at scale in the cloud by adding the ``flag --cloud``. Plus, you get a neat UI to track the optimization.
 
 ![Lightning App UI](https://pl-flash-data.s3.amazonaws.com/assets_lightning/lightning_hpo_optimizer.png)
 
