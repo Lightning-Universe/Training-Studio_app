@@ -36,7 +36,7 @@ class RootFlow(LightningFlow):
                 "--trainer.callbacks.monitor=val_acc",
             ],
             cloud_compute=CloudCompute("default"),
-            logger="wandb",
+            logger="streamlit",
         )
 
     def run(self):
