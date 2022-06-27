@@ -97,7 +97,11 @@ class Optimizer(LightningFlow):
                         break
 
             if work_objective.best_model_score and not work_objective.has_stopped and not work_objective.pruned:
-                self._study.tell(work_objective.trial_id, work_objective.best_model_score)
+                # TODO: Understand why this is failing.
+                try:
+                    self._study.tell(work_objective.trial_id, work_objective.best_model_score)
+                except RuntimeError:
+                    pass
                 if self.hi_plot:
                     self.hi_plot.data.append({"x": work_objective.best_model_score, **work_objective.params})
                 work_objective.stop()
