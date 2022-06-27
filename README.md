@@ -4,14 +4,14 @@ Lightning provides the most pythonic implementation for Scalable Hyperparameter 
 
 This library relies on [Optuna](https://optuna.readthedocs.io/en/stable/) for providing state-of-the-art sampling hyper-parameters algorithms and efficient trial pruning strategies.
 
-### Installation
+## Installation
 
 ```bash
 git clone https://github.com/PyTorchLightning/lightning-hpo.git
 pip install -e .
 ```
 
-### How to use
+## Use Lightning HPO in your app.
 
 The only provided classes are: `BaseObjective` and `Optimizer`.
 
@@ -41,13 +41,13 @@ component = Optimizer(
 )
 ```
 
-### Example
+Run the example with the following command:
 
 ```bash
 python -m lightning run app app.py
 ```
 
-### Convert from Optuna.
+## Convert existing from Optuna scripts to a scalable Lightning App
 
 Below, we are going to convert [Optuna Efficient Optimization Algorithms](https://optuna.readthedocs.io/en/stable/tutorial/10_key_features/003_efficient_optimization_algorithms.html#sphx-glr-tutorial-10-key-features-003-efficient-optimization-algorithms-py>) into a Lightning App.
 
@@ -149,7 +149,7 @@ Trail 18 pruned.
 Trail 19 pruned.
 ```
 
-### Customize your HPO training with Optuna advanced algorithms
+## Use advanced algorithms with your Lightning App
 
 Here is how to use the latest research such as [Hyperband paper](http://www.jmlr.org/papers/volume18/16-558/16-558.pdf)
 
