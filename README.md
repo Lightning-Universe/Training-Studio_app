@@ -47,6 +47,20 @@ Run the example with the following command:
 python -m lightning run app app.py
 ```
 
+## Select your logger
+
+Lightning HPO supports Wandb and Streamlit by default.
+
+```python
+import optuna
+
+Optimizer(..., logger="wandb")
+```
+
+```bash
+python -m lightning run app app.py --env WANDB_ENTITY=YOUR_USERNAME --env WANDB_API_KEY=YOUR_API_KEY --cloud
+```
+
 ## Convert existing from Optuna scripts to a scalable Lightning App
 
 Below, we are going to convert [Optuna Efficient Optimization Algorithms](https://optuna.readthedocs.io/en/stable/tutorial/10_key_features/003_efficient_optimization_algorithms.html#sphx-glr-tutorial-10-key-features-003-efficient-optimization-algorithms-py>) into a Lightning App.
@@ -170,18 +184,3 @@ python -m lightning run app app_hyperband.py --cloud
 ```
 
 Learn more [here](https://optuna.readthedocs.io/en/stable/tutorial/10_key_features/003_efficient_optimization_algorithms.html?highlight=hyperband#activating-pruners)
-
-
-## Select your logger
-
-Lightning HPO supports Wandb and Streamlit by default.
-
-```python
-import optuna
-
-Optimizer(..., logger="wandb")
-```
-
-```bash
-python -m lightning run app app.py --env WANDB_ENTITY=YOUR_USERNAME --env WANDB_API_KEY=YOUR_API_KEY --cloud
-```
