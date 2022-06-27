@@ -18,16 +18,15 @@ if not _root_logger.hasHandlers():
     _logger.addHandler(_console)
     _logger.propagate = False
 
-
 from lightning_hpo.__about__ import *  # noqa: E402, F401, F403
-from lightning_hpo.optuna_flow import OptunaPythonScript  # noqa: E402
-from lightning_hpo.objective import BaseObjectiveWork  # noqa: E402
+from lightning_hpo.optuna_flow import Optimizer  # noqa: E402
+from lightning_hpo.objective import BaseObjective  # noqa: E402
 
 _PACKAGE_ROOT = os.path.dirname(__file__)
 _PROJECT_ROOT = os.path.dirname(_PACKAGE_ROOT)
 
-__all__ = ["BaseObjectiveWork", "OptunaPythonScript"]
+from optuna.storages._in_memory import _logger
+_logger.disabled = True
+_logger.propagate = False
 
-
-def exported_lightning_components():
-    return [OptunaPythonScript, BaseObjectiveWork]
+__all__ = ["BaseObjective", "Optimizer"]

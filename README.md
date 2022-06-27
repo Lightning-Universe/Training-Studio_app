@@ -13,13 +13,13 @@ pip install -e .
 
 ### How to use
 
-The only provided classes are: `BaseObjectiveWork` and `OptunaPythonScript`.
+The only provided classes are: `BaseObjective` and `Optimizer`.
 
 ```py
 import optuna
-from lightning_hpo import BaseObjectiveWork, OptunaPythonScript
+from lightning_hpo import BaseObjective, Optimizer
 
-class MyCustomObjective(BaseObjectiveWork):
+class MyCustomObjective(BaseObjective):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -33,7 +33,7 @@ class MyCustomObjective(BaseObjectiveWork):
         return {"learning_rate": optuna.distributions.LogUniformDistribution(0.0001, 0.1)}
 
 
-component = OptunaPythonScript(
+component = Optimizer(
     script_path=`{RELATIVE_PATH_TO_YOUR_SCRIPT}`,
     total_trials=100,
     simultaneous_trials=5,
@@ -55,7 +55,7 @@ TODO [Hyperband paper](http://www.jmlr.org/papers/volume18/16-558/16-558.pdf)
 ```python
 import optuna
 
-OptunaPythonScript(
+Optimizer(
     study=optuna.create_study(
         direction="maximize",
         pruner=optuna.pruners.HyperbandPruner(

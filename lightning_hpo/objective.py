@@ -5,7 +5,7 @@ from typing import Dict, Any
 from lightning.app.components.python import TracerPythonScript
 
 
-class BaseObjectiveWork(TracerPythonScript, ABC):
+class BaseObjective(TracerPythonScript, ABC):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, raise_exception=True, **kwargs)

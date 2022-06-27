@@ -2,10 +2,10 @@ from pathlib import Path
 import optuna
 from functools import partial
 from lightning import LightningFlow, CloudCompute, LightningApp
-from lightning_hpo import BaseObjectiveWork, OptunaPythonScript
-from lightning.storage.path import Path
+from lightning_hpo import BaseObjective, Optimizer
+from lightning.app.storage.path import Path
 
-class MyCustomObjective(BaseObjectiveWork):
+class MyCustomObjective(BaseObjective):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -47,7 +47,7 @@ class RootFlow(LightningFlow):
 
     def __init__(self):
         super().__init__()
-        self.hpo_train = OptunaPythonScript(
+        self.hpo_train = Optimizer(
             script_path=str(Path(__file__).parent / "scripts/train.py"),
             total_trials=100,
             simultaneous_trials=10,
