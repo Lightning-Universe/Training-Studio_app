@@ -49,7 +49,7 @@ class RootFlow(LightningFlow):
         super().__init__()
         self.hpo_train = Optimizer(
             script_path=str(Path(__file__).parent / "scripts/train.py"),
-            total_trials=100,
+            n_trials=100,
             simultaneous_trials=10,
             study = optuna.create_study(
                 direction="maximize",

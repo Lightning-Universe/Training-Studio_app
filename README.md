@@ -35,7 +35,7 @@ class MyCustomObjective(BaseObjective):
 
 component = Optimizer(
     script_path=`{RELATIVE_PATH_TO_YOUR_SCRIPT}`,
-    total_trials=100,
+    n_trials=100,
     simultaneous_trials=5,
     objective_cls=MyCustomObjective,
 )
@@ -99,7 +99,7 @@ class RootFlow(LightningFlow):
         super().__init__()
         self.optimizer = Optimizer(
             objective_cls=Objective,
-            total_trials=20,
+            n_trials=20,
             study=optuna.create_study(pruner=optuna.pruners.MedianPruner()),
         )
 

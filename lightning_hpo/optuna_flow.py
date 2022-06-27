@@ -11,7 +11,7 @@ from lightning.app.utilities.enum import WorkStageStatus
 class Optimizer(LightningFlow):
     def __init__(
         self,
-        total_trials: int,
+        n_trials: int,
         objective_cls: Type[BaseObjective],
         simultaneous_trials: int = 1,
         script_args: Optional[Union[list, str]] = None,
@@ -26,7 +26,7 @@ class Optimizer(LightningFlow):
         :class:`~lightning.utilities.tracer.Tracer` with state-of-the-art distributed.
 
         Arguments:
-            total_trials: Number of HPO trials to run.
+            n_trials: Number of HPO trials to run.
             objective_cls: Your custom base objective work.
             simultaneous_trials: Number of parallel trials to run.
             script_args: Optional script arguments.
@@ -37,11 +37,11 @@ class Optimizer(LightningFlow):
             objective_work_kwargs: Your custom keywords arguments passed to your custom objective work class.
         """
         super().__init__()
-        self.total_trials = total_trials
+        self.n_trials = n_trials
         self.simultaneous_trials = simultaneous_trials
         self.num_trials = simultaneous_trials
         self._study = study or optuna.create_study()
-        for trial_idx in range(total_trials):
+        for trial_idx in range(n_trials):
             objective_work = objective_cls(
                 script_path=script_path or ".",
                 env=env,
@@ -57,7 +57,7 @@ class Optimizer(LightningFlow):
         self._trials = {}
 
     def run(self):
-        if self.num_trials > self.total_trials:
+        if self.num_trials > self.n_trials:
             return
 
         has_told_study = []

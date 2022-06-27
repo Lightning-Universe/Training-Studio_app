@@ -41,7 +41,7 @@ class RootFlow(LightningFlow):
         super().__init__()
         self.optimizer = Optimizer(
             objective_cls=Objective,
-            total_trials=20,
+            n_trials=20,
             study=optuna.create_study(pruner=optuna.pruners.MedianPruner()),
         )
 
