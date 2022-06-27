@@ -1,12 +1,13 @@
 from lightning import LightningFlow, CloudCompute
 from lightning_hpo.objective import BaseObjective
 import optuna
-import logging
-import sys
+import os
 from lightning_hpo.hyperplot import HiPlotFlow
 from typing import Optional, Union, Dict, Type, Any
 from lightning.app.storage.path import Path
 from lightning.app.utilities.enum import WorkStageStatus
+from lightning_hpo.loggers import Loggers, WandbConfig
+import uuid
 
 class Optimizer(LightningFlow):
     def __init__(
@@ -19,6 +20,7 @@ class Optimizer(LightningFlow):
         cloud_compute: Optional[CloudCompute] = None,
         script_path: Optional[str] = None,
         study: Optional[optuna.Study] = None,
+        logger: str = "streamlit",
         **objective_work_kwargs: Any,
 
     ):
@@ -34,6 +36,7 @@ class Optimizer(LightningFlow):
             cloud_compute: The cloud compute on which the Work should run on.
             blocking: Whether the Work should be blocking or asynchronous.
             script_path: Path of the python script to run.
+            logger: Which logger to use
             objective_work_kwargs: Your custom keywords arguments passed to your custom objective work class.
         """
         super().__init__()
@@ -41,7 +44,16 @@ class Optimizer(LightningFlow):
         self.simultaneous_trials = simultaneous_trials
         self.num_trials = simultaneous_trials
         self._study = study or optuna.create_study()
-        for trial_idx in range(n_trials):
+
+        if logger == Loggers.STREAMLIT:
+            self.hi_plot = HiPlotFlow()
+        elif logger == Loggers.WANDB:
+            self.hi_plot = None
+            WandbConfig.validate()
+
+        self.sweep_id = str(uuid.uuid4()).split("-")[0]
+
+        for trial_id in range(n_trials):
             objective_work = objective_cls(
                 script_path=script_path or ".",
                 env=env,
@@ -49,11 +61,13 @@ class Optimizer(LightningFlow):
                 cloud_compute=cloud_compute,
                 parallel=True,
                 cache_calls=True,
+                logger=logger,
+                trial_id=trial_id,
+                sweep_id=self.sweep_id,
                 **objective_work_kwargs,
             )
-            setattr(self, f"w_{trial_idx}", objective_work)
+            setattr(self, f"w_{trial_id}", objective_work)
 
-        self.hi_plot = HiPlotFlow()
         self._trials = {}
 
     def run(self):
@@ -65,7 +79,8 @@ class Optimizer(LightningFlow):
         for trial_idx in range(self.num_trials):
             work_objective = getattr(self, f"w_{trial_idx}")
             if work_objective.status.stage == WorkStageStatus.NOT_STARTED:
-                trial = self._study.ask(work_objective.distributions())
+                distributions = work_objective.distributions()
+                trial = self._study.ask(distributions)
                 self._trials[trial_idx] = trial
                 work_objective.run(trial_id=trial._trial_id, params=trial.params)
 
@@ -83,7 +98,8 @@ class Optimizer(LightningFlow):
 
             if work_objective.best_model_score and not work_objective.has_stopped and not work_objective.pruned:
                 self._study.tell(work_objective.trial_id, work_objective.best_model_score)
-                self.hi_plot.data.append({"x": work_objective.best_model_score, **work_objective.params})
+                if self.hi_plot:
+                    self.hi_plot.data.append({"x": work_objective.best_model_score, **work_objective.params})
                 work_objective.stop()
                 print(
                     f"Trial {trial_idx} finished with value: {work_objective.best_model_score} and parameters: {work_objective.params}. "
@@ -112,4 +128,8 @@ class Optimizer(LightningFlow):
                 return getattr(self, f"w_{trial_idx}").best_model_path
 
     def configure_layout(self):
-        return [{"name": name, "content": w} for name, w in self.named_works()]
+        if self.hi_plot:
+            content = self.hi_plot
+        else:
+            content = f"https://wandb.ai/{os.getenv('WANDB_ENTITY')}/{self.sweep_id}"
+        return [{"name": "Experiment", "content": content}]

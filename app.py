@@ -36,6 +36,7 @@ class RootFlow(LightningFlow):
                 "--trainer.callbacks.monitor=val_acc",
             ],
             cloud_compute=CloudCompute("default"),
+            logger="wandb",
         )
 
     def run(self):
@@ -45,6 +46,6 @@ class RootFlow(LightningFlow):
             pass
 
     def configure_layout(self):
-        return [{"name": "HiPlot", "content": self.hpo_train.hi_plot}]
+        return self.hpo_train.configure_layout()
 
 app = LightningApp(RootFlow())
