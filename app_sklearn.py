@@ -40,7 +40,7 @@ class RootFlow(LightningFlow):
     def __init__(self):
         super().__init__()
         self.optimizer = Optimizer(
-            objective_work_cls=Objective,
+            objective_cls=Objective,
             total_trials=20,
             study=optuna.create_study(pruner=optuna.pruners.MedianPruner()),
         )

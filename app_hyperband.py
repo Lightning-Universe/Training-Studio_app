@@ -57,7 +57,7 @@ class RootFlow(LightningFlow):
                     min_resource=1, max_resource=10, reduction_factor=3
                 ),
             ),
-            objective_work_cls=MyCustomObjective,
+            objective_cls=MyCustomObjective,
             script_args=[
                 "--trainer.max_epochs=5",
                 "--trainer.limit_train_batches=4",

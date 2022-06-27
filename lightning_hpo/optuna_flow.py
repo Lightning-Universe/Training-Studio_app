@@ -12,7 +12,7 @@ class Optimizer(LightningFlow):
     def __init__(
         self,
         total_trials: int,
-        objective_work_cls: Type[BaseObjective],
+        objective_cls: Type[BaseObjective],
         simultaneous_trials: int = 1,
         script_args: Optional[Union[list, str]] = None,
         env: Optional[Dict] = None,
@@ -27,7 +27,7 @@ class Optimizer(LightningFlow):
 
         Arguments:
             total_trials: Number of HPO trials to run.
-            objective_work_cls: Your custom base objective work.
+            objective_cls: Your custom base objective work.
             simultaneous_trials: Number of parallel trials to run.
             script_args: Optional script arguments.
             env: Environment variables to be passed to the script.
@@ -42,7 +42,7 @@ class Optimizer(LightningFlow):
         self.num_trials = simultaneous_trials
         self._study = study or optuna.create_study()
         for trial_idx in range(total_trials):
-            objective_work = objective_work_cls(
+            objective_work = objective_cls(
                 script_path=script_path or ".",
                 env=env,
                 script_args=script_args,
