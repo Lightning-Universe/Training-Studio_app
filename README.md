@@ -1,6 +1,6 @@
 # Lightning HPO
 
-Lightning provides the most pythonic implementation for Scalable Hyperparameter Tuning.
+Lightning HPO provides a pythonic implementation for Scalable Hyperparameter Tuning.
 
 This library relies on [Optuna](https://optuna.readthedocs.io/en/stable/) for providing state-of-the-art sampling hyper-parameters algorithms and efficient trial pruning strategies.
 
@@ -81,10 +81,9 @@ from lightning import LightningApp, LightningFlow
 
 
 class Objective(BaseObjective):
-    def run(self, trial_id, params):
+    def run(self, params):
         # WARNING: Don't forget to assign those to self,
         # so they get tracked in the state.
-        self.trial_id = trial_id
         self.params = params
 
         iris = datasets.load_iris()
