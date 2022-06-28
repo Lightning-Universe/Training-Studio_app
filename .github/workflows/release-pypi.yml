@@ -32,10 +32,17 @@ jobs:
       run: >-
         python setup.py sdist bdist_wheel
 
-    - name: Publish to Custom PyPI
-      uses: pypa/gh-action-pypi-publish@master
+    # We do this, since failures on test.pypi aren't that bad
+    - name: Publish to Test PyPI
+      uses: pypa/gh-action-pypi-publish@v1.4.1
       with:
-        user: ${{ secrets.LIGHTNING_PYPI_USER }}
-        password: ${{ secrets.LIGHTNING_PYPI_PASSWORD }}
-        # if you are changing this to another server, change the image builder in the cloud to fetch from new URL
-        repository_url: https://us-central1-python.pkg.dev/grid-backend-266721/xpi/
+        user: __token__
+        password: ${{ secrets.test_pypi_password }}
+        repository_url: https://test.pypi.org/legacy/
+        verbose: true
+
+    - name: Publish distribution 📦 to PyPI
+      uses: pypa/gh-action-pypi-publish@v1.4.1
+      with:
+        user: __token__
+        password: ${{ secrets.pypi_password }}
