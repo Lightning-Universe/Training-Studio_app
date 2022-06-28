@@ -6,9 +6,8 @@ __copyright__ = f"Copyright (c) 2021-2022, {__author__}."
 __homepage__ = "https://github.com/PyTorchLightning/lightning"
 __docs__ = "Lightning HPO"
 __long_doc__ = """
-What is it?
------------
-
+Lightning HPO provides a pythonic implementation for Scalable Hyperparameter Tuning.
+This library relies on Optuna for providing state-of-the-art sampling hyper-parameters algorithms and efficient trial pruning strategies.
 """
 
 __all__ = [

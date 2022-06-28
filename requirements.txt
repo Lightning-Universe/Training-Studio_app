@@ -8,3 +8,4 @@ click
 streamlit
 streamlit_autorefresh
 wandb
+lightning
