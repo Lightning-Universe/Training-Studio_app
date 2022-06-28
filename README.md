@@ -1,6 +1,6 @@
 # Lightning HPO
 
-Lightning HPO provides the most pythonic implementation for Scalable Hyperparameter Tuning.
+Lightning HPO provides a pythonic implementation for Scalable Hyperparameter Tuning.
 
 This library relies on [Optuna](https://optuna.readthedocs.io/en/stable/) for providing state-of-the-art sampling hyper-parameters algorithms and efficient trial pruning strategies.
 
