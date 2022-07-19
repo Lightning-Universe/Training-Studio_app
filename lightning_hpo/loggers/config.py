@@ -1,7 +1,10 @@
 import os
+import sys
 from dataclasses import dataclass
+from typing import Optional
 from optuna.distributions import LogUniformDistribution, UniformDistribution
 from lightning.pytorch.loggers import LightningLoggerBase
+from rich import print as rprint
 
 class Loggers:
     WANDB = "wandb"
@@ -14,10 +17,10 @@ class BaseConfig(LightningLoggerBase):
 
     @staticmethod
     def validate():
-        if os.getenv("WANDB_ENTITY") is None:
-            raise Exception("Please, use lightning run app ... --env WANDB_API_KEY=X")
         if os.getenv("WANDB_API_KEY") is None:
-            raise Exception("Please, use lightning run app ... --env WANDB_API_KEY=X")
+            rprint("\n\n"+"You are trying to use wandb without setting an api key. Please set your wandb key with:"+"\n")
+            rprint("lightning run app app_name.py --env LOGGER=wandb --env WANDB_API_KEY=YOUR_API_KEY"+"\n\n")
+            sys.exit()
 
     @classmethod
     def get_sweep_config(cls, distributions):
