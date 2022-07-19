@@ -2,12 +2,14 @@ from lightning import LightningFlow, CloudCompute
 from lightning_hpo.objective import BaseObjective
 import optuna
 import os
-from lightning_hpo.hyperplot import HiPlotFlow
+from lightning_hpo.loggers.hyperplot import HiPlotFlow
 from typing import Optional, Union, Dict, Type, Any
 from lightning.app.storage.path import Path
 from lightning.app.utilities.enum import WorkStageStatus
-from lightning_hpo.loggers import Loggers, WandbConfig
+from lightning_hpo.loggers import Loggers, Wandb
 import uuid
+
+from lightning.pytorch.utilities import rank_zero_warn
 
 class Optimizer(LightningFlow):
     def __init__(
@@ -49,7 +51,7 @@ class Optimizer(LightningFlow):
             self.hi_plot = HiPlotFlow()
         elif logger == Loggers.WANDB:
             self.hi_plot = None
-            WandbConfig.validate()
+            Wandb.validate()
 
         self.sweep_id = str(uuid.uuid4()).split("-")[0]
 
@@ -70,6 +72,7 @@ class Optimizer(LightningFlow):
 
         self._trials = {}
 
+   
     def run(self):
         if self.num_trials > self.n_trials:
             return
@@ -105,10 +108,10 @@ class Optimizer(LightningFlow):
                 if self.hi_plot:
                     self.hi_plot.data.append({"x": work_objective.best_model_score, **work_objective.params})
                 work_objective.stop()
-                print(
-                    f"Trial {trial_idx} finished with value: {work_objective.best_model_score} and parameters: {work_objective.params}. "
-                    f"Best is trial {self._study.best_trial.number} with value: {self._study.best_trial.value}."
-                )
+                # print(
+                #     f"Trial {trial_idx} finished with value: {work_objective.best_model_score} and parameters: {work_objective.params}. "
+                #     f"Best is trial {self._study.best_trial.number} with value: {self._study.best_trial.value}."
+                # )
 
             has_told_study.append(work_objective.has_stopped)
 

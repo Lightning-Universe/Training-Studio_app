@@ -1,17 +1,16 @@
 import os
 from dataclasses import dataclass
 from optuna.distributions import LogUniformDistribution, UniformDistribution
+from lightning.pytorch.loggers import LightningLoggerBase
 
 class Loggers:
     WANDB = "wandb"
     STREAMLIT = "streamlit"
 
 @dataclass
-class BaseLogger:
-    pass
-
-@dataclass
-class WandbConfig(BaseLogger):
+class BaseConfig(LightningLoggerBase):
+    def __init__(self):
+        super().__init__()
 
     @staticmethod
     def validate():
