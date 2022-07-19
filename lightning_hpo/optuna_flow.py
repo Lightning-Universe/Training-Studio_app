@@ -8,14 +8,19 @@ from lightning.app.storage.path import Path
 from lightning.app.utilities.enum import WorkStageStatus
 from lightning_hpo.loggers import Loggers, WandbConfig
 import uuid
+from typing import List
+from lightning_hpo.framework import _OBJECTIVE_FRAMEWORK
 
 class Optimizer(LightningFlow):
+
     def __init__(
         self,
         n_trials: int,
-        objective_cls: Type[BaseObjective],
         simultaneous_trials: int = 1,
         script_args: Optional[Union[list, str]] = None,
+        objective_cls: Optional[Type[BaseObjective]] = None,
+        framework: str = "pytorch_lightning",
+        distributions: Optional[Dict[str, optuna.distributions.BaseDistribution]] = None,
         env: Optional[Dict] = None,
         cloud_compute: Optional[CloudCompute] = None,
         script_path: Optional[str] = None,
@@ -40,6 +45,17 @@ class Optimizer(LightningFlow):
             objective_work_kwargs: Your custom keywords arguments passed to your custom objective work class.
         """
         super().__init__()
+        if objective_cls and distributions:
+            raise Exception(
+                "The arguments `distributions` and `objective_cls` are mutually exclusive. "
+                "Please, select which one to use."
+            )
+
+        if objective_cls is None:
+            if framework not in self.supported_frameworks():
+                raise Exception(f"The supported framework are {self.supported_frameworks()}. Found {framework}.")
+            objective_cls = _OBJECTIVE_FRAMEWORK[framework]
+
         self.n_trials = n_trials
         self.simultaneous_trials = simultaneous_trials
         self.num_trials = simultaneous_trials
@@ -69,6 +85,7 @@ class Optimizer(LightningFlow):
             setattr(self, f"w_{trial_id}", objective_work)
 
         self._trials = {}
+        self._distributions = distributions or objective_work.distributions()
 
     def run(self):
         if self.num_trials > self.n_trials:
@@ -79,8 +96,7 @@ class Optimizer(LightningFlow):
         for trial_idx in range(self.num_trials):
             work_objective = getattr(self, f"w_{trial_idx}")
             if work_objective.status.stage == WorkStageStatus.NOT_STARTED:
-                distributions = work_objective.distributions()
-                trial = self._study.ask(distributions)
+                trial = self._study.ask(self._distributions)
                 self._trials[trial_idx] = trial
                 work_objective.run(params=trial.params)
 
@@ -137,3 +153,7 @@ class Optimizer(LightningFlow):
         else:
             content = f"https://wandb.ai/{os.getenv('WANDB_ENTITY')}/{self.sweep_id}"
         return [{"name": "Experiment", "content": content}]
+
+    @staticmethod
+    def supported_frameworks() -> List[str]:
+        return list(_OBJECTIVE_FRAMEWORK.keys())
