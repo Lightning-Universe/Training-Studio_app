@@ -26,6 +26,8 @@ class Optimizer(LightningFlow):
         script_path: Optional[str] = None,
         study: Optional[optuna.Study] = None,
         logger: str = "streamlit",
+        code: bool = False,
+        drive = None,
         **objective_work_kwargs: Any,
 
     ):
@@ -67,8 +69,6 @@ class Optimizer(LightningFlow):
             self.hi_plot = None
             WandbConfig.validate()
 
-        self.sweep_id = str(uuid.uuid4()).split("-")[0]
-
         for trial_id in range(n_trials):
             objective_work = objective_cls(
                 script_path=script_path or ".",
@@ -79,7 +79,8 @@ class Optimizer(LightningFlow):
                 cache_calls=True,
                 logger=logger,
                 trial_id=trial_id,
-                sweep_id=self.sweep_id,
+                code=code,
+                drive=drive,
                 **objective_work_kwargs,
             )
             setattr(self, f"w_{trial_id}", objective_work)

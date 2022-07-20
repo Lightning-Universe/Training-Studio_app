@@ -5,11 +5,12 @@ from typing import Dict, Any
 from lightning.app.components.python import TracerPythonScript
 from lightning_hpo.loggers import Loggers
 import os
+from lightning_hpo.utils import extract_tarfile
 
 class BaseObjective(TracerPythonScript, ABC):
 
-    def __init__(self, *args, logger: str, sweep_id: str, trial_id, **kwargs):
-        super().__init__(*args, raise_exception=True, **kwargs)
+    def __init__(self, *args, logger: str, sweep_id: str, trial_id: str, code: bool, drive, **kwargs):
+        super().__init__(*args, raise_exception=False, **kwargs)
         self.trial_id = trial_id
         self.best_model_score = None
         self.params = None
@@ -19,6 +20,8 @@ class BaseObjective(TracerPythonScript, ABC):
         self.pruned = False
         self.logger = logger
         self._url = None
+        self.code = code
+        self.drive = drive
         self.sweep_id = sweep_id
 
     def configure_tracer(self):
@@ -52,6 +55,10 @@ class BaseObjective(TracerPythonScript, ABC):
         return tracer
 
     def run(self, params: Dict[str, Any]):
+        if self.code:
+            self.drive.get(self.sweep_id)
+            extract_tarfile(self.sweep_id, ".", "r:gz")
+
         self.params = params
         self.script_args.extend([f"--{k}={v}" for k, v in params.items()])
         return super().run()

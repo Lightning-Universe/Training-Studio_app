@@ -1,6 +1,8 @@
 from typing import Optional
 from lightning.app.storage import Path
 from lightning import LightningFlow
+import os
+import tarfile
 
 def get_best_model_path(flow: LightningFlow) -> Optional[Path]:
     metrics = {work.best_model_score: work for work in flow.works()}
@@ -11,3 +13,12 @@ def get_best_model_path(flow: LightningFlow) -> Optional[Path]:
         return None
 
     return metrics[max(metrics)].best_model_path
+
+def extract_tarfile(file_path: str, extract_path: str, mode: str):
+    if os.path.exists(file_path):
+        with tarfile.open(file_path, mode=mode) as tar_ref:
+            for member in tar_ref.getmembers():
+                try:
+                    tar_ref.extract(member, path=extract_path, set_attrs=False)
+                except PermissionError:
+                    raise PermissionError(f"Could not extract tar file {file_path}")
