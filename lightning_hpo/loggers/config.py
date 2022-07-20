@@ -6,9 +6,11 @@ from optuna.distributions import LogUniformDistribution, UniformDistribution
 from lightning.pytorch.loggers import LightningLoggerBase
 from rich import print as rprint
 
+
 class Loggers:
     WANDB = "wandb"
     STREAMLIT = "streamlit"
+
 
 @dataclass
 class BaseConfig(LightningLoggerBase):
@@ -17,9 +19,16 @@ class BaseConfig(LightningLoggerBase):
 
     @staticmethod
     def validate():
-        if os.getenv("WANDB_API_KEY") is None:
-            rprint("\n\n"+"You are trying to use wandb without setting an api key. Please set your wandb key with:"+"\n")
-            rprint("lightning run app app_name.py --env LOGGER=wandb --env WANDB_API_KEY=YOUR_API_KEY"+"\n\n")
+        if os.getenv("WANDB_API_KEY") is None or os.getenv("WANDB_ENTITY") is None:
+            rprint(
+                "\n\n"
+                + "You are trying to use wandb without setting your API key or entity. Please set your wandb config with:"
+                + "\n"
+            )
+            rprint(
+                "lightning run app app_name.py --env LOGGER=wandb --env WANDB_API_KEY=YOUR_API_KEY"
+                + "\n\n"
+            )
             sys.exit()
 
     @classmethod
@@ -30,16 +39,13 @@ class BaseConfig(LightningLoggerBase):
             parameters[k] = {}
             distribution_name = cls._to_distribution_name(d)
             if distribution_name:
-                parameters[k]['distribution'] = distribution_name
+                parameters[k]["distribution"] = distribution_name
             parameters[k].update(cls._to_distribution_values(d))
 
         sweep_config = {
-            'method': 'random',
-            'metric': {
-                'name': 'loss',
-                'goal': 'minimize'
-            },
-            'parameters': parameters
+            "method": "random",
+            "metric": {"name": "loss", "goal": "minimize"},
+            "parameters": parameters,
         }
 
         return sweep_config

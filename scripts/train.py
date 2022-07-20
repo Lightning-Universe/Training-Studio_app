@@ -60,17 +60,29 @@ class MNISTDataModule(LightningDataModule):
         MNIST("./data", download=True)
 
     def train_dataloader(self):
-        train_dataset = MNIST("./data", train=True, download=False, transform=self.transform)
-        return torch.utils.data.DataLoader(train_dataset, batch_size=self.hparams.batch_size)
+        train_dataset = MNIST(
+            "./data", train=True, download=False, transform=self.transform
+        )
+        return torch.utils.data.DataLoader(
+            train_dataset, batch_size=self.hparams.batch_size
+        )
 
     def val_dataloader(self):
-        val_dataset = MNIST("./data", train=False, download=False, transform=self.transform)
-        return torch.utils.data.DataLoader(val_dataset, batch_size=self.hparams.batch_size)
+        val_dataset = MNIST(
+            "./data", train=False, download=False, transform=self.transform
+        )
+        return torch.utils.data.DataLoader(
+            val_dataset, batch_size=self.hparams.batch_size
+        )
 
 
 if __name__ == "__main__":
 
     cli = LightningCLI(
-        ImageClassifier, MNISTDataModule, seed_everything_default=42, save_config_overwrite=True, run=False
+        ImageClassifier,
+        MNISTDataModule,
+        seed_everything_default=42,
+        save_config_overwrite=True,
+        run=False,
     )
     cli.trainer.fit(cli.model, datamodule=cli.datamodule)
