@@ -1,3 +1,4 @@
+import shutil
 from typing import Optional
 from lightning.app.storage import Path
 from lightning import LightningFlow
@@ -13,6 +14,19 @@ def get_best_model_path(flow: LightningFlow) -> Optional[Path]:
         return None
 
     return metrics[max(metrics)].best_model_path
+
+def clean_tarfile(file_path: str, mode):
+    if os.path.exists(file_path):
+        with tarfile.open(file_path, mode=mode) as tar_ref:
+            for member in tar_ref.getmembers():
+                p = member.path
+                if p != '.' and os.path.exists(p):
+                    if os.path.isfile(p):
+                        os.remove(p)
+                    else:
+                        shutil.rmtree(p)
+        os.remove(file_path)
+
 
 def extract_tarfile(file_path: str, extract_path: str, mode: str):
     if os.path.exists(file_path):

@@ -87,8 +87,12 @@ class Optimizer(LightningFlow):
 
         self._trials = {}
         self._distributions = distributions or objective_work.distributions()
+        self.has_failed = False
 
     def run(self):
+        if self.has_failed:
+            return
+
         if self.num_trials > self.n_trials:
             return
 
@@ -96,10 +100,15 @@ class Optimizer(LightningFlow):
 
         for trial_idx in range(self.num_trials):
             work_objective = getattr(self, f"w_{trial_idx}")
+
+            if work_objective.status.stage == "failed":
+                self.has_failed = True
+
             if work_objective.status.stage == WorkStageStatus.NOT_STARTED:
                 trial = self._study.ask(self._distributions)
                 self._trials[trial_idx] = trial
-                work_objective.run(params=trial.params)
+
+            work_objective.run(params=self._trials[trial_idx].params, restart_count=work_objective.restart_count)
 
             if work_objective.reports and not work_objective.pruned:
                 trial = self._trials[work_objective.trial_id]

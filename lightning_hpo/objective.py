@@ -1,11 +1,12 @@
 from abc import ABC, abstractmethod
 from functools import partial
+import shutil
 import optuna
 from typing import Dict, Any
 from lightning.app.components.python import TracerPythonScript
 from lightning_hpo.loggers import Loggers
 import os
-from lightning_hpo.utils import extract_tarfile
+from lightning_hpo.utils import extract_tarfile, clean_tarfile
 
 class BaseObjective(TracerPythonScript, ABC):
 
@@ -23,13 +24,14 @@ class BaseObjective(TracerPythonScript, ABC):
         self.code = code
         self.drive = drive
         self.sweep_id = sweep_id
+        self.restart_count = 0
 
     def configure_tracer(self):
         tracer = super().configure_tracer()
         if self.logger == Loggers.STREAMLIT:
             return tracer
 
-        from pytorch_lightning import Callback, Trainer
+        from pytorch_lightning import Trainer
         from pytorch_lightning.loggers import WandbLogger
         import wandb
 
@@ -54,10 +56,12 @@ class BaseObjective(TracerPythonScript, ABC):
         tracer.add_traced(Trainer, "__init__", pre_fn=partial(trainer_pre_fn, work=self))
         return tracer
 
-    def run(self, params: Dict[str, Any]):
+    def run(self, params: Dict[str, Any], restart_count: int):
         if self.code:
+            clean_tarfile(self.sweep_id, "r:gz")
             self.drive.get(self.sweep_id)
             extract_tarfile(self.sweep_id, ".", "r:gz")
+            os.remove(self.sweep_id)
 
         self.params = params
         self.script_args.extend([f"--{k}={v}" for k, v in params.items()])

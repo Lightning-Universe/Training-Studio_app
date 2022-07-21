@@ -7,6 +7,8 @@ from lightning.app.storage.path import Path
 from lightning.app.structures import Dict
 from lightning_hpo.utils import get_best_model_path
 from typing import Optional
+from optuna.distributions import CategoricalDistribution, LogUniformDistribution, UniformDistribution
+from lightning.app import BuildConfig
 
 class HPOSweeper(LightningFlow):
 
@@ -22,20 +24,45 @@ class HPOSweeper(LightningFlow):
             for sweep in self.sweeps.values():
                 sweep.run()
 
-    def create_sweep(self, config: SweepConfig) -> None:
-        if config.sweep_id not in self.sweeps:
+    def create_sweep(self, config: SweepConfig) -> bool:
+        # TODO: Resolve this bug, we shouldn't need to use list
+        sweep_ids = list(self.sweeps.keys())
+        if config.sweep_id not in sweep_ids:
+            distributions = {}
+            mapping_name_to_cls = {
+                "categorical": CategoricalDistribution,
+                "uniform": UniformDistribution,
+                "log_uniform": LogUniformDistribution,
+            }
+            for k, v in config.distributions.items():
+                dist_cls = mapping_name_to_cls[v.pop("distribution")]
+                distributions[k] = dist_cls(**v)
+
             self.sweeps[config.sweep_id] = Optimizer(
                 script_path=config.script_path,
                 n_trials=config.n_trials,
                 simultaneous_trials=config.simultaneous_trials,
                 framework=config.framework,
                 script_args=config.script_args,
-                distributions=config.distributions,
+                distributions=distributions,
                 cloud_compute=config.cloud_compute,
                 drive=self.drive,
                 sweep_id=config.sweep_id,
                 code=config.code,
+                cloud_build_config=BuildConfig(requirements=config.requirements)
             )
+            return True
+        else:
+            # TODO: Understand how to abstract this from the framework.
+            works = self.sweeps[config.sweep_id].works()
+            if any(w.status.stage == "failed" for w in works):
+                for w in works:
+                    if w.status.stage == "failed":
+                        w.restart_count += 1
+                self.sweeps[config.sweep_id].has_failed = False
+                print("Re-using existing works.")
+            else:
+                return False
 
     def configure_commands(self):
         return [{"sweep": SweepCommand(self.create_sweep)}]

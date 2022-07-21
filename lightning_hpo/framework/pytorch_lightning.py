@@ -47,9 +47,6 @@ class PyTorchLightningObjective(BaseObjective):
         tracer.add_traced(Trainer, "__init__", pre_fn=partial(trainer_pre_fn, work=self))
         return tracer
 
-    def run(self, *args, **kwargs):
-        super().run(*args, **kwargs)
-
     def on_after_run(self, script_globals):
         import torch
 
