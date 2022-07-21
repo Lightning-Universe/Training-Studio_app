@@ -1,7 +1,6 @@
 import os
 import sys
 from dataclasses import dataclass
-from typing import Optional
 from optuna.distributions import LogUniformDistribution, UniformDistribution
 from lightning.pytorch.loggers import LightningLoggerBase
 from rich import print as rprint

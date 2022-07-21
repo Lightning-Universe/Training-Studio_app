@@ -3,7 +3,7 @@ from functools import partial
 import optuna
 from typing import Dict, Any
 from lightning.app.components.python import TracerPythonScript
-from lightning_hpo.loggers import Loggers
+from lightning_hpo.config import Loggers
 import os
 
 

@@ -2,19 +2,13 @@ from lightning import LightningFlow, LightningWork, CloudCompute
 from lightning_hpo.objective import BaseObjective
 import optuna
 import os
-from lightning_hpo.loggers.hyperplot import HiPlotFlow
+from lightning_hpo.hyperplot import HiPlotFlow
 from typing import Optional, Union, Dict, Type, Any
 from lightning.app.storage.path import Path
 from lightning.app.utilities.enum import WorkStageStatus
-from lightning_hpo.loggers import Loggers, Wandb
+from lightning_hpo.config import Loggers
+from lightning_hpo.wandb import WandbConfig
 import uuid
-
-import wandb
-import wandb.apis.reports as wb
-
-
-class OptimizerWork(LightningWork):
-    ...
 
 
 class Optimizer(LightningFlow):
@@ -59,7 +53,7 @@ class Optimizer(LightningFlow):
             self.hi_plot = HiPlotFlow()
         elif logger == Loggers.WANDB:
             self.hi_plot = None
-            Wandb.validate()
+            WandbConfig.validate()
 
         self.sweep_id = str(uuid.uuid4()).split("-")[0] if not project else project
 
@@ -80,38 +74,10 @@ class Optimizer(LightningFlow):
 
         self._trials = {}
 
-    def create_wandb_report(self):
-        api = wandb.Api(api_key=os.environ.get("WANDB_API_KEY"))
-        project_name = self.sweep_id
-        wandb.require("report-editing:v0")
-        report = api.create_report(project=project_name)
-        report.title = "A fabulous title"
-        report.description = "A descriptive description"
-        panel_grid = wb.PanelGrid()
-        run_set = wb.RunSet()
-        run_set.entity = os.environ.get("WANDB_ENTITY")
-        run_set.project = project_name
-        panel_grid.runsets = [run_set]
-        coords = wb.ParallelCoordinatesPlot(
-            columns=[
-                wb.reports.PCColumn("batch_size"),
-                wb.reports.PCColumn("epoch"),
-                wb.reports.PCColumn("loss"),
-            ]
-        )
-        panel_grid.panels = [coords]
-        run_set.set_filters_with_python_expr(
-            f'User == "{os.environ.get("WANDB_ENTITY")}"'
-        )
-        report.blocks = [panel_grid]
-        report.save()
-        self.wandb_storage_id = report.id
-        return
-
     def run(self):
         if self.num_trials > self.n_trials:
             if self.wandb_storage_id is None:
-                self.create_wandb_report()
+                create_wandb_report()
                 return
             if self.wandb_storage_id is not None:
                 return
