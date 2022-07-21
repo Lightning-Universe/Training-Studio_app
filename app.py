@@ -5,7 +5,7 @@ import optuna
 from lightning import LightningFlow, CloudCompute, LightningApp
 from lightning_hpo import BaseObjective, Optimizer
 from lightning.app.storage.path import Path
-from lightning_hpo.loggers import Loggers
+from lightning_hpo.config import Loggers
 from rich import print as rprint
 
 
