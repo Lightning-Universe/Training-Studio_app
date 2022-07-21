@@ -24,7 +24,7 @@ class HPOSweeper(LightningFlow):
             for sweep in self.sweeps.values():
                 sweep.run()
 
-    def create_sweep(self, config: SweepConfig) -> bool:
+    def create_sweep(self, config: SweepConfig) -> str:
         # TODO: Resolve this bug, we shouldn't need to use list
         sweep_ids = list(self.sweeps.keys())
         if config.sweep_id not in sweep_ids:
@@ -51,7 +51,7 @@ class HPOSweeper(LightningFlow):
                 code=config.code,
                 cloud_build_config=BuildConfig(requirements=config.requirements)
             )
-            return True
+            return f"Launched a sweep {config.sweep_id}"
         else:
             # TODO: Understand how to abstract this from the framework.
             works = self.sweeps[config.sweep_id].works()
@@ -60,9 +60,9 @@ class HPOSweeper(LightningFlow):
                     if w.status.stage == "failed":
                         w.restart_count += 1
                 self.sweeps[config.sweep_id].has_failed = False
-                print("Re-using existing works.")
+                return f"Updated code for Sweep {config.sweep_id}."
             else:
-                return False
+                return f"The current Sweep {config.sweep_id} is running. It couldn't be updated."
 
     def configure_commands(self):
         return [{"sweep": SweepCommand(self.create_sweep)}]

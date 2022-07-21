@@ -131,7 +131,7 @@ class SweepCommand(ClientCommand):
         url = self.state.file_server._state["vars"]["_url"]
         repo.package()
         repo.upload(url=f"{url}/uploadfile/{sweep_id}")
-        self.invoke_handler(config=SweepConfig(
+        response = self.invoke_handler(config=SweepConfig(
             sweep_id=sweep_id,
             script_path=script_path,
             n_trials=int(hparams.n_trials),
@@ -143,4 +143,4 @@ class SweepCommand(ClientCommand):
             cloud_compute=hparams.cloud_compute,
             code=True,
         ))
-        print(f"Launched a sweep {sweep_id}")
+        print(response["response"])
