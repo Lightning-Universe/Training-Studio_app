@@ -6,7 +6,7 @@ from lightning_hpo.config import BaseConfig
 import wandb
 import wandb.apis.reports as wb
 
-STORAGE_ID: str = ""
+STORAGE_ID = str
 
 
 class WandB(BaseConfig):
