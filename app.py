@@ -5,24 +5,12 @@ import optuna
 from lightning import LightningFlow, CloudCompute, LightningApp
 from lightning_hpo import BaseObjective, Optimizer
 from lightning.app.storage.path import Path
-from lightning_hpo.config import Loggers
+from lightning_hpo.config import Loggers, validate_logger
 from rich import print as rprint
 
 
 ENV_LOGGER = os.environ.get("LOGGER")
-LOGGER = "streamlit" if not ENV_LOGGER else ENV_LOGGER
-
-if not hasattr(Loggers, LOGGER.upper()):
-    rprint(
-        "\n\n"
-        + f"You are trying to use [bold green]{LOGGER}[/bold green], which is an unsupported logger."
-        + "\n"
-    )
-    rprint(
-        f"Supported loggers are: {', '.join([l for l in dir(Loggers) if not l.startswith('_')])}"
-        + "\n"
-    )
-    sys.exit()
+LOGGER = "streamlit" or ENV_LOGGER
 
 
 class MyCustomObjective(BaseObjective):
@@ -70,4 +58,5 @@ class RootFlow(LightningFlow):
         return self.hpo_train.configure_layout()
 
 
+validate_logger()
 app = LightningApp(RootFlow())

@@ -6,6 +6,23 @@ from lightning.pytorch.loggers import LightningLoggerBase
 from rich import print as rprint
 
 
+def validate_logger():
+    logger = os.environ.get("LOGGER")
+    if logger is not None:
+        logger = logger.upper()
+    if not hasattr(Loggers, logger):
+        rprint(
+            "\n\n"
+            + f"You are trying to use [bold green]{logger}[/bold green], which is an unsupported logger."
+            + "\n"
+        )
+        rprint(
+            f"Supported loggers are: {', '.join([l for l in dir(Loggers) if not l.startswith('_')])}"
+            + "\n"
+        )
+        sys.exit()
+
+
 class Loggers:
     WANDB = "wandb"
     STREAMLIT = "streamlit"
