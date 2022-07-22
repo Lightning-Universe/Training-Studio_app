@@ -39,7 +39,7 @@ class BaseObjective(TracerPythonScript, ABC):
 
         def trainer_pre_fn(self, *args, work=None, **kwargs):
             logger = WandbLogger(
-                save_dir=os.path.join(os.getcwd(), "lightning-logs"),
+                save_dir=os.path.join(os.getcwd(), os.environ.get("LOGS_DIR")),
                 project=work.sweep_id,
                 entity=os.getenv("WANDB_ENTITY"),
                 name=f"trial_{work.trial_id}",

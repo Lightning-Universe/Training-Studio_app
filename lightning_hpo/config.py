@@ -12,12 +12,12 @@ class Loggers:
 
 
 @dataclass
-class BaseConfig(LightningLoggerBase):
+class BaseConfig:
     def __init__(self):
         super().__init__()
 
     @staticmethod
-    def validate():
+    def validate_auth():
         if os.getenv("WANDB_API_KEY") is None or os.getenv("WANDB_ENTITY") is None:
             rprint(
                 "\n\n"

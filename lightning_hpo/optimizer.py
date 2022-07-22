@@ -7,7 +7,7 @@ from typing import Optional, Union, Dict, Type, Any
 from lightning.app.storage.path import Path
 from lightning.app.utilities.enum import WorkStageStatus
 from lightning_hpo.config import Loggers
-from lightning_hpo.wandb import WandbConfig
+from lightning_hpo.wandb import WandB
 import uuid
 
 
@@ -48,12 +48,13 @@ class Optimizer(LightningFlow):
         self._study = study or optuna.create_study()
         self.logger = logger
         self.wandb_storage_id = None
+        self._wandb_api = WandB()
 
         if logger == Loggers.STREAMLIT:
             self.hi_plot = HiPlotFlow()
         elif logger == Loggers.WANDB:
             self.hi_plot = None
-            WandbConfig.validate()
+            self._wandb_api.validate_auth()
 
         self.sweep_id = str(uuid.uuid4()).split("-")[0] if not project else project
 
@@ -75,12 +76,13 @@ class Optimizer(LightningFlow):
         self._trials = {}
 
     def run(self):
+        if (
+            self.num_trials == self.simultaneous_trials
+            and self.wandb_storage_id is None
+        ):
+            self.wandb_storage_id = self._wandb_api.create_report(self.sweep_id)
         if self.num_trials > self.n_trials:
-            if self.wandb_storage_id is None:
-                create_wandb_report()
-                return
-            if self.wandb_storage_id is not None:
-                return
+            return
 
         has_told_study = []
 
@@ -128,6 +130,8 @@ class Optimizer(LightningFlow):
 
             has_told_study.append(work_objective.has_stopped)
 
+        self._wandb_api.update_report()
+
         if all(has_told_study):
             self.num_trials += self.simultaneous_trials
 
@@ -154,12 +158,12 @@ class Optimizer(LightningFlow):
         else:
             if self.wandb_storage_id is not None:
                 reports = f"https://wandb.ai/{os.getenv('WANDB_ENTITY')}/{self.sweep_id}/reports/{self.sweep_id}"
-                tab1 = {"name": "Reports", "content": reports}
+                tab1 = {"name": "Project", "content": reports}
                 sweep_report = f"https://wandb.ai/{os.getenv('WANDB_ENTITY')}/{self.sweep_id}/reports/{self.sweep_id}--{self.wandb_storage_id}"
                 tab2 = {"name": "Report", "content": sweep_report}
                 content = [tab1, tab2]
             else:
                 reports = f"https://wandb.ai/{os.getenv('WANDB_ENTITY')}/{self.sweep_id}/reports/{self.sweep_id}"
-                tab1 = {"name": "Reports", "content": reports}
+                tab1 = {"name": "Project", "content": reports}
                 content = [tab1]
         return content
