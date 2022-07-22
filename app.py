@@ -10,7 +10,7 @@ from rich import print as rprint
 
 
 ENV_LOGGER = os.environ.get("LOGGER")
-LOGGER = "streamlit" or ENV_LOGGER
+LOGGER = "streamlit" if not ENV_LOGGER else ENV_LOGGER
 
 
 class MyCustomObjective(BaseObjective):
