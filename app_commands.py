@@ -1,4 +1,4 @@
-from lightning import LightningFlow, LightningApp
+from lightning import LightningFlow, LightningApp, CloudCompute, BuildConfig
 from lightning_hpo import Optimizer
 from lightning_hpo.commands.sweep import SweepCommand, SweepConfig
 from lightning.app.storage import Drive
@@ -8,7 +8,6 @@ from lightning.app.structures import Dict
 from lightning_hpo.utils import get_best_model_path
 from typing import Optional
 from optuna.distributions import CategoricalDistribution, LogUniformDistribution, UniformDistribution
-from lightning.app import BuildConfig
 
 class HPOSweeper(LightningFlow):
 
@@ -45,7 +44,7 @@ class HPOSweeper(LightningFlow):
                 framework=config.framework,
                 script_args=config.script_args,
                 distributions=distributions,
-                cloud_compute=config.cloud_compute,
+                cloud_compute=CloudCompute(config.cloud_compute),
                 drive=self.drive,
                 sweep_id=config.sweep_id,
                 code=config.code,

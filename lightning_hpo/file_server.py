@@ -23,7 +23,7 @@ class FileServer(L.LightningWork):
             chunk_size: The quantity of bytes to download/upload at once.
         """
         super().__init__(
-            cloud_build_config=L.BuildConfig(["flask, flask-cors"]),
+            cloud_build_config=L.BuildConfig(requirements=["Flask", "Flask-Cors"]),
             parallel=True,
             port=6654,
             **kwargs,
