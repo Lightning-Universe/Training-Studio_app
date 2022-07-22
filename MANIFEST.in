@@ -1,4 +1,6 @@
 include *.py
 include *.txt
+exclude *.yaml
+exclude *.toml
 exclude *.lightning
 exclude *.lightningignore
