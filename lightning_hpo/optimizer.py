@@ -1,14 +1,16 @@
-from lightning import LightningFlow, LightningWork, CloudCompute
-from lightning_hpo.objective import BaseObjective
-import optuna
 import os
-from lightning_hpo.hyperplot import HiPlotFlow
-from typing import Optional, Union, Dict, Type, Any
+import uuid
+from typing import Any, Dict, Optional, Type, Union
+
+import optuna
+from lightning import CloudCompute, LightningFlow
 from lightning.app.storage.path import Path
 from lightning.app.utilities.enum import WorkStageStatus
+
 from lightning_hpo.config import Loggers
+from lightning_hpo.hyperplot import HiPlotFlow
+from lightning_hpo.objective import BaseObjective
 from lightning_hpo.wandb import WandB
-import uuid
 
 
 class Optimizer(LightningFlow):
@@ -103,25 +105,18 @@ class Optimizer(LightningFlow):
                         work_objective.stop()
                         break
 
-            if (
-                work_objective.best_model_score
-                and not work_objective.has_stopped
-                and not work_objective.pruned
-            ):
+            if work_objective.best_model_score and not work_objective.has_stopped and not work_objective.pruned:
                 # TODO: Understand why this is failing.
                 try:
-                    self._study.tell(
-                        work_objective.trial_id, work_objective.best_model_score
-                    )
+                    self._study.tell(work_objective.trial_id, work_objective.best_model_score)
                 except RuntimeError:
                     pass
                 if self.hi_plot:
-                    self.hi_plot.data.append(
-                        {"x": work_objective.best_model_score, **work_objective.params}
-                    )
+                    self.hi_plot.data.append({"x": work_objective.best_model_score, **work_objective.params})
                 work_objective.stop()
+
                 print(
-                    f"Trial {trial_idx} finished with value: {work_objective.best_model_score} and parameters: {work_objective.params}. "
+                    f"Trial {trial_idx} finished with value: {work_objective.best_model_score} and parameters: {work_objective.params}. "  # noqa: E501
                     f"Best is trial {self._study.best_trial.number} with value: {self._study.best_trial.value}."
                 )
 
@@ -152,14 +147,16 @@ class Optimizer(LightningFlow):
             content = self.hi_plot
             content = [{"name": "Experiment", "content": content}]
         else:
+
             if self.wandb_storage_id is not None:
                 reports = f"https://wandb.ai/{os.getenv('WANDB_ENTITY')}/{self.sweep_id}/reports/{self.sweep_id}"
                 tab1 = {"name": "Project", "content": reports}
-                sweep_report = f"https://wandb.ai/{os.getenv('WANDB_ENTITY')}/{self.sweep_id}/reports/{self.sweep_id}--{self.wandb_storage_id}"
+                sweep_report = f"https://wandb.ai/{os.getenv('WANDB_ENTITY')}/{self.sweep_id}/reports/{self.sweep_id}--{self.wandb_storage_id}"  # noqa: E501
                 tab2 = {"name": "Report", "content": sweep_report}
                 content = [tab1, tab2]
             else:
                 reports = f"https://wandb.ai/{os.getenv('WANDB_ENTITY')}/{self.sweep_id}/reports/{self.sweep_id}"
                 tab1 = {"name": "Project", "content": reports}
                 content = [tab1]
+
         return content

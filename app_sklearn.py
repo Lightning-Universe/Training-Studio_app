@@ -1,11 +1,11 @@
 import optuna
-from lightning_hpo import BaseObjective, Optimizer
+from lightning import LightningApp, LightningFlow
 from optuna.distributions import LogUniformDistribution
 from sklearn import datasets
 from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import train_test_split
 
-from lightning import LightningApp, LightningFlow
+from lightning_hpo import BaseObjective, Optimizer
 
 
 class Objective(BaseObjective):
@@ -16,8 +16,7 @@ class Objective(BaseObjective):
 
         iris = datasets.load_iris()
         classes = list(set(iris.target))
-        train_x, valid_x, train_y, valid_y = train_test_split(
-            iris.data, iris.target, test_size=0.25, random_state=0)
+        train_x, valid_x, train_y, valid_y = train_test_split(iris.data, iris.target, test_size=0.25, random_state=0)
 
         clf = SGDClassifier(alpha=params["alpha"])
 

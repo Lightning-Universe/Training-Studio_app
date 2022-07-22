@@ -1,4 +1,5 @@
 import os
+
 import torch
 import torchvision.transforms as T
 from pytorch_lightning import LightningDataModule, LightningModule
@@ -6,6 +7,7 @@ from pytorch_lightning.utilities.cli import LightningCLI
 from torch.nn import functional as F
 from torchmetrics import Accuracy
 from torchvision.datasets import MNIST
+
 from scripts.net import Net
 
 train_script_path = __file__
@@ -60,20 +62,12 @@ class MNISTDataModule(LightningDataModule):
         MNIST("./data", download=True)
 
     def train_dataloader(self):
-        train_dataset = MNIST(
-            "./data", train=True, download=False, transform=self.transform
-        )
-        return torch.utils.data.DataLoader(
-            train_dataset, batch_size=self.hparams.batch_size
-        )
+        train_dataset = MNIST("./data", train=True, download=False, transform=self.transform)
+        return torch.utils.data.DataLoader(train_dataset, batch_size=self.hparams.batch_size)
 
     def val_dataloader(self):
-        val_dataset = MNIST(
-            "./data", train=False, download=False, transform=self.transform
-        )
-        return torch.utils.data.DataLoader(
-            val_dataset, batch_size=self.hparams.batch_size
-        )
+        val_dataset = MNIST("./data", train=False, download=False, transform=self.transform)
+        return torch.utils.data.DataLoader(val_dataset, batch_size=self.hparams.batch_size)
 
 
 if __name__ == "__main__":

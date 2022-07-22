@@ -1,8 +1,8 @@
 import os
 import sys
 from dataclasses import dataclass
+
 from optuna.distributions import LogUniformDistribution, UniformDistribution
-from lightning.pytorch.loggers import LightningLoggerBase
 from rich import print as rprint
 
 
@@ -12,14 +12,9 @@ def validate_logger():
         logger = logger.upper()
     if not hasattr(Loggers, logger):
         rprint(
-            "\n\n"
-            + f"You are trying to use [bold green]{logger}[/bold green], which is an unsupported logger."
-            + "\n"
+            "\n\n" + f"You are trying to use [bold green]{logger}[/bold green], which is an unsupported logger." + "\n"
         )
-        rprint(
-            f"Supported loggers are: {', '.join([l for l in dir(Loggers) if not l.startswith('_')])}"
-            + "\n"
-        )
+        rprint(f"Supported loggers are: {', '.join([l for l in dir(Loggers) if not l.startswith('_')])}" + "\n")
         sys.exit()
 
 
@@ -37,14 +32,10 @@ class BaseConfig:
     def validate_auth():
         if os.getenv("WANDB_API_KEY") is None or os.getenv("WANDB_ENTITY") is None:
             rprint(
-                "\n\n"
-                + "You are trying to use wandb without setting your API key or entity. Please set your wandb config with:"
-                + "\n"
+                "You are trying to use wandb without setting your API key or entity. Please set wandb config with:",
+                end="\n",
             )
-            rprint(
-                "lightning run app app_name.py --env LOGGER=wandb --env WANDB_API_KEY=YOUR_API_KEY"
-                + "\n\n"
-            )
+            rprint("lightning run app app_name.py --env LOGGER=wandb --env WANDB_API_KEY=YOUR_API_KEY", end="\n")
             sys.exit()
 
     @classmethod

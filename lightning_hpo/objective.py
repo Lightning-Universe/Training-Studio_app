@@ -1,10 +1,12 @@
+import os
 from abc import ABC, abstractmethod
 from functools import partial
+from typing import Any, Dict
+
 import optuna
-from typing import Dict, Any
 from lightning.app.components.python import TracerPythonScript
+
 from lightning_hpo.config import Loggers
-import os
 
 
 class BaseObjective(TracerPythonScript, ABC):
@@ -26,8 +28,9 @@ class BaseObjective(TracerPythonScript, ABC):
         if self.logger == Loggers.STREAMLIT:
             return tracer
 
-        from pytorch_lightning import Callback, Trainer
+        from pytorch_lightning import Trainer
         from pytorch_lightning.loggers import WandbLogger
+
         import wandb
 
         wandb.init(
@@ -48,9 +51,7 @@ class BaseObjective(TracerPythonScript, ABC):
             return {}, args, kwargs
 
         tracer = super().configure_tracer()
-        tracer.add_traced(
-            Trainer, "__init__", pre_fn=partial(trainer_pre_fn, work=self)
-        )
+        tracer.add_traced(Trainer, "__init__", pre_fn=partial(trainer_pre_fn, work=self))
         return tracer
 
     def run(self, params: Dict[str, Any]):

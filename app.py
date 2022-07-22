@@ -1,13 +1,11 @@
 import os
-import sys
-from pathlib import Path
-import optuna
-from lightning import LightningFlow, CloudCompute, LightningApp
-from lightning_hpo import BaseObjective, Optimizer
-from lightning.app.storage.path import Path
-from lightning_hpo.config import Loggers, validate_logger
-from rich import print as rprint
 
+import optuna
+from lightning import CloudCompute, LightningApp, LightningFlow
+from lightning.app.storage.path import Path
+
+from lightning_hpo import BaseObjective, Optimizer
+from lightning_hpo.config import validate_logger
 
 ENV_LOGGER = os.environ.get("LOGGER")
 # first arg has priority
@@ -20,12 +18,8 @@ class MyCustomObjective(BaseObjective):
         self.best_model_path = None
 
     def on_after_run(self, res):
-        self.best_model_score = float(
-            res["cli"].trainer.checkpoint_callback.best_model_score
-        )
-        self.best_model_path = Path(
-            res["cli"].trainer.checkpoint_callback.best_model_path
-        )
+        self.best_model_score = float(res["cli"].trainer.checkpoint_callback.best_model_score)
+        self.best_model_path = Path(res["cli"].trainer.checkpoint_callback.best_model_path)
 
     @staticmethod
     def distributions():
