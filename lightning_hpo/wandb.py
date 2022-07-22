@@ -42,19 +42,6 @@ class WandB(BaseConfig):
             ]
         )
         panel_grid.panels = [coords]
-        panel_grid = wb.PanelGrid()
-        run_set = wb.RunSet()
-        run_set.entity = os.environ.get("WANDB_ENTITY")
-        run_set.project = self.sweep_id
-        panel_grid.runsets = [run_set]
-        coords = wb.ParallelCoordinatesPlot(
-            columns=[
-                wb.reports.PCColumn("batch_size"),
-                wb.reports.PCColumn("epoch"),
-                wb.reports.PCColumn("loss"),
-            ]
-        )
-        panel_grid.panels = [coords]
         run_set.set_filters_with_python_expr(
             f'User == "{os.environ.get("WANDB_ENTITY")}"'
         )
