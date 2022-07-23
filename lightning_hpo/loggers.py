@@ -16,7 +16,7 @@ class WandbConfig(BaseLogger):
     @staticmethod
     def validate():
         if os.getenv("WANDB_ENTITY") is None:
-            raise Exception("Please, use lightning run app ... --env WANDB_API_KEY=X")
+            raise Exception("Please, use lightning run app ... --env WANDB_ENTITY=X")
         if os.getenv("WANDB_API_KEY") is None:
             raise Exception("Please, use lightning run app ... --env WANDB_API_KEY=X")
 
