@@ -16,7 +16,7 @@ class RootFlow(LightningFlow):
                 "--trainer.callbacks.monitor=val_acc",
             ],
             cloud_compute=CloudCompute("gpu"),
-            distributions={"model.lr": LogUniformDistribution(0, 1)},
+            distributions={"--model.lr": LogUniformDistribution(0.1, 1)},
             logger="wandb",
         )
 

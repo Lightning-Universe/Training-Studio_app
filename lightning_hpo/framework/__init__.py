@@ -1,5 +1,7 @@
-from lightning_hpo.framework.pytorch_lightning import PyTorchLightningObjective
+from lightning_hpo.framework.pytorch_lightning import ObjectiveLightningTrainingComponent
+from lightning_hpo.objective import BaseObjective
 
 _OBJECTIVE_FRAMEWORK = {
-    "pytorch_lightning": PyTorchLightningObjective
+    "base": BaseObjective,
+    "pytorch_lightning": ObjectiveLightningTrainingComponent
 }

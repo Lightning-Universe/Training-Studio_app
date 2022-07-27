@@ -145,3 +145,5 @@ sweep-*
 __init__.py
 train.py
 net.py
+thomas-*
+boring_train.py

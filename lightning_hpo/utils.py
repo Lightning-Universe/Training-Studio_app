@@ -4,6 +4,20 @@ from lightning.app.storage import Path
 from lightning import LightningFlow
 import os
 import tarfile
+from optuna.distributions import CategoricalDistribution, LogUniformDistribution, UniformDistribution
+
+
+def config_to_distributions(config):
+    distributions = {}
+    mapping_name_to_cls = {
+        "categorical": CategoricalDistribution,
+        "uniform": UniformDistribution,
+        "log_uniform": LogUniformDistribution,
+    }
+    for k, v in config.distributions.items():
+        dist_cls = mapping_name_to_cls[v.pop("distribution")]
+        distributions[k] = dist_cls(**v)
+    return distributions
 
 def get_best_model_path(flow: LightningFlow) -> Optional[Path]:
     metrics = {work.best_model_score: work for work in flow.works()}

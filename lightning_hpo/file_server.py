@@ -7,6 +7,9 @@ from pathlib import Path
 import lightning as L
 from lightning.app.storage import Drive
 import traceback
+import logging
+
+_logger = logging.getLogger(__name__)
 
 class FileServer(L.LightningWork):
     def __init__(
@@ -148,7 +151,7 @@ class FileServer(L.LightningWork):
                 return resp
             except Exception:
                 trace = str(traceback.print_exc())
-                print(trace)
+                _logger.error(trace)
                 resp = flask.Response(trace)
                 resp.status_code = 505
                 return resp

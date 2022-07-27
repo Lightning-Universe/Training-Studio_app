@@ -1,17 +1,15 @@
 from abc import ABC, abstractmethod
 from functools import partial
-import shutil
 import optuna
 from typing import Dict, Any
 from lightning.app.components.python import TracerPythonScript
 from lightning_hpo.loggers import Loggers
 import os
-from lightning_hpo.utils import extract_tarfile, clean_tarfile
 
 class BaseObjective(TracerPythonScript, ABC):
 
-    def __init__(self, *args, logger: str, sweep_id: str, trial_id: str, code: bool, drive, **kwargs):
-        super().__init__(*args, raise_exception=False, **kwargs)
+    def __init__(self, *args, logger: str, sweep_id: str, trial_id, **kwargs):
+        super().__init__(*args, raise_exception=True, **kwargs)
         self.trial_id = trial_id
         self.best_model_score = None
         self.params = None
@@ -21,10 +19,7 @@ class BaseObjective(TracerPythonScript, ABC):
         self.pruned = False
         self.logger = logger
         self._url = None
-        self.code = code
-        self.drive = drive
         self.sweep_id = sweep_id
-        self.restart_count = 0
 
     def configure_tracer(self):
         tracer = super().configure_tracer()
@@ -56,13 +51,7 @@ class BaseObjective(TracerPythonScript, ABC):
         tracer.add_traced(Trainer, "__init__", pre_fn=partial(trainer_pre_fn, work=self))
         return tracer
 
-    def run(self, params: Dict[str, Any], restart_count: int):
-        if self.code:
-            clean_tarfile(self.sweep_id, "r:gz")
-            self.drive.get(self.sweep_id)
-            extract_tarfile(self.sweep_id, ".", "r:gz")
-            os.remove(self.sweep_id)
-
+    def run(self, params: Dict[str, Any]):
         self.params = params
         self.script_args.extend([f"--{k}={v}" for k, v in params.items()])
         return super().run()

@@ -1,13 +1,17 @@
 from pydantic import BaseModel
 from typing import List, Any, Dict
 from lightning.app.utilities.commands import ClientCommand
-from lightning_app.source_code import LocalSourceCodeDir
+from lightning.app.source_code import LocalSourceCodeDir
 from uuid import uuid4
 from pathlib import Path
 from argparse import ArgumentParser
 import sys
 import re
+import requests
 import os
+from getpass import getuser
+from lightning.app.source_code.uploader import FileUploader
+
 
 
 class SweepConfig(BaseModel):
@@ -21,6 +25,7 @@ class SweepConfig(BaseModel):
     framework: str
     cloud_compute: Any
     code: bool
+    num_nodes: int = 1
 
 
 class DistributionParser:
@@ -89,11 +94,44 @@ class CategoricalDistributionParser(DistributionParser):
             }
         }
 
+
+class CustomFileUploader(FileUploader):
+
+    def _upload_data(self, s: requests.Session, url: str, data: bytes):
+        resp = s.put(url, files={"file": data})
+        return resp.status_code
+
+class CustomLocalSourceCodeDir(LocalSourceCodeDir):
+
+    def upload(self, url: str) -> None:
+        """Uploads package to URL, usually pre-signed URL.
+
+        Notes
+        -----
+        Since we do not use multipart uploads here, we cannot upload any
+        packaged repository files which have a size > 2GB.
+
+        This limitation should be removed during the datastore upload redesign
+        """
+        if self.package_path.stat().st_size > 2e9:
+            raise OSError(
+                "cannot upload directory code whose total fize size is greater than 2GB (2e9 bytes)"
+            ) from None
+
+        uploader = CustomFileUploader(
+            presigned_url=url,
+            source_file=str(self.package_path),
+            name=self.package_path.name,
+            total_size=self.package_path.stat().st_size,
+        )
+        uploader.upload()
+
 class SweepCommand(ClientCommand):
 
     SUPPORTED_DISTRIBUTIONS = ("uniform", "log_uniform", "categorical")
 
     def run(self) -> None:
+        sys.argv = sys.argv[1:]
         script_path = sys.argv[0]
 
         parser = ArgumentParser()
@@ -103,6 +141,7 @@ class SweepCommand(ClientCommand):
         parser.add_argument('--framework', default="pytorch_lightning", type=str, help="The framework you are using.")
         parser.add_argument('--cloud_compute', default="cpu", type=str, help="The machine to use in the cloud.")
         parser.add_argument('--sweep_id', default=None, type=str, help="The sweep you want to run upon.")
+        parser.add_argument('--num_nodes', default=1, type=int, help="The number of nodes to train upon.")
         hparams, args = parser.parse_known_args()
 
         if any("=" not in arg for arg in args):
@@ -111,23 +150,22 @@ class SweepCommand(ClientCommand):
         script_args = []
         distributions = {}
         for arg in args:
-            arg = arg.replace("--", "")
             is_distribution = False
             for p in [UniformDistributionParser, LogUniformDistributionParser, CategoricalDistributionParser]:
-                if p.is_distribution(arg):
-                    distributions.update(p.parse(arg))
+                if p.is_distribution(arg.replace("--", "")):
+                    distributions.update(p.parse(arg.replace("--", "")))
                     is_distribution = True
                     break
             if not is_distribution:
                 script_args.append(arg)
 
-        sweep_id = hparams.sweep_id or f"sweep-{str(uuid4())}"
+        id = str(uuid4()).split("-")[0]
+        sweep_id = hparams.sweep_id or f"{getuser()}-{id}"
 
         if not os.path.exists(script_path):
             raise Exception("The provided script doesn't exists.")
 
-
-        repo = LocalSourceCodeDir(path=Path(script_path).parent.resolve())
+        repo = CustomLocalSourceCodeDir(path=Path(script_path).parent.resolve())
         url = self.state.file_server._state["vars"]["_url"]
         repo.package()
         repo.upload(url=f"{url}/uploadfile/{sweep_id}")
@@ -141,6 +179,7 @@ class SweepCommand(ClientCommand):
             distributions=distributions,
             framework=hparams.framework,
             cloud_compute=hparams.cloud_compute,
+            num_nodes=hparams.num_nodes,
             code=True,
         ))
-        print(response["response"])
+        print(response)

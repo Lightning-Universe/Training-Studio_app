@@ -1,5 +1,4 @@
-from lightning import LightningFlow, CloudCompute
-from lightning_hpo.objective import BaseObjective
+from lightning import LightningFlow, CloudCompute, LightningWork
 import optuna
 import os
 from lightning_hpo.hyperplot import HiPlotFlow
@@ -7,9 +6,9 @@ from typing import Optional, Union, Dict, Type, Any
 from lightning.app.storage.path import Path
 from lightning.app.utilities.enum import WorkStageStatus
 from lightning_hpo.loggers import Loggers, WandbConfig
-import uuid
 from typing import List
 from lightning_hpo.framework import _OBJECTIVE_FRAMEWORK
+from lightning.app.components.python.tracer import Code
 
 class Optimizer(LightningFlow):
 
@@ -18,18 +17,16 @@ class Optimizer(LightningFlow):
         n_trials: int,
         simultaneous_trials: int = 1,
         script_args: Optional[Union[list, str]] = None,
-        objective_cls: Optional[Type[BaseObjective]] = None,
+        objective_cls: Optional[Type[Any]] = None,
         framework: str = "pytorch_lightning",
         distributions: Optional[Dict[str, optuna.distributions.BaseDistribution]] = None,
-        env: Optional[Dict] = None,
         cloud_compute: Optional[CloudCompute] = None,
         script_path: Optional[str] = None,
         study: Optional[optuna.Study] = None,
         logger: str = "streamlit",
-        code: bool = False,
-        drive = None,
+        code: Optional[Code] = None,
+        sweep_id: Optional[str] = None,
         **objective_work_kwargs: Any,
-
     ):
         """The Optimizer class enables to easily run a Python Script with Lightning
         :class:`~lightning.utilities.tracer.Tracer` with state-of-the-art distributed.
@@ -62,6 +59,7 @@ class Optimizer(LightningFlow):
         self.simultaneous_trials = simultaneous_trials
         self.num_trials = simultaneous_trials
         self._study = study or optuna.create_study()
+        self.sweep_id = sweep_id
 
         if logger == Loggers.STREAMLIT:
             self.hi_plot = HiPlotFlow()
@@ -71,16 +69,13 @@ class Optimizer(LightningFlow):
 
         for trial_id in range(n_trials):
             objective_work = objective_cls(
-                script_path=script_path or ".",
-                env=env,
+                script_path=script_path,
                 script_args=script_args,
                 cloud_compute=cloud_compute,
-                parallel=True,
-                cache_calls=True,
-                logger=logger,
-                trial_id=trial_id,
                 code=code,
-                drive=drive,
+                sweep_id=sweep_id,
+                trial_id=trial_id,
+                logger=logger,
                 **objective_work_kwargs,
             )
             setattr(self, f"w_{trial_id}", objective_work)
@@ -88,6 +83,7 @@ class Optimizer(LightningFlow):
         self._trials = {}
         self._distributions = distributions or objective_work.distributions()
         self.has_failed = False
+        self.restart_count = 0
 
     def run(self):
         if self.has_failed:
@@ -99,44 +95,48 @@ class Optimizer(LightningFlow):
         has_told_study = []
 
         for trial_idx in range(self.num_trials):
-            work_objective = getattr(self, f"w_{trial_idx}")
+            objective = getattr(self, f"w_{trial_idx}")
 
-            if work_objective.status.stage == "failed":
-                self.has_failed = True
-
-            if work_objective.status.stage == WorkStageStatus.NOT_STARTED:
+            if self.check_status(objective, WorkStageStatus.NOT_STARTED):
                 trial = self._study.ask(self._distributions)
                 self._trials[trial_idx] = trial
 
-            work_objective.run(params=self._trials[trial_idx].params, restart_count=work_objective.restart_count)
+            objective.run(
+                params=self._trials[trial_idx].params,
+                restart_count=self.restart_count,
+            )
 
-            if work_objective.reports and not work_objective.pruned:
-                trial = self._trials[work_objective.trial_id]
-                for report in work_objective.reports:
-                    if report not in work_objective.flow_reports:
+            if self.check_status(objective, "failed"):
+                self.has_failed = True
+
+            if getattr(objective, "reports", None) and not objective.pruned:
+                trial = self._trials[objective.trial_id]
+                for report in objective.reports:
+                    if report not in objective.flow_reports:
                         trial.report(*report)
-                        work_objective.flow_reports.append(report)
+                        objective.flow_reports.append(report)
+
                     if trial.should_prune():
                         print(f"Trail {trial_idx} pruned.")
-                        work_objective.pruned = True
-                        work_objective.stop()
+                        objective.pruned = True
+                        objective.stop()
                         break
 
-            if work_objective.best_model_score and not work_objective.has_stopped and not work_objective.pruned:
+            if objective.best_model_score and not objective.has_stopped and not objective.pruned:
                 # TODO: Understand why this is failing.
                 try:
-                    self._study.tell(work_objective.trial_id, work_objective.best_model_score)
+                    self._study.tell(objective.trial_id, objective.best_model_score)
                 except RuntimeError:
                     pass
                 if self.hi_plot:
-                    self.hi_plot.data.append({"x": work_objective.best_model_score, **work_objective.params})
-                work_objective.stop()
+                    self.hi_plot.data.append({"x": objective.best_model_score, **objective.params})
+                objective.stop()
                 print(
-                    f"Trial {trial_idx} finished with value: {work_objective.best_model_score} and parameters: {work_objective.params}. "
+                    f"Trial {trial_idx} finished with value: {objective.best_model_score} and parameters: {objective.params}. "
                     f"Best is trial {self._study.best_trial.number} with value: {self._study.best_trial.value}."
                 )
 
-            has_told_study.append(work_objective.has_stopped)
+            has_told_study.append(objective.has_stopped)
 
         if all(has_told_study):
             self.num_trials += self.simultaneous_trials
@@ -167,3 +167,13 @@ class Optimizer(LightningFlow):
     @staticmethod
     def supported_frameworks() -> List[str]:
         return list(_OBJECTIVE_FRAMEWORK.keys())
+
+    def check_status(self, obj: Union[LightningFlow, LightningWork], status: str) -> bool:
+        if isinstance(obj, LightningWork):
+            return obj.status.stage == status
+        else:
+            works = obj.works()
+            if works:
+                return any(w.status.stage == status for w in obj.works())
+            else:
+                return status == WorkStageStatus.NOT_STARTED
