@@ -7,10 +7,8 @@ from lightning import CloudCompute, LightningFlow
 from lightning.app.storage.path import Path
 from lightning.app.utilities.enum import WorkStageStatus
 
-from lightning_hpo.config import Loggers
-from lightning_hpo.hyperplot import HiPlotFlow
 from lightning_hpo.objective import BaseObjective
-from lightning_hpo.wandb import WandB
+from lightning_hpo.loggers import LoggerType
 
 
 class Optimizer(LightningFlow):
@@ -25,7 +23,7 @@ class Optimizer(LightningFlow):
         script_path: Optional[str] = None,
         study: Optional[optuna.Study] = None,
         logger: str = "streamlit",
-        project: Optional[str] = None,
+        sweep_id: Optional[str] = None,
         **objective_work_kwargs: Any,
     ):
         """The Optimizer class enables to easily run a Python Script with Lightning
@@ -48,17 +46,9 @@ class Optimizer(LightningFlow):
         self.simultaneous_trials = simultaneous_trials
         self.num_trials = simultaneous_trials
         self._study = study or optuna.create_study()
-        self.logger = logger
-
-        if logger == Loggers.STREAMLIT:
-            self.hi_plot = HiPlotFlow()
-        elif logger == Loggers.WANDB:
-            self.hi_plot = None
-            self.wandb_storage_id = None
-            self._wandb_api = WandB()
-            self._wandb_api.validate_auth()
-
-        self.sweep_id = str(uuid.uuid4()).split("-")[0] if not project else project
+        self._logger = LoggerType(logger).get_logger()
+        self._logger.connect(self)
+        self.sweep_id = sweep_id or str(uuid.uuid4()).split("-")[0]
 
         for trial_id in range(n_trials):
             objective_work = objective_cls(
@@ -76,10 +66,13 @@ class Optimizer(LightningFlow):
             setattr(self, f"w_{trial_id}", objective_work)
 
         self._trials = {}
+        self.has_started = False
 
     def run(self):
-        if self.wandb_storage_id is None:
-            self.wandb_storage_id = self._wandb_api.create_report(self.sweep_id)
+        if not self.has_started:
+            self._logger.on_start(self.sweep_id)
+            self.has_started = True
+
         if self.num_trials > self.n_trials:
             return
 
@@ -111,8 +104,10 @@ class Optimizer(LightningFlow):
                     self._study.tell(work_objective.trial_id, work_objective.best_model_score)
                 except RuntimeError:
                     pass
-                if self.hi_plot:
-                    self.hi_plot.data.append({"x": work_objective.best_model_score, **work_objective.params})
+                self._logger.on_trial_end(
+                    score=work_objective.best_model_score,
+                    params=work_objective.params
+                )
                 work_objective.stop()
 
                 print(
@@ -123,7 +118,7 @@ class Optimizer(LightningFlow):
             has_told_study.append(work_objective.has_stopped)
 
         if all(has_told_study):
-            self._wandb_api.update_report()
+            self._logger.on_batch_trial_end()
             self.num_trials += self.simultaneous_trials
 
     @property
@@ -143,20 +138,4 @@ class Optimizer(LightningFlow):
                 return getattr(self, f"w_{trial_idx}").best_model_path
 
     def configure_layout(self):
-        if self.hi_plot:
-            content = self.hi_plot
-            content = [{"name": "Experiment", "content": content}]
-        else:
-
-            if self.wandb_storage_id is not None:
-                reports = f"https://wandb.ai/{os.getenv('WANDB_ENTITY')}/{self.sweep_id}/reports/{self.sweep_id}"
-                tab1 = {"name": "Project", "content": reports}
-                sweep_report = f"https://wandb.ai/{os.getenv('WANDB_ENTITY')}/{self.sweep_id}/reports/{self.sweep_id}--{self.wandb_storage_id}"  # noqa: E501
-                tab2 = {"name": "Report", "content": sweep_report}
-                content = [tab1, tab2]
-            else:
-                reports = f"https://wandb.ai/{os.getenv('WANDB_ENTITY')}/{self.sweep_id}/reports/{self.sweep_id}"
-                tab1 = {"name": "Project", "content": reports}
-                content = [tab1]
-
-        return content
+        return self._logger.configure_layout()

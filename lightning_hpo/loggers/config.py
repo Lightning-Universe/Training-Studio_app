@@ -1,21 +1,7 @@
-import os
-import sys
 from dataclasses import dataclass
 
 from optuna.distributions import LogUniformDistribution, UniformDistribution
 from rich import print as rprint
-
-
-def validate_logger():
-    logger = os.environ.get("LOGGER")
-    if logger is not None:
-        logger = logger.upper()
-    if not hasattr(Loggers, logger):
-        rprint(
-            "\n\n" + f"You are trying to use [bold green]{logger}[/bold green], which is an unsupported logger." + "\n"
-        )
-        rprint(f"Supported loggers are: {', '.join([l for l in dir(Loggers) if not l.startswith('_')])}" + "\n")
-        sys.exit()
 
 
 class Loggers:
@@ -25,18 +11,6 @@ class Loggers:
 
 @dataclass
 class BaseConfig:
-    def __init__(self):
-        super().__init__()
-
-    @staticmethod
-    def validate_auth():
-        if os.getenv("WANDB_API_KEY") is None or os.getenv("WANDB_ENTITY") is None:
-            rprint(
-                "You are trying to use wandb without setting your API key or entity. Please set wandb config with:",
-                end="\n",
-            )
-            rprint("lightning run app app_name.py --env LOGGER=wandb --env WANDB_API_KEY=YOUR_API_KEY", end="\n")
-            sys.exit()
 
     @classmethod
     def get_sweep_config(cls, distributions):

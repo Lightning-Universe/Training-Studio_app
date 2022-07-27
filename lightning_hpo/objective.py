@@ -6,7 +6,7 @@ from typing import Any, Dict
 import optuna
 from lightning.app.components.python import TracerPythonScript
 
-from lightning_hpo.config import Loggers
+from lightning_hpo.loggers.config import Loggers
 
 
 class BaseObjective(TracerPythonScript, ABC):

@@ -3,14 +3,7 @@ import os
 import optuna
 from lightning import CloudCompute, LightningApp, LightningFlow
 from lightning.app.storage.path import Path
-
 from lightning_hpo import BaseObjective, Optimizer
-from lightning_hpo.config import validate_logger
-
-ENV_LOGGER = os.environ.get("LOGGER")
-# first arg has priority
-LOGGER = ENV_LOGGER or "streamlit"
-
 
 class MyCustomObjective(BaseObjective):
     def __init__(self, *args, **kwargs):
@@ -42,8 +35,8 @@ class RootFlow(LightningFlow):
                 "--trainer.callbacks.monitor=val_acc",
             ],
             cloud_compute=CloudCompute("default"),
-            logger=LOGGER.lower(),
-            project=os.environ.get("PROJECT"),
+            logger=os.environ.get("LOGGER", "streamlit"),
+            sweep_id=os.environ.get("PROJECT"),
         )
 
     def run(self):
@@ -53,5 +46,4 @@ class RootFlow(LightningFlow):
         return self.hpo_train.configure_layout()
 
 
-validate_logger()
 app = LightningApp(RootFlow())
