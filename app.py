@@ -1,33 +1,33 @@
-from optuna.distributions import LogUniformDistribution
-from lightning import LightningFlow, CloudCompute, LightningApp
-from lightning_hpo import Optimizer
+import optuna
+from lightning import CloudCompute, LightningApp
+from lightning.app.storage.path import Path
+from lightning_hpo import BaseObjective, Optimizer
 
-class RootFlow(LightningFlow):
+class MyCustomObjective(BaseObjective):
 
-    def __init__(self):
-        super().__init__()
-        self.hpo_train = Optimizer(
-            script_path="train.py",
-            n_trials=100,
-            simultaneous_trials=10,
-            script_args=[
-                "--trainer.max_epochs=100",
-                "--trainer.callbacks=ModelCheckpoint",
-                "--trainer.callbacks.monitor=val_acc",
-            ],
-            cloud_compute=CloudCompute("gpu"),
-            distributions={"--model.lr": LogUniformDistribution(0.1, 1)},
-            logger="wandb",
-            framework="pytorch_lightning"
-        )
+    def on_after_run(self, script_globals):
+        # Collect metadata directly from the script.
+        self.best_model_path = Path(script_globals["cli"].trainer.checkpoint_callback.best_model_path)
+        self.best_model_score = float(script_globals["cli"].trainer.checkpoint_callback.best_model_score)
+        self.monitor = script_globals["cli"].trainer.checkpoint_callback.monitor
 
-    def run(self):
-        self.hpo_train.run()
+    @staticmethod
+    def distributions():
+        return {"model.lr": optuna.distributions.LogUniformDistribution(0.0001, 0.1)}
 
-        if self.hpo_train.best_model_path:
-            pass
 
-    def configure_layout(self):
-        return self.hpo_train.configure_layout()
-
-app = LightningApp(RootFlow())
+app = LightningApp(
+    Optimizer(
+        script_path=str(Path(__file__).parent / "scripts/train.py"),
+        n_trials=5,
+        simultaneous_trials=1,
+        objective_cls=MyCustomObjective,
+        script_args=[
+            "--trainer.max_epochs=100",
+            "--trainer.callbacks=ModelCheckpoint",
+            "--trainer.callbacks.monitor=val_acc",
+        ],
+        cloud_compute=CloudCompute("default"),
+        logger="wandb",
+    )
+)

@@ -1,12 +1,13 @@
-from pathlib import Path
-import optuna
 from functools import partial
-from lightning import LightningFlow, CloudCompute, LightningApp
-from lightning_hpo import BaseObjective, Optimizer
+
+import optuna
+from lightning import CloudCompute, LightningApp, LightningFlow
 from lightning.app.storage.path import Path
 
-class MyCustomObjective(BaseObjective):
+from lightning_hpo import BaseObjective, Optimizer
 
+
+class MyCustomObjective(BaseObjective):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.best_model_path = None
@@ -16,7 +17,6 @@ class MyCustomObjective(BaseObjective):
         from pytorch_lightning.callbacks import Callback
 
         class WorkCollector(Callback):
-
             def __init__(self, work):
                 self._work = work
 
@@ -27,7 +27,7 @@ class MyCustomObjective(BaseObjective):
 
         def trainer_pre_fn(self, *args, work=None, **kwargs):
             # Dynamically inject the callback inside the Trainer.
-            kwargs['callbacks'].append(WorkCollector(work))
+            kwargs["callbacks"].append(WorkCollector(work))
             return {}, args, kwargs
 
         tracer = super().configure_tracer()
@@ -44,18 +44,15 @@ class MyCustomObjective(BaseObjective):
 
 
 class RootFlow(LightningFlow):
-
     def __init__(self):
         super().__init__()
         self.hpo_train = Optimizer(
             script_path=str(Path(__file__).parent / "scripts/train.py"),
             n_trials=100,
             simultaneous_trials=10,
-            study = optuna.create_study(
+            study=optuna.create_study(
                 direction="maximize",
-                pruner=optuna.pruners.HyperbandPruner(
-                    min_resource=1, max_resource=10, reduction_factor=3
-                ),
+                pruner=optuna.pruners.HyperbandPruner(min_resource=1, max_resource=10, reduction_factor=3),
             ),
             objective_cls=MyCustomObjective,
             script_args=[
@@ -65,7 +62,7 @@ class RootFlow(LightningFlow):
                 "--trainer.callbacks=ModelCheckpoint",
                 "--trainer.callbacks.monitor=val_acc",
             ],
-            cloud_compute=CloudCompute("cpu", idle_timeout=0) # kill as soon as successfull.
+            cloud_compute=CloudCompute("cpu", idle_timeout=0),  # kill as soon as successfull.
         )
 
     def run(self):
@@ -76,5 +73,6 @@ class RootFlow(LightningFlow):
 
     def configure_layout(self):
         return [{"name": "HiPlot", "content": self.hpo_train.hi_plot}]
+
 
 app = LightningApp(RootFlow())

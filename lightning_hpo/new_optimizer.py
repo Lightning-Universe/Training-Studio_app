@@ -1,8 +1,8 @@
-from lightning import LightningFlow, CloudCompute, LightningWork
+import uuid
+from typing import Any, Dict, Optional, Type, Union
+
 import optuna
-import os
-from lightning_hpo.hyperplot import HiPlotFlow
-from typing import Optional, Union, Dict, Type, Any
+from lightning import CloudCompute, LightningFlow
 from lightning.app.storage.path import Path
 from lightning.app.utilities.enum import WorkStageStatus
 from lightning_hpo.loggers import Loggers, WandbConfig
@@ -56,8 +56,8 @@ class Optimizer(LightningFlow):
             objective_cls = _OBJECTIVE_FRAMEWORK[framework]
 
         self.n_trials = n_trials
-        self.simultaneous_trials = simultaneous_trials
-        self.num_trials = simultaneous_trials
+        self.num_trials = self.simultaneous_trials = simultaneous_trials
+        self.sweep_id = sweep_id or str(uuid.uuid4()).split("-")[0]
         self._study = study or optuna.create_study()
         self.sweep_id = sweep_id
 

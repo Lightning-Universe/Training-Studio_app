@@ -21,12 +21,9 @@ from lightning_hpo import BaseObjective, Optimizer
 
 class MyCustomObjective(BaseObjective):
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.best_model_path = None
-
     def on_after_run(self, result):
         self.best_model_score = float(result["best_model_score"])
+        self.monitor = result["monitor"]
 
     @staticmethod
     def distributions():
