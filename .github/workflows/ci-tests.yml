@@ -88,12 +88,12 @@ jobs:
           coverage xml -i
           coverage report -i
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: tests/coverage.xml
-          flags: unittests
-          env_vars: OS,PYTHON
-          name: codecov-umbrella
-          fail_ci_if_error: false
+      # - name: Upload coverage to Codecov
+      #   uses: codecov/codecov-action@v3
+      #   with:
+      #     token: ${{ secrets.CODECOV_TOKEN }}
+      #     file: tests/coverage.xml
+      #     flags: unittests
+      #     env_vars: OS,PYTHON
+      #     name: codecov-umbrella
+      #     fail_ci_if_error: false
