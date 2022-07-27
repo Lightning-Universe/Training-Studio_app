@@ -1,4 +1,3 @@
-import os
 import uuid
 from typing import Any, Dict, Optional, Type, Union
 
@@ -43,12 +42,11 @@ class Optimizer(LightningFlow):
         """
         super().__init__()
         self.n_trials = n_trials
-        self.simultaneous_trials = simultaneous_trials
-        self.num_trials = simultaneous_trials
+        self.num_trials = self.simultaneous_trials = simultaneous_trials
+        self.sweep_id = sweep_id or str(uuid.uuid4()).split("-")[0]
         self._study = study or optuna.create_study()
         self._logger = LoggerType(logger).get_logger()
         self._logger.connect(self)
-        self.sweep_id = sweep_id or str(uuid.uuid4()).split("-")[0]
 
         for trial_id in range(n_trials):
             objective_work = objective_cls(
@@ -66,13 +64,8 @@ class Optimizer(LightningFlow):
             setattr(self, f"w_{trial_id}", objective_work)
 
         self._trials = {}
-        self.has_started = False
 
     def run(self):
-        if not self.has_started:
-            self._logger.on_start(self.sweep_id)
-            self.has_started = True
-
         if self.num_trials > self.n_trials:
             return
 
@@ -84,6 +77,7 @@ class Optimizer(LightningFlow):
                 distributions = work_objective.distributions()
                 trial = self._study.ask(distributions)
                 self._trials[trial_idx] = trial
+                self._logger.on_trial_start(self.sweep_id, trial, trial.params)
                 work_objective.run(params=trial.params)
 
             if work_objective.reports and not work_objective.pruned:
@@ -93,17 +87,13 @@ class Optimizer(LightningFlow):
                         trial.report(*report)
                         work_objective.flow_reports.append(report)
                     if trial.should_prune():
-                        print(f"Trail {trial_idx} pruned.")
+                        print(f"Trial {trial_idx} pruned.")
                         work_objective.pruned = True
                         work_objective.stop()
                         break
 
             if work_objective.best_model_score and not work_objective.has_stopped and not work_objective.pruned:
-                # TODO: Understand why this is failing.
-                try:
-                    self._study.tell(work_objective.trial_id, work_objective.best_model_score)
-                except RuntimeError:
-                    pass
+                self._study.tell(work_objective.trial_id, work_objective.best_model_score)
                 self._logger.on_trial_end(
                     score=work_objective.best_model_score,
                     params=work_objective.params
@@ -118,7 +108,6 @@ class Optimizer(LightningFlow):
             has_told_study.append(work_objective.has_stopped)
 
         if all(has_told_study):
-            self._logger.on_batch_trial_end()
             self.num_trials += self.simultaneous_trials
 
     @property

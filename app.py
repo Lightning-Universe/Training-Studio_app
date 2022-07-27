@@ -24,7 +24,7 @@ class RootFlow(LightningFlow):
         super().__init__()
         self.hpo_train = Optimizer(
             script_path=str(Path(__file__).parent / "scripts/train.py"),
-            n_trials=50,
+            n_trials=5,
             simultaneous_trials=2,
             objective_cls=MyCustomObjective,
             script_args=[

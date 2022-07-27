@@ -6,7 +6,7 @@ from typing import Any, Dict
 import optuna
 from lightning.app.components.python import TracerPythonScript
 
-from lightning_hpo.loggers.config import Loggers
+from lightning_hpo.loggers import LoggerType
 
 
 class BaseObjective(TracerPythonScript, ABC):
@@ -24,9 +24,8 @@ class BaseObjective(TracerPythonScript, ABC):
         self.sweep_id = sweep_id
 
     def configure_tracer(self):
+        assert self.params
         tracer = super().configure_tracer()
-        if self.logger == Loggers.STREAMLIT:
-            return tracer
 
         from pytorch_lightning import Trainer
         from pytorch_lightning.loggers import WandbLogger
@@ -40,24 +39,29 @@ class BaseObjective(TracerPythonScript, ABC):
             config=self.params,
         )
 
-        def trainer_pre_fn(self, *args, work=None, **kwargs):
+        def trainer_pre_fn(trainer, *args, **kwargs):
+            raise Exception("HERE")
             logger = WandbLogger(
                 save_dir=os.path.join(os.getcwd(), os.environ.get("LOGS_DIR")),
-                project=work.sweep_id,
+                project=self.sweep_id,
                 entity=os.getenv("WANDB_ENTITY"),
-                name=f"trial_{work.trial_id}",
+                name=f"trial_{self.trial_id}",
             )
             kwargs["logger"] = [logger]
             return {}, args, kwargs
 
-        tracer = super().configure_tracer()
-        tracer.add_traced(Trainer, "__init__", pre_fn=partial(trainer_pre_fn, work=self))
+        tracer.add_traced(Trainer, "__init__", trainer_pre_fn)
+
+        # LoggerType(self.logger).get_logger().configure_tracer(
+        #     tracer,
+        #     params=self.params,
+        #     trial_id=self.trial_id
+        # )
         return tracer
 
     def run(self, params: Dict[str, Any]):
         self.params = params
-        self.script_args.extend([f"--{k}={v}" for k, v in params.items()])
-        return super().run()
+        return super().run(params=params)
 
     @abstractmethod
     def distributions() -> Dict[str, optuna.distributions.BaseDistribution]:

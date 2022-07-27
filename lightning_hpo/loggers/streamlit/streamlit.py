@@ -9,17 +9,17 @@ class StreamLitLogger(Logger):
         super().__init__()
         self.hi_plot = HiPlotFlow()
 
-    def on_start(self, sweep_id: str):
-        return super().on_start(sweep_id)
+    def on_trial_start(self, *_):
+        pass
 
     def on_trial_end(self, score: float, params: Dict[str, Any]):
         self.hi_plot.data.append({"score": score, **params})
-
-    def on_batch_trial_end(self):
-        return super().on_batch_trial_end()
 
     def connect(self, flow: LightningFlow):
         flow.hi_plot = self.hi_plot
 
     def configure_layout(self):
         return  [{"name": "Experiment", "content": self.hi_plot}]
+
+    def configure_tracer(self, tracer, params: Dict[str, Any], trial_id: int):
+        pass
