@@ -42,7 +42,7 @@ class ImageClassifier(LightningModule):
         x, y = batch
         logits = self.forward(x)
         loss = F.nll_loss(logits, y.long())
-        self.log("val_acc", self.val_acc(logits, y), on_step=True, on_epoch=True)
+        self.log("val_acc", self.val_acc(logits, y))
         self.log("val_loss", loss)
 
     def configure_optimizers(self):

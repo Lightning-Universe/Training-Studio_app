@@ -72,40 +72,43 @@ class Optimizer(LightningFlow):
         has_told_study = []
 
         for trial_idx in range(self.num_trials):
-            work_objective = getattr(self, f"w_{trial_idx}")
-            if work_objective.status.stage == WorkStageStatus.NOT_STARTED:
-                distributions = work_objective.distributions()
+            objective = getattr(self, f"w_{trial_idx}")
+            if objective.status.stage == WorkStageStatus.NOT_STARTED:
+                distributions = objective.distributions()
                 trial = self._study.ask(distributions)
                 self._trials[trial_idx] = trial
-                self._logger.on_trial_start(self.sweep_id, trial, trial.params)
-                work_objective.run(params=trial.params)
+                self._logger.on_trial_start(self.sweep_id)
+                objective.run(params=trial.params)
 
-            if work_objective.reports and not work_objective.pruned:
-                trial = self._trials[work_objective.trial_id]
-                for report in work_objective.reports:
-                    if report not in work_objective.flow_reports:
+            if objective.reports and not objective.pruned:
+                trial = self._trials[objective.trial_id]
+                for report in objective.reports:
+                    if report not in objective.flow_reports:
                         trial.report(*report)
-                        work_objective.flow_reports.append(report)
+                        objective.flow_reports.append(report)
                     if trial.should_prune():
                         print(f"Trial {trial_idx} pruned.")
-                        work_objective.pruned = True
-                        work_objective.stop()
+                        objective.pruned = True
+                        objective.stop()
                         break
 
-            if work_objective.best_model_score and not work_objective.has_stopped and not work_objective.pruned:
-                self._study.tell(work_objective.trial_id, work_objective.best_model_score)
+            if objective.best_model_score and not objective.has_stopped and not objective.pruned:
+                self._study.tell(objective.trial_id, objective.best_model_score)
                 self._logger.on_trial_end(
-                    score=work_objective.best_model_score,
-                    params=work_objective.params
+                    sweep_id=self.sweep_id,
+                    trial_id=objective.trial_id,
+                    monitor=objective.monitor,
+                    score=objective.best_model_score,
+                    params=objective.params
                 )
-                work_objective.stop()
+                objective.stop()
 
                 print(
-                    f"Trial {trial_idx} finished with value: {work_objective.best_model_score} and parameters: {work_objective.params}. "  # noqa: E501
+                    f"Trial {trial_idx} finished with value: {objective.best_model_score} and parameters: {objective.params}. "  # noqa: E501
                     f"Best is trial {self._study.best_trial.number} with value: {self._study.best_trial.value}."
                 )
 
-            has_told_study.append(work_objective.has_stopped)
+            has_told_study.append(objective.has_stopped)
 
         if all(has_told_study):
             self.num_trials += self.simultaneous_trials

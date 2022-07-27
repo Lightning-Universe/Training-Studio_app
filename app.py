@@ -6,13 +6,11 @@ from lightning.app.storage.path import Path
 from lightning_hpo import BaseObjective, Optimizer
 
 class MyCustomObjective(BaseObjective):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.best_model_path = None
 
     def on_after_run(self, res):
-        self.best_model_score = float(res["cli"].trainer.checkpoint_callback.best_model_score)
         self.best_model_path = Path(res["cli"].trainer.checkpoint_callback.best_model_path)
+        self.best_model_score = float(res["cli"].trainer.checkpoint_callback.best_model_score)
+        self.monitor = res["cli"].trainer.checkpoint_callback.monitor
 
     @staticmethod
     def distributions():
@@ -25,7 +23,7 @@ class RootFlow(LightningFlow):
         self.hpo_train = Optimizer(
             script_path=str(Path(__file__).parent / "scripts/train.py"),
             n_trials=5,
-            simultaneous_trials=2,
+            simultaneous_trials=1,
             objective_cls=MyCustomObjective,
             script_args=[
                 "--trainer.max_epochs=5",

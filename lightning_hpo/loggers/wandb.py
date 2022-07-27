@@ -22,8 +22,6 @@ class WandB(Logger):
     def on_trial_start(
         self,
         sweep_id: str,
-        trial_id: int,
-        params: Dict[str, Any],
         title: Optional[str] = None,
         desc: Optional[str] = None,
     ):
@@ -45,15 +43,21 @@ class WandB(Logger):
         self.storage_id = self.report.id
         self.report_url = f"https://wandb.ai/{self.entity}/{self.sweep_id}/reports/{self.sweep_id}--{self.report.id}"
         self.report_url = f"https://wandb.ai/{self.entity}/{self.sweep_id}/reports/{self.sweep_id}--{self.report.id}"
-        self.report = self._api.load_report(self.report_url)
+
+    def on_trial_end(self, sweep_id: str, trial_id: int, monitor: str, score: float, params: Dict[str, Any]):
+        from wandb.apis import reports
+
+        if getattr(self.report, "blocks"):
+            return
+
         panel_grid = reports.PanelGrid()
         run_set = reports.RunSet()
         run_set.entity = self.entity
         run_set.project = self.sweep_id
         panel_grid.runsets = [run_set]
-        keys = list(params.keys()) + ["score"]
-        columns = [reports.PCColumn(p) for p in keys]
-        coords = reports.ParallelCoordinatesPlot(columns)
+        keys = list(params.keys()) + [monitor]
+        coords = reports.ParallelCoordinatesPlot([reports.PCColumn(p) for p in keys])
+        coords.layout = { "x": 0, "y": 0, "w": 24, "h": 10 }
         coords.entity = self.entity
         coords.project = self.sweep_id
         panel_grid.panels = [coords]
@@ -61,49 +65,43 @@ class WandB(Logger):
         self.report.blocks = [panel_grid]
         self.report.save()
 
-    def on_trial_end(self, score, params):
-        pass
-
     def connect(self, flow: LightningFlow):
         pass
 
     def configure_layout(self):
+        reports = report = ""
         if self.storage_id is not None:
-            reports = f"https://wandb.ai/{os.getenv('WANDB_ENTITY')}/{self.sweep_id}/reports/{self.sweep_id}"
-            tab1 = {"name": "Project", "content": reports}
-            sweep_report = f"https://wandb.ai/{os.getenv('WANDB_ENTITY')}/{self.sweep_id}/reports/{self.sweep_id}--{self.storage_id}"  # noqa: E501
-            tab2 = {"name": "Report", "content": sweep_report}
-            content = [tab1, tab2]
-        else:
-            reports = f"https://wandb.ai/{os.getenv('WANDB_ENTITY')}/{self.sweep_id}/reports/{self.sweep_id}"
-            tab1 = {"name": "Project", "content": reports}
-            content = [tab1]
-        return content
+            reports = f"https://wandb.ai/{self.entity}/{self.sweep_id}/reports/{self.sweep_id}"
+            report = f"https://wandb.ai/{self.entity}/{self.sweep_id}/reports/{self.sweep_id}--{self.storage_id}"  # noqa: E501
+        return [{"name": "Project", "content": reports}, {"name": "Report", "content": report}]
 
-    def configure_tracer(self, tracer, params: Dict[str, Any], trial_id: int):
+    def configure_tracer(self, tracer, sweep_id: str, trial_id: int, params: Dict[str, Any]):
         from pytorch_lightning import Trainer
         from pytorch_lightning.loggers import WandbLogger
 
         import wandb
 
         wandb.init(
-            project=self.sweep_id,
-            entity=os.getenv("WANDB_ENTITY"),
+            project=sweep_id,
+            entity=self.entity,
             name=f"trial_{trial_id}",
             config=params,
         )
 
+        for k, v in params.items():
+            wandb.summary[k] = v
+
         def trainer_pre_fn(trainer, *args, **kwargs):
             logger = WandbLogger(
-                save_dir=os.path.join(os.getcwd(), os.environ.get("LOGS_DIR")),
-                project=self.sweep_id,
-                entity=os.getenv("WANDB_ENTITY"),
+                save_dir=os.path.join(os.getcwd(), "wandb/lightning_logs"),
+                project=sweep_id,
+                entity=self.entity,
                 name=f"trial_{trial_id}",
             )
             kwargs["logger"] = [logger]
             return {}, args, kwargs
 
-        tracer.add_traced(Trainer, "__init__", trainer_pre_fn)
+        tracer.add_traced(Trainer, "__init__", pre_fn=trainer_pre_fn)
 
     @staticmethod
     def _validate_auth():
