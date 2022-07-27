@@ -17,7 +17,7 @@ class Optimizer(LightningFlow):
         n_trials: int,
         simultaneous_trials: int = 1,
         script_args: Optional[Union[list, str]] = None,
-        objective_cls: Optional[Type[Any]] = None,
+        objective_cls: Optional[Type[Union[LightningFlow, LightningWork]]] = None, # TODO: Create a base class.
         framework: str = "pytorch_lightning",
         distributions: Optional[Dict[str, optuna.distributions.BaseDistribution]] = None,
         cloud_compute: Optional[CloudCompute] = None,

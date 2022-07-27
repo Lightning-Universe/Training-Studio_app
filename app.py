@@ -18,6 +18,7 @@ class RootFlow(LightningFlow):
             cloud_compute=CloudCompute("gpu"),
             distributions={"--model.lr": LogUniformDistribution(0.1, 1)},
             logger="wandb",
+            framework="pytorch_lightning"
         )
 
     def run(self):
