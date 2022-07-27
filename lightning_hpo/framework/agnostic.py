@@ -1,7 +1,5 @@
-import os
 from abc import ABC, abstractmethod
-from functools import partial
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import optuna
 from lightning.app.components.python import TracerPythonScript
@@ -29,14 +27,11 @@ class BaseObjective(TracerPythonScript, ABC):
         assert self.params
         tracer = super().configure_tracer()
         LoggerType(self.logger).get_logger().configure_tracer(
-            tracer,
-            params=self.params,
-            sweep_id=self.sweep_id,
-            trial_id=self.trial_id
+            tracer, params=self.params, sweep_id=self.sweep_id, trial_id=self.trial_id
         )
         return tracer
 
-    def run(self, params: Dict[str, Any]):
+    def run(self, params: Optional[Dict[str, Any]] = None, restart_count: int = 0):
         self.params = params
         return super().run(params=params)
 

@@ -1,10 +1,11 @@
 import optuna
 from lightning import CloudCompute, LightningApp
 from lightning.app.storage.path import Path
+
 from lightning_hpo import BaseObjective, Optimizer
 
-class MyCustomObjective(BaseObjective):
 
+class MyCustomObjective(BaseObjective):
     def on_after_run(self, script_globals):
         # Collect metadata directly from the script.
         self.best_model_path = Path(script_globals["cli"].trainer.checkpoint_callback.best_model_path)
@@ -28,6 +29,5 @@ app = LightningApp(
             "--trainer.callbacks.monitor=val_acc",
         ],
         cloud_compute=CloudCompute("default"),
-        logger="wandb",
     )
 )
