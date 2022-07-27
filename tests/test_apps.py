@@ -30,7 +30,7 @@ class LightningHPOTestApp(LightningTestApp):
 def test_custom_objective_optimizer_streamlit():
 
     command_line = [
-        os.path.join(os.getcwd(), "app_base.py"),
+        os.path.join(os.getcwd(), "examples/app_base.py"),
         "--open-ui",
         "False",
     ]
@@ -43,7 +43,7 @@ def test_custom_objective_optimizer_streamlit():
 def test_pytorch_lightning_objective_optimizer_wandb():
 
     command_line = [
-        os.path.join(os.getcwd(), "app_pytorch_lightning.py"),
+        os.path.join(os.getcwd(), "examples/app_pytorch_lightning.py"),
         "--open-ui",
         "False",
     ]

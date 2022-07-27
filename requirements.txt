@@ -1,1 +1,6 @@
 pytorch-lightning
+wandb
+streamlit
+hiplot
+optuna
+lightning
