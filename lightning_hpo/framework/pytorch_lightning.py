@@ -11,19 +11,21 @@ class PyTorchLightningObjective(BaseObjective, PyTorchLightningScriptRunner):
     """This component executes a PyTorch Lightning script
     and injects a callback in the Trainer at runtime in order to start tensorboard server."""
 
-    def __init__(self, *args, logger: str, sweep_id: str, trial_id: int, **kwargs):
+    def __init__(self, *args, logger: str, sweep_id: str, trial_id: int, num_nodes: int, **kwargs):
         BaseObjective.__init__(self, logger=logger, sweep_id=sweep_id, trial_id=trial_id, **kwargs)
-        PyTorchLightningScriptRunner.__init__(self, *args, **kwargs)
+        PyTorchLightningScriptRunner.__init__(self, *args, num_nodes=num_nodes, **kwargs)
 
     def configure_tracer(self):
-        if self.node_rank != 0:
+        if self.node_rank == 0:
             return BaseObjective.configure_tracer(self)
-        else:
-            return TracerPythonScript.configure_tracer(self)
+        return TracerPythonScript.configure_tracer(self)
 
     def run(self, params: Optional[Dict[str, Any]] = None, restart_count: int = 0, **kwargs):
         self.params = params
-        return PyTorchLightningScriptRunner.run(self, **kwargs)
+        return PyTorchLightningScriptRunner.run(self, params=params, **kwargs)
+
+    def on_after_run(self, script_globals):
+        PyTorchLightningScriptRunner.on_after_run(self, script_globals)
 
     @classmethod
     def distributions(cls):
@@ -31,14 +33,14 @@ class PyTorchLightningObjective(BaseObjective, PyTorchLightningScriptRunner):
 
 
 class ObjectiveLightningTrainingComponent(LightningTrainingComponent):
-    def __init__(self, *args, trial_id: int, logger: str, sweep_id: str, **kwargs):
+    def __init__(self, *args, trial_id: int, logger: str, sweep_id: str, num_nodes: int = 1, **kwargs):
         super().__init__(
             *args,
             script_runner=PyTorchLightningObjective,
             logger=logger,
             sweep_id=sweep_id,
             trial_id=trial_id,
-            num_nodes=2,
+            num_nodes=num_nodes,
             **kwargs,
         )
         self.trial_id = trial_id

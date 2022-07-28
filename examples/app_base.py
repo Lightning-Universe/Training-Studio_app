@@ -24,10 +24,14 @@ app = LightningApp(
         simultaneous_trials=1,
         objective_cls=MyCustomObjective,
         script_args=[
-            "--trainer.max_epochs=100",
+            "--trainer.max_epochs=5",
             "--trainer.callbacks=ModelCheckpoint",
             "--trainer.callbacks.monitor=val_acc",
+            "--trainer.limit_train_batches=20",
+            "--trainer.limit_val_batches=5",
         ],
         cloud_compute=CloudCompute("default"),
+        logger="wandb",
+        study=optuna.create_study(direction="maximize"),
     )
 )

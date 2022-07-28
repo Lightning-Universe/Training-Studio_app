@@ -8,8 +8,8 @@ from lightning_hpo.loggers import LoggerType
 
 
 class BaseObjective(TracerPythonScript, ABC):
-    def __init__(self, *args, logger: str, sweep_id: str, trial_id, **kwargs):
-        super().__init__(*args, raise_exception=True, **kwargs)
+    def __init__(self, *args, logger: str, sweep_id: str, trial_id, raise_exception: bool = False, **kwargs):
+        super().__init__(*args, raise_exception=raise_exception, **kwargs)
         self.trial_id = trial_id
         self.best_model_score = None
         self.best_model_path = None

@@ -71,6 +71,7 @@ class Optimizer(LightningFlow):
         self._distributions = distributions or objective.distributions()
         self.has_failed = False
         self.restart_count = 0
+        self.show = False
 
     def run(self):
         if self.has_failed:
@@ -125,7 +126,12 @@ class Optimizer(LightningFlow):
             has_told_study.append(objective.has_stopped)
 
         if all(has_told_study):
-            self.num_trials += self.simultaneous_trials
+            if self.num_trials == self.n_trials:
+                self.num_trials += 1
+            elif self.num_trials >= (self.n_trials - self.simultaneous_trials):
+                self.num_trials = self.n_trials
+            else:
+                self.num_trials += self.simultaneous_trials
 
     @property
     def best_model_score(self) -> Optional[float]:
