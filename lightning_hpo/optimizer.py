@@ -45,31 +45,26 @@ class Optimizer(LightningFlow):
             objective_kwargs: Your custom keywords arguments passed to your custom objective work class.
         """
         super().__init__()
-        objective_cls = _resolve_objective_cls(objective_cls, distributions, framework)
+        self._objective_cls = _resolve_objective_cls(objective_cls, distributions, framework)
         self.n_trials = n_trials
         self.num_trials = self.simultaneous_trials = simultaneous_trials
         self.sweep_id = sweep_id or str(uuid.uuid4()).split("-")[0]
         self._study = study or optuna.create_study()
         self._logger = LoggerType(logger).get_logger()
         self._logger.connect(self)
-
-        for trial_id in range(n_trials):
-            objective = objective_cls(
-                script_path=script_path,
-                env=env,
-                script_args=script_args,
-                cloud_compute=cloud_compute,
-                logger=logger,
-                code=code,
-                trial_id=trial_id,
-                sweep_id=self.sweep_id,
-                raise_exception=False,
-                **objective_kwargs,
-            )
-            setattr(self, f"w_{trial_id}", objective)
-
+        self._kwargs = {
+            "script_path": script_path,
+            "env": env,
+            "script_args": script_args,
+            "cloud_compute": cloud_compute,
+            "logger": logger,
+            "code": code,
+            "sweep_id": self.sweep_id,
+            "raise_exception": False,
+            **objective_kwargs,
+        }
         self._trials = {}
-        self._distributions = distributions or objective.distributions()
+        self._distributions = distributions
         self.has_failed = False
         self.restart_count = 0
         self.show = False
@@ -83,15 +78,18 @@ class Optimizer(LightningFlow):
 
         has_told_study = []
 
-        for trial_idx in range(self.num_trials):
-            objective = getattr(self, f"w_{trial_idx}")
+        for trial_id in range(self.num_trials):
+            objective = getattr(self, f"w_{trial_id}", None)
+            if objective is None:
+                objective = self._objective_cls(trial_id=trial_id, **self._kwargs)
+                setattr(self, f"w_{trial_id}", objective)
 
             if self._check_status(objective, WorkStageStatus.NOT_STARTED):
                 trial = self._study.ask(self._distributions)
-                self._trials[trial_idx] = trial
+                self._trials[trial_id] = trial
                 self._logger.on_trial_start(self.sweep_id)
 
-            objective.run(params=self._trials[trial_idx].params, restart_count=self.restart_count)
+            objective.run(params=self._trials[trial_id].params, restart_count=self.restart_count)
 
             if self._check_status(objective, WorkStageStatus.FAILED):
                 self.has_failed = True
@@ -103,7 +101,7 @@ class Optimizer(LightningFlow):
                         trial.report(*report)
                         objective.flow_reports.append(report)
                     if trial.should_prune():
-                        print(f"Trial {trial_idx} pruned.")
+                        print(f"Trial {trial_id} pruned.")
                         objective.pruned = True
                         objective.stop()
                         break
@@ -120,7 +118,7 @@ class Optimizer(LightningFlow):
                 objective.stop()
 
                 print(
-                    f"Trial {trial_idx} finished with value: {objective.best_model_score} and parameters: {objective.params}. "  # noqa: E501
+                    f"Trial {trial_id} finished with value: {objective.best_model_score} and parameters: {objective.params}. "  # noqa: E501
                     f"Best is trial {self._study.best_trial.number} with value: {self._study.best_trial.value}."
                 )
 
@@ -146,9 +144,9 @@ class Optimizer(LightningFlow):
         metrics = [work.best_model_score for work in self.works()]
         if not all(metrics):
             return None
-        for trial_idx, metric in enumerate(metrics):
+        for trial_id, metric in enumerate(metrics):
             if metric == self.best_model_score:
-                return getattr(self, f"w_{trial_idx}").best_model_path
+                return getattr(self, f"w_{trial_id}").best_model_path
 
     def configure_layout(self):
         return self._logger.configure_layout()
