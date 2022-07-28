@@ -11,37 +11,37 @@ git clone https://github.com/PyTorchLightning/lightning-hpo.git
 pip install -e .
 ```
 
-## Use Lightning HPO in your app.
+## HPO makes simple
 
-The only provided classes are: `BaseObjective` and `Optimizer`.
+Here is how to launch 100 trials per batch of 10 over your own script with 2 nodes of 4 GPUs each in the cloud.
 
-```py
+```python
 import optuna
-from lightning_hpo import BaseObjective, Optimizer
+from lightning import CloudCompute, LightningApp
+from lightning_hpo import Optimizer
 
-class MyCustomObjective(BaseObjective):
-
-    def on_after_run(self, result):
-        self.best_model_score = float(result["best_model_score"])
-        self.monitor = result["monitor"]
-
-    @staticmethod
-    def distributions():
-        return {"learning_rate": optuna.distributions.LogUniformDistribution(0.0001, 0.1)}
-
-
-component = Optimizer(
-    script_path=`{RELATIVE_PATH_TO_YOUR_SCRIPT}`,
-    n_trials=100,
-    simultaneous_trials=5,
-    objective_cls=MyCustomObjective,
+app = LightningApp(
+    Optimizer(
+        script_path="train.py",
+        n_trials=50,
+        simultaneous_trials=10,
+        distributions={
+            "model.lr": optuna.distributions.LogUniformDistribution(0.001, 0.1),
+            "model.gamma": optuna.distributions.UniformDistribution(0.5, 0.8),
+            "data.batch_size": optuna.distributions.CategoricalDistribution([16, 32, 64]),
+            "trainer.max_epochs": optuna.distributions.IntUniformDistribution(3, 15),
+        },
+        num_nodes=4,
+        cloud_compute=CloudCompute("gpu-fast-multi"),  # 4 V100.
+        framework="pytorch_lightning",
+        logger="wandb",
+        study=optuna.create_study(direction="maximize"),
+    )
 )
 ```
 
-Run the example with the following command:
-
 ```bash
-python -m lightning run app app.py
+python -m lightning run app app.py --cloud
 ```
 
 ## Select your logger
@@ -170,8 +170,11 @@ Optimizer(
     study=optuna.create_study(
         direction="maximize",
         pruner=optuna.pruners.HyperbandPruner(
-            min_resource=1, max_resource=n_train_iter, reduction_factor=3
-    ),
+            min_resource=1,
+            max_resource=3,
+            reduction_factor=3,
+        ),
+    )
 )
 ```
 

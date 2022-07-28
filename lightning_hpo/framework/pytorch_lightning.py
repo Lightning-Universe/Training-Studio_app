@@ -72,3 +72,7 @@ class ObjectiveLightningTrainingComponent(LightningTrainingComponent):
         for w in self.works():
             w.stop()
         self.has_stopped = True
+
+    @classmethod
+    def distributions(cls):
+        return {}

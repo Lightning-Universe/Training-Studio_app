@@ -1,5 +1,6 @@
 from typing import Optional
 
+import optuna
 from lightning import BuildConfig, CloudCompute, LightningFlow
 from lightning.app.frontend import StreamlitFrontend
 from lightning.app.storage import Drive
@@ -41,6 +42,7 @@ class Sweeper(LightningFlow):
                 num_nodes=config.num_nodes,
                 cloud_build_config=BuildConfig(requirements=config.requirements),
                 logger=config.logger,
+                study=optuna.create_study(direction=config.direction),
             )
             return f"Launched a sweep {config.sweep_id}"
         elif self.sweeps[config.sweep_id].has_failed:
@@ -64,7 +66,45 @@ class Sweeper(LightningFlow):
 def render_fn(state):
     import streamlit as st
 
-    st.write(state.sweeper._state["structures"])
+    sweeps = state.sweeps.items()
+    if not sweeps:
+        st.header("You haven't launched any sweeps yet.")
+        st.write("Here is an example to submit a sweep.")
+        st.code(
+            'lightning sweep train.py --n_trials=2 --num_nodes=2 --model.lr="log_uniform(0.001, 0.1)" --trainer.max_epochs=5 --trainer.callbacks=ModelCheckpoint'
+        )
+        return
+
+    user_sweeps = {}
+    for sweep_id, sweep in sweeps:
+        username = sweep_id.split("-")[0]
+        if username not in user_sweeps:
+            user_sweeps[username] = {}
+        user_sweeps[username][sweep_id] = sweep
+
+    user_tabs = st.tabs(list(user_sweeps))
+    for tab, username, sweep_id in zip(user_tabs, user_sweeps, user_sweeps):
+        with tab:
+            for sweep_id, sweep in user_sweeps[username].items():
+                status = "/ failed" if sweep.has_failed else ""
+                with st.expander(f"{sweep_id} {status}"):
+                    show_report = st.checkbox("Report", value=sweep.show, key=f"report_{sweep_id}")
+                    if show_report:
+                        sweep.show = True
+                    else:
+                        sweep.show = False
+                    for trial_id, trial in sweep.items():
+                        if st.checkbox(f"Trial {trial_id}", key=f"checkbox_{trial_id}_{sweep_id}"):
+                            tab1, tab2, tab3 = st.tabs(["Script Args", "Hyper-Parameters", "Results"])
+                            with tab1:
+                                st.code(trial.script_args)
+                            with tab2:
+                                st.json(trial.params)
+                            with tab3:
+                                try:
+                                    st.json({"best_model_score": trial.ws["0"].best_model_score})
+                                except Exception:
+                                    pass
 
 
 class HPOSweeper(LightningFlow):
@@ -76,7 +116,7 @@ class HPOSweeper(LightningFlow):
         self.sweeper.run()
 
     def configure_layout(self):
-        tabs = self.sweeper.configure_layout()
+        tabs = [{"name": "Team Control", "content": self.sweeper}]
         for sweep in self.sweeper.sweeps.values():
             if sweep.show:
                 tabs += sweep.configure_layout()

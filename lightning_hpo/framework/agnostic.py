@@ -24,7 +24,7 @@ class BaseObjective(TracerPythonScript, ABC):
         self.monitor = None
 
     def configure_tracer(self):
-        assert self.params
+        assert self.params is not None
         tracer = super().configure_tracer()
         LoggerType(self.logger).get_logger().configure_tracer(
             tracer, params=self.params, sweep_id=self.sweep_id, trial_id=self.trial_id
@@ -32,7 +32,7 @@ class BaseObjective(TracerPythonScript, ABC):
         return tracer
 
     def run(self, params: Optional[Dict[str, Any]] = None, restart_count: int = 0):
-        self.params = params
+        self.params = params or {}
         return super().run(params=params)
 
     @abstractmethod

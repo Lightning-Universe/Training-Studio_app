@@ -26,6 +26,7 @@ class SweepConfig(BaseModel):
     cloud_compute: Any
     num_nodes: int = 1
     logger: str
+    direction: str
 
 
 class DistributionParser:
@@ -129,6 +130,13 @@ class SweepCommand(ClientCommand):
         parser.add_argument("--sweep_id", default=None, type=str, help="The sweep you want to run upon.")
         parser.add_argument("--num_nodes", default=1, type=int, help="The number of nodes to train upon.")
         parser.add_argument("--logger", default="streamlit", type=str, help="The logger to use with your sweep.")
+        parser.add_argument(
+            "--direction",
+            default="minimize",
+            choices=["minimize", "maximize"],
+            type=str,
+            help="In which direction to optimize.",
+        )
         hparams, args = parser.parse_known_args()
 
         if any("=" not in arg for arg in args):
@@ -169,6 +177,7 @@ class SweepCommand(ClientCommand):
                 cloud_compute=hparams.cloud_compute,
                 num_nodes=hparams.num_nodes,
                 logger=hparams.logger,
+                direction=hparams.direction,
             )
         )
         print(response)

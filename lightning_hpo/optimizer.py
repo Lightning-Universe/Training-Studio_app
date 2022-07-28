@@ -63,6 +63,7 @@ class Optimizer(LightningFlow):
                 code=code,
                 trial_id=trial_id,
                 sweep_id=self.sweep_id,
+                raise_exception=False,
                 **objective_kwargs,
             )
             setattr(self, f"w_{trial_id}", objective)

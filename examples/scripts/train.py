@@ -15,9 +15,10 @@ train_script_path = __file__
 
 
 class ImageClassifier(LightningModule):
-    def __init__(self, model=None, lr=1.0, gamma=0.7, batch_size=32):
+    def __init__(self, model=None, lr=1.0, gamma=0.7):
         super().__init__()
         self.save_hyperparameters(ignore="model")
+        print(self.hparams)
         self.model = model or Net()
         self.val_acc = Accuracy()
 
@@ -85,10 +86,9 @@ if __name__ == "__main__":
         save_config_overwrite=True,
         run=False,
         trainer_defaults={
-            "max_epochs": 5,
-            "limit_train_batches": 4,
-            "limit_train_batches": 4,
-            "limit_val_batches": 4,
+            "max_epochs": 10,
+            "limit_train_batches": 20,
+            "limit_val_batches": 5,
             "callbacks": [ModelCheckpoint(monitor="val_acc")],
         },
     )
