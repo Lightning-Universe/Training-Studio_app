@@ -1,7 +1,5 @@
-import os
 from abc import ABC, abstractmethod
-from functools import partial
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import optuna
 from lightning.app.components.python import TracerPythonScript
@@ -10,8 +8,8 @@ from lightning_hpo.loggers import LoggerType
 
 
 class BaseObjective(TracerPythonScript, ABC):
-    def __init__(self, *args, logger: str, sweep_id: str, trial_id, **kwargs):
-        super().__init__(*args, raise_exception=True, **kwargs)
+    def __init__(self, *args, logger: str, sweep_id: str, trial_id, raise_exception: bool = False, **kwargs):
+        super().__init__(*args, raise_exception=raise_exception, **kwargs)
         self.trial_id = trial_id
         self.best_model_score = None
         self.best_model_path = None
@@ -29,14 +27,11 @@ class BaseObjective(TracerPythonScript, ABC):
         assert self.params
         tracer = super().configure_tracer()
         LoggerType(self.logger).get_logger().configure_tracer(
-            tracer,
-            params=self.params,
-            sweep_id=self.sweep_id,
-            trial_id=self.trial_id
+            tracer, params=self.params, sweep_id=self.sweep_id, trial_id=self.trial_id
         )
         return tracer
 
-    def run(self, params: Dict[str, Any]):
+    def run(self, params: Optional[Dict[str, Any]] = None, restart_count: int = 0):
         self.params = params
         return super().run(params=params)
 

@@ -19,7 +19,7 @@ if not _root_logger.hasHandlers():
     _logger.propagate = False
 
 from lightning_hpo.__about__ import *  # noqa: E402, F401, F403
-from lightning_hpo.objective import BaseObjective  # noqa: E402
+from lightning_hpo.framework.agnostic import BaseObjective  # noqa: E402
 from lightning_hpo.optimizer import Optimizer  # noqa: E402
 
 _PACKAGE_ROOT = os.path.dirname(__file__)

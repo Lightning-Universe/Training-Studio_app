@@ -140,3 +140,10 @@ wandb
 *lightning-quick-start-quick_start_train*
 flagged
 wandb
+file_server
+sweep-*
+__init__.py
+train.py
+net.py
+thomas-*
+boring_train.py

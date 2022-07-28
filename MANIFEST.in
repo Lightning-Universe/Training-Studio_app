@@ -4,3 +4,4 @@ exclude *.yaml
 exclude *.toml
 exclude *.lightning
 exclude *.lightningignore
+recursive-exclude scripts
