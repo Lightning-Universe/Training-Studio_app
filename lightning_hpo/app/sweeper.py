@@ -123,7 +123,7 @@ def render_fn(state):
                                     }
                                 )
                     with logging_tab:
-                        components.html(f'<a href="{trial.url}">Weights & Biases URL</a>', height=50)
+                        components.html(f'<a href="{trial.url}" target="_blank">Weights & Biases URL</a>', height=50)
 
 
 class HPOSweeper(LightningFlow):
