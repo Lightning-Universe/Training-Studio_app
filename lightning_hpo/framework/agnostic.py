@@ -1,14 +1,33 @@
-from abc import ABC, abstractmethod
-from typing import Any, Dict, Optional
+from abc import ABC
+from typing import Any, Dict, Optional, TypedDict
 
-import optuna
 from lightning.app.components.python import TracerPythonScript
+from lightning.app.utilities.app_helpers import is_overridden
 
 from lightning_hpo.loggers import LoggerType
 
 
+class ObjectiveResult(TypedDict):
+    monitor: str
+    score: float
+    checkpoint: Optional[str]
+
+
 class BaseObjective(TracerPythonScript, ABC):
-    def __init__(self, *args, logger: str, sweep_id: str, trial_id, raise_exception: bool = False, **kwargs):
+    def objective(self, *args, **kwargs):
+        """Override with your own objective logic"""
+
+    def __init__(
+        self,
+        *args,
+        logger: str,
+        sweep_id: str,
+        trial_id,
+        raise_exception: bool = False,
+        function_name: str = "objective",
+        num_nodes: int = 1,  # TODO # Add support for multi node
+        **kwargs
+    ):
         super().__init__(*args, raise_exception=raise_exception, **kwargs)
         self.trial_id = trial_id
         self.best_model_score = None
@@ -22,6 +41,7 @@ class BaseObjective(TracerPythonScript, ABC):
         self._url = None
         self.sweep_id = sweep_id
         self.monitor = None
+        self.function_name = function_name
 
     def configure_tracer(self):
         assert self.params is not None
@@ -33,8 +53,18 @@ class BaseObjective(TracerPythonScript, ABC):
 
     def run(self, params: Optional[Dict[str, Any]] = None, restart_count: int = 0):
         self.params = params or {}
-        return super().run(params=params)
+        if is_overridden("objective", self, BaseObjective):
+            self.objective(**self.params)
+        else:
+            return super().run(params=params)
 
-    @abstractmethod
-    def distributions() -> Dict[str, optuna.distributions.BaseDistribution]:
-        pass
+    def on_after_run(self, global_scripts: Any):
+        objective_fn = global_scripts.get(self.function_name, None)
+        if objective_fn:
+            res = objective_fn(**self.params)
+            if isinstance(res, float):
+                self.monitor = "score"
+                self.best_model_score = res
+            elif isinstance(res, dict):
+                assert isinstance(res, ObjectiveResult)
+        super().on_after_run(global_scripts)

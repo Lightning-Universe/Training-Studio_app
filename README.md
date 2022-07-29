@@ -11,52 +11,88 @@ git clone https://github.com/PyTorchLightning/lightning-hpo.git
 pip install -e .
 ```
 
-## HPO makes simple
+## Getting started
 
-Here is how to launch 100 trials per batch of 10 over your own script with 2 nodes of 4 GPUs each in the cloud.
+Imagine you want to optimize a simple function called `objective` inside a `objective.py` file.
 
 ```python
-import optuna
+# objective.py
+
+
+def objective(x: float):
+    return (x - 2) ** 2
+```
+
+Import a `Sweep` component, provide the path to your script and what you want to optimize on.
+
+```python
+import os.path as ops
 from lightning import CloudCompute, LightningApp
-from lightning_hpo import Optimizer
+from lightning_hpo import Sweep
+from lightning_hpo.distributions import Uniform
 
 app = LightningApp(
-    Optimizer(
-        script_path="train.py",
+    Sweep(
+        script_path=ops.join(ops.dirname(__file__), "scripts/objective.py"),
         n_trials=50,
         simultaneous_trials=10,
+        direction="maximize",
+        distributions={"x": Uniform(-10, 10)},
+    )
+)
+```
+
+Now, you can optimize it locally.
+
+```bash
+python -m lightning run app examples/1_app_agnostic.py
+```
+
+or with ``--cloud`` to run it in the cloud.
+
+```bash
+python -m lightning run app examples/1_app_agnostic.py --cloud
+```
+
+> Note: Locally, each trial runs into its own process, so there is an overhead if your objective is quick.
+
+## PyTorch Lightning Users
+
+Here is how to launch 65 trials per batch of 10 over your own script with 2 nodes of 4 GPUs each in the cloud.
+
+```python
+import os.path as ops
+
+from lightning import LightningApp
+from lightning_hpo.algorithm import OptunaAlgorithm
+from lightning_hpo import Sweep, CloudCompute
+from lightning_hpo.distributions import Uniform, IntUniform, Categorical, LogUniform
+
+app = LightningApp(
+    Sweep(
+        script_path="train.py",
+        n_trials=65,
+        simultaneous_trials=10,
         distributions={
-            "model.lr": optuna.distributions.LogUniformDistribution(0.001, 0.1),
-            "model.gamma": optuna.distributions.UniformDistribution(0.5, 0.8),
-            "data.batch_size": optuna.distributions.CategoricalDistribution([16, 32, 64]),
-            "trainer.max_epochs": optuna.distributions.IntUniformDistribution(3, 15),
+            "model.lr": LogUniform(0.001, 0.1),
+            "model.gamma": Uniform(0.5, 0.8),
+            "data.batch_size": Categorical([16, 32, 64]),
+            "trainer.max_epochs": IntUniform(3, 15),
         },
-        num_nodes=4,
-        cloud_compute=CloudCompute("gpu-fast-multi"),  # 4 V100.
+        algorithm=OptunaAlgorithm(direction="maximize"),
+        cloud_compute=CloudCompute("gpu-fast-multi", count=2),  # 2 * 4 V100
         framework="pytorch_lightning",
         logger="wandb",
-        study=optuna.create_study(direction="maximize"),
+        sweep_id="Optimizing a Simple CNN over MNIST with Lightning HPO",
     )
 )
 ```
 
 ```bash
-python -m lightning run app app.py --cloud
+python -m lightning run app examples/2_app_pytorch_lightning.py --cloud --env WANDB_ENTITY={WANDB_ENTITY} --env WANDB_API_KEY={WANDB_API_KEY}
 ```
 
-## Select your logger
-
-Lightning HPO supports Wandb and Streamlit by default.
-
-```python
-import optuna
-
-Optimizer(..., logger="wandb")
-```
-
-```bash
-python -m lightning run app app.py --env WANDB_ENTITY=YOUR_USERNAME --env WANDB_API_KEY=YOUR_API_KEY --cloud
-```
+![](https://pl-flash-data.s3.amazonaws.com/assets_lightning/sweep_wandb.gif)
 
 ## Convert existing from Optuna scripts to a scalable Lightning App
 
@@ -67,60 +103,49 @@ The Optuna example optimize the value (e.g learning-rate) of a ``SGDClassifier``
 The example above has been re-organized below in order to run as Lightning App.
 
 ```py
-import optuna
-from lightning_hpo import BaseObjective, Optimizer
-from optuna.distributions import LogUniformDistribution
+from lightning import LightningApp
 from sklearn import datasets
+import optuna
 from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import train_test_split
+from lightning_hpo.distributions import LogUniform
+from lightning_hpo.algorithm import OptunaAlgorithm
+from lightning_hpo import BaseObjective, Sweep
 
-from lightning import LightningApp, LightningFlow
 
+class MyObjective(BaseObjective):
 
-class Objective(BaseObjective):
-    def run(self, params):
-        # WARNING: Don't forget to assign those to self,
-        # so they get tracked in the state.
-        self.params = params
+    def objective(self, alpha: float):
 
         iris = datasets.load_iris()
         classes = list(set(iris.target))
-        train_x, valid_x, train_y, valid_y = train_test_split(
-            iris.data, iris.target, test_size=0.25, random_state=0)
+        train_x, valid_x, train_y, valid_y = train_test_split(iris.data, iris.target, test_size=0.25, random_state=0)
 
-        clf = SGDClassifier(alpha=params["alpha"])
+        clf = SGDClassifier(alpha=alpha)
+
+        self.monitor = "accuracy"
 
         for step in range(100):
             clf.partial_fit(train_x, train_y, classes=classes)
-            intermediate_value = 1.0 - clf.score(valid_x, valid_y)
+            intermediate_value = clf.score(valid_x, valid_y)
 
             # WARNING: Assign to reports,
             # so the state is instantly sent to the flow.
             self.reports = self.reports + [[intermediate_value, step]]
 
-        self.best_model_score = 1.0 - clf.score(valid_x, valid_y)
-
-    def distributions(self):
-        return {"alpha": LogUniformDistribution(1e-5, 1e-1)}
+        self.best_model_score = clf.score(valid_x, valid_y)
 
 
-class RootFlow(LightningFlow):
-    def __init__(self):
-        super().__init__()
-        self.optimizer = Optimizer(
-            objective_cls=Objective,
-            n_trials=20,
-            study=optuna.create_study(pruner=optuna.pruners.MedianPruner()),
-        )
-
-    def run(self):
-        self.optimizer.run()
-
-    def configure_layout(self):
-        return {"name": "HyperPlot", "content": self.optimizer.hi_plot}
-
-
-app = LightningApp(RootFlow())
+app = LightningApp(
+    Sweep(
+        objective_cls=MyObjective,
+        n_trials=20,
+        algorithm=OptunaAlgorithm(
+            optuna.create_study(pruner=optuna.pruners.MedianPruner(), direction="maximize")
+        ),
+        distributions={"alpha": LogUniform(1e-5, 1e-1)}
+    )
+)
 ```
 
 Now, your code can run at scale in the cloud by adding the flag ``--cloud``. Plus, you get a neat UI to track the optimization.
@@ -159,21 +184,38 @@ Trail 18 pruned.
 Trail 19 pruned.
 ```
 
+## Select your logger
+
+Lightning HPO supports Wandb and Streamlit by default.
+
+```python
+import optuna
+
+Sweep(..., logger="wandb")
+```
+
+```bash
+python -m lightning run app app.py --env WANDB_ENTITY=YOUR_USERNAME --env WANDB_API_KEY=YOUR_API_KEY --cloud
+```
+
 ## Use advanced algorithms with your Lightning App
 
 Here is how to use the latest research such as [Hyperband paper](http://www.jmlr.org/papers/volume18/16-558/16-558.pdf)
 
 ```python
+from lightning_hpo.algorithm import OptunaAlgorithm
 import optuna
 
-Optimizer(
-    study=optuna.create_study(
-        direction="maximize",
-        pruner=optuna.pruners.HyperbandPruner(
-            min_resource=1,
-            max_resource=3,
-            reduction_factor=3,
-        ),
+Sweep(
+    algorithm=OptunaAlgorithm(
+        optuna.create_study(
+            direction="maximize",
+            pruner=optuna.pruners.HyperbandPruner(
+                min_resource=1,
+                max_resource=3,
+                reduction_factor=3,
+            ),
+        )
     )
 )
 ```

@@ -1,15 +1,17 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List, Union
-from lightning import LightningFlow, LightningWork
+from typing import Any, Dict, Optional
+
+from lightning import LightningFlow
 
 
 class Logger(ABC):
-
-    def on_trial_start(self, sweep_id: str):
+    def on_after_trial_start(self, sweep_id: str):
         ...
 
     @abstractmethod
-    def on_trial_end(self, sweep_id: str, trial_id: int, monitor: str, score: float, params: Dict[str, Any]):
+    def on_after_trial_end(
+        self, sweep_id: str, trial_id: int, monitor: Optional[str], score: Optional[float], params: Dict[str, Any]
+    ):
         ...
 
     @abstractmethod

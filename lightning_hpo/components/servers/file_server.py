@@ -1,23 +1,20 @@
 import json
+import logging
 import os
 import tarfile
+import traceback
 import uuid
 import zipfile
 from pathlib import Path
+
 import lightning as L
 from lightning.app.storage import Drive
-import traceback
-import logging
 
 _logger = logging.getLogger(__name__)
 
+
 class FileServer(L.LightningWork):
-    def __init__(
-        self, drive: Drive,
-        base_dir: str = "",
-        chunk_size=10240,
-        **kwargs
-    ):
+    def __init__(self, drive: Drive, base_dir: str = "", chunk_size=10240, **kwargs):
         """This component uploads, downloads files to your application.
 
         Arguments:
@@ -141,7 +138,7 @@ class FileServer(L.LightningWork):
         CORS(flask_app)
 
         # 3: Define the upload file endpoint
-        @flask_app.route("/uploadfile/<id>", methods=['PUT'])
+        @flask_app.route("/uploadfile/<id>", methods=["PUT"])
         def upload_file(id: str):
             try:
                 """Upload a file directly as form data."""

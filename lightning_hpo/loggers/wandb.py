@@ -1,11 +1,12 @@
 import os
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
 
 from lightning import LightningFlow
+
 from lightning_hpo.loggers.base import Logger
 
-class WandB(Logger):
 
+class WandB(Logger):
     def __init__(self):
         super().__init__()
         import wandb
@@ -13,13 +14,13 @@ class WandB(Logger):
         self._validate_auth()
         os.environ["WANDB_REQUIRE_REPORT_EDITING_V0"] = "1"
         self._api = wandb.Api(api_key=os.environ.get("WANDB_API_KEY"))
-        self.entity = os.getenv('WANDB_ENTITY')
+        self.entity = os.getenv("WANDB_ENTITY")
         self.sweep_id: Optional[str] = None
         self.storage_id: Optional[str] = None
         self.report_url: Optional[str] = None
         self.report = None
 
-    def on_trial_start(
+    def on_after_trial_start(
         self,
         sweep_id: str,
         title: Optional[str] = None,
@@ -27,7 +28,6 @@ class WandB(Logger):
     ):
 
         import wandb
-        from wandb.apis import reports
 
         if self.sweep_id:
             return
@@ -44,7 +44,7 @@ class WandB(Logger):
         self.report_url = f"https://wandb.ai/{self.entity}/{self.sweep_id}/reports/{self.sweep_id}--{self.report.id}"
         self.report_url = f"https://wandb.ai/{self.entity}/{self.sweep_id}/reports/{self.sweep_id}--{self.report.id}"
 
-    def on_trial_end(self, sweep_id: str, trial_id: int, monitor: str, score: float, params: Dict[str, Any]):
+    def on_after_trial_end(self, sweep_id: str, trial_id: int, monitor: str, score: float, params: Dict[str, Any]):
         from wandb.apis import reports
 
         if getattr(self.report, "blocks"):
@@ -57,7 +57,7 @@ class WandB(Logger):
         panel_grid.runsets = [run_set]
         keys = list(params.keys()) + [monitor]
         coords = reports.ParallelCoordinatesPlot([reports.PCColumn(p) for p in keys])
-        coords.layout = { "x": 0, "y": 0, "w": 24, "h": 10 }
+        coords.layout = {"x": 0, "y": 0, "w": 24, "h": 10}
         coords.entity = self.entity
         coords.project = self.sweep_id
         panel_grid.panels = [coords]

@@ -7,10 +7,10 @@ from lightning.app.storage import Drive
 from lightning.app.storage.path import Path
 from lightning.app.structures import Dict
 
-from lightning_hpo import Optimizer
+from lightning_hpo import Sweep
 from lightning_hpo.commands.sweep import SweepCommand, SweepConfig
-from lightning_hpo.file_server import FileServer
-from lightning_hpo.utils import config_to_distributions, get_best_model_path
+from lightning_hpo.servers.file_server import Server
+from lightning_hpo.utilities.utils import config_to_distributions, get_best_model_path
 
 
 class Sweeper(LightningFlow):
@@ -18,7 +18,7 @@ class Sweeper(LightningFlow):
         super().__init__()
         self.sweeps = Dict()
         self.drive = Drive("lit://code")
-        self.file_server = FileServer(self.drive)
+        self.file_server = Server(self.drive)
 
     def run(self):
         self.file_server.run()
@@ -29,7 +29,7 @@ class Sweeper(LightningFlow):
     def create_sweep(self, config: SweepConfig) -> str:
         sweep_ids = list(self.sweeps.keys())
         if config.sweep_id not in sweep_ids:
-            self.sweeps[config.sweep_id] = Optimizer(
+            self.sweeps[config.sweep_id] = Sweep(
                 script_path=config.script_path,
                 n_trials=config.n_trials,
                 simultaneous_trials=config.simultaneous_trials,
