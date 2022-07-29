@@ -16,9 +16,6 @@ pip install -e .
 Imagine you want to optimize a simple function called `objective` inside a `objective.py` file.
 
 ```python
-# objective.py
-
-
 def objective(x: float):
     return (x - 2) ** 2
 ```
