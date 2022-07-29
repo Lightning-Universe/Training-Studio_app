@@ -53,6 +53,8 @@ python -m lightning run app examples/1_app_agnostic.py --cloud
 
 > Note: Locally, each trial runs into its own process, so there is an overhead if your objective is quick.
 
+Find the example [here](./examples/1_app_agnostic.py)
+
 ## PyTorch Lightning Users
 
 Here is how to launch 70 trials per batch of 10 over your own script with 2 nodes of 4 GPUs each in the cloud.
@@ -88,6 +90,8 @@ app = LightningApp(
 ```bash
 python -m lightning run app examples/2_app_pytorch_lightning.py --cloud --env WANDB_ENTITY={WANDB_ENTITY} --env WANDB_API_KEY={WANDB_API_KEY}
 ```
+
+Find the example [here](./examples/2_app_pytorch_lightning.py)
 
 ![Lightning App UI](https://pl-flash-data.s3.amazonaws.com/assets_lightning/wandb2.png)
 
@@ -145,14 +149,10 @@ app = LightningApp(
 )
 ```
 
-Now, your code can run at scale in the cloud by adding the flag ``--cloud``. Plus, you get a neat UI to track the optimization.
-
 ![Lightning App UI](https://pl-flash-data.s3.amazonaws.com/assets_lightning/lightning_hpo_optimizer.png)
 
-Simply run the following commands:
-
-```py
-lightning run app app_sklearn.py
+```bash
+python -m lightning run app examples/3_app_sklearn.py
 ```
 
 As you can see, several trials were pruned (stopped) before they finished all of the iterations. Same as when using pure optuna.
@@ -180,6 +180,8 @@ Trial 17 finished with value: 0.052631578947368474 and parameters: {'alpha': 0.0
 Trail 18 pruned.
 Trail 19 pruned.
 ```
+
+Find the example [here](./examples/3_app_sklearn.py)
 
 ## Select your logger
 
@@ -222,3 +224,12 @@ python -m lightning run app app_hyperband.py --cloud
 ```
 
 Learn more [here](https://optuna.readthedocs.io/en/stable/tutorial/10_key_features/003_efficient_optimization_algorithms.html?highlight=hyperband#activating-pruners)
+
+
+## Use the Team HPO App
+
+WIP, but it is going to be awesome !
+
+```bash
+python -m lightning run app examples/4_app_sweeper.py
+```
