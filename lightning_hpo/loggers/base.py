@@ -25,3 +25,7 @@ class Logger(ABC):
     @abstractmethod
     def configure_tracer(self, tracer, sweep_id: str, trial_id: int, params: Dict[str, Any]):
         ...
+
+    @abstractmethod
+    def get_url(self, trial_id: int) -> Optional[str]:
+        ...

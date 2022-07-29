@@ -42,6 +42,7 @@ class BaseObjective(TracerPythonScript, ABC):
         self.sweep_id = sweep_id
         self.monitor = None
         self.function_name = function_name
+        self.has_stored = False
 
     def configure_tracer(self):
         assert self.params is not None

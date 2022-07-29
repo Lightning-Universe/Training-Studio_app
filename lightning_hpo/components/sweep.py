@@ -1,5 +1,5 @@
 import uuid
-from typing import Any, Dict, Optional, Type, Union
+from typing import Any, Dict, List, Optional, Type, Union
 
 from lightning import LightningFlow
 from lightning.app.components.python.tracer import Code
@@ -8,6 +8,7 @@ from lightning.app.utilities.enum import WorkStageStatus
 
 from lightning_hpo.algorithm.base import Algorithm
 from lightning_hpo.algorithm.optuna import OptunaAlgorithm
+from lightning_hpo.components.servers.db.models import Trial
 from lightning_hpo.distributions import Distribution
 from lightning_hpo.framework.agnostic import BaseObjective
 from lightning_hpo.loggers import LoggerType
@@ -141,3 +142,23 @@ class Sweep(LightningFlow):
             objective = self._objective_cls(trial_id=trial_id, **self._kwargs)
             setattr(self, f"w_{trial_id}", objective)
         return objective
+
+    def get_trials(self) -> List[Trial]:
+        trials = []
+        for trial_id in range(self.num_trials):
+            objective = getattr(self, f"w_{trial_id}", None)
+            if objective and (objective.has_stopped or objective.has_failed) and not objective.has_stored:
+                trial = Trial(
+                    sweep_id=self.sweep_id,
+                    trial_id=trial_id,
+                    best_model_score=objective.best_model_score,
+                    monitor=objective.monitor,
+                    name=objective.name,
+                    best_model_path=str(objective.best_model_path),
+                    has_succeeded=not objective.has_failed,
+                    url=self._logger.get_url(trial_id),
+                    params=str(objective.params),
+                )
+                objective.has_stored = True
+                trials.append(trial)
+        return trials

@@ -50,6 +50,7 @@ class ObjectiveLightningTrainingComponent(LightningTrainingComponent):
         self.restart_count = 0
         self.sweep_id = sweep_id
         self.reports = []
+        self.has_stored = False
 
     def run(self, params: Optional[Dict[str, Any]] = None, restart_count: int = 0):
         self.params = params
@@ -67,6 +68,10 @@ class ObjectiveLightningTrainingComponent(LightningTrainingComponent):
     @property
     def best_model_score(self):
         return self.ws[0].best_model_score
+
+    @property
+    def has_failed(self) -> bool:
+        return any(w.has_failed for w in self.works())
 
     def stop(self):
         for w in self.works():

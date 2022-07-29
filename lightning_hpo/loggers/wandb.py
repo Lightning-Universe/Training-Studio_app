@@ -105,6 +105,11 @@ class WandB(Logger):
 
         tracer.add_traced(Trainer, "__init__", pre_fn=trainer_pre_fn)
 
+    def get_url(self, trial_id: int) -> None:
+        if self.storage_id is not None:
+            return f"https://wandb.ai/{self.entity}/{self.sweep_id}/reports/{self.sweep_id}--{self.storage_id}"
+        return f"https://wandb.ai/{self.entity}/{self.sweep_id}/reports/{self.sweep_id}"
+
     @staticmethod
     def _validate_auth():
         if os.getenv("WANDB_API_KEY") is None or os.getenv("WANDB_ENTITY") is None:

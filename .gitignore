@@ -147,3 +147,4 @@ train.py
 net.py
 thomas-*
 boring_train.py
+database.db

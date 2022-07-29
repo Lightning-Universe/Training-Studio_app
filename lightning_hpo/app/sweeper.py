@@ -1,6 +1,7 @@
-from typing import Optional
+from typing import List, Optional
 
 import optuna
+import requests
 from lightning import BuildConfig, LightningFlow
 from lightning.app.frontend import StreamlitFrontend
 from lightning.app.storage import Drive
@@ -10,22 +11,34 @@ from lightning.app.structures import Dict
 from lightning_hpo import Sweep
 from lightning_hpo.algorithm import OptunaAlgorithm
 from lightning_hpo.commands.sweep import SweepCommand, SweepConfig
+from lightning_hpo.components.servers.db.models import Trial
+from lightning_hpo.components.servers.db.server import Database
+from lightning_hpo.components.servers.db.visualization import DatabaseViz
 from lightning_hpo.components.servers.file_server import FileServer
 from lightning_hpo.utilities.utils import CloudCompute, get_best_model_path
 
 
 class Sweeper(LightningFlow):
-    def __init__(self):
+    def __init__(self, use_db_viz: bool = True):
         super().__init__()
         self.sweeps = Dict()
         self.drive = Drive("lit://code")
         self.file_server = FileServer(self.drive)
+        self.db = Database()
+        self.db_viz = DatabaseViz()
 
     def run(self):
         self.file_server.run()
-        if self.file_server.alive():
+        self.db.run()
+        self.db_viz.run()
+        if self.file_server.alive() and self.db.alive():
+            trials = []
             for sweep in self.sweeps.values():
                 sweep.run()
+                trials.extend(sweep.get_trials())
+            if trials:
+                for trial in trials:
+                    requests.post(self.db.url + "/trial", data=trial.json())
 
     def create_sweep(self, config: SweepConfig) -> str:
         sweep_ids = list(self.sweeps.keys())
@@ -65,9 +78,17 @@ class Sweeper(LightningFlow):
 
 def render_fn(state):
     import streamlit as st
+    import streamlit.components.v1 as components
+    from sqlmodel import create_engine, select, Session
 
-    sweeps = state.sweeps.items()
-    if not sweeps:
+    if "database" not in st.session_state:
+        engine = create_engine(f"sqlite:///{state.db.db_file_name}", echo=True)
+        st.session_state["engine"] = engine
+
+    with Session(st.session_state["engine"]) as session:
+        trials: List[Trial] = session.exec(select(Trial)).all()
+
+    if not trials:
         st.header("You haven't launched any sweeps yet.")
         st.write("Here is an example to submit a sweep.")
         st.code(
@@ -76,35 +97,33 @@ def render_fn(state):
         return
 
     user_sweeps = {}
-    for sweep_id, sweep in sweeps:
-        username = sweep_id.split("-")[0]
+    for trial in trials:
+        username = trial.sweep_id.split("-")[0]
         if username not in user_sweeps:
             user_sweeps[username] = {}
-        user_sweeps[username][sweep_id] = sweep
+        if trial.sweep_id not in user_sweeps[username]:
+            user_sweeps[username][trial.sweep_id] = []
+        user_sweeps[username][trial.sweep_id].append(trial)
 
     user_tabs = st.tabs(list(user_sweeps))
-    for tab, username, sweep_id in zip(user_tabs, user_sweeps, user_sweeps):
+    for tab, username in zip(user_tabs, user_sweeps):
         with tab:
-            for sweep_id, sweep in user_sweeps[username].items():
-                status = "/ failed" if sweep.has_failed else ""
+            for sweep_id, trials in user_sweeps[username].items():
+                status = "/ Succeeded" if trial.has_succeeded else "/ Failed"
                 with st.expander(f"{sweep_id} {status}"):
-                    show_report = st.checkbox("Report", value=sweep.show, key=f"report_{sweep_id}")
-                    if show_report:
-                        sweep.show = True
-                    else:
-                        sweep.show = False
-                    for trial_id, trial in sweep.items():
-                        if st.checkbox(f"Trial {trial_id}", key=f"checkbox_{trial_id}_{sweep_id}"):
-                            tab1, tab2, tab3 = st.tabs(["Script Args", "Hyper-Parameters", "Results"])
-                            with tab1:
-                                st.code(trial.script_args)
-                            with tab2:
-                                st.json(trial.params)
-                            with tab3:
-                                try:
-                                    st.json({"best_model_score": trial.ws["0"].best_model_score})
-                                except Exception:
-                                    pass
+                    trials_tab, logging_tab = st.tabs(["Trials", "Logging"])
+                    with trials_tab:
+                        for trial in trials:
+                            if st.checkbox(f"Trial {trial.trial_id}", key=f"checkbox_{trial.id}_{sweep_id}"):
+                                st.json(
+                                    {
+                                        "params": trial.params,
+                                        "monitor": trial.monitor,
+                                        "best_model_score": trial.best_model_score,
+                                    }
+                                )
+                    with logging_tab:
+                        components.html(f'<a href="{trial.url}">Weights & Biases URL</a>', height=50)
 
 
 class HPOSweeper(LightningFlow):
@@ -117,6 +136,7 @@ class HPOSweeper(LightningFlow):
 
     def configure_layout(self):
         tabs = [{"name": "Team Control", "content": self.sweeper}]
+        tabs += [{"name": "Database Viz", "content": self.sweeper.db_viz}]
         for sweep in self.sweeper.sweeps.values():
             if sweep.show:
                 tabs += sweep.configure_layout()
