@@ -10,8 +10,8 @@ from lightning.app.storage import Path
 from lightning.app.utilities.enum import WorkStageStatus
 from optuna.distributions import CategoricalDistribution, LogUniformDistribution, UniformDistribution
 
-from lightning_hpo import BaseObjective
 from lightning_hpo.framework import _OBJECTIVE_FRAMEWORK
+from lightning_hpo.framework.agnostic import BaseObjective
 
 
 @dataclass

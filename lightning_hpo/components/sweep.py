@@ -67,14 +67,16 @@ class Sweep(LightningFlow):
             "env": env,
             "script_args": script_args,
             "cloud_compute": cloud_compute,
-            "num_nodes": cloud_compute.count if cloud_compute else 1,
+            "num_nodes": getattr(cloud_compute, "count", 1) if cloud_compute else 1,
             "logger": logger,
             "code": code,
             "sweep_id": self.sweep_id,
             "raise_exception": False,
             **objective_kwargs,
         }
-        self._algorithm.register_distributions({k: d.to_dict() for k, d in (distributions or {}).items()})
+        self._algorithm.register_distributions(
+            {k: d.to_dict() if isinstance(d, Distribution) else d for k, d in (distributions or {}).items()}
+        )
         self.has_failed = False
         self.restart_count = 0
         self.show = False

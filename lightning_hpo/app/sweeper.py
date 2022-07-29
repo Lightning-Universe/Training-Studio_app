@@ -1,16 +1,17 @@
 from typing import Optional
 
 import optuna
-from lightning import BuildConfig, CloudCompute, LightningFlow
+from lightning import BuildConfig, LightningFlow
 from lightning.app.frontend import StreamlitFrontend
 from lightning.app.storage import Drive
 from lightning.app.storage.path import Path
 from lightning.app.structures import Dict
 
 from lightning_hpo import Sweep
+from lightning_hpo.algorithm import OptunaAlgorithm
 from lightning_hpo.commands.sweep import SweepCommand, SweepConfig
-from lightning_hpo.servers.file_server import Server
-from lightning_hpo.utilities.utils import config_to_distributions, get_best_model_path
+from lightning_hpo.components.servers.file_server import FileServer
+from lightning_hpo.utilities.utils import CloudCompute, get_best_model_path
 
 
 class Sweeper(LightningFlow):
@@ -18,7 +19,7 @@ class Sweeper(LightningFlow):
         super().__init__()
         self.sweeps = Dict()
         self.drive = Drive("lit://code")
-        self.file_server = Server(self.drive)
+        self.file_server = FileServer(self.drive)
 
     def run(self):
         self.file_server.run()
@@ -35,14 +36,13 @@ class Sweeper(LightningFlow):
                 simultaneous_trials=config.simultaneous_trials,
                 framework=config.framework,
                 script_args=config.script_args,
-                distributions=config_to_distributions(config),
-                cloud_compute=CloudCompute(config.cloud_compute),
+                distributions=config.distributions,
+                cloud_compute=CloudCompute(config.cloud_compute, config.num_nodes),
                 sweep_id=config.sweep_id,
                 code={"drive": self.drive, "name": config.sweep_id},
-                num_nodes=config.num_nodes,
                 cloud_build_config=BuildConfig(requirements=config.requirements),
                 logger=config.logger,
-                study=optuna.create_study(direction=config.direction),
+                algorithm=OptunaAlgorithm(optuna.create_study(direction=config.direction)),
             )
             return f"Launched a sweep {config.sweep_id}"
         elif self.sweeps[config.sweep_id].has_failed:

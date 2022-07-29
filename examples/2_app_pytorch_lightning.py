@@ -9,8 +9,8 @@ from lightning_hpo.distributions import Categorical, IntUniform, LogUniform, Uni
 app = LightningApp(
     Sweep(
         script_path=ops.join(ops.dirname(__file__), "scripts/train.py"),
-        n_trials=100,
-        simultaneous_trials=10,
+        n_trials=5,
+        simultaneous_trials=2,
         distributions={
             "model.lr": LogUniform(0.001, 0.1),
             "model.gamma": Uniform(0.5, 0.8),

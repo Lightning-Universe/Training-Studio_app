@@ -27,6 +27,8 @@ class WandB(Logger):
         desc: Optional[str] = None,
     ):
 
+        from wandb.apis import reports  # noqa F401
+
         import wandb
 
         if self.sweep_id:

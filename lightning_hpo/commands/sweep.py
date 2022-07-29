@@ -49,7 +49,7 @@ class UniformDistributionParser(DistributionParser):
         name, value = argument.split("=")
         regex = "[0-9]*\.[0-9]*"  # noqa W605
         low, high = re.findall(regex, value)
-        return {name: {"distribution": "uniform", "low": float(low), "high": float(high)}}
+        return {name: {"distribution": "uniform", "params": {"low": float(low), "high": float(high)}}}
 
 
 class LogUniformDistributionParser(DistributionParser):
@@ -62,7 +62,7 @@ class LogUniformDistributionParser(DistributionParser):
         name, value = argument.split("=")
         regex = "[0-9]*\.[0-9]*"  # noqa W605
         low, high = re.findall(regex, value)
-        return {name: {"distribution": "log_uniform", "low": float(low), "high": float(high)}}
+        return {name: {"distribution": "log_uniform", "params": {"low": float(low), "high": float(high)}}}
 
 
 class CategoricalDistributionParser(DistributionParser):
@@ -74,12 +74,7 @@ class CategoricalDistributionParser(DistributionParser):
     def parse(argument: str):
         name, value = argument.split("=")
         choices = value.split("[")[1].split("]")[0].split(", ")
-        return {
-            name: {
-                "distribution": "categorical",
-                "choices": choices,
-            }
-        }
+        return {name: {"distribution": "categorical", "params": {"choices": choices}}}
 
 
 class CustomFileUploader(FileUploader):
