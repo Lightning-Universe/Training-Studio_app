@@ -98,12 +98,12 @@ def render_fn(state):
 
     user_sweeps = {}
     for trial in trials:
-        username = trial.sweep_id.split("-")[0]
+        username, sweep_id = trial.sweep_id.split("-")
         if username not in user_sweeps:
             user_sweeps[username] = {}
-        if trial.sweep_id not in user_sweeps[username]:
-            user_sweeps[username][trial.sweep_id] = []
-        user_sweeps[username][trial.sweep_id].append(trial)
+        if sweep_id not in user_sweeps[username]:
+            user_sweeps[username][sweep_id] = []
+        user_sweeps[username][sweep_id].append(trial)
 
     user_tabs = st.tabs(list(user_sweeps))
     for tab, username in zip(user_tabs, user_sweeps):
