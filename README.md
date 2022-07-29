@@ -30,7 +30,7 @@ from lightning_hpo.distributions import Uniform
 
 app = LightningApp(
     Sweep(
-        script_path=ops.join(ops.dirname(__file__), "scripts/objective.py"),
+        script_path="objective.py",
         n_trials=50,
         simultaneous_trials=10,
         direction="maximize",
@@ -55,7 +55,7 @@ python -m lightning run app examples/1_app_agnostic.py --cloud
 
 ## PyTorch Lightning Users
 
-Here is how to launch 65 trials per batch of 10 over your own script with 2 nodes of 4 GPUs each in the cloud.
+Here is how to launch 70 trials per batch of 10 over your own script with 2 nodes of 4 GPUs each in the cloud.
 
 ```python
 import os.path as ops
@@ -68,7 +68,7 @@ from lightning_hpo.distributions import Uniform, IntUniform, Categorical, LogUni
 app = LightningApp(
     Sweep(
         script_path="train.py",
-        n_trials=65,
+        n_trials=70,
         simultaneous_trials=10,
         distributions={
             "model.lr": LogUniform(0.001, 0.1),
@@ -89,7 +89,7 @@ app = LightningApp(
 python -m lightning run app examples/2_app_pytorch_lightning.py --cloud --env WANDB_ENTITY={WANDB_ENTITY} --env WANDB_API_KEY={WANDB_API_KEY}
 ```
 
-![](https://pl-flash-data.s3.amazonaws.com/assets_lightning/sweep_wandb.gif)
+![Lightning App UI](https://pl-flash-data.s3.amazonaws.com/assets_lightning/wandb2.png)
 
 ## Convert existing from Optuna scripts to a scalable Lightning App
 
