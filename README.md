@@ -219,10 +219,6 @@ Sweep(
 )
 ```
 
-```bash
-python -m lightning run app app_hyperband.py --cloud
-```
-
 Learn more [here](https://optuna.readthedocs.io/en/stable/tutorial/10_key_features/003_efficient_optimization_algorithms.html?highlight=hyperband#activating-pruners)
 
 
