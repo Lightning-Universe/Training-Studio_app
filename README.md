@@ -24,7 +24,7 @@ Import a `Sweep` component, provide the path to your script and what you want to
 
 ```python
 import os.path as ops
-from lightning import CloudCompute, LightningApp
+from lightning import LightningApp
 from lightning_hpo import Sweep
 from lightning_hpo.distributions import Uniform
 
