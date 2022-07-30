@@ -57,7 +57,7 @@ Find the example [here](./examples/1_app_agnostic.py)
 
 ## PyTorch Lightning Users
 
-Here is how to launch 70 trials per batch of 10 over your own script with 2 nodes of 4 GPUs each in the cloud.
+Here is how to launch 70 trials 10 at a times with 2 nodes of 4 GPUs for each in the cloud.
 
 ```python
 import os.path as ops
