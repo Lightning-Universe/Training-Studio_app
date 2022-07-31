@@ -8,7 +8,7 @@ This library relies on [Optuna](https://optuna.readthedocs.io/en/stable/) for pr
 
 ```bash
 git clone https://github.com/PyTorchLightning/lightning-hpo.git
-pip install -e .
+cd lightning-hpo && pip install -e .
 ```
 
 ## Getting started
