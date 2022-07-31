@@ -51,7 +51,7 @@ or with ``--cloud`` to run it in the cloud.
 python -m lightning run app examples/1_app_agnostic.py --cloud
 ```
 
-> Note: Locally, each trial runs into its own process, so there is an overhead if your objective is quick.
+> Note: Locally, each trial runs into its own process, so there is an overhead if your objective is quick to run.
 
 Find the example [here](./examples/1_app_agnostic.py)
 
