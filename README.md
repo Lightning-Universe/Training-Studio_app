@@ -57,7 +57,7 @@ Find the example [here](./examples/1_app_agnostic.py)
 
 ## PyTorch Lightning Users
 
-Here is how to launch 70 trials 10 at a times with 2 nodes of 4 GPUs for each in the cloud.
+Here is how to launch 100 trials 10 at a times with 2 nodes of 4 GPUs for each in the cloud.
 
 ```python
 import os.path as ops
@@ -70,7 +70,7 @@ from lightning_hpo.distributions import Uniform, IntUniform, Categorical, LogUni
 app = LightningApp(
     Sweep(
         script_path="train.py",
-        n_trials=70,
+        n_trials=100,
         simultaneous_trials=10,
         distributions={
             "model.lr": LogUniform(0.001, 0.1),
