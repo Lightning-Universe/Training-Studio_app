@@ -100,11 +100,10 @@ def pydantic_column_type(pydantic_type):
 
 
 class Params(SQLModel, table=False):
-    params: Dict[str, str]
+    params: Dict[str, str] = Field(sa_column=Column(pydantic_column_type(Dict[str, str])))
 
 
 class Distributions(SQLModel, table=False):
-    name: str
     distribution: str
     params: Params = Field(sa_column=Column(pydantic_column_type(Params)))
 
@@ -115,10 +114,12 @@ class SweepConfig(SQLModel, table=True):
     script_path: str
     n_trials: int
     simultaneous_trials: int
-    requirements: List[str]
-    script_args: List[str]
-    # TODO: How to support a List[Optional[Distributions]] here ?
-    distributions: Optional[Distributions] = Field(sa_column=Column(pydantic_column_type(Distributions)))
+    num_trials: int = 0
+    requirements: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
+    script_args: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
+    distributions: Dict[str, Distributions] = Field(
+        ..., sa_column=Column(pydantic_column_type(Dict[str, Distributions]))
+    )
     framework: str
     cloud_compute: str
     num_nodes: int = 1
@@ -257,10 +258,10 @@ class SweepCommand(ClientCommand):
         repo.package()
         repo.upload(url=f"{url}/uploadfile/{sweep_id}")
 
-        distributions = [
-            Distributions(name=k, distribution=x["distribution"], params=Params(params=x["params"]))
+        distributions = {
+            k: Distributions(distribution=x["distribution"], params=Params(params=x["params"]))
             for k, x in distributions.items()
-        ]
+        }
 
         config = SweepConfig(
             sweep_id=sweep_id,
@@ -269,7 +270,7 @@ class SweepCommand(ClientCommand):
             simultaneous_trials=hparams.simultaneous_trials,
             requirements=hparams.requirements,
             script_args=script_args,
-            distributions=distributions[0],
+            distributions=distributions,
             framework=hparams.framework,
             cloud_compute=hparams.cloud_compute,
             num_nodes=hparams.num_nodes,
