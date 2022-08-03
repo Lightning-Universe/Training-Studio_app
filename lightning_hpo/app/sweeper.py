@@ -36,12 +36,15 @@ class Sweeper(LightningFlow):
                 trials.extend(sweep.get_trials())
             if trials:
                 for trial in trials:
+                    breakpoint()
                     resp = requests.post(self.db.url + "/trial", data=trial.json())
                     assert resp.status_code == 200
 
     def create_sweep(self, config: SweepConfig) -> str:
         sweep_ids = list(self.sweeps.keys())
         if config.sweep_id not in sweep_ids:
+            breakpoint()
+            resp = requests.post(self.db.url + "/sweep", data=config.json())
             self.sweeps[config.sweep_id] = Sweep.from_config(
                 config,
                 code={"drive": self.drive, "name": config.sweep_id},

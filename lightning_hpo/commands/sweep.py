@@ -4,16 +4,97 @@ import sys
 from argparse import ArgumentParser
 from getpass import getuser
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Generic, TypeVar
 from uuid import uuid4
 
 import requests
 from lightning.app.source_code import LocalSourceCodeDir
 from lightning.app.source_code.uploader import FileUploader
 from lightning.app.utilities.commands import ClientCommand
-from pydantic import BaseModel
 from sqlalchemy import Column
-from sqlmodel import Field, JSON, SQLModel
+from pydantic import BaseModel
+from sqlmodel import Field, JSON, SQLModel, TypeDecorator
+import json
+from fastapi.encoders import jsonable_encoder
+
+T = TypeVar("T")
+
+# Taken from https://github.com/tiangolo/sqlmodel/issues/63#issuecomment-1081555082
+def pydantic_column_type(pydantic_type):
+    class PydanticJSONType(TypeDecorator, Generic[T]):
+        impl = JSON()
+
+        def __init__(
+            self,
+            json_encoder=json,
+        ):
+            self.json_encoder = json_encoder
+            super(PydanticJSONType, self).__init__()
+
+        def bind_processor(self, dialect):
+            impl_processor = self.impl.bind_processor(dialect)
+            dumps = self.json_encoder.dumps
+            if impl_processor:
+
+                def process(value: T):
+                    if value is not None:
+                        if isinstance(pydantic_type, BaseModel):
+                            # This allows to assign non-InDB models and if they're
+                            # compatible, they're directly parsed into the InDB
+                            # representation, thus hiding the implementation in the
+                            # background. However, the InDB model will still be returned
+                            value_to_dump = pydantic_type.from_orm(value)
+                        else:
+                            value_to_dump = value
+                        value = jsonable_encoder(value_to_dump)
+                    return impl_processor(value)
+
+            else:
+
+                def process(value):
+                    if isinstance(pydantic_type, BaseModel):
+                        # This allows to assign non-InDB models and if they're
+                        # compatible, they're directly parsed into the InDB
+                        # representation, thus hiding the implementation in the
+                        # background. However, the InDB model will still be returned
+                        value_to_dump = pydantic_type.from_orm(value)
+                    else:
+                        value_to_dump = value
+                    value = dumps(jsonable_encoder(value_to_dump))
+                    return value
+
+            return process
+
+        def result_processor(self, dialect, coltype) -> T:
+            impl_processor = self.impl.result_processor(dialect, coltype)
+            if impl_processor:
+
+                def process(value):
+                    value = impl_processor(value)
+                    if value is None:
+                        return None
+
+                    data = value
+                    # Explicitly use the generic directly, not type(T)
+                    full_obj = parse_obj_as(pydantic_type, data)
+                    return full_obj
+
+            else:
+
+                def process(value):
+                    if value is None:
+                        return None
+
+                    # Explicitly use the generic directly, not type(T)
+                    full_obj = parse_obj_as(pydantic_type, value)
+                    return full_obj
+
+            return process
+
+        def compare_values(self, x, y):
+            return x == y
+
+    return PydanticJSONType
 
 
 class Params(SQLModel, table=False):
@@ -21,11 +102,12 @@ class Params(SQLModel, table=False):
 
 
 class Distributions(SQLModel, table=False):
-    distribution: Dict[str, Params] = Field(sa_column=Column(JSON))
+    name: str
+    distribution: str
+    params: Params = Field(sa_column=Column(pydantic_column_type(Params)))
 
 
-# class SweepConfig(SQLModel, table=True):
-class SweepConfig(BaseModel):
+class SweepConfig(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     sweep_id: str
     script_path: str
@@ -33,8 +115,8 @@ class SweepConfig(BaseModel):
     simultaneous_trials: int
     requirements: List[str]
     script_args: List[str]
-    # distributions: Dict[str, Distributions] = Field(sa_column=Column(JSON))
-    distributions: Dict[str, Any]
+    # TODO: How to support a List[Optional[Distributions]] here ?
+    distributions: Optional[Distributions] = Field(sa_column=Column(pydantic_column_type(Distributions)))
     framework: str
     cloud_compute: str
     num_nodes: int = 1
@@ -173,10 +255,10 @@ class SweepCommand(ClientCommand):
         repo.package()
         repo.upload(url=f"{url}/uploadfile/{sweep_id}")
 
-        # distributions = {
-        #     k: Distributions(distribution={x['distribution']: Params(params=x['params'])})
-        #     for k, x in distributions.items()
-        # }
+        distributions = [
+            Distributions(name=k, distribution=x['distribution'], params=Params(params=x['params']))
+            for k, x in distributions.items()
+        ]
 
         config = SweepConfig(
             sweep_id=sweep_id,
@@ -185,13 +267,12 @@ class SweepCommand(ClientCommand):
             simultaneous_trials=hparams.simultaneous_trials,
             requirements=hparams.requirements,
             script_args=script_args,
-            distributions=distributions,
+            distributions=distributions[0],
             framework=hparams.framework,
             cloud_compute=hparams.cloud_compute,
             num_nodes=hparams.num_nodes,
             logger=hparams.logger,
             direction=hparams.direction,
         )
-        breakpoint()
         response = self.invoke_handler(config=config)
         print(response)
