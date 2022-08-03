@@ -1,1 +1,5 @@
-pytorch-lightning
+lightning
+sqlmodel
+streamlit
+wandb
+optuna
