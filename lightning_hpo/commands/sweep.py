@@ -1,23 +1,25 @@
+import json
 import os
 import re
 import sys
 from argparse import ArgumentParser
 from getpass import getuser
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Generic, TypeVar
+from typing import Dict, Generic, List, Optional, TypeVar
 from uuid import uuid4
 
 import requests
+from fastapi.encoders import jsonable_encoder
 from lightning.app.source_code import LocalSourceCodeDir
 from lightning.app.source_code.uploader import FileUploader
 from lightning.app.utilities.commands import ClientCommand
+from pydantic import parse_obj_as
+from pydantic.main import ModelMetaclass
 from sqlalchemy import Column
-from pydantic import BaseModel
 from sqlmodel import Field, JSON, SQLModel, TypeDecorator
-import json
-from fastapi.encoders import jsonable_encoder
 
 T = TypeVar("T")
+
 
 # Taken from https://github.com/tiangolo/sqlmodel/issues/63#issuecomment-1081555082
 def pydantic_column_type(pydantic_type):
@@ -38,7 +40,7 @@ def pydantic_column_type(pydantic_type):
 
                 def process(value: T):
                     if value is not None:
-                        if isinstance(pydantic_type, BaseModel):
+                        if isinstance(pydantic_type, ModelMetaclass):
                             # This allows to assign non-InDB models and if they're
                             # compatible, they're directly parsed into the InDB
                             # representation, thus hiding the implementation in the
@@ -52,7 +54,7 @@ def pydantic_column_type(pydantic_type):
             else:
 
                 def process(value):
-                    if isinstance(pydantic_type, BaseModel):
+                    if isinstance(pydantic_type, ModelMetaclass):
                         # This allows to assign non-InDB models and if they're
                         # compatible, they're directly parsed into the InDB
                         # representation, thus hiding the implementation in the
@@ -256,7 +258,7 @@ class SweepCommand(ClientCommand):
         repo.upload(url=f"{url}/uploadfile/{sweep_id}")
 
         distributions = [
-            Distributions(name=k, distribution=x['distribution'], params=Params(params=x['params']))
+            Distributions(name=k, distribution=x["distribution"], params=Params(params=x["params"]))
             for k, x in distributions.items()
         ]
 
