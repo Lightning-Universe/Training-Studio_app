@@ -1,7 +1,10 @@
+from typing import List
+
 from fastapi import FastAPI
 from lightning import BuildConfig, LightningWork
 from uvicorn import run
 
+from lightning_hpo.commands.sweep import SweepConfig
 from lightning_hpo.components.servers.db.models import Trial
 
 
@@ -14,7 +17,7 @@ class Database(LightningWork):
         self.db_file_name = db_file_name
 
     def run(self):
-        from sqlmodel import create_engine, Session, SQLModel
+        from sqlmodel import create_engine, select, Session, SQLModel
 
         app = FastAPI()
         engine = create_engine(f"sqlite:///{self.db_file_name}", echo=True)
@@ -24,12 +27,26 @@ class Database(LightningWork):
             SQLModel.metadata.create_all(engine)
 
         @app.post("/trial/")
-        def insert_trial(trial: Trial):
+        async def insert_trial(trial: Trial):
             with Session(engine) as session:
                 session.add(trial)
                 session.commit()
                 session.refresh(trial)
                 return trial
+
+        @app.post("/sweep/")
+        async def insert_sweep(sweep: SweepConfig):
+            with Session(engine) as session:
+                print(sweep)
+                session.add(sweep)
+                session.commit()
+                session.refresh(sweep)
+                return sweep
+
+        @app.get("/trials/")
+        async def collect_trials() -> List[Trial]:
+            with Session(engine) as session:
+                return session.exec(select(Trial)).all()
 
         run(app, host=self.host, port=self.port)
 

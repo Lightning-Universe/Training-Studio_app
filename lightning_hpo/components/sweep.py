@@ -1,13 +1,14 @@
 import uuid
 from typing import Any, Dict, List, Optional, Type, Union
 
-from lightning import LightningFlow
+from lightning import BuildConfig, LightningFlow
 from lightning.app.components.python.tracer import Code
 from lightning.app.storage.path import Path
 from lightning.app.utilities.enum import WorkStageStatus
 
 from lightning_hpo.algorithm.base import Algorithm
 from lightning_hpo.algorithm.optuna import OptunaAlgorithm
+from lightning_hpo.commands.sweep import SweepConfig
 from lightning_hpo.components.servers.db.models import Trial
 from lightning_hpo.distributions import Distribution
 from lightning_hpo.framework.agnostic import BaseObjective
@@ -162,3 +163,20 @@ class Sweep(LightningFlow):
                 objective.has_stored = True
                 trials.append(trial)
         return trials
+
+    @classmethod
+    def from_config(cls, config: SweepConfig, code: Optional[Code] = None):
+        return cls(
+            script_path=config.script_path,
+            n_trials=config.n_trials,
+            simultaneous_trials=config.simultaneous_trials,
+            framework=config.framework,
+            script_args=config.script_args,
+            distributions=config.distributions,
+            cloud_compute=CloudCompute(config.cloud_compute, config.num_nodes),
+            sweep_id=config.sweep_id,
+            code=code,
+            cloud_build_config=BuildConfig(requirements=config.requirements),
+            logger=config.logger,
+            algorithm=OptunaAlgorithm(direction=config.direction),
+        )

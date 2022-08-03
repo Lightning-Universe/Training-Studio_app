@@ -4,7 +4,7 @@ import sys
 from argparse import ArgumentParser
 from getpass import getuser
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from uuid import uuid4
 
 import requests
@@ -12,18 +12,31 @@ from lightning.app.source_code import LocalSourceCodeDir
 from lightning.app.source_code.uploader import FileUploader
 from lightning.app.utilities.commands import ClientCommand
 from pydantic import BaseModel
+from sqlalchemy import Column
+from sqlmodel import Field, JSON, SQLModel
 
 
+class Params(SQLModel, table=False):
+    params: Dict[str, str]
+
+
+class Distributions(SQLModel, table=False):
+    distribution: Dict[str, Params] = Field(sa_column=Column(JSON))
+
+
+# class SweepConfig(SQLModel, table=True):
 class SweepConfig(BaseModel):
+    id: Optional[int] = Field(default=None, primary_key=True)
     sweep_id: str
     script_path: str
     n_trials: int
     simultaneous_trials: int
     requirements: List[str]
     script_args: List[str]
-    distributions: Any
+    # distributions: Dict[str, Distributions] = Field(sa_column=Column(JSON))
+    distributions: Dict[str, Any]
     framework: str
-    cloud_compute: Any
+    cloud_compute: str
     num_nodes: int = 1
     logger: str
     direction: str
@@ -159,20 +172,26 @@ class SweepCommand(ClientCommand):
         url = self.state.sweeper.file_server._state["vars"]["_url"]
         repo.package()
         repo.upload(url=f"{url}/uploadfile/{sweep_id}")
-        response = self.invoke_handler(
-            config=SweepConfig(
-                sweep_id=sweep_id,
-                script_path=script_path,
-                n_trials=int(hparams.n_trials),
-                simultaneous_trials=hparams.simultaneous_trials,
-                requirements=hparams.requirements,
-                script_args=script_args,
-                distributions=distributions,
-                framework=hparams.framework,
-                cloud_compute=hparams.cloud_compute,
-                num_nodes=hparams.num_nodes,
-                logger=hparams.logger,
-                direction=hparams.direction,
-            )
+
+        # distributions = {
+        #     k: Distributions(distribution={x['distribution']: Params(params=x['params'])})
+        #     for k, x in distributions.items()
+        # }
+
+        config = SweepConfig(
+            sweep_id=sweep_id,
+            script_path=script_path,
+            n_trials=int(hparams.n_trials),
+            simultaneous_trials=hparams.simultaneous_trials,
+            requirements=hparams.requirements,
+            script_args=script_args,
+            distributions=distributions,
+            framework=hparams.framework,
+            cloud_compute=hparams.cloud_compute,
+            num_nodes=hparams.num_nodes,
+            logger=hparams.logger,
+            direction=hparams.direction,
         )
+        breakpoint()
+        response = self.invoke_handler(config=config)
         print(response)

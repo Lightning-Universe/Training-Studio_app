@@ -1,21 +1,19 @@
 from typing import List, Optional
 
-import optuna
 import requests
-from lightning import BuildConfig, LightningFlow
+from lightning import LightningFlow
 from lightning.app.frontend import StreamlitFrontend
 from lightning.app.storage import Drive
 from lightning.app.storage.path import Path
 from lightning.app.structures import Dict
 
 from lightning_hpo import Sweep
-from lightning_hpo.algorithm import OptunaAlgorithm
 from lightning_hpo.commands.sweep import SweepCommand, SweepConfig
 from lightning_hpo.components.servers.db.models import Trial
 from lightning_hpo.components.servers.db.server import Database
 from lightning_hpo.components.servers.db.visualization import DatabaseViz
 from lightning_hpo.components.servers.file_server import FileServer
-from lightning_hpo.utilities.utils import CloudCompute, get_best_model_path
+from lightning_hpo.utilities.utils import get_best_model_path
 
 
 class Sweeper(LightningFlow):
@@ -38,24 +36,15 @@ class Sweeper(LightningFlow):
                 trials.extend(sweep.get_trials())
             if trials:
                 for trial in trials:
-                    requests.post(self.db.url + "/trial", data=trial.json())
+                    resp = requests.post(self.db.url + "/trial", data=trial.json())
+                    assert resp.status_code == 200
 
     def create_sweep(self, config: SweepConfig) -> str:
         sweep_ids = list(self.sweeps.keys())
         if config.sweep_id not in sweep_ids:
-            self.sweeps[config.sweep_id] = Sweep(
-                script_path=config.script_path,
-                n_trials=config.n_trials,
-                simultaneous_trials=config.simultaneous_trials,
-                framework=config.framework,
-                script_args=config.script_args,
-                distributions=config.distributions,
-                cloud_compute=CloudCompute(config.cloud_compute, config.num_nodes),
-                sweep_id=config.sweep_id,
+            self.sweeps[config.sweep_id] = Sweep.from_config(
+                config,
                 code={"drive": self.drive, "name": config.sweep_id},
-                cloud_build_config=BuildConfig(requirements=config.requirements),
-                logger=config.logger,
-                algorithm=OptunaAlgorithm(optuna.create_study(direction=config.direction)),
             )
             return f"Launched a sweep {config.sweep_id}"
         elif self.sweeps[config.sweep_id].has_failed:
@@ -79,14 +68,10 @@ class Sweeper(LightningFlow):
 def render_fn(state):
     import streamlit as st
     import streamlit.components.v1 as components
-    from sqlmodel import create_engine, select, Session
 
-    if "database" not in st.session_state:
-        engine = create_engine(f"sqlite:///{state.db.db_file_name}", echo=True)
-        st.session_state["engine"] = engine
-
-    with Session(st.session_state["engine"]) as session:
-        trials: List[Trial] = session.exec(select(Trial)).all()
+    database_url = state.db._state["vars"]["_url"] + "/trials/"
+    resp: requests.Response = requests.get(database_url)
+    trials: List[Trial] = resp.json()
 
     if not trials:
         st.header("You haven't launched any sweeps yet.")
@@ -98,6 +83,7 @@ def render_fn(state):
 
     user_sweeps = {}
     for trial in trials:
+        trial = Trial(**trial)
         username, sweep_id = trial.sweep_id.split("-")
         if username not in user_sweeps:
             user_sweeps[username] = {}
@@ -144,3 +130,6 @@ class HPOSweeper(LightningFlow):
 
     def configure_commands(self):
         return self.sweeper.configure_commands()
+
+    def configure_api(self):
+        return self.sweeper.configure_api()
