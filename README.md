@@ -4,11 +4,13 @@ Lightning HPO provides a pythonic implementation for Scalable Hyperparameter Tun
 
 This library relies on [Optuna](https://optuna.readthedocs.io/en/stable/) for providing state-of-the-art sampling hyper-parameters algorithms and efficient trial pruning strategies.
 
+This is built upon the highly scalable and distributed [Lightning App](https://lightning.ai/lightning-docs/get_started/what_app_can_do.html) framework from [lightning.ai](https://lightning.ai/).
+
 ## Installation
 
 ```bash
 git clone https://github.com/PyTorchLightning/lightning-hpo.git
-pip install -e .
+cd lightning-hpo && pip install -e .
 ```
 
 ## Getting started
@@ -24,7 +26,7 @@ Import a `Sweep` component, provide the path to your script and what you want to
 
 ```python
 import os.path as ops
-from lightning import CloudCompute, LightningApp
+from lightning import LightningApp
 from lightning_hpo import Sweep
 from lightning_hpo.distributions import Uniform
 
@@ -51,13 +53,13 @@ or with ``--cloud`` to run it in the cloud.
 python -m lightning run app examples/1_app_agnostic.py --cloud
 ```
 
-> Note: Locally, each trial runs into its own process, so there is an overhead if your objective is quick.
+> Note: Locally, each trial runs into its own process, so there is an overhead if your objective is quick to run.
 
 Find the example [here](./examples/1_app_agnostic.py)
 
 ## PyTorch Lightning Users
 
-Here is how to launch 70 trials per batch of 10 over your own script with 2 nodes of 4 GPUs each in the cloud.
+Here is how to launch 100 trials 10 at a times with 2 nodes of 4 GPUs for each in the cloud.
 
 ```python
 import os.path as ops
@@ -70,7 +72,7 @@ from lightning_hpo.distributions import Uniform, IntUniform, Categorical, LogUni
 app = LightningApp(
     Sweep(
         script_path="train.py",
-        n_trials=70,
+        n_trials=100,
         simultaneous_trials=10,
         distributions={
             "model.lr": LogUniform(0.001, 0.1),
@@ -95,7 +97,7 @@ Find the example [here](./examples/2_app_pytorch_lightning.py)
 
 ![Lightning App UI](https://pl-flash-data.s3.amazonaws.com/assets_lightning/wandb2.png)
 
-## Convert existing from Optuna scripts to a scalable Lightning App
+## Convert from raw Optuna to a Lightning App
 
 Below, we are going to convert [Optuna Efficient Optimization Algorithms](https://optuna.readthedocs.io/en/stable/tutorial/10_key_features/003_efficient_optimization_algorithms.html#sphx-glr-tutorial-10-key-features-003-efficient-optimization-algorithms-py>) into a Lightning App.
 
@@ -142,7 +144,8 @@ app = LightningApp(
         objective_cls=MyObjective,
         n_trials=20,
         algorithm=OptunaAlgorithm(
-            optuna.create_study(pruner=optuna.pruners.MedianPruner(), direction="maximize")
+            optuna.create_study(pruner=optuna.pruners.MedianPruner()), 
+            direction="maximize",
         ),
         distributions={"alpha": LogUniform(1e-5, 1e-1)}
     )
