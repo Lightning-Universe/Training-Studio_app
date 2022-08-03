@@ -43,6 +43,19 @@ class Database(LightningWork):
                 session.refresh(sweep)
                 return sweep
 
+        @app.put("/sweep/")
+        async def update_sweep(sweep_id: str, num_trials: int):
+            with Session(engine) as session:
+                statement = select(SweepConfig).where(SweepConfig.sweep_id == sweep_id)
+                results = session.exec(statement)
+                sweeps = results.all()
+                assert len(sweeps) == 1
+                sweep = sweeps[0]
+                sweep.num_trials = int(num_trials)
+                session.add(sweep)
+                session.commit()
+                session.refresh(sweep)
+
         @app.get("/trials/")
         async def collect_trials() -> List[Trial]:
             with Session(engine) as session:

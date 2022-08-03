@@ -11,6 +11,7 @@ from lightning_hpo.algorithm.optuna import OptunaAlgorithm
 from lightning_hpo.commands.sweep import SweepConfig
 from lightning_hpo.components.servers.db.models import Trial
 from lightning_hpo.distributions import Distribution
+from lightning_hpo.distributions.distributions import parse_distributions
 from lightning_hpo.framework.agnostic import BaseObjective
 from lightning_hpo.loggers import LoggerType
 from lightning_hpo.utilities.utils import (
@@ -172,7 +173,7 @@ class Sweep(LightningFlow):
             simultaneous_trials=config.simultaneous_trials,
             framework=config.framework,
             script_args=config.script_args,
-            distributions=config.distributions,
+            distributions=parse_distributions(config.distributions),
             cloud_compute=CloudCompute(config.cloud_compute, config.num_nodes),
             sweep_id=config.sweep_id,
             code=code,
