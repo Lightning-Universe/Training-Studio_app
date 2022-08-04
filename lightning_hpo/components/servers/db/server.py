@@ -59,7 +59,7 @@ class Database(LightningWork):
                 sweeps = results.all()
                 return sweeps
 
-        @app.get("/sweep")
+        @app.get("/sweep/")
         async def collect_trials() -> List[SweepConfig]:
             with Session(engine) as session:
                 return session.exec(select(SweepConfig)).all()

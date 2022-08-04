@@ -74,7 +74,7 @@ class Sweep(LightningFlow):
             num_nodes=getattr(cloud_compute, "count", 1) if cloud_compute else 1,
             logger=logger,
             direction=direction,
-            trials=trials,
+            trials=trials or {},
         )
 
         self._objective_cls = _resolve_objective_cls(objective_cls, framework)

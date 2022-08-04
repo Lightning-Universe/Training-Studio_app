@@ -40,14 +40,10 @@ class OptunaAlgorithm(Algorithm):
 
     def register_trials(self, trials_config: List[TrialConfig]) -> None:
         for trial_config in trials_config:
-            trial_params = {}
-            for k, v in trial_config.params.params.items():
-                try:
-                    trial_params[k] = float(v)
-                except ValueError:
-                    trial_params[k] = v
             trial = optuna.trial.create_trial(
-                params=trial_params, distributions=self.distributions, value=trial_config.best_model_score
+                params=trial_config.params.params,
+                distributions=self.distributions,
+                value=trial_config.best_model_score
             )
             self.study.add_trial(trial)
 

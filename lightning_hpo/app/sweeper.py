@@ -50,7 +50,7 @@ class Sweeper(LightningFlow):
         self.reconcile_sweep_on_end(updates)
 
     def reconcile_sweeps_on_start(self):
-        resp = requests.get(self.db.url + "/reconcile_sweeps")
+        resp = requests.get(self.db.url + "/reconcile_sweeps/")
         assert resp.status_code == 200
         sweeps = [SweepConfig(**sweep) for sweep in resp.json()]
         for config in sweeps:
@@ -62,7 +62,7 @@ class Sweeper(LightningFlow):
 
     def reconcile_sweep_on_end(self, updates: List[SweepConfig]):
         for update in updates:
-            resp = requests.put(self.db.url + "/sweep", data=update.json())
+            resp = requests.put(self.db.url + "/sweep/", data=update.json())
             assert resp.status_code == 200
             if update.status == Status.SUCCEEDED:
                 for w in self.sweeps.works:
