@@ -3,7 +3,7 @@ from typing import Optional
 from sqlmodel import Field, SQLModel
 
 
-class Trial(SQLModel, table=True):
+class Trial(SQLModel, table=False):
     id: Optional[int] = Field(default=None, primary_key=True)
     sweep_id: str = Field(index=True)
     trial_id: int

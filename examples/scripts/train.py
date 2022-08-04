@@ -52,7 +52,7 @@ class ImageClassifier(LightningModule):
 
 
 class MNISTDataModule(LightningDataModule):
-    def __init__(self, batch_size=32):
+    def __init__(self, batch_size: float = 32.0):
         super().__init__()
         self.save_hyperparameters()
 
@@ -70,11 +70,11 @@ class MNISTDataModule(LightningDataModule):
 
     def train_dataloader(self):
         train_dataset = MNIST("./data", train=True, download=False, transform=self.transform)
-        return torch.utils.data.DataLoader(train_dataset, batch_size=self.hparams.batch_size)
+        return torch.utils.data.DataLoader(train_dataset, batch_size=int(self.hparams.batch_size))
 
     def val_dataloader(self):
         val_dataset = MNIST("./data", train=False, download=False, transform=self.transform)
-        return torch.utils.data.DataLoader(val_dataset, batch_size=self.hparams.batch_size)
+        return torch.utils.data.DataLoader(val_dataset, batch_size=int(self.hparams.batch_size))
 
 
 if __name__ == "__main__":

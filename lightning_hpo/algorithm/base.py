@@ -1,10 +1,16 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List
 
+from lightning_hpo.commands.sweep import TrialConfig
+
 
 class Algorithm(ABC):
     @abstractmethod
     def register_distributions(self, distributions):
+        ...
+
+    @abstractmethod
+    def register_trials(self, trials: List[TrialConfig]):
         ...
 
     @abstractmethod

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional, TypedDict
 
-from lightning_hpo.commands.sweep import Distributions
+from lightning_hpo.commands.sweep import Distributions, Params
 
 
 class DistributionDict(TypedDict):
@@ -56,3 +56,14 @@ _DISTRIBUTION = {"uniform": Uniform, "int_uniform": IntUniform, "log_uniform": L
 
 def parse_distributions(distributions: Dict[str, Distributions]) -> Dict[str, Distribution]:
     return {k: _DISTRIBUTION[v.distribution](**v.params.params) for k, v in distributions.items()}
+
+
+def unparse_distributions(distributions: Optional[Dict[str, Distribution]]) -> Dict[str, Distributions]:
+    if not distributions:
+        return {}
+
+    dist = {
+        k: Distributions(distribution=x.to_dict()["distribution"], params=Params(params=x.to_dict()["params"]))
+        for k, x in distributions.items()
+    }
+    return dist
