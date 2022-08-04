@@ -1,106 +1,27 @@
-import json
 import os
 import re
 import sys
 from argparse import ArgumentParser
 from getpass import getuser
 from pathlib import Path
-from typing import Dict, Generic, List, Optional, TypeVar
+from typing import Dict, List, Optional, Union
 from uuid import uuid4
 
 import requests
-from fastapi.encoders import jsonable_encoder
 from lightning.app.source_code import LocalSourceCodeDir
 from lightning.app.source_code.uploader import FileUploader
 from lightning.app.utilities.commands import ClientCommand
-from pydantic import parse_obj_as
-from pydantic.main import ModelMetaclass
 from sqlalchemy import Column
-from sqlmodel import Field, JSON, SQLModel, TypeDecorator
+from sqlmodel import Field, SQLModel
 
-T = TypeVar("T")
-
-
-# Taken from https://github.com/tiangolo/sqlmodel/issues/63#issuecomment-1081555082
-def pydantic_column_type(pydantic_type):
-    class PydanticJSONType(TypeDecorator, Generic[T]):
-        impl = JSON()
-
-        def __init__(
-            self,
-            json_encoder=json,
-        ):
-            self.json_encoder = json_encoder
-            super(PydanticJSONType, self).__init__()
-
-        def bind_processor(self, dialect):
-            impl_processor = self.impl.bind_processor(dialect)
-            dumps = self.json_encoder.dumps
-            if impl_processor:
-
-                def process(value: T):
-                    if value is not None:
-                        if isinstance(pydantic_type, ModelMetaclass):
-                            # This allows to assign non-InDB models and if they're
-                            # compatible, they're directly parsed into the InDB
-                            # representation, thus hiding the implementation in the
-                            # background. However, the InDB model will still be returned
-                            value_to_dump = pydantic_type.from_orm(value)
-                        else:
-                            value_to_dump = value
-                        value = jsonable_encoder(value_to_dump)
-                    return impl_processor(value)
-
-            else:
-
-                def process(value):
-                    if isinstance(pydantic_type, ModelMetaclass):
-                        # This allows to assign non-InDB models and if they're
-                        # compatible, they're directly parsed into the InDB
-                        # representation, thus hiding the implementation in the
-                        # background. However, the InDB model will still be returned
-                        value_to_dump = pydantic_type.from_orm(value)
-                    else:
-                        value_to_dump = value
-                    value = dumps(jsonable_encoder(value_to_dump))
-                    return value
-
-            return process
-
-        def result_processor(self, dialect, coltype) -> T:
-            impl_processor = self.impl.result_processor(dialect, coltype)
-            if impl_processor:
-
-                def process(value):
-                    value = impl_processor(value)
-                    if value is None:
-                        return None
-
-                    data = value
-                    # Explicitly use the generic directly, not type(T)
-                    full_obj = parse_obj_as(pydantic_type, data)
-                    return full_obj
-
-            else:
-
-                def process(value):
-                    if value is None:
-                        return None
-
-                    # Explicitly use the generic directly, not type(T)
-                    full_obj = parse_obj_as(pydantic_type, value)
-                    return full_obj
-
-            return process
-
-        def compare_values(self, x, y):
-            return x == y
-
-    return PydanticJSONType
+from lightning_hpo.utilities.enum import Status
+from lightning_hpo.utilities.utils import pydantic_column_type
 
 
 class Params(SQLModel, table=False):
-    params: Dict[str, str] = Field(sa_column=Column(pydantic_column_type(Dict[str, str])))
+    params: Dict[str, Union[float, int, List[float], List[str]]] = Field(
+        sa_column=Column(pydantic_column_type(Dict[str, Union[float, int, List[float], List[str]]]))
+    )
 
 
 class Distributions(SQLModel, table=False):
@@ -108,23 +29,45 @@ class Distributions(SQLModel, table=False):
     params: Params = Field(sa_column=Column(pydantic_column_type(Params)))
 
 
+class TrialConfig(SQLModel, table=False):
+    best_model_score: Optional[float]
+    monitor: Optional[str]
+    best_model_path: Optional[str]
+    status: str = Status.NOT_STARTED
+    params: Params = Field(sa_column=Column(pydantic_column_type(Params)))
+    exception: Optional[str]
+
+    @property
+    def pruned(self) -> bool:
+        return self.status == Status.PRUNED
+
+
 class SweepConfig(SQLModel, table=True):
+    __table_args__ = {"extend_existing": True}
+
     id: Optional[int] = Field(default=None, primary_key=True)
     sweep_id: str
     script_path: str
     n_trials: int
     simultaneous_trials: int
-    num_trials: int = 0
+    trials_done: int = 0
     requirements: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
     script_args: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
     distributions: Dict[str, Distributions] = Field(
         ..., sa_column=Column(pydantic_column_type(Dict[str, Distributions]))
     )
+    url: Optional[str]
+    trials: Dict[int, TrialConfig] = Field(..., sa_column=Column(pydantic_column_type(Dict[int, TrialConfig])))
     framework: str
     cloud_compute: str
     num_nodes: int = 1
     logger: str
     direction: str
+    status: str = Status.NOT_STARTED
+
+    @property
+    def num_trials(self) -> int:
+        return self.trials_done + self.simultaneous_trials
 
 
 class DistributionParser:
@@ -276,6 +219,7 @@ class SweepCommand(ClientCommand):
             num_nodes=hparams.num_nodes,
             logger=hparams.logger,
             direction=hparams.direction,
+            trials=[],
         )
         response = self.invoke_handler(config=config)
         print(response)
