@@ -109,25 +109,35 @@ def render_fn(state):
         )
         return
 
-    # user_tabs = st.tabs(list(user_sweeps))
-    # for tab, username in zip(user_tabs, user_sweeps):
-    #     with tab:
-    #         for sweep_id, trials in user_sweeps[username].items():
-    #             status = "/ Succeeded" if trial.has_succeeded else "/ Failed"
-    #             with st.expander(f"{sweep_id} {status}"):
-    #                 trials_tab, logging_tab = st.tabs(["Trials", "Logging"])
-    #                 with trials_tab:
-    #                     for trial in trials:
-    #                         if st.checkbox(f"Trial {trial.trial_id}", key=f"checkbox_{trial.id}_{sweep_id}"):
-    #                             st.json(
-    #                                 {
-    #                                     "params": trial.params,
-    #                                     "monitor": trial.monitor,
-    #                                     "best_model_score": trial.best_model_score,
-    #                                 }
-    #                             )
-    #                 with logging_tab:
-    #                     components.html(f'<a href="{trial.url}" target="_blank">Weights & Biases URL</a>', height=50)
+    user_sweeps = {}
+    for sweep in sweeps:
+        username, sweep_id = sweep["sweep_id"].split("-")
+        if username not in user_sweeps:
+            user_sweeps[username] = {}
+        user_sweeps[username][sweep_id] = sweep
+
+    user_tabs = st.tabs(user_sweeps)
+    for tab, username in zip(user_tabs, user_sweeps):
+        with tab:
+            for sweep_id, sweep in user_sweeps[username].items():
+                with st.expander(f"{sweep_id} / {sweep['status']}"):
+                    trials_tab, logging_tab = st.tabs(["Trials", "Logging"])
+                    with trials_tab:
+                        for trial_id, trial in sweep["trials"].items():
+                            if st.checkbox(f"Trial {trial_id}", key=f"checkbox_{trial_id}_{sweep_id}"):
+                                st.json(
+                                    {
+                                        "params": trial["params"]["params"],
+                                        "monitor": trial["monitor"],
+                                        "best_model_score": trial["best_model_score"],
+                                    }
+                                )
+                            with logging_tab:
+                                url = trial.get("url", None)
+                                if url:
+                                    components.html(
+                                        f'<a href="{url}" target="_blank">Weights & Biases URL</a>', height=50
+                                    )
 
 
 class HPOSweeper(LightningFlow):

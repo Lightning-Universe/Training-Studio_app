@@ -69,6 +69,14 @@ class SweepConfig(SQLModel, table=True):
     def num_trials(self) -> int:
         return self.trials_done + self.simultaneous_trials
 
+    @property
+    def username(self) -> str:
+        return self.sweep_id.split("-")[0]
+
+    @property
+    def hash(self) -> str:
+        return self.sweep_id.split("-")[1]
+
 
 class DistributionParser:
     @staticmethod
