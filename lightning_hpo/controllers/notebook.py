@@ -5,7 +5,7 @@ from lightning import LightningFlow
 from lightning_hpo.commands.notebook import CreateNotebookCommand, NotebookConfig
 
 
-class NotebookReconciler(LightningFlow):
+class NotebookController(LightningFlow):
     def __init__(self):
         super().__init__()
 

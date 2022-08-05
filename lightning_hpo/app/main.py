@@ -6,7 +6,7 @@ from lightning_hpo.commands.sweep import SweepConfig
 from lightning_hpo.components.servers.db.server import Database
 from lightning_hpo.components.servers.db.visualization import DatabaseViz
 from lightning_hpo.components.servers.file_server import FileServer
-from lightning_hpo.controllers.notebook import NotebookReconciler
+from lightning_hpo.controllers.notebook import NotebookController
 from lightning_hpo.controllers.sweeper import SweepController
 
 
@@ -21,7 +21,7 @@ class MainFlow(LightningFlow):
 
         # 2: Controllers
         self.sweep_controller = SweepController(self.drive)
-        self.notebook_controller = NotebookReconciler()
+        self.notebook_controller = NotebookController()
 
     def run(self):
         # 1: Start the servers.
