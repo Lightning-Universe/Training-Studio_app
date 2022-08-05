@@ -18,6 +18,7 @@ class Database(LightningWork):
         super().__init__(parallel=True, cloud_build_config=BuildConfig(["sqlmodel"]))
         self.db_file_name = db_file_name
         self.debug = debug
+        self._models = models
 
     def run(self):
         from sqlmodel import create_engine, select, Session, SQLModel
@@ -27,6 +28,7 @@ class Database(LightningWork):
 
         @app.on_event("startup")
         def on_startup():
+            print(f"Creating the following tables {self._models}")
             SQLModel.metadata.create_all(engine)
 
         @app.get("/general/")
