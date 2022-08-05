@@ -205,7 +205,7 @@ class SweepCommand(ClientCommand):
             raise Exception("The provided script doesn't exists.")
 
         repo = CustomLocalSourceCodeDir(path=Path(script_path).parent.resolve())
-        url = self.state.sweeper.file_server._state["vars"]["_url"]
+        url = self.state.file_server._state["vars"]["_url"]
         repo.package()
         repo.upload(url=f"{url}/uploadfile/{sweep_id}")
 

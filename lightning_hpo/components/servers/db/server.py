@@ -1,12 +1,11 @@
-from typing import List
+from typing import List, Optional
 
 from fastapi import FastAPI
 from lightning import BuildConfig, LightningWork
+from sqlmodel import SQLModel
 from uvicorn import run
 
-from lightning_hpo.commands.sweep import SweepConfig
-
-# from lightning_hpo.components.servers.db.models import Trial
+from lightning_hpo.components.servers.db.models import GeneralModel
 
 
 class Database(LightningWork):
@@ -14,6 +13,7 @@ class Database(LightningWork):
         self,
         db_file_name: str = "database.db",
         debug: bool = False,
+        models: Optional[List[SQLModel]] = None,  # Just meant to be imported.
     ):
         super().__init__(parallel=True, cloud_build_config=BuildConfig(["sqlmodel"]))
         self.db_file_name = db_file_name
@@ -29,40 +29,39 @@ class Database(LightningWork):
         def on_startup():
             SQLModel.metadata.create_all(engine)
 
-        @app.post("/sweep/")
-        async def insert_sweep(sweep: SweepConfig):
+        @app.get("/general/")
+        async def general_get(config: GeneralModel):
             with Session(engine) as session:
-                session.add(sweep)
-                session.commit()
-                session.refresh(sweep)
-                return sweep
-
-        @app.put("/sweep/")
-        async def update_sweep(update: SweepConfig):
-            with Session(engine) as session:
-                statement = select(SweepConfig).where(SweepConfig.sweep_id == update.sweep_id)
+                statement = select(config.data_cls)
                 results = session.exec(statement)
-                sweep = results.one()
-                for k, v in vars(update).items():
+                return results.all()
+
+        @app.post("/general/")
+        async def general_post(config: GeneralModel):
+            with Session(engine) as session:
+                data = config.convert_to_model()
+                session.add(data)
+                session.commit()
+                session.refresh(data)
+                return data
+
+        @app.put("/general/")
+        async def general_put(config: GeneralModel):
+            with Session(engine) as session:
+                assert config.id
+                data = config.convert_to_model()
+                identifier = getattr(data.__class__, config.id, None)
+                statement = select(data.__class__).where(identifier == getattr(data, config.id))
+                results = session.exec(statement)
+                result = results.one()
+                for k, v in vars(data).items():
                     if k in ("id", "_sa_instance_state"):
                         continue
-                    if getattr(sweep, k) != v:
-                        setattr(sweep, k, v)
-                session.add(sweep)
+                    if getattr(result, k) != v:
+                        setattr(result, k, v)
+                session.add(result)
                 session.commit()
-
-        @app.get("/reconcile_sweeps/")
-        async def reconcile_sweeps() -> List[SweepConfig]:
-            with Session(engine) as session:
-                statement = select(SweepConfig).where(SweepConfig.n_trials > SweepConfig.trials_done)
-                results = session.exec(statement)
-                sweeps = results.all()
-                return sweeps
-
-        @app.get("/sweep/")
-        async def collect_trials() -> List[SweepConfig]:
-            with Session(engine) as session:
-                return session.exec(select(SweepConfig)).all()
+                session.refresh(result)
 
         run(app, host=self.host, port=self.port)
 
