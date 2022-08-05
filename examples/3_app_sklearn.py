@@ -35,7 +35,12 @@ app = LightningApp(
     Sweep(
         objective_cls=MyObjective,
         n_trials=20,
-        algorithm=OptunaAlgorithm(optuna.create_study(pruner=optuna.pruners.MedianPruner(), direction="maximize")),
+        algorithm=OptunaAlgorithm(
+            optuna.create_study(
+                pruner=optuna.pruners.MedianPruner(),
+                direction="maximize",
+            )
+        ),
         distributions={"alpha": LogUniform(1e-5, 1e-1)},
     )
 )
