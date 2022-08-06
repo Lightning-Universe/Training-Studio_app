@@ -44,7 +44,6 @@ class WandB(Logger):
         self.report.save()
         self.storage_id = self.report.id
         self.report_url = f"https://wandb.ai/{self.entity}/{self.sweep_id}/reports/{self.sweep_id}--{self.report.id}"
-        self.report_url = f"https://wandb.ai/{self.entity}/{self.sweep_id}/reports/{self.sweep_id}--{self.report.id}"
 
     def on_after_trial_end(self, sweep_id: str, trial_id: int, monitor: str, score: float, params: Dict[str, Any]):
         from wandb.apis import reports
@@ -115,5 +114,5 @@ class WandB(Logger):
         if os.getenv("WANDB_API_KEY") is None or os.getenv("WANDB_ENTITY") is None:
             raise Exception(
                 "You are trying to use wandb without setting your API key or entity. "
-                "HINT: lightning run app app.py --env WANDB_API_KEY=YOUR_API_KEY --env WANDB_ENTITY=YOU_ENTITY",
+                "HINT: lightning run app app.py --env WANDB_API_KEY=YOUR_API_KEY --env WANDB_ENTITY=YOUR_ENTITY",
             )
