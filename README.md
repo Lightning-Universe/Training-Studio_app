@@ -13,6 +13,16 @@ git clone https://github.com/PyTorchLightning/lightning-hpo.git
 cd lightning-hpo && pip install -e .
 ```
 
+
+Individuals who wish to use lightning-hpo in their own projects can install to a virtual environment with:
+
+```bash
+cd {{ path to clone }}
+{{ activate python environment }}
+pip install git+https://github.com/PyTorchLightning/lightning-hpo.git
+```
+
+
 ## Getting started
 
 Imagine you want to optimize a simple function called `objective` inside a `objective.py` file.
@@ -144,7 +154,7 @@ app = LightningApp(
         objective_cls=MyObjective,
         n_trials=20,
         algorithm=OptunaAlgorithm(
-            optuna.create_study(pruner=optuna.pruners.MedianPruner()), 
+            optuna.create_study(pruner=optuna.pruners.MedianPruner()),
             direction="maximize",
         ),
         distributions={"alpha": LogUniform(1e-5, 1e-1)}
