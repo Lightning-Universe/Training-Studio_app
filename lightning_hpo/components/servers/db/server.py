@@ -51,12 +51,12 @@ class Database(LightningWork):
         async def general_put(config: GeneralModel):
             with Session(engine) as session:
                 assert config.id
-                data = config.convert_to_model()
-                identifier = getattr(data.__class__, config.id, None)
-                statement = select(data.__class__).where(identifier == getattr(data, config.id))
+                update_data = config.convert_to_model()
+                identifier = getattr(update_data.__class__, config.id, None)
+                statement = select(update_data.__class__).where(identifier == getattr(update_data, config.id))
                 results = session.exec(statement)
                 result = results.one()
-                for k, v in vars(data).items():
+                for k, v in vars(update_data).items():
                     if k in ("id", "_sa_instance_state"):
                         continue
                     if getattr(result, k) != v:
