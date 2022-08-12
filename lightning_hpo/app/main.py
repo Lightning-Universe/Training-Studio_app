@@ -1,7 +1,7 @@
 from lightning import LightningFlow
 from lightning.app.storage import Drive
 
-from lightning_hpo.commands.notebook import NotebookConfig
+from lightning_hpo.commands.notebook import RunNotebook
 from lightning_hpo.commands.sweep.run_sweep import SweepConfig
 from lightning_hpo.components.servers.db.server import Database
 from lightning_hpo.components.servers.db.visualization import DatabaseViz
@@ -16,7 +16,7 @@ class MainFlow(LightningFlow):
         # 1: General managers
         self.drive = Drive("lit://code")
         self.file_server = FileServer(self.drive)
-        self.db = Database(models=[SweepConfig, NotebookConfig])
+        self.db = Database(models=[SweepConfig, RunNotebook])
         self.db_viz = DatabaseViz()
 
         # 2: Controllers

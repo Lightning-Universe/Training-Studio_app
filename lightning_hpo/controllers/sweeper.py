@@ -88,6 +88,7 @@ class SweepController(LightningFlow):
         return [
             {"run sweep": RunSweepCommand(self.run_sweep)},
             {"stop sweep": StopSweepCommand(self.stop_sweep)},
+            # TODO: view sweeps
         ]
 
     @property
