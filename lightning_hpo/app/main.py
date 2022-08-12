@@ -2,7 +2,7 @@ from lightning import LightningFlow
 from lightning.app.storage import Drive
 
 from lightning_hpo.commands.notebook import NotebookConfig
-from lightning_hpo.commands.sweep import SweepConfig
+from lightning_hpo.commands.sweep.run_sweep import SweepConfig
 from lightning_hpo.components.servers.db.server import Database
 from lightning_hpo.components.servers.db.visualization import DatabaseViz
 from lightning_hpo.components.servers.file_server import FileServer

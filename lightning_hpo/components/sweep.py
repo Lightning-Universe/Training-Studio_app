@@ -7,7 +7,7 @@ from lightning.app.storage.path import Path
 
 from lightning_hpo.algorithm.base import Algorithm
 from lightning_hpo.algorithm.optuna import OptunaAlgorithm
-from lightning_hpo.commands.sweep import Params, SweepConfig, TrialConfig
+from lightning_hpo.commands.sweep.run_sweep import Params, SweepConfig, TrialConfig
 from lightning_hpo.distributions import Distribution
 from lightning_hpo.distributions.distributions import parse_distributions, unparse_distributions
 from lightning_hpo.framework.agnostic import BaseObjective

@@ -12,7 +12,7 @@ from optuna.distributions import (
 )
 
 from lightning_hpo.algorithm.base import Algorithm
-from lightning_hpo.commands.sweep import TrialConfig
+from lightning_hpo.commands.sweep.run_sweep import TrialConfig
 from lightning_hpo.distributions import DistributionDict
 
 _logger = logging.getLogger(__name__)
