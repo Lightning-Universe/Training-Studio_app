@@ -77,8 +77,8 @@ class SweepController(LightningFlow):
 
     def stop_sweep(self, config: StopSweep):
         sweep_ids = list(self.sweeps.keys())
-        if config.sweep_id not in sweep_ids:
-            sweep = self.sweeps["sweep_id"]
+        if config.sweep_id in sweep_ids:
+            sweep = self.sweeps[config.sweep_id]
             for w in sweep.works:
                 w.stop()
             return f"Stopped the sweep `{config.sweep_id}`"
@@ -87,7 +87,7 @@ class SweepController(LightningFlow):
     def configure_commands(self):
         return [
             {"run sweep": RunSweepCommand(self.run_sweep)},
-            {"stop sweep": StopSweepCommand(self.run_sweep)},
+            {"stop sweep": StopSweepCommand(self.stop_sweep)},
         ]
 
     @property
