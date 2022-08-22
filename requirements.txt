@@ -5,3 +5,4 @@ streamlit
 sqlalchemy
 hiplot
 streamlit_autorefresh
+git+https://github.com/Lightning-AI/lightning.git@master

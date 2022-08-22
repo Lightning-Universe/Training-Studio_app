@@ -68,7 +68,7 @@ jobs:
           AWS_DEFAULT_REGION: us-east-1
           PYTEST_ARTIFACT: results-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}.xml
         run: |
-          pytest tests --timeout=300 -vvvv --capture=no -v --color=yes
+          pytest tests -vvvv --capture=no -v --color=yes
 
       - name: Upload pytest test results
         uses: actions/upload-artifact@v3
