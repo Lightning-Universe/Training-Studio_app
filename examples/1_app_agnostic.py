@@ -3,7 +3,7 @@ import os.path as ops
 from lightning import LightningApp
 
 from lightning_hpo import Sweep
-from lightning_hpo.distributions import Uniform
+from lightning_hpo.distributions.distributions import Uniform
 
 app = LightningApp(
     Sweep(

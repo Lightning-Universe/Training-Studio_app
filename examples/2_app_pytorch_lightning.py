@@ -3,8 +3,8 @@ import os.path as ops
 from lightning import LightningApp
 
 from lightning_hpo import CloudCompute, Sweep
-from lightning_hpo.algorithm import OptunaAlgorithm
-from lightning_hpo.distributions import Categorical, IntUniform, LogUniform, Uniform
+from lightning_hpo.algorithm.optuna import OptunaAlgorithm
+from lightning_hpo.distributions.distributions import Categorical, IntUniform, LogUniform, Uniform
 
 app = LightningApp(
     Sweep(

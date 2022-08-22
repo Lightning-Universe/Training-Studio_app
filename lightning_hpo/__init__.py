@@ -31,4 +31,4 @@ from optuna.storages._in_memory import _logger
 _logger.disabled = True
 _logger.propagate = False
 
-__all__ = ["BaseObjective", "Sweep"]
+__all__ = ["BaseObjective", "Sweep", "CloudCompute"]

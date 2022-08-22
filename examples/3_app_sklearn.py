@@ -5,8 +5,8 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import train_test_split
 
 from lightning_hpo import BaseObjective, Sweep
-from lightning_hpo.algorithm import OptunaAlgorithm
-from lightning_hpo.distributions import LogUniform
+from lightning_hpo.algorithm.optuna import OptunaAlgorithm
+from lightning_hpo.distributions.distributions import LogUniform
 
 
 class MyObjective(BaseObjective):
