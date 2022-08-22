@@ -5,3 +5,7 @@ exclude *.toml
 exclude *.lightning
 exclude *.lightningignore
 recursive-exclude scripts
+recursive-include lightning_hpo
+recursive-include examples
+recursive-exclude tests
+recursive-include requirements *.txt
