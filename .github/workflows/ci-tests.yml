@@ -62,14 +62,13 @@ jobs:
         shell: bash
 
       - name: Tests
-        working-directory: ./tests
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: us-east-1
           PYTEST_ARTIFACT: results-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}.xml
         run: |
-          coverage run --source lightning_hpo -m pytest -m "not cloud" lightning_hpo --timeout=300 -vvvv --junitxml=$PYTEST_ARTIFACT --durations=0
+          pytest tests --timeout=300 -vvvv --capture=no -v --color=yes
 
       - name: Upload pytest test results
         uses: actions/upload-artifact@v3
