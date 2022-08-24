@@ -4,4 +4,5 @@ streamlit
 sqlalchemy
 hiplot
 streamlit_autorefresh
+lightning
 git+https://github.com/Lightning-AI/lightning.git@master  # TODO: repelace with lightning once 0.6.0 is released
