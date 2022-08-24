@@ -13,12 +13,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, macOS-11, windows-2019]
+        os: [ubuntu-20.04, macOS-11]
         python-version: [3.8]
         requires: ["latest"]
 
     # Timeout: https://stackoverflow.com/a/59076067/4521646
-    timeout-minutes: 20
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v2
@@ -57,7 +57,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip --version
-          pip install -r requirements.txt -r requirements/test.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
+          pip install -e . -r requirements/test.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
           pip list
         shell: bash
 
