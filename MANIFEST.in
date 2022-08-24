@@ -10,3 +10,4 @@ recursive-include lightning_hpo *
 recursive-include requirements *
 
 recursive-exclude tests *.py
+recursive-exclude * *.pyc
