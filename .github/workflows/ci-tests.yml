@@ -70,19 +70,19 @@ jobs:
         run: |
           pytest tests -vvvv --capture=no -v --color=yes
 
-      - name: Upload pytest test results
-        uses: actions/upload-artifact@v3
-        with:
-          name: unittest-results-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}
-          path: tests/results-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}.xml
-        if: failure()
-
-      - name: Statistics
-        if: success()
-        working-directory: ./tests
-        run: |
-          coverage xml -i
-          coverage report -i
+#      - name: Upload pytest test results
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: unittest-results-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}
+#          path: tests/results-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}.xml
+#        if: failure()
+#
+#      - name: Statistics
+#        if: success()
+#        working-directory: ./tests
+#        run: |
+#          coverage xml -i
+#          coverage report -i
 
       # - name: Upload coverage to Codecov
       #   uses: codecov/codecov-action@v3
