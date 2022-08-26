@@ -5,3 +5,4 @@ streamlit_autorefresh
 hiplot
 sklearn
 flask-cors
+torchvision

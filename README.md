@@ -9,9 +9,17 @@ This is built upon the highly scalable and distributed [Lightning App](https://l
 ## Installation
 
 ```bash
-git clone https://github.com/PyTorchLightning/lightning-hpo.git
+git clone https://github.com/Lightning-AI/lightning-hpo.git
 cd lightning-hpo && pip install -e .
 ```
+
+Make sure you have lightning installed.
+
+```bash
+git clone https://github.com/Lightning-AI/lightning.git
+cd lightning && pip install -e .
+```
+
 
 ## Getting started
 

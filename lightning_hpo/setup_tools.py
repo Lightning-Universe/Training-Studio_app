@@ -30,16 +30,20 @@ def _load_requirements(path_dir: str, file_name: str = "requirements.txt", comme
     reqs = []
     for ln in lines:
         # filer all comments
+        comment = ""
         if comment_char in ln:
-            ln = ln[: ln.index(comment_char)].strip()
+            comment = ln[ln.index(comment_char) :]
+            ln = ln[: ln.index(comment_char)]
+        req = ln.strip()
         # skip directly installed dependencies
-        if ln.startswith("http"):
+        if not req or req.startswith("http") or req.startswith("http") or req.startswith("git") or "@http" in req:
             continue
-        # skip index url
-        if ln.startswith("--extra-index-url"):
-            continue
-        if ln:  # if requirement is not empty
-            reqs.append(ln)
+
+        # adding strict back to the comment
+        if "strict" in comment:
+            req += "  # strict"
+
+        reqs.append(req)
     return reqs
 
 
