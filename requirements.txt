@@ -1,1 +1,8 @@
-pytorch-lightning
+optuna
+sqlmodel
+streamlit
+sqlalchemy
+hiplot
+streamlit_autorefresh
+lightning  # TODO: remove this dependency. (added only for CI)
+git+https://github.com/Lightning-AI/lightning.git@master  # TODO: repelace with lightning once 0.6.0 is released
