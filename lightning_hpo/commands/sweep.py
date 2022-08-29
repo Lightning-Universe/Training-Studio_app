@@ -231,3 +231,22 @@ class SweepCommand(ClientCommand):
         )
         response = self.invoke_handler(config=config)
         print(response)
+
+
+
+class ShowSweepsListCommand(ClientCommand):
+
+    @classmethod
+    def formate_sweeps(cls, sweeps: List['JSON']) -> List[str]:
+        return sweeps
+        # return [
+        #     f"{sweep['sweep_id']} - {sweep['status']} - {sweep['framework']} - {sweep['cloud_compute']}"
+        #     for sweep in sweeps
+        # ]
+
+    def run(self) -> None:
+
+        response = self.invoke_handler(SweepConfig())
+        formatted_sweeps = self.formate_sweeps(response)
+        print("\n".join(formatted_sweeps))
+
