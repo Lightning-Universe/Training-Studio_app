@@ -75,15 +75,18 @@ class SweepController(LightningFlow):
         else:
             return f"The current Sweep {config.sweep_id} is running. It couldn't be updated."
 
-    def show_sweeps_handler(self, config: SweepConfig) -> List[SweepConfig]:
+    def get_db_url(self, config: SweepConfig) -> str:
+        return self.db_url
+
+    def show_sweeps_handler(self, config: SweepConfig) -> str:
         resp = requests.get(self.db_url + "/general/", data=GeneralModel.from_cls(SweepConfig).json())
-        sweeps: List[SweepConfig] = resp.json()
-        return sweeps
+        sweeps = [SweepConfig(**sweep) for sweep in resp.json()]
+        return "sweeps"
 
     def configure_commands(self):
         return [
             {"sweep": SweepCommand(self.sweep_handler)},
-            {"cmd_show_sweeps": ShowSweepsListCommand(self.show_sweeps_handler)},
+            {"cmd_show_sweeps": ShowSweepsListCommand(self.get_db_url)},
         ]
 
     @property

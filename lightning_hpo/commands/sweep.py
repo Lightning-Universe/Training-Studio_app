@@ -14,6 +14,7 @@ from lightning.app.utilities.commands import ClientCommand
 from sqlalchemy import Column
 from sqlmodel import Field, SQLModel
 
+from lightning_hpo.components.servers.db.models import GeneralModel
 from lightning_hpo.utilities.enum import Status
 from lightning_hpo.utilities.utils import pydantic_column_type
 
@@ -238,15 +239,30 @@ class ShowSweepsListCommand(ClientCommand):
 
     @classmethod
     def formate_sweeps(cls, sweeps: List['JSON']) -> List[str]:
-        return sweeps
-        # return [
-        #     f"{sweep['sweep_id']} - {sweep['status']} - {sweep['framework']} - {sweep['cloud_compute']}"
-        #     for sweep in sweeps
-        # ]
+        return [
+            f"Sweep name: {sweep['sweep_id']} - {sweep['status']} - {sweep['framework']} - {sweep['cloud_compute']}"
+            for sweep in sweeps
+        ]
 
     def run(self) -> None:
+        # mock_sweep = SweepConfig()
+        mock_sweep = SweepConfig(
+            sweep_id="sweep_id",
+            script_path="script_path",
+            n_trials=0,
+            simultaneous_trials=0,
+            requirements=[],
+            script_args=[],
+            distributions={"x": Distributions(distribution="uniform", params=Params(params={"low": 0, "high": 1}))},
+            framework="framework",
+            cloud_compute="cloud_compute",
+            logger="logger",
+            direction="direction",
+            trials={1: TrialConfig(params=Params(params={"x": 0}))},
+        )
+        db_url = self.invoke_handler(mock_sweep)
 
-        response = self.invoke_handler(SweepConfig())
-        formatted_sweeps = self.formate_sweeps(response)
+        resp = requests.get(db_url + "/general/", data=GeneralModel(cls_name='SweepConfig',cls_module='lightning_hpo.commands.sweep',data='').json())
+        formatted_sweeps = self.formate_sweeps(resp.json())
         print("\n".join(formatted_sweeps))
 
