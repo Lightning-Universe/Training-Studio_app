@@ -1,4 +1,4 @@
-# Lightning HPO
+# [experimental] Lightning HPO
 
 Lightning HPO provides a pythonic implementation for Scalable Hyperparameter Tuning.
 
