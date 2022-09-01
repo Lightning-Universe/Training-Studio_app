@@ -3,7 +3,7 @@ from typing import List
 import requests
 from lightning import LightningFlow
 
-from lightning_hpo.commands.notebook import RunNotebook, RunNotebookCommand
+from lightning_hpo.commands.notebook import RunNotebookCommand, RunNotebookConfig
 from lightning_hpo.components.servers.db.models import GeneralModel
 
 
@@ -18,14 +18,14 @@ class NotebookController(LightningFlow):
         # TODO: Implement the notebook reconciliation
 
     def reconcile_notebooks(self):
-        resp = requests.get(self.db_url + "/general/", data=GeneralModel.from_cls(RunNotebook).json())
+        resp = requests.get(self.db_url + "/general/", data=GeneralModel.from_cls(RunNotebookConfig).json())
         assert resp.status_code == 200
-        notebooks = [RunNotebook(**notebook) for notebook in resp.json()]
+        notebooks = [RunNotebookConfig(**notebook) for notebook in resp.json()]
         for notebook in notebooks:
             # TODO: Implement the thingy there.
             pass
 
-    def run_notebook(self, config: RunNotebook) -> str:
+    def run_notebook(self, config: RunNotebookConfig) -> str:
         assert self.db_url
         resp = requests.post(self.db_url + "/general/", data=GeneralModel.from_obj(config).json())
         assert resp.status_code == 200

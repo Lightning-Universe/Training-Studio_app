@@ -11,7 +11,7 @@ from lightning_hpo.utilities.enum import Status
 from lightning_hpo.utilities.utils import pydantic_column_type
 
 
-class RunNotebook(SQLModel):
+class RunNotebookConfig(SQLModel):
     id: Optional[str] = Field(default=None, primary_key=True)
     name: str
     requirements: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
@@ -30,7 +30,7 @@ class RunNotebookCommand(ClientCommand):
         hparams, _ = parser.parse_known_args()
         id = str(uuid4()).split("-")[0]
 
-        config = RunNotebook(
+        config = RunNotebookConfig(
             id=f"{getuser()}-{id}",
             name=hparams.name,
             requirements=hparams.requirements,

@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Type
 
 from fastapi import FastAPI
 from lightning import BuildConfig, LightningWork
@@ -13,7 +13,7 @@ class Database(LightningWork):
         self,
         db_file_name: str = "database.db",
         debug: bool = False,
-        models: Optional[List[SQLModel]] = None,  # Just meant to be imported.
+        models: Optional[List[Type[SQLModel]]] = None,  # Just meant to be imported.
     ):
         super().__init__(parallel=True, cloud_build_config=BuildConfig(["sqlmodel"]))
         self.db_file_name = db_file_name
