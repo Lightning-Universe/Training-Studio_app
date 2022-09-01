@@ -248,7 +248,7 @@ Learn more [here](https://optuna.readthedocs.io/en/stable/tutorial/10_key_featur
 In terminal 1, run the Training Application.
 
 ```bash
-lightning run app examples/4_app_sweeper.py --env WANDB_ENTITY={ENTITY} --env WANDB_API_KEY={API_KEY}
+python -m lightning run app examples/4_app_sweeper.py --env WANDB_ENTITY={ENTITY} --env WANDB_API_KEY={API_KEY}
 ```
 
 In terminal 2, connect to the App and run your first sweep or start your notebook.
