@@ -55,7 +55,7 @@ class SweepConfig(SQLModel, table=True):
     distributions: Dict[str, Distributions] = Field(
         ..., sa_column=Column(pydantic_column_type(Dict[str, Distributions]))
     )
-    url: Optional[str]
+    url: Optional[str] = None
     trials: Dict[int, TrialConfig] = Field(..., sa_column=Column(pydantic_column_type(Dict[int, TrialConfig])))
     framework: str
     cloud_compute: str
@@ -225,7 +225,7 @@ class RunSweepCommand(ClientCommand):
             num_nodes=hparams.num_nodes,
             logger=hparams.logger,
             direction=hparams.direction,
-            trials=[],
+            trials={},
         )
         response = self.invoke_handler(config=config)
         print(response)
