@@ -8,8 +8,8 @@ from lightning.app.storage.path import Path
 from lightning.app.structures import Dict
 
 from lightning_hpo import Sweep
-from lightning_hpo.commands.sweep.list_sweeps import ShowSweepsListCommand
 from lightning_hpo.commands.sweep.run_sweep import RunSweepCommand, SweepConfig
+from lightning_hpo.commands.sweep.show_sweeps import ShowSweepsCommand
 from lightning_hpo.commands.sweep.stop_sweep import StopSweep, StopSweepCommand
 from lightning_hpo.components.servers.db.models import GeneralModel
 from lightning_hpo.components.servers.file_server import FileServer
@@ -70,14 +70,10 @@ class SweepController(LightningFlow):
             resp = requests.post(self.db_url + "/general/", data=GeneralModel.from_obj(config).json())
             assert resp.status_code == 200
             return f"Launched a sweep {config.sweep_id}"
-        # elif self.sweeps[config.sweep_id].has_failed:
-        #     self.sweeps[config.sweep_id].restart_count += 1
-        #     self.sweeps[config.sweep_id].has_failed = False
-        #     return f"Updated code for Sweep {config.sweep_id}."
         return f"The current Sweep {config.sweep_id} is running. It couldn't be updated."
 
-    def get_db_url(self) -> str:
-        return self.db_url
+    def show_sweeps(self) -> Dict:
+        return requests.get(self.db_url + "/general/", data=GeneralModel.from_cls(SweepConfig).json()).json()
 
     def stop_sweep(self, config: StopSweep):
         sweep_ids = list(self.sweeps.keys())
@@ -92,7 +88,7 @@ class SweepController(LightningFlow):
         return [
             {"run sweep": RunSweepCommand(self.run_sweep)},
             {"stop sweep": StopSweepCommand(self.stop_sweep)},
-            {"show sweeps": ShowSweepsListCommand(self.get_db_url)},
+            {"show sweeps": ShowSweepsCommand(self.show_sweeps)},
         ]
 
     @property
