@@ -1,4 +1,3 @@
-import abc
 import argparse
 from typing import List
 
@@ -7,32 +6,6 @@ from rich.console import Console
 from rich.table import Table
 
 from lightning_hpo.commands.sweep.run_sweep import SweepConfig
-
-
-class Formatable(abc.ABC):
-    @abc.abstractmethod
-    def as_table(self) -> Table:
-        pass
-
-
-class SweepsList(Formatable):
-    def __init__(self, sweeps: List[dict]):
-        self.sweeps = sweeps
-
-    def as_table(self) -> Table:
-        table = Table(
-            "id", "status", "framework", "cloud_compute", "n_trials", show_header=True, header_style="bold green"
-        )
-
-        for sweep in self.sweeps:
-            table.add_row(
-                sweep["sweep_id"],
-                sweep["status"],
-                sweep["framework"],
-                sweep["cloud_compute"],
-                str(sweep["n_trials"]),
-            )
-        return table
 
 
 def _show_sweeps(sweeps: List[SweepConfig]):
