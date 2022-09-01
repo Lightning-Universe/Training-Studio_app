@@ -7,8 +7,8 @@ from lightning.app.storage.path import Path
 
 from lightning_hpo.algorithm.base import Algorithm
 from lightning_hpo.algorithm.optuna import OptunaAlgorithm
-from lightning_hpo.commands.sweep import Params, SweepConfig, TrialConfig
-from lightning_hpo.distributions.distributions import Distribution
+from lightning_hpo.commands.sweep.run_sweep import Params, SweepConfig, TrialConfig
+from lightning_hpo.distributions import Distribution
 from lightning_hpo.distributions.distributions import parse_distributions, unparse_distributions
 from lightning_hpo.framework.agnostic import BaseObjective
 from lightning_hpo.loggers import LoggerType
@@ -129,7 +129,8 @@ class Sweep(LightningFlow):
                     self.has_updated = True
 
                 objective.run(
-                    params=self._sweep_config.trials[trial_id].params.params, restart_count=self.restart_count
+                    params=self._algorithm.get_params(trial_id),
+                    restart_count=self.restart_count,
                 )
 
                 if _check_status(objective, Status.FAILED):

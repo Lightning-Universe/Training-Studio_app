@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List
 
-from lightning_hpo.commands.sweep import TrialConfig
+from lightning_hpo.commands.sweep.run_sweep import TrialConfig
 
 
 class Algorithm(ABC):

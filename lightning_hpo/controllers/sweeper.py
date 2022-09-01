@@ -8,7 +8,8 @@ from lightning.app.storage.path import Path
 from lightning.app.structures import Dict
 
 from lightning_hpo import Sweep
-from lightning_hpo.commands.sweep import SweepCommand, SweepConfig, ShowSweepsListCommand
+from lightning_hpo.commands.sweep.run_sweep import RunSweepCommand, SweepConfig, ShowSweepsListCommand
+from lightning_hpo.commands.sweep.stop_sweep import StopSweep, StopSweepCommand
 from lightning_hpo.components.servers.db.models import GeneralModel
 from lightning_hpo.components.servers.file_server import FileServer
 from lightning_hpo.utilities.enum import Status
@@ -62,31 +63,34 @@ class SweepController(LightningFlow):
                     w.stop()
                 self.sweeps.pop(update.sweep_id)
 
-    def sweep_handler(self, config: SweepConfig) -> str:
+    def run_sweep(self, config: SweepConfig) -> str:
         sweep_ids = list(self.sweeps.keys())
         if config.sweep_id not in sweep_ids:
             resp = requests.post(self.db_url + "/general/", data=GeneralModel.from_obj(config).json())
             assert resp.status_code == 200
             return f"Launched a sweep {config.sweep_id}"
-        elif self.sweeps[config.sweep_id].has_failed:
-            self.sweeps[config.sweep_id].restart_count += 1
-            self.sweeps[config.sweep_id].has_failed = False
-            return f"Updated code for Sweep {config.sweep_id}."
-        else:
-            return f"The current Sweep {config.sweep_id} is running. It couldn't be updated."
-
+        # elif self.sweeps[config.sweep_id].has_failed:
+        #     self.sweeps[config.sweep_id].restart_count += 1
+        #     self.sweeps[config.sweep_id].has_failed = False
+        #     return f"Updated code for Sweep {config.sweep_id}."
+        return f"The current Sweep {config.sweep_id} is running. It couldn't be updated."
     def get_db_url(self, config: SweepConfig) -> str:
         return self.db_url
-
-    def show_sweeps_handler(self, config: SweepConfig) -> str:
-        resp = requests.get(self.db_url + "/general/", data=GeneralModel.from_cls(SweepConfig).json())
-        sweeps = [SweepConfig(**sweep) for sweep in resp.json()]
-        return "sweeps"
+    def stop_sweep(self, config: StopSweep):
+        sweep_ids = list(self.sweeps.keys())
+        if config.sweep_id in sweep_ids:
+            sweep = self.sweeps[config.sweep_id]
+            for w in sweep.works:
+                w.stop()
+            return f"Stopped the sweep `{config.sweep_id}`"
+        return f"We didn't find the sweep `{config.sweep_id}`"
 
     def configure_commands(self):
         return [
-            {"sweep": SweepCommand(self.sweep_handler)},
+            {"run sweep": RunSweepCommand(self.run_sweep)},
+            {"stop sweep": StopSweepCommand(self.stop_sweep)},
             {"cmd_show_sweeps": ShowSweepsListCommand(self.get_db_url)},
+
         ]
 
     @property

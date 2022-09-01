@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Type
 
 from fastapi import FastAPI
 from lightning import BuildConfig, LightningWork
@@ -13,7 +13,7 @@ class Database(LightningWork):
         self,
         db_file_name: str = "database.db",
         debug: bool = False,
-        models: Optional[List[SQLModel]] = None,  # Just meant to be imported.
+        models: Optional[List[Type[SQLModel]]] = None,  # Just meant to be imported.
     ):
         super().__init__(parallel=True, cloud_build_config=BuildConfig(["sqlmodel"]))
         self.db_file_name = db_file_name
@@ -51,12 +51,12 @@ class Database(LightningWork):
         async def general_put(config: GeneralModel):
             with Session(engine) as session:
                 assert config.id
-                data = config.convert_to_model()
-                identifier = getattr(data.__class__, config.id, None)
-                statement = select(data.__class__).where(identifier == getattr(data, config.id))
+                update_data = config.convert_to_model()
+                identifier = getattr(update_data.__class__, config.id, None)
+                statement = select(update_data.__class__).where(identifier == getattr(update_data, config.id))
                 results = session.exec(statement)
                 result = results.one()
-                for k, v in vars(data).items():
+                for k, v in vars(update_data).items():
                     if k in ("id", "_sa_instance_state"):
                         continue
                     if getattr(result, k) != v:
