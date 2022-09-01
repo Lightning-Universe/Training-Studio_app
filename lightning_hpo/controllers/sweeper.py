@@ -8,7 +8,7 @@ from lightning.app.storage.path import Path
 from lightning.app.structures import Dict
 
 from lightning_hpo import Sweep
-from lightning_hpo.commands.sweep.run_sweep import RunSweepCommand, SweepConfig, ShowSweepsListCommand
+from lightning_hpo.commands.sweep.run_sweep import RunSweepCommand, ShowSweepsListCommand, SweepConfig
 from lightning_hpo.commands.sweep.stop_sweep import StopSweep, StopSweepCommand
 from lightning_hpo.components.servers.db.models import GeneralModel
 from lightning_hpo.components.servers.file_server import FileServer
@@ -74,8 +74,10 @@ class SweepController(LightningFlow):
         #     self.sweeps[config.sweep_id].has_failed = False
         #     return f"Updated code for Sweep {config.sweep_id}."
         return f"The current Sweep {config.sweep_id} is running. It couldn't be updated."
+
     def get_db_url(self, config: SweepConfig) -> str:
         return self.db_url
+
     def stop_sweep(self, config: StopSweep):
         sweep_ids = list(self.sweeps.keys())
         if config.sweep_id in sweep_ids:
@@ -89,8 +91,7 @@ class SweepController(LightningFlow):
         return [
             {"run sweep": RunSweepCommand(self.run_sweep)},
             {"stop sweep": StopSweepCommand(self.stop_sweep)},
-            {"cmd_show_sweeps": ShowSweepsListCommand(self.get_db_url)},
-
+            {"show sweeps": ShowSweepsListCommand(self.get_db_url)},
         ]
 
     @property
