@@ -15,24 +15,18 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
-Install Lightning master.
-
-```bash
-pip install git+https://github.com/Lightning-AI/lightning
-```
-
 Clone and install lightning-hpo.
 
 ```bash
 git clone https://github.com/Lightning-AI/lightning-hpo.git
-cd lightning-hpo && pip install -e .
+cd lightning-hpo
+pip install -e . -r requirements.txt -r requirements/test.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
 ```
 
-Make sure you have lightning installed.
+Make sure everything works fine.
 
 ```bash
-git clone https://github.com/Lightning-AI/lightning.git
-cd lightning && pip install -e .
+pytest tests --capture=no -v
 ```
 
 
