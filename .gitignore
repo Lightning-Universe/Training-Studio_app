@@ -142,7 +142,6 @@ flagged
 wandb
 file_server
 sweep-*
-__init__.py
 train.py
 net.py
 thomas-*
