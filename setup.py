@@ -32,7 +32,7 @@ setup(
     author=about.__author__,
     author_email=about.__author_email__,
     url=about.__homepage__,
-    download_url="https://github.com/PyTorchLightning/lightning_hpo",
+    download_url="https://github.com/Lightning-AI/lightning-hpo",
     license=about.__license__,
     packages=find_packages(exclude=["tests", "docs"]),
     long_description=long_description,
@@ -41,11 +41,7 @@ setup(
     zip_safe=False,
     keywords=["deep learning", "pytorch", "AI"],
     python_requires=">=3.6",
-    entry_points={
-        "lightning.external_components": [
-            "lightning_hpo = lightning_hpo:exported_lightning_components",
-        ],
-    },
+    entry_points={},
     setup_requires=["wheel"],
     install_requires=setup_tools._load_requirements(_PATH_ROOT),
 )

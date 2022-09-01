@@ -1,4 +1,4 @@
-# Lightning HPO
+# [experimental] Lightning HPO
 
 Lightning HPO provides a pythonic implementation for Scalable Hyperparameter Tuning.
 
@@ -24,9 +24,17 @@ pip install git+https://github.com/Lightning-AI/lightning
 Clone and install lightning-hpo.
 
 ```bash
-git clone https://github.com/PyTorchLightning/lightning-hpo.git
+git clone https://github.com/Lightning-AI/lightning-hpo.git
 cd lightning-hpo && pip install -e .
 ```
+
+Make sure you have lightning installed.
+
+```bash
+git clone https://github.com/Lightning-AI/lightning.git
+cd lightning && pip install -e .
+```
+
 
 ## Getting started
 

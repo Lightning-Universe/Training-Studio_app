@@ -13,12 +13,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, macOS-11, windows-2019]
+        os: [ubuntu-20.04, macOS-11]
         python-version: [3.8]
-        requires: ["oldest", "latest"]
+        requires: ["latest"]
 
     # Timeout: https://stackoverflow.com/a/59076067/4521646
-    timeout-minutes: 20
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v2
@@ -57,33 +57,32 @@ jobs:
       - name: Install dependencies
         run: |
           pip --version
-          pip install -r requirements.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
+          pip install -e . -r requirements.txt -r requirements/test.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
           pip list
         shell: bash
 
       - name: Tests
-        working-directory: ./tests
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: us-east-1
           PYTEST_ARTIFACT: results-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}.xml
         run: |
-          coverage run --source lightning_hpo -m pytest -m "not cloud" tests_app --timeout=300 -vvvv --junitxml=$PYTEST_ARTIFACT --durations=0
+          pytest tests -vvvv --capture=no -v --color=yes
 
-      - name: Upload pytest test results
-        uses: actions/upload-artifact@v3
-        with:
-          name: unittest-results-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}
-          path: tests/results-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}.xml
-        if: failure()
-
-      - name: Statistics
-        if: success()
-        working-directory: ./tests
-        run: |
-          coverage xml -i
-          coverage report -i
+#      - name: Upload pytest test results
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: unittest-results-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}
+#          path: tests/results-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}.xml
+#        if: failure()
+#
+#      - name: Statistics
+#        if: success()
+#        working-directory: ./tests
+#        run: |
+#          coverage xml -i
+#          coverage report -i
 
       # - name: Upload coverage to Codecov
       #   uses: codecov/codecov-action@v3
