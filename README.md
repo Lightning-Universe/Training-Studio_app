@@ -8,6 +8,21 @@ This is built upon the highly scalable and distributed [Lightning App](https://l
 
 ## Installation
 
+Create a new virtual environment with python 3.8+
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+
+Install Lightning master.
+
+```bash
+pip install git+https://github.com/Lightning-AI/lightning
+```
+
+Clone and install lightning-hpo.
+
 ```bash
 git clone https://github.com/PyTorchLightning/lightning-hpo.git
 cd lightning-hpo && pip install -e .
@@ -144,7 +159,7 @@ app = LightningApp(
         objective_cls=MyObjective,
         n_trials=20,
         algorithm=OptunaAlgorithm(
-            optuna.create_study(pruner=optuna.pruners.MedianPruner()), 
+            optuna.create_study(pruner=optuna.pruners.MedianPruner()),
             direction="maximize",
         ),
         distributions={"alpha": LogUniform(1e-5, 1e-1)}
@@ -225,10 +240,17 @@ Sweep(
 Learn more [here](https://optuna.readthedocs.io/en/stable/tutorial/10_key_features/003_efficient_optimization_algorithms.html?highlight=hyperband#activating-pruners)
 
 
-## Use the Team HPO App
+## The Training App (WIP)
 
-WIP, but it is going to be awesome !
+In terminal 1, run the Training Application.
 
 ```bash
-python -m lightning run app examples/4_app_sweeper.py
+lightning run app examples/4_app_sweeper.py --env WANDB_ENTITY={ENTITY} --env WANDB_API_KEY={API_KEY}
+```
+
+In terminal 2, connect to the App and run your first sweep or start your notebook.
+
+```bash
+lightning connect localhost
+cd examples/scripts && lightning run sweep train.py --n_trials=3 --model.lr="log_uniform(0.001, 0.1)" --logger="wandb" --direction=maximize
 ```

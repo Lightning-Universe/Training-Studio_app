@@ -75,4 +75,11 @@ class OptunaAlgorithm(Algorithm):
         return False
 
     def get_params(self, trial_id: int) -> Dict[str, Any]:
-        return self.trials[trial_id].params
+        params = self.trials[trial_id].params
+        out = {}
+        for k, v in params.items():
+            if v == int(v):
+                out[k] = int(v)
+            else:
+                out[k] = v
+        return out

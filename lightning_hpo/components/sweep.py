@@ -129,7 +129,8 @@ class Sweep(LightningFlow):
                     self.has_updated = True
 
                 objective.run(
-                    params=self._sweep_config.trials[trial_id].params.params, restart_count=self.restart_count
+                    params=self._algorithm.get_params(trial_id),
+                    restart_count=self.restart_count,
                 )
 
                 if _check_status(objective, Status.FAILED):
