@@ -1,8 +1,8 @@
 import os
 from functools import partial
 from unittest import mock
-import pytest
 
+import pytest
 from lightning.app.testing import application_testing, LightningTestApp
 
 
@@ -25,10 +25,11 @@ class LightningHPOTestApp(LightningTestApp):
         if self.root.num_trials > self.root.n_trials:
             return True
 
+
 @pytest.mark.skip(reason="TODO: See if this test is still relevant")
 @mock.patch.dict(os.environ, {"WANDB_ENTITY": "thomas-chaton"})
 @mock.patch.dict(os.environ, {"WANDB_API_KEY": "eabe6ced59f74db139187745544572f81ef76162"})
-def test_custom_objective_Sweep_streamlit():
+def test_custom_objective_sweep_streamlit():
 
     command_line = [
         os.path.join(os.getcwd(), "examples/1_app_agnostic.py"),
@@ -38,10 +39,10 @@ def test_custom_objective_Sweep_streamlit():
     result = application_testing(LightningHPOTestApp, command_line)
     assert result.exit_code == 0, result.__dict__
 
-@pytest.mark.skip(reason="TODO: See if this test is still relevant")
+
 @mock.patch.dict(os.environ, {"WANDB_ENTITY": "thomas-chaton"})
 @mock.patch.dict(os.environ, {"WANDB_API_KEY": "eabe6ced59f74db139187745544572f81ef76162"})
-def test_pytorch_lightning_objective_Sweep_wandb():
+def test_pytorch_lightning_objective_sweep_wandb():
 
     command_line = [
         os.path.join(os.getcwd(), "examples/2_app_pytorch_lightning.py"),

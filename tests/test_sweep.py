@@ -10,5 +10,4 @@ class Custom(BaseObjective):
 
 
 def test_sweep_database_interraction():
-
-    sweep = Sweep(script_path=__file__, n_trials=5, simultaneous_trials=1)
+    Sweep(script_path=__file__, n_trials=5, simultaneous_trials=1)
