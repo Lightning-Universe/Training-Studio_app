@@ -1,6 +1,5 @@
 import os
 import re
-import sys
 from argparse import ArgumentParser
 from getpass import getuser
 from pathlib import Path
@@ -157,15 +156,13 @@ class CustomLocalSourceCodeDir(LocalSourceCodeDir):
         uploader.upload()
 
 
-class SweepCommand(ClientCommand):
+class RunSweepCommand(ClientCommand):
 
     SUPPORTED_DISTRIBUTIONS = ("uniform", "log_uniform", "categorical")
 
     def run(self) -> None:
-        sys.argv = sys.argv[1:]
-        script_path = sys.argv[0]
-
         parser = ArgumentParser()
+        parser.add_argument("script_path", type=str, help="The path to the script to run.")
         parser.add_argument("--n_trials", type=int, help="Number of trials to run.")
         parser.add_argument("--simultaneous_trials", default=1, type=int, help="Number of trials to run.")
         parser.add_argument("--requirements", nargs="+", default=[], help="Requirements file.")
@@ -201,10 +198,11 @@ class SweepCommand(ClientCommand):
         id = str(uuid4()).split("-")[0]
         sweep_id = hparams.sweep_id or f"{getuser()}-{id}"
 
-        if not os.path.exists(script_path):
+        if not os.path.exists(hparams.script_path):
             raise Exception("The provided script doesn't exists.")
 
-        repo = CustomLocalSourceCodeDir(path=Path(script_path).parent.resolve())
+        repo = CustomLocalSourceCodeDir(path=Path(hparams.script_path).parent.resolve())
+        # TODO: Resolve this bug.
         url = self.state.file_server._state["vars"]["_url"]
         repo.package()
         repo.upload(url=f"{url}/uploadfile/{sweep_id}")
@@ -216,7 +214,7 @@ class SweepCommand(ClientCommand):
 
         config = SweepConfig(
             sweep_id=sweep_id,
-            script_path=script_path,
+            script_path=hparams.script_path,
             n_trials=int(hparams.n_trials),
             simultaneous_trials=hparams.simultaneous_trials,
             requirements=hparams.requirements,

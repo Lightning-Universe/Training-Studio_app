@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional, TypedDict
 
-from lightning_hpo.commands.sweep import Distributions, Params
+from lightning_hpo.commands.sweep.run_sweep import Distributions, Params
 
 
 class DistributionDict(TypedDict):

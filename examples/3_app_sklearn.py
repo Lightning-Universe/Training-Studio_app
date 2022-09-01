@@ -14,7 +14,12 @@ class MyObjective(BaseObjective):
 
         iris = datasets.load_iris()
         classes = list(set(iris.target))
-        train_x, valid_x, train_y, valid_y = train_test_split(iris.data, iris.target, test_size=0.25, random_state=0)
+        train_x, valid_x, train_y, valid_y = train_test_split(
+            iris.data,
+            iris.target,
+            test_size=0.25,
+            random_state=0,
+        )
 
         clf = SGDClassifier(alpha=alpha)
 

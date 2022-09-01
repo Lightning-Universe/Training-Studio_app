@@ -12,8 +12,8 @@ from optuna.distributions import (
 )
 
 from lightning_hpo.algorithm.base import Algorithm
-from lightning_hpo.commands.sweep import TrialConfig
-from lightning_hpo.distributions.distributions import DistributionDict
+from lightning_hpo.commands.sweep.run_sweep import TrialConfig
+from lightning_hpo.distributions import DistributionDict
 
 _logger = logging.getLogger(__name__)
 
@@ -75,4 +75,11 @@ class OptunaAlgorithm(Algorithm):
         return False
 
     def get_params(self, trial_id: int) -> Dict[str, Any]:
-        return self.trials[trial_id].params
+        params = self.trials[trial_id].params
+        out = {}
+        for k, v in params.items():
+            if v == int(v):
+                out[k] = int(v)
+            else:
+                out[k] = v
+        return out
