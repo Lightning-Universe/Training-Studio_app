@@ -4,6 +4,7 @@ exclude *.yaml
 exclude *.toml
 exclude *.lightning
 exclude *.lightningignore
+exclude *.json
 
 recursive-include examples *
 recursive-include lightning_hpo *

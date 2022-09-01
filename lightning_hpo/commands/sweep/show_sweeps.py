@@ -1,7 +1,9 @@
 import argparse
-from typing import List
+from typing import Any, Dict, List, Optional
 
+import requests
 from lightning.app.utilities.commands import ClientCommand
+from pydantic import BaseModel
 from rich.console import Console
 from rich.table import Table
 
@@ -86,6 +88,14 @@ def _show_sweep(sweep: SweepConfig):
 
 
 class ShowSweepsCommand(ClientCommand):
+
+    # TODO: (tchaton) Upstream to Lightning
+    def invoke_handler(self, config: Optional[BaseModel] = None) -> Dict[str, Any]:
+        command = self.command_name.replace(" ", "_")
+        resp = requests.post(self.app_url + f"/command/{command}", data=config.json() if config else None)
+        assert resp.status_code == 200, resp.json()
+        return resp.json()
+
     def run(self) -> None:
         # 1. Parse the user arguments.
         parser = argparse.ArgumentParser()
