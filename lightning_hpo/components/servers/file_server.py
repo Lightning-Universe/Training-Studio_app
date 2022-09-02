@@ -25,7 +25,6 @@ class FileServer(L.LightningWork):
         super().__init__(
             cloud_build_config=L.BuildConfig(requirements=["Flask", "Flask-Cors"]),
             parallel=True,
-            port=6654,
             **kwargs,
         )
         # 1: Attach the arguments to the state.

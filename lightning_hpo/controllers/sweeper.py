@@ -1,3 +1,4 @@
+from time import sleep
 from typing import List, Optional
 
 import requests
@@ -8,6 +9,7 @@ from lightning.app.storage.path import Path
 from lightning.app.structures import Dict
 
 from lightning_hpo import Sweep
+from lightning_hpo.commands.sweep.delete_sweep import DeleteSweepCommand, DeleteSweepConfig
 from lightning_hpo.commands.sweep.run_sweep import RunSweepCommand, SweepConfig
 from lightning_hpo.commands.sweep.show_sweeps import ShowSweepsCommand
 from lightning_hpo.commands.sweep.stop_sweep import StopSweepCommand, StopSweepConfig
@@ -18,7 +20,7 @@ from lightning_hpo.utilities.utils import get_best_model_path
 
 
 class SweepController(LightningFlow):
-    def __init__(self, drive: Drive, use_db_viz: bool = True):
+    def __init__(self, drive: Drive):
         super().__init__()
         self.sweeps = Dict()
         self.drive = drive
@@ -93,11 +95,27 @@ class SweepController(LightningFlow):
             return f"Stopped the sweep `{config.sweep_id}`"
         return f"We didn't find the sweep `{config.sweep_id}`"
 
+    def delete_sweep(self, config: DeleteSweepConfig):
+        sweep_ids = list(self.sweeps.keys())
+        if config.sweep_id in sweep_ids:
+            sweep: Sweep = self.sweeps[config.sweep_id]
+            for w in sweep.works():
+                w.stop()
+            sweep_config = sweep._sweep_config
+            resp = requests.delete(
+                self.db_url + "/general/", data=GeneralModel.from_obj(sweep_config, id="sweep_id").json()
+            )
+            del self.sweeps[config.sweep_id]
+            assert resp.status_code == 200
+            return f"Deleted the sweep `{config.sweep_id}`"
+        return f"We didn't find the sweep `{config.sweep_id}`"
+
     def configure_commands(self):
         return [
+            {"delete sweep": DeleteSweepCommand(self.delete_sweep)},
             {"run sweep": RunSweepCommand(self.run_sweep)},
-            {"stop sweep": StopSweepCommand(self.stop_sweep)},
             {"show sweeps": ShowSweepsCommand(self.show_sweeps)},
+            {"stop sweep": StopSweepCommand(self.stop_sweep)},
         ]
 
     @property
@@ -111,6 +129,10 @@ class SweepController(LightningFlow):
 def render_fn(state):
     import streamlit as st
     import streamlit.components.v1 as components
+
+    if not state.db_url:
+        sleep(1)
+        st.experimental_rerun()
 
     resp = requests.get(state.db_url + "/general/", data=GeneralModel.from_cls(SweepConfig).json())
     sweeps: List[SweepConfig] = resp.json()
