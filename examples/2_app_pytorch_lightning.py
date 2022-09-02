@@ -15,7 +15,7 @@ app = LightningApp(
             "model.lr": LogUniform(0.001, 0.1),
             "model.gamma": Uniform(0.5, 0.8),
             "data.batch_size": Categorical([16, 32, 64]),
-            "trainer.max_epochs": IntUniform(3, 15),
+            "trainer.max_epochs": IntUniform(1, 5),
         },
         algorithm=OptunaAlgorithm(direction="maximize"),
         cloud_compute=CloudCompute("gpu-fast-multi", count=2),  # 2 * 4 V100
