@@ -56,6 +56,7 @@ class DownloadArtefactsCommand(ClientCommand):
                     .replace("/artifacts/", "")
                     .replace(os.getcwd() + "/", "")
                 )
+
                 target_file = Path(os.path.join(output_dir, cleaned_path))
                 if not target_file.parent.exists():
                     os.makedirs(str(target_file.parent), exist_ok=True)
