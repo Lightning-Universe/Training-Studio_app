@@ -84,7 +84,7 @@ class SweepController(LightningFlow):
             sweep_config = sweep._sweep_config
             sweep_config.status = Status.STOPPED
             for trial in sweep_config.trials.values():
-                if trial.status in (Status.PENDING, Status.RUNNING):
+                if trial.status != Status.SUCCEEDED:
                     trial.status = Status.STOPPED
             resp = requests.put(
                 self.db_url + "/general/", data=GeneralModel.from_obj(sweep_config, id="sweep_id").json()
