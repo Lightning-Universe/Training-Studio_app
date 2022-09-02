@@ -7,7 +7,7 @@ import requests
 from lightning.app.storage import Drive
 from sqlmodel import create_engine, SQLModel
 
-from lightning_hpo.commands.sweep.delete_sweep import DeleteSweepConfig
+from lightning_hpo.commands.sweep.delete import DeleteSweepConfig
 from lightning_hpo.components.servers.db import server
 from lightning_hpo.components.servers.db.server import general_delete, general_get, general_post, GeneralModel
 from lightning_hpo.components.sweep import Sweep, SweepConfig

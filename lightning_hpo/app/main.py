@@ -1,8 +1,14 @@
 from lightning import LightningFlow
 from lightning.app.storage import Drive
 
+from lightning_hpo.commands.artefacts.download import (
+    _collect_artefact_urls,
+    DownloadArtefactsCommand,
+    DownloadArtefactsConfig,
+)
+from lightning_hpo.commands.artefacts.show import _collect_artefact_paths, ShowArtefactsCommand, ShowArtefactsConfig
 from lightning_hpo.commands.notebook import RunNotebookConfig
-from lightning_hpo.commands.sweep.run_sweep import SweepConfig
+from lightning_hpo.commands.sweep.run import SweepConfig
 from lightning_hpo.components.servers.db.server import Database
 from lightning_hpo.components.servers.db.visualization import DatabaseViz
 from lightning_hpo.components.servers.file_server import FileServer
@@ -51,5 +57,17 @@ class MainFlow(LightningFlow):
                 tabs += sweep.configure_layout()
         return tabs
 
+    def show_artefacts(self, config: ShowArtefactsConfig):
+        return _collect_artefact_paths(config)
+
+    def download_artefacts(self, config: DownloadArtefactsConfig):
+        return _collect_artefact_urls(config)
+
     def configure_commands(self):
-        return self.sweep_controller.configure_commands() + self.notebook_controller.configure_commands()
+        controller_commands = self.sweep_controller.configure_commands()
+        controller_commands += self.notebook_controller.configure_commands()
+        controller_commands += [
+            {"show artefacts": ShowArtefactsCommand(self.show_artefacts)},
+            {"download artefacts": DownloadArtefactsCommand(self.download_artefacts)},
+        ]
+        return controller_commands

@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from rich.console import Console
 from rich.table import Table
 
-from lightning_hpo.commands.sweep.run_sweep import SweepConfig
+from lightning_hpo.commands.sweep.run import SweepConfig
 
 
 def _show_sweeps(sweeps: List[SweepConfig]):

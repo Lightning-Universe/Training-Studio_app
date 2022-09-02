@@ -9,10 +9,10 @@ from lightning.app.storage.path import Path
 from lightning.app.structures import Dict
 
 from lightning_hpo import Sweep
-from lightning_hpo.commands.sweep.delete_sweep import DeleteSweepCommand, DeleteSweepConfig
-from lightning_hpo.commands.sweep.run_sweep import RunSweepCommand, SweepConfig
-from lightning_hpo.commands.sweep.show_sweeps import ShowSweepsCommand
-from lightning_hpo.commands.sweep.stop_sweep import StopSweepCommand, StopSweepConfig
+from lightning_hpo.commands.sweep.delete import DeleteSweepCommand, DeleteSweepConfig
+from lightning_hpo.commands.sweep.run import RunSweepCommand, SweepConfig
+from lightning_hpo.commands.sweep.show import ShowSweepsCommand
+from lightning_hpo.commands.sweep.stop import StopSweepCommand, StopSweepConfig
 from lightning_hpo.components.servers.db.models import GeneralModel
 from lightning_hpo.components.servers.file_server import FileServer
 from lightning_hpo.utilities.enum import Status
@@ -80,6 +80,7 @@ class SweepController(LightningFlow):
     def stop_sweep(self, config: StopSweepConfig):
         sweep_ids = list(self.sweeps.keys())
         if config.sweep_id in sweep_ids:
+            # TODO: Add support for __del__ in lightning
             sweep: Sweep = self.sweeps[config.sweep_id]
             for w in sweep.works():
                 w.stop()
