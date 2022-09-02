@@ -1,8 +1,7 @@
 import argparse
 import os
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
-import requests
 import rich
 from lightning.app.utilities.commands import ClientCommand
 from pydantic import BaseModel
@@ -60,22 +59,19 @@ def walk_directory(paths: List[str], tree: Tree) -> None:
     rich.print(tree)
 
 
+class ShowArtefactsConfig(BaseModel):
+    filter_regex: Optional[str] = None
+
+
 class ShowArtefactsCommand(ClientCommand):
-
-    # TODO: (tchaton) Upstream to Lightning
-    def invoke_handler(self, config: Optional[BaseModel] = None) -> Dict[str, Any]:
-        command = self.command_name.replace(" ", "_")
-        resp = requests.post(self.app_url + f"/command/{command}", data=config.json() if config else None)
-        assert resp.status_code == 200, resp.json()
-        return resp.json()
-
     def run(self) -> None:
         # 1. Parse the user arguments.
         parser = argparse.ArgumentParser()
         parser.add_argument("--filter", type=str, default=None, help="Provide a filtering regex.")
-        _ = parser.parse_args()
+        hparams = parser.parse_args()
 
-        response: List[str] = self.invoke_handler()
+        config = ShowArtefactsConfig(filter_regex=hparams.filter)
+        response: List[str] = self.invoke_handler(config=config)
 
         tree = Tree(
             "[bold magenta]:open_file_folder: root",
