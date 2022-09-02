@@ -65,6 +65,18 @@ class Database(LightningWork):
                 session.commit()
                 session.refresh(result)
 
+        @app.delete("/general/")
+        async def general_delete(config: GeneralModel):
+            with Session(engine) as session:
+                assert config.id
+                update_data = config.convert_to_model()
+                identifier = getattr(update_data.__class__, config.id, None)
+                statement = select(update_data.__class__).where(identifier == getattr(update_data, config.id))
+                results = session.exec(statement)
+                result = results.one()
+                session.delete(result)
+                session.commit()
+
         run(app, host=self.host, port=self.port)
 
     def alive(self):

@@ -11,13 +11,17 @@ from lightning_hpo.controllers.sweeper import SweepController
 
 
 class MainFlow(LightningFlow):
-    def __init__(self):
+    def __init__(self, debug: bool = False):
         super().__init__()
+        self.debug = debug
+
         # 1: General managers
         self.drive = Drive("lit://code")
         self.file_server = FileServer(self.drive)
         self.db = Database(models=[SweepConfig, RunNotebookConfig])
-        self.db_viz = DatabaseViz()
+
+        if self.debug:
+            self.db_viz = DatabaseViz()
 
         # 2: Controllers
         self.sweep_controller = SweepController(self.drive)
@@ -27,10 +31,11 @@ class MainFlow(LightningFlow):
         # 1: Start the servers.
         self.file_server.run()
         self.db.run()
-        self.db_viz.run()
+        if self.debug:
+            self.db_viz.run()
 
         # 2: Wait for the servers to be alive
-        if not (self.file_server.alive() and self.db.alive()):
+        if not (self.file_server.alive() and (self.db.alive() if self.debug else True)):
             return
 
         # 3: Run the controllers
@@ -39,7 +44,8 @@ class MainFlow(LightningFlow):
 
     def configure_layout(self):
         tabs = [{"name": "Dashboard", "content": self.sweep_controller}]
-        tabs += [{"name": "Database Viz", "content": self.db_viz}]
+        if self.debug:
+            tabs += [{"name": "Database Viz", "content": self.db_viz}]
         for sweep in self.sweep_controller.sweeps.values():
             if sweep.show:
                 tabs += sweep.configure_layout()

@@ -87,7 +87,7 @@ if __name__ == "__main__":
         run=False,
         trainer_defaults={
             "max_epochs": 10,
-            "limit_train_batches": 10,
+            "limit_train_batches": 20,
             "limit_val_batches": 5,
             "callbacks": [ModelCheckpoint(monitor="val_acc")],
         },
