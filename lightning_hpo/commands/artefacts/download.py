@@ -32,6 +32,7 @@ class DownloadArtefactsCommand(ClientCommand):
         hparams = parser.parse_args()
 
         output_dir = Path(hparams.output_dir).resolve()
+
         if not output_dir.exists():
             raise FileNotFoundError(f"The provided directory {output_dir} doesn't exist.")
 
@@ -49,7 +50,12 @@ class DownloadArtefactsCommand(ClientCommand):
             for path in response:
                 source_path = Path(path).resolve()
                 shared_storage = shared_storage_path()
-                cleaned_path = str(path).replace(str(shared_storage) + "/artifacts/", "").replace(os.getcwd(), "")
+                cleaned_path = (
+                    str(path)
+                    .replace(str(shared_storage) + "/", "")
+                    .replace("/artifacts/", "")
+                    .replace(os.getcwd() + "/", "")
+                )
                 target_file = Path(os.path.join(output_dir, cleaned_path))
                 if not target_file.parent.exists():
                     os.makedirs(str(target_file.parent), exist_ok=True)

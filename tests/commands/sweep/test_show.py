@@ -78,7 +78,5 @@ def test_show_sweeps_server(monkeypatch):
     monkeypatch.setattr(requests, "get", get)
     result = sweep_controller.show_sweeps()
     assert result == data
-    expected = (
-        '{"cls_name": "SweepConfig", "cls_module": "lightning_hpo.commands.sweep.run_sweep", "data": "", "id": null}'
-    )
+    expected = '{"cls_name": "SweepConfig", "cls_module": "lightning_hpo.commands.sweep.run", "data": "", "id": null}'
     assert get._mock_call_args.kwargs["data"] == expected
