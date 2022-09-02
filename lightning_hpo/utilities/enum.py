@@ -5,3 +5,4 @@ class Status:
     PRUNED = "pruned"
     SUCCEEDED = "succeeded"
     FAILED = "failed"
+    STOPPED = "stopped"

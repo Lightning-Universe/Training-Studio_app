@@ -10,7 +10,7 @@ from lightning.app.structures import Dict
 from lightning_hpo import Sweep
 from lightning_hpo.commands.sweep.run_sweep import RunSweepCommand, SweepConfig
 from lightning_hpo.commands.sweep.show_sweeps import ShowSweepsCommand
-from lightning_hpo.commands.sweep.stop_sweep import StopSweep, StopSweepCommand
+from lightning_hpo.commands.sweep.stop_sweep import StopSweepCommand, StopSweepConfig
 from lightning_hpo.components.servers.db.models import GeneralModel
 from lightning_hpo.components.servers.file_server import FileServer
 from lightning_hpo.utilities.enum import Status
@@ -75,12 +75,21 @@ class SweepController(LightningFlow):
     def show_sweeps(self) -> Dict:
         return requests.get(self.db_url + "/general/", data=GeneralModel.from_cls(SweepConfig).json()).json()
 
-    def stop_sweep(self, config: StopSweep):
+    def stop_sweep(self, config: StopSweepConfig):
         sweep_ids = list(self.sweeps.keys())
         if config.sweep_id in sweep_ids:
-            sweep = self.sweeps[config.sweep_id]
-            for w in sweep.works:
+            sweep: Sweep = self.sweeps[config.sweep_id]
+            for w in sweep.works():
                 w.stop()
+            sweep_config = sweep._sweep_config
+            sweep_config.status = Status.STOPPED
+            for trial in sweep_config.trials.values():
+                if trial.status in (Status.PENDING, Status.RUNNING):
+                    trial.status = Status.STOPPED
+            resp = requests.put(
+                self.db_url + "/general/", data=GeneralModel.from_obj(sweep_config, id="sweep_id").json()
+            )
+            assert resp.status_code == 200
             return f"Stopped the sweep `{config.sweep_id}`"
         return f"We didn't find the sweep `{config.sweep_id}`"
 
