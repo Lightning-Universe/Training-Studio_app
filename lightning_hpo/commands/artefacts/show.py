@@ -76,7 +76,6 @@ class ShowArtefactsCommand(ClientCommand):
 
         config = ShowArtefactsConfig(include=hparams.include, exclude=hparams.exclude)
         response: List[str] = self.invoke_handler(config=config)
-        print(response)
 
         tree = Tree(
             "[bold magenta]:open_file_folder: root",
@@ -86,13 +85,8 @@ class ShowArtefactsCommand(ClientCommand):
         walk_folder(response, tree)
 
 
-def _collect_artefact_paths(config: ShowArtefactsConfig) -> List[str]:
-    """This function is responsible to collecting the files from the shared filesystem."""
-    fs = filesystem()
-    paths = []
-
-    include = config.include
-    exclude = config.exclude
+def _filter_paths(paths: List[str], include: Optional[str], exclude: Optional[str]) -> List[str]:
+    out = []
 
     if include:
         include_pattern = re.compile(include)
@@ -100,18 +94,28 @@ def _collect_artefact_paths(config: ShowArtefactsConfig) -> List[str]:
     if exclude:
         exclude_pattern = re.compile(exclude)
 
+    for path in paths:
+        if include or exclude:
+            if exclude and len(exclude_pattern.findall(path)):
+                pass
+
+            elif (include and len(include_pattern.findall(path))) or include is None:
+                out.append(path)
+        else:
+            out.append(path)
+    return out
+
+
+def _collect_artefact_paths(config: ShowArtefactsConfig, replace: bool = True) -> List[str]:
+    """This function is responsible to collecting the files from the shared filesystem."""
+    fs = filesystem()
+    paths = []
+
     shared_storage = shared_storage_path()
     for root_dir, _, files in fs.walk(shared_storage):
-        root_dir = str(root_dir).replace(str(shared_storage), "").replace("/artifacts/root.", "root/")
+        if replace:
+            root_dir = str(root_dir).replace(str(shared_storage), "").replace("/artifacts/root.", "root/")
         for f in files:
-            path = os.path.join(root_dir, f)
-            if include or exclude:
-                if exclude and len(exclude_pattern.findall(path)):
-                    pass
+            paths.append(os.path.join(str(root_dir), f))
 
-                elif (include and len(include_pattern.findall(path))) or include is None:
-                    paths.append(path)
-
-            else:
-                paths.append(path)
-    return paths
+    return _filter_paths(paths, config.include, config.exclude)
