@@ -1,8 +1,10 @@
 import argparse
 import os
+import re
 from typing import Dict, List, Optional
 
 import rich
+from lightning.app.storage.path import filesystem, shared_storage_path
 from lightning.app.utilities.commands import ClientCommand
 from pydantic import BaseModel
 from rich.text import Text
@@ -60,19 +62,21 @@ def walk_folder(paths: List[str], tree: Tree) -> None:
 
 
 class ShowArtefactsConfig(BaseModel):
-    filter_regex: Optional[str] = None
+    include: Optional[str] = None
+    exclude: Optional[str] = None
 
 
 class ShowArtefactsCommand(ClientCommand):
     def run(self) -> None:
         # 1. Parse the user arguments.
         parser = argparse.ArgumentParser()
-        parser.add_argument("--include", type=str, default=None, help="Provide a filtering regex.")
-        parser.add_argument("--exclude", type=str, default=None, help="Provide a filtering regex.")
+        parser.add_argument("--include", type=str, default=None, help="Provide a regex to include some specific files.")
+        parser.add_argument("--exclude", type=str, default=None, help="Provide a regex to exclude some specific files.")
         hparams = parser.parse_args()
 
-        config = ShowArtefactsConfig(filter_regex=hparams.filter)
+        config = ShowArtefactsConfig(include=hparams.include, exclude=hparams.exclude)
         response: List[str] = self.invoke_handler(config=config)
+        print(response)
 
         tree = Tree(
             "[bold magenta]:open_file_folder: root",
@@ -80,3 +84,34 @@ class ShowArtefactsCommand(ClientCommand):
         )
 
         walk_folder(response, tree)
+
+
+def _collect_artefact_paths(config: ShowArtefactsConfig) -> List[str]:
+    """This function is responsible to collecting the files from the shared filesystem."""
+    fs = filesystem()
+    paths = []
+
+    include = config.include
+    exclude = config.exclude
+
+    if include:
+        include_pattern = re.compile(include)
+
+    if exclude:
+        exclude_pattern = re.compile(exclude)
+
+    shared_storage = shared_storage_path()
+    for root_dir, _, files in fs.walk(shared_storage):
+        root_dir = str(root_dir).replace(str(shared_storage), "").replace("/artifacts/root.", "root/")
+        for f in files:
+            path = os.path.join(root_dir, f)
+            if include or exclude:
+                if exclude and len(exclude_pattern.findall(path)):
+                    pass
+
+                elif (include and len(include_pattern.findall(path))) or include is None:
+                    paths.append(path)
+
+            else:
+                paths.append(path)
+    return paths
