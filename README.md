@@ -258,7 +258,8 @@ lightning connect localhost
 ```
 
 ```bash
-(.venv) ➜  LAI-lightning-hpo-App git:(tensorboard_visualize_metrics) ✗ lightning --help           
+lightning --help           
+
 You are connected to the local Lightning App.
 Usage: lightning [OPTIONS] COMMAND [ARGS]...
 
