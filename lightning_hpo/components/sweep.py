@@ -42,6 +42,7 @@ class Sweep(LightningFlow):
         trials_done: Optional[int] = 0,
         requirements: Optional[List[str]] = None,
         trials: Optional[Dict[int, TrialConfig]] = None,
+        status: Optional[str] = Status.NOT_STARTED,
         **objective_kwargs: Any,
     ):
         """The Sweep class enables to easily run a Python Script with Lightning
@@ -75,6 +76,7 @@ class Sweep(LightningFlow):
             logger=logger,
             direction=direction,
             trials=trials or {},
+            status=status,
         )
 
         self._objective_cls = _resolve_objective_cls(objective_cls, framework)
@@ -219,4 +221,5 @@ class Sweep(LightningFlow):
             algorithm=OptunaAlgorithm(direction=config.direction),
             trials=config.trials,
             direction=config.direction,
+            status=config.status,
         )
