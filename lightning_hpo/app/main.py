@@ -54,7 +54,7 @@ class MainFlow(LightningFlow):
         fs = filesystem()
         paths = []
         if config.filter_regex:
-            regex = re.compile(config.filter_regex)
+            pattern = re.compile(config.filter_regex)
 
         shared_storage = shared_storage_path()
         for root_dir, _, files in fs.walk(shared_storage):
@@ -62,7 +62,7 @@ class MainFlow(LightningFlow):
             for f in files:
                 path = os.path.join(root_dir, f)
                 if config.filter_regex:
-                    if not re.match(regex, path):
+                    if len(pattern.findall(path)):
                         paths.append(path)
                 else:
                     paths.append(path)

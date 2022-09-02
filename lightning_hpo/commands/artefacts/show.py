@@ -1,6 +1,6 @@
 import argparse
 import os
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import rich
 from lightning.app.utilities.commands import ClientCommand
@@ -9,7 +9,7 @@ from rich.text import Text
 from rich.tree import Tree
 
 
-def walk_folder(tree, sorted_directories, root_path, depth):
+def _walk_folder(tree: Tree, sorted_directories: Dict[str, List[str]], root_path: str, depth: int):
     parents = {}
     for directory in sorted_directories:
         splits = directory.split("/")
@@ -37,7 +37,7 @@ def walk_folder(tree, sorted_directories, root_path, depth):
             style=style,
             guide_style=style,
         )
-        walk_folder(
+        _walk_folder(
             branch,
             {directory: sorted_directories[directory] for directory in directories},
             os.path.join(root_path, folder),
@@ -45,7 +45,7 @@ def walk_folder(tree, sorted_directories, root_path, depth):
         )
 
 
-def walk_directory(paths: List[str], tree: Tree) -> None:
+def walk_folder(paths: List[str], tree: Tree) -> None:
     """Recursively build a Tree with directory contents."""
     paths = sorted(paths)
     directories = {}
@@ -55,7 +55,7 @@ def walk_directory(paths: List[str], tree: Tree) -> None:
             directories[directory] = []
         directories[directory].append(p)
 
-    walk_folder(tree, directories, "artifacts", 1)
+    _walk_folder(tree, directories, "artifacts", 1)
     rich.print(tree)
 
 
@@ -67,7 +67,8 @@ class ShowArtefactsCommand(ClientCommand):
     def run(self) -> None:
         # 1. Parse the user arguments.
         parser = argparse.ArgumentParser()
-        parser.add_argument("--filter", type=str, default=None, help="Provide a filtering regex.")
+        parser.add_argument("--include", type=str, default=None, help="Provide a filtering regex.")
+        parser.add_argument("--exclude", type=str, default=None, help="Provide a filtering regex.")
         hparams = parser.parse_args()
 
         config = ShowArtefactsConfig(filter_regex=hparams.filter)
@@ -78,4 +79,4 @@ class ShowArtefactsCommand(ClientCommand):
             guide_style="bold bright_blue",
         )
 
-        walk_directory(response, tree)
+        walk_folder(response, tree)
