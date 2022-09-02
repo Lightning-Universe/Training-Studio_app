@@ -255,5 +255,25 @@ In terminal 2, connect to the App and run your first sweep or start your noteboo
 
 ```bash
 lightning connect localhost
+```
+
+```bash
+(.venv) ➜  LAI-lightning-hpo-App git:(tensorboard_visualize_metrics) ✗ lightning --help           
+You are connected to the local Lightning App.
+Usage: lightning [OPTIONS] COMMAND [ARGS]...
+
+  --help     Show this message and exit.
+
+Lightning App Commands
+  delete sweep
+  download artefacts
+  run notebook
+  run sweep
+  show artefacts
+  show sweeps
+  stop sweep
+```
+
+```bash
 cd examples/scripts && lightning run sweep train.py --n_trials=3 --model.lr="log_uniform(0.001, 0.1)" --logger="wandb" --direction=maximize
 ```
