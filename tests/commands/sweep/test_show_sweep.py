@@ -8,8 +8,8 @@ import requests
 from lightning.app.storage import Drive
 from rich.table import Table
 
-from lightning_hpo.commands.sweep import show_sweeps
-from lightning_hpo.commands.sweep.show_sweeps import ShowSweepsCommand
+from lightning_hpo.commands.sweep import show
+from lightning_hpo.commands.sweep.show import ShowSweepsCommand
 from lightning_hpo.components.sweep import Sweep, SweepConfig
 from lightning_hpo.controllers.sweeper import SweepController
 
@@ -27,7 +27,7 @@ def test_show_sweeps_client(monkeypatch):
     monkeypatch.setattr(requests, "post", MagicMock(return_value=resp))
     console = MagicMock()
 
-    monkeypatch.setattr(show_sweeps, "Console", console)
+    monkeypatch.setattr(show, "Console", console)
     sys.argv = [""]
     command = ShowSweepsCommand(None)
     command.command_name = ""
@@ -38,7 +38,7 @@ def test_show_sweeps_client(monkeypatch):
     assert isinstance(table, Table)
     assert table.columns[0]._cells == ["thomas-cb8f69f0"]
 
-    monkeypatch.setattr(show_sweeps, "Console", console)
+    monkeypatch.setattr(show, "Console", console)
     with pytest.raises(Exception, match="thomas-cb8f69f0"):
         sys.argv = ["", "--sweep_id=1234"]
         command = ShowSweepsCommand(None)
@@ -46,7 +46,7 @@ def test_show_sweeps_client(monkeypatch):
         command.app_url = ""
         command.run()
 
-    monkeypatch.setattr(show_sweeps, "Console", console)
+    monkeypatch.setattr(show, "Console", console)
     sys.argv = ["", "--sweep_id=thomas-cb8f69f0"]
     command = ShowSweepsCommand(None)
     command.command_name = ""
