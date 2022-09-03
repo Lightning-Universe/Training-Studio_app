@@ -39,6 +39,9 @@ class DownloadArtefactsCommand(ClientCommand):
         config = DownloadArtefactsConfig(include=hparams.include, exclude=hparams.exclude)
         response: List[str] = self.invoke_handler(config=config)
 
+        if not response:
+            return
+
         if len(response[0]) == 2:
             for path, url in response:
                 source_path = Path(path)

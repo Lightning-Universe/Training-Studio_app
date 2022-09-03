@@ -6,7 +6,7 @@ from sqlmodel import SQLModel
 from lightning_hpo.components.servers.db.models import GeneralModel
 
 
-class Database:
+class DatabaseConnector:
     def __init__(self, model: Type[SQLModel], db_url: str, model_id: Optional[str] = None):
         self.model = model
         self.db_url = db_url

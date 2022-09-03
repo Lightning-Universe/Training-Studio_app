@@ -6,7 +6,7 @@ from lightning.app.storage import Drive
 from lightning.app.structures import Dict
 from sqlmodel import SQLModel
 
-from lightning_hpo.components.servers.db.database import Database
+from lightning_hpo.components.servers.db import DatabaseConnector
 
 
 class Controller(LightningFlow):
@@ -49,10 +49,10 @@ class Controller(LightningFlow):
         self.on_reconcile_end(updates)
 
     @property
-    def db(self) -> Database:
+    def db(self) -> DatabaseConnector:
         if self._database is None:
             assert self.db_url
-            self._database = Database(self.model, self.db_url, self.model_id)
+            self._database = DatabaseConnector(self.model, self.db_url, self.model_id)
         return self._database
 
     @abstractmethod

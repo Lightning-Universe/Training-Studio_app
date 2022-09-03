@@ -7,8 +7,7 @@ from lightning_hpo.commands.artefacts.download import (
     DownloadArtefactsConfig,
 )
 from lightning_hpo.commands.artefacts.show import _collect_artefact_paths, ShowArtefactsCommand, ShowArtefactsConfig
-from lightning_hpo.components.servers.db.server import Database
-from lightning_hpo.components.servers.db.visualization import DatabaseViz
+from lightning_hpo.components.servers.db import Database, DatabaseViz
 from lightning_hpo.components.servers.file_server import FileServer
 from lightning_hpo.controllers.notebook import NotebookController
 from lightning_hpo.controllers.sweeper import SweepController
