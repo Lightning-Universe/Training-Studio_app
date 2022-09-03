@@ -15,7 +15,7 @@ from lightning_hpo.controllers.tensorboard import TensorboardController
 
 
 class MainFlow(LightningFlow):
-    def __init__(self, debug: bool = True):
+    def __init__(self, debug: bool = False):
         super().__init__()
         self.debug = debug
 
@@ -50,7 +50,7 @@ class MainFlow(LightningFlow):
             self.db_viz.run()
 
         # 2: Wait for the servers to be alive
-        if not (self.file_server.alive() and (self.db.alive() if self.debug else True)):
+        if not (self.file_server.alive() and self.db.alive()):
             return
 
         # 3: Run the controllers

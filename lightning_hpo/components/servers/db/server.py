@@ -2,6 +2,7 @@ from typing import List, Optional, Type
 
 from fastapi import FastAPI
 from lightning import BuildConfig, LightningWork
+from lightning.app.storage import Path
 from sqlmodel import create_engine, select, Session, SQLModel
 from uvicorn import run
 
@@ -64,7 +65,7 @@ class Database(LightningWork):
         models: Optional[List[Type[SQLModel]]] = None,  # Just meant to be imported.
     ):
         super().__init__(parallel=True, cloud_build_config=BuildConfig(["sqlmodel"]))
-        self.db_file_name = db_file_name
+        self.db_file_name = Path(db_file_name)
         self.debug = debug
         self._models = models
 
