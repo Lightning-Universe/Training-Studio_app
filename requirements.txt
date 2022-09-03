@@ -1,1 +1,18 @@
-pytorch-lightning
+pytorch_lightning
+jsonargparse[signatures]
+git+https://github.com/Lightning-AI/lightning.git@master  # TODO: repelace with lightning once 0.6.0 is released
+lightning_cloud
+torchvision
+optuna
+sqlmodel
+wandb
+streamlit
+sqlalchemy
+hiplot
+streamlit_autorefresh
+lightning  # TODO: remove this dependency. (added only for CI)
+sklearn
+sqlmodel
+sqlite_web
+Flask
+Flask-Cors
