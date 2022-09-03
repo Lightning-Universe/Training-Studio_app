@@ -13,8 +13,10 @@ from lightning_hpo.commands.sweep.delete import DeleteSweepCommand, DeleteSweepC
 from lightning_hpo.commands.sweep.run import RunSweepCommand, SweepConfig
 from lightning_hpo.commands.sweep.show import ShowSweepsCommand
 from lightning_hpo.commands.sweep.stop import StopSweepCommand, StopSweepConfig
+from lightning_hpo.commands.tensorboard.stop import TensorboardConfig
 from lightning_hpo.components.servers.db.models import GeneralModel
 from lightning_hpo.components.servers.file_server import FileServer
+from lightning_hpo.loggers import LoggerType
 from lightning_hpo.utilities.enum import Status
 from lightning_hpo.utilities.utils import get_best_model_path
 
@@ -29,6 +31,7 @@ class SweepController(LightningFlow):
         self.drive = drive
         self.file_server = FileServer(self.drive)
         self.db_url = None
+        self.tensorboard_sweep_id = None
 
     def run(self, db_url: str):
         self.db_url = db_url
@@ -51,6 +54,22 @@ class SweepController(LightningFlow):
         resp = requests.get(self.db_url + "/general/", data=GeneralModel.from_cls(SweepConfig).json())
         assert resp.status_code == 200
         sweeps = [SweepConfig(**sweep) for sweep in resp.json()]
+
+        if self.tensorboard_sweep_id is None:
+            resp = requests.get(self.db_url + "/general/", data=GeneralModel.from_cls(TensorboardConfig).json())
+            assert resp.status_code == 200
+            self.tensorboard_sweep_id = [TensorboardConfig(**config).sweep_id for config in resp.json()]
+
+        for sweep in sweeps:
+            if sweep.logger != LoggerType.TENSORBOARD.value:
+                continue
+
+            if sweep.sweep_id not in self.tensorboard_sweep_id:
+                drive = Drive(f"lit://{sweep.sweep_id}", component_name="logs")
+                tensorboard = TensorboardConfig(sweep_id=sweep.sweep_id, shared_folder=str(drive.root))
+                resp = requests.post(self.db_url + "/general/", data=GeneralModel.from_obj(tensorboard).json())
+                self.tensorboard_sweep_id.append(sweep.sweep_id)
+
         for config in sweeps:
             if config.trials_done == config.n_trials:
                 continue

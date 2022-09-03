@@ -16,7 +16,7 @@ from lightning_hpo.controllers.tensorboard import TensorboardController
 
 
 class MainFlow(LightningFlow):
-    def __init__(self, debug: bool = False):
+    def __init__(self, debug: bool = True):
         super().__init__()
         self.debug = debug
 

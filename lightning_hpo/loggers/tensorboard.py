@@ -24,8 +24,8 @@ class TensorboardLogger(Logger):
         from pytorch_lightning import Trainer
         from pytorch_lightning.loggers import TensorBoardLogger as PLTensorBoardLogger
 
-        drive = Drive(f"lit://{sweep_id}")
-        drive.component_name = "logs"
+        # Create a space logs under the sweep_id folder
+        drive = Drive(f"lit://{sweep_id}", component_name="logs")
         logger = PLTensorBoardLogger(os.path.join(drive.root, str(trial_id)))
 
         logger.log_hyperparams(params)
