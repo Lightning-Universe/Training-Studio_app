@@ -44,9 +44,10 @@ class DownloadArtefactsCommand(ClientCommand):
 
         if len(response[0]) == 2:
             for path, url in response:
-                source_path = Path(path)
+                if path.startswith("/"):
+                    path = path[1:]
                 resp = requests.get(url, allow_redirects=True)
-                target_file = Path(os.path.join(output_dir, source_path))
+                target_file = Path(os.path.join(output_dir, path))
                 with open(target_file, "wb") as f:
                     f.write(resp.content)
         else:
