@@ -26,7 +26,7 @@ def test_stop_sweeps_server(monkeypatch):
 
     sweep_controller = SweepController(Drive("lit://code"))
     sweep_controller.db_url = ""
-    sweep_controller.sweeps[sweep_config.sweep_id] = sweep
+    sweep_controller.resources[sweep_config.sweep_id] = sweep
     resp = MagicMock()
     resp.status_code = 200
     monkeypatch.setattr(requests, "put", MagicMock(return_value=resp))
