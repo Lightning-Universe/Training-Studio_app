@@ -63,7 +63,7 @@ class MainFlow(LightningFlow):
         tabs = [{"name": "Dashboard", "content": self.sweep_controller}]
         if self.debug:
             tabs += [{"name": "Database Viz", "content": self.db_viz}]
-        for sweep in self.sweep_controller.sweeps.values():
+        for sweep in self.sweep_controller.resources.values():
             if sweep.show:
                 tabs += sweep.configure_layout()
         return tabs

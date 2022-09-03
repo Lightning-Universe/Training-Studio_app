@@ -3,6 +3,7 @@ from typing import List, Optional, Type
 
 import requests
 from lightning import LightningFlow
+from lightning.app.storage import Drive
 from lightning.app.structures import Dict
 from sqlmodel import SQLModel
 
@@ -14,10 +15,11 @@ class Controller(LightningFlow):
     model: Type[SQLModel]
     model_id: Optional[str] = None
 
-    def __init__(self):
+    def __init__(self, drive: Optional[Drive] = None):
         super().__init__()
         self.db_url = None
         self.resources = Dict()
+        self.drive = drive
 
     def run(self, db_url: str, configs: Optional[List[Type[SQLModel]]] = None):
         self.db_url = db_url
