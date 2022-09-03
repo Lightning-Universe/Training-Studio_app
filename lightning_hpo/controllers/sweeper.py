@@ -20,6 +20,9 @@ from lightning_hpo.utilities.utils import get_best_model_path
 
 
 class SweepController(LightningFlow):
+
+    model = SweepConfig
+
     def __init__(self, drive: Drive):
         super().__init__()
         self.sweeps = Dict()

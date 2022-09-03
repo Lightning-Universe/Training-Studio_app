@@ -7,13 +7,12 @@ from lightning_hpo.commands.artefacts.download import (
     DownloadArtefactsConfig,
 )
 from lightning_hpo.commands.artefacts.show import _collect_artefact_paths, ShowArtefactsCommand, ShowArtefactsConfig
-from lightning_hpo.commands.notebook import RunNotebookConfig
-from lightning_hpo.commands.sweep.run import SweepConfig
 from lightning_hpo.components.servers.db.server import Database
 from lightning_hpo.components.servers.db.visualization import DatabaseViz
 from lightning_hpo.components.servers.file_server import FileServer
 from lightning_hpo.controllers.notebook import NotebookController
 from lightning_hpo.controllers.sweeper import SweepController
+from lightning_hpo.controllers.tensorboard import TensorboardController
 
 
 class MainFlow(LightningFlow):
@@ -21,17 +20,28 @@ class MainFlow(LightningFlow):
         super().__init__()
         self.debug = debug
 
-        # 1: General managers
+        # 1: Create Drive
         self.drive = Drive("lit://code")
-        self.file_server = FileServer(self.drive)
-        self.db = Database(models=[SweepConfig, RunNotebookConfig])
-
-        if self.debug:
-            self.db_viz = DatabaseViz()
 
         # 2: Controllers
         self.sweep_controller = SweepController(self.drive)
         self.notebook_controller = NotebookController()
+        self.tensorboard_controller = TensorboardController()
+
+        # 3: Create the File Server to upload code or data.
+        self.file_server = FileServer(self.drive)
+
+        # 4: Create the database.
+        self.db = Database(
+            models=[
+                self.sweep_controller.model,
+                self.notebook_controller.model,
+                self.tensorboard_controller.model,
+            ]
+        )
+
+        if self.debug:
+            self.db_viz = DatabaseViz()
 
     def run(self):
         # 1: Start the servers.
@@ -47,6 +57,7 @@ class MainFlow(LightningFlow):
         # 3: Run the controllers
         self.sweep_controller.run(self.db.url)
         self.notebook_controller.run(self.db.url)
+        self.tensorboard_controller.run(self.db.url)
 
     def configure_layout(self):
         tabs = [{"name": "Dashboard", "content": self.sweep_controller}]

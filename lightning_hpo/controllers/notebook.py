@@ -8,6 +8,9 @@ from lightning_hpo.components.servers.db.models import GeneralModel
 
 
 class NotebookController(LightningFlow):
+
+    model = RunNotebookConfig
+
     def __init__(self):
         super().__init__()
         self.db_url = None

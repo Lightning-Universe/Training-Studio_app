@@ -3,10 +3,10 @@ from typing import Any, Dict, Optional
 
 from lightning import LightningFlow
 
-from lightning_hpo.loggers.base import Logger
+from lightning_hpo.loggers.logger import Logger
 
 
-class WandB(Logger):
+class WandbLogger(Logger):
     def __init__(self):
         super().__init__()
         import wandb

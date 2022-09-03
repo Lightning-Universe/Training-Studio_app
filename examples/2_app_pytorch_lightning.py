@@ -10,7 +10,7 @@ app = LightningApp(
     Sweep(
         script_path=ops.join(ops.dirname(__file__), "scripts/train.py"),
         n_trials=5,
-        simultaneous_trials=2,
+        simultaneous_trials=1,
         distributions={
             "model.lr": LogUniform(0.001, 0.1),
             "model.gamma": Uniform(0.5, 0.8),
@@ -18,9 +18,9 @@ app = LightningApp(
             "trainer.max_epochs": IntUniform(3, 15),
         },
         algorithm=OptunaAlgorithm(direction="maximize"),
-        cloud_compute=CloudCompute("gpu-fast-multi", count=2),  # 2 * 4 V100
+        cloud_compute=CloudCompute("gpu-fast-multi", count=1),  # 2 * 4 V100
         framework="pytorch_lightning",
-        logger="wandb",
+        logger="tensorboard",
         sweep_id="Optimizing a Simple CNN over MNIST with Lightning HPO",
     )
 )
