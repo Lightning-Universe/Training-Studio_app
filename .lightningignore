@@ -16,4 +16,3 @@ wandb
 thomas-*
 venv
 dist
-*artefacts*
