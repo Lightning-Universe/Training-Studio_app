@@ -158,6 +158,8 @@ class CustomLocalSourceCodeDir(LocalSourceCodeDir):
 
 class RunSweepCommand(ClientCommand):
 
+    DESCRIPTION = "Command to run a Sweep or Trial"
+
     SUPPORTED_DISTRIBUTIONS = ("uniform", "log_uniform", "categorical")
 
     def run(self) -> None:

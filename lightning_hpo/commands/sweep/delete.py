@@ -9,6 +9,9 @@ class DeleteSweepConfig(BaseModel):
 
 
 class DeleteSweepCommand(ClientCommand):
+
+    DESCRIPTION = "Command to delete a Sweep"
+
     def run(self) -> None:
         parser = ArgumentParser()
         parser.add_argument("sweep_id", type=str, help="The associated `sweep_id` to delete.")

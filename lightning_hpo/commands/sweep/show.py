@@ -89,6 +89,8 @@ def _show_sweep(sweep: SweepConfig):
 
 class ShowSweepsCommand(ClientCommand):
 
+    DESCRIPTION = "Command to show a Sweep or its Trials"
+
     # TODO: (tchaton) Upstream to Lightning
     def invoke_handler(self, config: Optional[BaseModel] = None) -> Dict[str, Any]:
         command = self.command_name.replace(" ", "_")

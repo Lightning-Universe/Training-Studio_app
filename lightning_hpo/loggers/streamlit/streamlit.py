@@ -2,7 +2,7 @@ from typing import Any, Dict
 
 from lightning import LightningFlow
 
-from lightning_hpo.loggers.base import Logger
+from lightning_hpo.loggers.logger import Logger
 from lightning_hpo.loggers.streamlit.hyperplot import HiPlotFlow
 
 

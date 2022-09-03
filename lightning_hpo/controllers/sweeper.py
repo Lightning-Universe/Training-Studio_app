@@ -2,7 +2,6 @@ from time import sleep
 from typing import List, Optional
 
 import requests
-from lightning import LightningFlow
 from lightning.app.frontend import StreamlitFrontend
 from lightning.app.storage import Drive
 from lightning.app.storage.path import Path
@@ -13,61 +12,54 @@ from lightning_hpo.commands.sweep.delete import DeleteSweepCommand, DeleteSweepC
 from lightning_hpo.commands.sweep.run import RunSweepCommand, SweepConfig
 from lightning_hpo.commands.sweep.show import ShowSweepsCommand
 from lightning_hpo.commands.sweep.stop import StopSweepCommand, StopSweepConfig
+from lightning_hpo.commands.tensorboard.stop import TensorboardConfig
 from lightning_hpo.components.servers.db.models import GeneralModel
-from lightning_hpo.components.servers.file_server import FileServer
+from lightning_hpo.controllers.controller import Controller
+from lightning_hpo.loggers import LoggerType
 from lightning_hpo.utilities.enum import Status
 from lightning_hpo.utilities.utils import get_best_model_path
 
 
-class SweepController(LightningFlow):
-    def __init__(self, drive: Drive):
-        super().__init__()
-        self.sweeps = Dict()
-        self.drive = drive
-        self.file_server = FileServer(self.drive)
-        self.db_url = None
+class SweepController(Controller):
 
-    def run(self, db_url: str):
-        self.db_url = db_url
+    model = SweepConfig
+    model_id = "sweep_id"
 
-        # 1: Read from the database and generate the works accordingly.
-        # TODO: Improve the schedule API.
-        if self.schedule("* * * * * 0,5,10,15,20,25,30,35,40,45,50,55"):
-            self.reconcile_sweeps_on_start()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.tensorboard_sweep_id = None
 
-        # 2: Iterate over the sweeps and collect updates
-        updates = []
-        for sweep in self.sweeps.values():
-            sweep.run()
-            updates.extend(sweep.updates)
+    def on_reconcile_start(self, sweeps: List[SweepConfig]):
+        # 1: Retrieve the tensorboard configs from the database
+        if self.tensorboard_sweep_id is None:
+            resp = requests.get(self.db_url + "/general/", data=GeneralModel.from_cls(TensorboardConfig).json())
+            assert resp.status_code == 200
+            self.tensorboard_sweep_id = [TensorboardConfig(**config).sweep_id for config in resp.json()]
 
-        # 3: Reconcile sweep on end
-        self.reconcile_sweep_on_end(updates)
+        # 2: Create the Sweeps
+        for sweep in sweeps:
+            id = sweep.sweep_id
+            if sweep.logger == LoggerType.TENSORBOARD.value and id not in self.tensorboard_sweep_id:
+                drive = Drive(f"lit://{id}", component_name="logs")
+                tensorboard = TensorboardConfig(sweep_id=id, shared_folder=str(drive.root))
+                resp = requests.post(self.db_url + "/general/", data=GeneralModel.from_obj(tensorboard).json())
+                self.tensorboard_sweep_id.append(id)
 
-    def reconcile_sweeps_on_start(self):
-        resp = requests.get(self.db_url + "/general/", data=GeneralModel.from_cls(SweepConfig).json())
-        assert resp.status_code == 200
-        sweeps = [SweepConfig(**sweep) for sweep in resp.json()]
-        for config in sweeps:
-            if config.trials_done == config.n_trials:
-                continue
-            if config.sweep_id not in self.sweeps:
-                self.sweeps[config.sweep_id] = Sweep.from_config(
-                    config,
-                    code={"drive": self.drive, "name": config.sweep_id},
+            if id not in self.resources:
+                self.resources[id] = Sweep.from_config(
+                    sweep,
+                    code={"drive": self.drive, "name": id},
                 )
 
-    def reconcile_sweep_on_end(self, updates: List[SweepConfig]):
+    def on_reconcile_end(self, updates: List[SweepConfig]):
         for update in updates:
-            resp = requests.put(self.db_url + "/general/", data=GeneralModel.from_obj(update, id="sweep_id").json())
-            assert resp.status_code == 200
             if update.status == Status.SUCCEEDED:
-                for w in self.sweeps.works:
+                for w in self.resources.works:
                     w.stop()
-                self.sweeps.pop(update.sweep_id)
+                self.resources.pop(update.sweep_id)
 
     def run_sweep(self, config: SweepConfig) -> str:
-        sweep_ids = list(self.sweeps.keys())
+        sweep_ids = list(self.resources.keys())
         if config.sweep_id not in sweep_ids:
             resp = requests.post(self.db_url + "/general/", data=GeneralModel.from_obj(config).json())
             assert resp.status_code == 200
@@ -78,10 +70,10 @@ class SweepController(LightningFlow):
         return requests.get(self.db_url + "/general/", data=GeneralModel.from_cls(SweepConfig).json()).json()
 
     def stop_sweep(self, config: StopSweepConfig):
-        sweep_ids = list(self.sweeps.keys())
+        sweep_ids = list(self.resources.keys())
         if config.sweep_id in sweep_ids:
             # TODO: Add support for __del__ in lightning
-            sweep: Sweep = self.sweeps[config.sweep_id]
+            sweep: Sweep = self.resources[config.sweep_id]
             for w in sweep.works():
                 w.stop()
             sweep_config = sweep._sweep_config
@@ -97,16 +89,16 @@ class SweepController(LightningFlow):
         return f"We didn't find the sweep `{config.sweep_id}`"
 
     def delete_sweep(self, config: DeleteSweepConfig):
-        sweep_ids = list(self.sweeps.keys())
+        sweep_ids = list(self.resources.keys())
         if config.sweep_id in sweep_ids:
-            sweep: Sweep = self.sweeps[config.sweep_id]
+            sweep: Sweep = self.resources[config.sweep_id]
             for w in sweep.works():
                 w.stop()
             sweep_config = sweep._sweep_config
             resp = requests.delete(
                 self.db_url + "/general/", data=GeneralModel.from_obj(sweep_config, id="sweep_id").json()
             )
-            del self.sweeps[config.sweep_id]
+            del self.resources[config.sweep_id]
             assert resp.status_code == 200
             return f"Deleted the sweep `{config.sweep_id}`"
         return f"We didn't find the sweep `{config.sweep_id}`"
