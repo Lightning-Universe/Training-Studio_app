@@ -11,7 +11,7 @@ from lightning_hpo.utilities.enum import Status
 from lightning_hpo.utilities.utils import pydantic_column_type
 
 
-class RunNotebookConfig(SQLModel):
+class RunNotebookConfig(SQLModel, table=True):
     id: Optional[str] = Field(default=None, primary_key=True)
     name: str
     requirements: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))

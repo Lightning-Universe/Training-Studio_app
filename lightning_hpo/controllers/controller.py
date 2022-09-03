@@ -1,13 +1,12 @@
 from abc import abstractmethod
 from typing import List, Optional, Type
 
-import requests
 from lightning import LightningFlow
 from lightning.app.storage import Drive
 from lightning.app.structures import Dict
 from sqlmodel import SQLModel
 
-from lightning_hpo.components.servers.db.models import GeneralModel
+from lightning_hpo.components.servers.db.database import Database
 
 
 class Controller(LightningFlow):
@@ -20,6 +19,7 @@ class Controller(LightningFlow):
         self.db_url = None
         self.resources = Dict()
         self.drive = drive
+        self._database = None
 
     def run(self, db_url: str, configs: Optional[List[Type[SQLModel]]] = None):
         self.db_url = db_url
@@ -27,9 +27,7 @@ class Controller(LightningFlow):
         # 1: Read from the database and generate the works accordingly.
         # TODO: Improve the schedule API.
         if self.schedule("* * * * * 0,5,10,15,20,25,30,35,40,45,50,55"):
-            resp = requests.get(self.db_url + "/general/", data=GeneralModel.from_cls(self.model).json())
-            assert resp.status_code == 200
-            db_configs = [self.model(**data) for data in resp.json()]
+            db_configs = self.db.get()
             if configs:
                 db_configs += db_configs
             if db_configs:
@@ -46,10 +44,16 @@ class Controller(LightningFlow):
 
         # 3: Reconcile sweep on end
         for update in updates:
-            resp = requests.put(self.db_url + "/general/", data=GeneralModel.from_obj(update, id=self.model_id).json())
-            assert resp.status_code == 200
+            self.db.put(update)
 
         self.on_reconcile_end(updates)
+
+    @property
+    def db(self) -> Database:
+        if self._database is None:
+            assert self.db_url
+            self._database = Database(self.model, self.db_url, self.model_id)
+        return self._database
 
     @abstractmethod
     def on_reconcile_start(self, configs):

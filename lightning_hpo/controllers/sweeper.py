@@ -32,18 +32,15 @@ class SweepController(Controller):
     def on_reconcile_start(self, sweeps: List[SweepConfig]):
         # 1: Retrieve the tensorboard configs from the database
         if self.tensorboard_sweep_id is None:
-            resp = requests.get(self.db_url + "/general/", data=GeneralModel.from_cls(TensorboardConfig).json())
-            assert resp.status_code == 200
-            self.tensorboard_sweep_id = [TensorboardConfig(**config).sweep_id for config in resp.json()]
+            self.tensorboard_sweep_id = [c.sweep_id for c in self.db.get(TensorboardConfig)]
 
         # 2: Create the Sweeps
         for sweep in sweeps:
             id = sweep.sweep_id
             if sweep.logger == LoggerType.TENSORBOARD.value and id not in self.tensorboard_sweep_id:
-                drive = Drive(f"lit://{id}", component_name="logs")
-                tensorboard = TensorboardConfig(sweep_id=id, shared_folder=str(drive.root))
-                resp = requests.post(self.db_url + "/general/", data=GeneralModel.from_obj(tensorboard).json())
                 self.tensorboard_sweep_id.append(id)
+                drive = Drive(f"lit://{id}", component_name="logs")
+                self.db.put(TensorboardConfig(sweep_id=id, shared_folder=str(drive.root)), "id")
 
             if id not in self.resources:
                 self.resources[id] = Sweep.from_config(
@@ -61,13 +58,12 @@ class SweepController(Controller):
     def run_sweep(self, config: SweepConfig) -> str:
         sweep_ids = list(self.resources.keys())
         if config.sweep_id not in sweep_ids:
-            resp = requests.post(self.db_url + "/general/", data=GeneralModel.from_obj(config).json())
-            assert resp.status_code == 200
+            self.db.post(config)
             return f"Launched a sweep {config.sweep_id}"
         return f"The current Sweep {config.sweep_id} is running. It couldn't be updated."
 
-    def show_sweeps(self) -> Dict:
-        return requests.get(self.db_url + "/general/", data=GeneralModel.from_cls(SweepConfig).json()).json()
+    def show_sweeps(self) -> List[Dict]:
+        return [sweep.json() for sweep in self.db.get()]
 
     def stop_sweep(self, config: StopSweepConfig):
         sweep_ids = list(self.resources.keys())
@@ -81,10 +77,7 @@ class SweepController(Controller):
             for trial in sweep_config.trials.values():
                 if trial.status != Status.SUCCEEDED:
                     trial.status = Status.STOPPED
-            resp = requests.put(
-                self.db_url + "/general/", data=GeneralModel.from_obj(sweep_config, id="sweep_id").json()
-            )
-            assert resp.status_code == 200
+            self.db.put(sweep_config)
             return f"Stopped the sweep `{config.sweep_id}`"
         return f"We didn't find the sweep `{config.sweep_id}`"
 
@@ -95,11 +88,8 @@ class SweepController(Controller):
             for w in sweep.works():
                 w.stop()
             sweep_config = sweep._sweep_config
-            resp = requests.delete(
-                self.db_url + "/general/", data=GeneralModel.from_obj(sweep_config, id="sweep_id").json()
-            )
+            self.db.delete(sweep_config)
             del self.resources[config.sweep_id]
-            assert resp.status_code == 200
             return f"Deleted the sweep `{config.sweep_id}`"
         return f"We didn't find the sweep `{config.sweep_id}`"
 
