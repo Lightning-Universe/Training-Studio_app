@@ -15,3 +15,5 @@ flagged
 wandb
 .venv
 thomas-*
+venv
+dist
