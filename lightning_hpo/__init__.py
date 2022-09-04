@@ -21,7 +21,7 @@ if not _root_logger.hasHandlers():
 from lightning_hpo.__about__ import *  # noqa: E402, F401, F403
 from lightning_hpo.components.sweep import Sweep  # noqa: E402
 from lightning_hpo.framework.agnostic import BaseObjective  # noqa: E402
-from lightning_hpo.utilities.utils import CloudCompute  # noqa: E402, F401
+from lightning_hpo.utilities.utils import HPOCloudCompute  # noqa: E402, F401
 
 _PACKAGE_ROOT = os.path.dirname(__file__)
 _PROJECT_ROOT = os.path.dirname(_PACKAGE_ROOT)
@@ -31,4 +31,4 @@ from optuna.storages._in_memory import _logger
 _logger.disabled = True
 _logger.propagate = False
 
-__all__ = ["BaseObjective", "Sweep", "CloudCompute"]
+__all__ = ["BaseObjective", "Sweep", "HPOCloudCompute"]

@@ -1,7 +1,7 @@
 import uuid
 from typing import Any, Dict, List, Optional, Type, Union
 
-from lightning import BuildConfig, LightningFlow
+from lightning import BuildConfig, CloudCompute, LightningFlow
 from lightning.app.components.python.tracer import Code
 from lightning.app.storage.path import Path
 
@@ -16,9 +16,9 @@ from lightning_hpo.utilities.enum import Status
 from lightning_hpo.utilities.utils import (
     _check_status,
     _resolve_objective_cls,
-    CloudCompute,
     get_best_model_path,
     get_best_model_score,
+    HPOCloudCompute,
 )
 
 
@@ -30,7 +30,7 @@ class Sweep(LightningFlow):
         simultaneous_trials: int = 1,
         script_args: Optional[Union[list, str]] = None,
         env: Optional[Dict] = None,
-        cloud_compute: Optional[CloudCompute] = None,
+        cloud_compute: Optional[HPOCloudCompute] = None,
         script_path: Optional[str] = None,
         algorithm: Optional[Algorithm] = None,
         logger: str = "streamlit",
@@ -89,7 +89,7 @@ class Sweep(LightningFlow):
             "script_path": script_path,
             "env": env,
             "script_args": script_args,
-            "cloud_compute": cloud_compute,
+            "cloud_compute": CloudCompute(name=cloud_compute.name),
             "num_nodes": getattr(cloud_compute, "count", 1) if cloud_compute else 1,
             "logger": logger,
             "code": code,
@@ -213,7 +213,7 @@ class Sweep(LightningFlow):
             script_args=config.script_args,
             trials_done=config.trials_done,
             distributions=parse_distributions(config.distributions),
-            cloud_compute=CloudCompute(config.cloud_compute, config.num_nodes),
+            cloud_compute=HPOCloudCompute(config.cloud_compute, config.num_nodes),
             sweep_id=config.sweep_id,
             code=code,
             cloud_build_config=BuildConfig(requirements=config.requirements),

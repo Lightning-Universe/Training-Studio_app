@@ -42,6 +42,8 @@ class MainFlow(LightningFlow):
         if self.debug:
             self.db_viz = DatabaseViz()
 
+        self.ready = False
+
     def run(self):
         # 1: Start the servers.
         self.file_server.run()
@@ -53,10 +55,14 @@ class MainFlow(LightningFlow):
         if not (self.file_server.alive() and self.db.alive()):
             return
 
+        if not self.ready:
+            print(f"The Training App is ready ! Database URL: {self.db.db_url}")
+            self.ready = True
+
         # 3: Run the controllers
-        self.sweep_controller.run(self.db.url)
-        self.notebook_controller.run(self.db.url)
-        self.tensorboard_controller.run(self.db.url)
+        self.sweep_controller.run(self.db.db_url)
+        self.notebook_controller.run(self.db.db_url)
+        self.tensorboard_controller.run(self.db.db_url)
 
     def configure_layout(self):
         tabs = [{"name": "Dashboard", "content": self.sweep_controller}]
@@ -65,6 +71,8 @@ class MainFlow(LightningFlow):
         for sweep in self.sweep_controller.resources.values():
             if sweep.show:
                 tabs += sweep.configure_layout()
+        for sweep_id, tensorboard in self.tensorboard_controller.resources.items():
+            tabs += [{"name": f"tensorboard_{sweep_id}", "content": tensorboard}]
         return tabs
 
     def show_artefacts(self, config: ShowArtefactsConfig):

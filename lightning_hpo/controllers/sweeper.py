@@ -40,7 +40,7 @@ class SweepController(Controller):
             if sweep.logger == LoggerType.TENSORBOARD.value and id not in self.tensorboard_sweep_id:
                 self.tensorboard_sweep_id.append(id)
                 drive = Drive(f"lit://{id}", component_name="logs")
-                self.db.put(TensorboardConfig(sweep_id=id, shared_folder=str(drive.root)), "id")
+                self.db.post(TensorboardConfig(sweep_id=id, shared_folder=str(drive.root)), "id")
 
             if id not in self.resources:
                 self.resources[id] = Sweep.from_config(

@@ -1,3 +1,4 @@
+import os
 from typing import List, Optional, Type
 
 from fastapi import FastAPI
@@ -13,6 +14,7 @@ engine = None
 
 def general_get(config: GeneralModel):
     with Session(engine) as session:
+        print(config)
         statement = select(config.data_cls)
         results = session.exec(statement)
         return results.all()
@@ -20,6 +22,7 @@ def general_get(config: GeneralModel):
 
 def general_post(config: GeneralModel):
     with Session(engine) as session:
+        print(config)
         data = config.convert_to_model()
         session.add(data)
         session.commit()
@@ -29,6 +32,7 @@ def general_post(config: GeneralModel):
 
 def general_put(config: GeneralModel):
     with Session(engine) as session:
+        print(config)
         assert config.id
         update_data = config.convert_to_model()
         identifier = getattr(update_data.__class__, config.id, None)
@@ -47,6 +51,7 @@ def general_put(config: GeneralModel):
 
 def general_delete(config: GeneralModel):
     with Session(engine) as session:
+        print(config)
         assert config.id
         update_data = config.convert_to_model()
         identifier = getattr(update_data.__class__, config.id, None)
@@ -89,4 +94,13 @@ class Database(LightningWork):
 
     def alive(self):
         """Hack: Returns whether the server is alive."""
-        return self.url != ""
+        return self.db_url != ""
+
+    @property
+    def db_url(self) -> Optional[str]:
+        use_localhost = "LIGHTNING_APP_STATE_URL" not in os.environ
+        if use_localhost:
+            return self.url
+        if self.internal_ip != "":
+            return f"http://{self.internal_ip}:{self.port}"
+        return self.internal_ip
