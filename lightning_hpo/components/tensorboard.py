@@ -1,3 +1,4 @@
+import os
 from subprocess import Popen
 
 from lightning import LightningWork
@@ -12,9 +13,17 @@ class Tensorboard(LightningWork):
 
     def run(self):
         self.drive.component_name = "logs"
-        cmd = f"tensorboard --logdir='{self.drive.root}' --host {self.host} --port {self.port}"
-        print(cmd)
-        self._process = Popen(cmd, shell=True)
+        cmd = f"tensorboard --logdir='s3://{self.drive.root}' --host {self.host} --port {self.port}"
+
+        os.environ["S3_ENDPOINT"] = os.getenv("LIGHTNING_BUCKET_ENDPOINT_URL", "")
+        os.environ["S3_VERIFY_SSL"] = "0"
+        os.environ["S3_USE_HTTPS"] = "0"
+        # TODO: What is LAI platform
+        os.environ["AWS_REGION"] = "eu-west-1"
+
+        print(cmd, os.environ)
+
+        self._process = Popen(cmd, shell=True, env=os.environ)
 
     def on_exception(self, exception):
         self._process.kill()

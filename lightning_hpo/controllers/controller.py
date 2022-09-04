@@ -25,11 +25,10 @@ class Controller(LightningFlow):
         self.db_url = db_url
 
         # TODO: Resolve scheduling. It seems only the last one is activated somehow in the cloud.
-        # 1: Read from the database and generate the works accordingly.
         # TODO: Improve the schedule API.
+        # 1: Read from the database and generate the works accordingly.
         # if self.schedule("* * * * * 0,5,10,15,20,25,30,35,40,45,50,55"):
         db_configs = self.db.get()
-        print("db_configs", db_configs)
         if configs:
             db_configs += db_configs
         if db_configs:

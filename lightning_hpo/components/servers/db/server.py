@@ -14,7 +14,6 @@ engine = None
 
 def general_get(config: GeneralModel):
     with Session(engine) as session:
-        print(config)
         statement = select(config.data_cls)
         results = session.exec(statement)
         return results.all()
@@ -22,7 +21,6 @@ def general_get(config: GeneralModel):
 
 def general_post(config: GeneralModel):
     with Session(engine) as session:
-        print(config)
         data = config.convert_to_model()
         session.add(data)
         session.commit()
@@ -32,7 +30,6 @@ def general_post(config: GeneralModel):
 
 def general_put(config: GeneralModel):
     with Session(engine) as session:
-        print(config)
         assert config.id
         update_data = config.convert_to_model()
         identifier = getattr(update_data.__class__, config.id, None)
@@ -51,7 +48,6 @@ def general_put(config: GeneralModel):
 
 def general_delete(config: GeneralModel):
     with Session(engine) as session:
-        print(config)
         assert config.id
         update_data = config.convert_to_model()
         identifier = getattr(update_data.__class__, config.id, None)
