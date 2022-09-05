@@ -16,3 +16,4 @@ wandb
 thomas-*
 venv
 dist
+tensorboard_logs

@@ -1,29 +1,35 @@
 import os
+import time
 from subprocess import Popen
+from uuid import uuid4
 
 from lightning import LightningWork
 from lightning.app.storage import Drive
+from lightning.app.storage.path import filesystem
 
 
 class Tensorboard(LightningWork):
-    def __init__(self, *args, drive: Drive, **kwargs):
+    def __init__(self, *args, component_name: str, drive: Drive, sleep: int = 5, **kwargs):
         super().__init__(*args, **kwargs)
+        self.component_name = component_name
         self.drive = drive
-        self.drive.component_name = "logs"
+        self.sleep = sleep
 
     def run(self):
-        self.drive.component_name = "logs"
-        cmd = f"tensorboard --logdir='s3://{self.drive.root}' --host {self.host} --port {self.port}"
+        local_folder = f"./tensorboard_logs/{uuid4()}"
+        self.drive.component_name = self.component_name
 
-        os.environ["S3_ENDPOINT"] = os.getenv("LIGHTNING_BUCKET_ENDPOINT_URL", "")
-        os.environ["S3_VERIFY_SSL"] = "0"
-        os.environ["S3_USE_HTTPS"] = "0"
-        # TODO: What is LAI platform
-        os.environ["AWS_REGION"] = "eu-west-1"
+        os.makedirs(local_folder, exist_ok=True)
 
-        print(cmd, os.environ)
-
+        # Note: Used tensorboard built-in sync methods but it doesn't seem to work.
+        cmd = f"tensorboard --logdir={local_folder} --host {self.host} --port {self.port}"
         self._process = Popen(cmd, shell=True, env=os.environ)
+
+        fs = filesystem()
+
+        while True:
+            fs.get(str(self.drive.root), local_folder)
+            time.sleep(self.sleep)
 
     def on_exception(self, exception):
         self._process.kill()

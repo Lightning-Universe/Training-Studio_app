@@ -1,10 +1,36 @@
 import os
+from time import time
 from typing import Any, Dict, Optional
 
 from lightning import LightningFlow
 from lightning.app.storage import Drive
+from lightning.pytorch.loggers import TensorBoardLogger
+from lightning.pytorch.utilities.rank_zero import rank_zero_only
 
 from lightning_hpo.loggers.logger import Logger
+
+
+class DriveTensorBoardLogger(TensorBoardLogger):
+    def __init__(self, *args, drive: Drive, refresh_time: int = 5, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.timestamp = None
+        self.drive = drive
+        self.refresh_time = refresh_time
+
+    @rank_zero_only
+    def log_metrics(self, metrics, step) -> None:
+        super().log_metrics(metrics, step)
+        if self.timestamp is None:
+            self.drive.put(self.log_dir)
+            self.timestamp = time()
+        elif (time() - self.timestamp) > self.refresh_time:
+            self.drive.put(self.log_dir)
+            self.timestamp = time()
+
+    @rank_zero_only
+    def finalize(self, status: str) -> None:
+        super().finalize(status)
+        self.drive.put(self.log_dir)
 
 
 class TensorboardLogger(Logger):
@@ -22,19 +48,15 @@ class TensorboardLogger(Logger):
 
     def configure_tracer(self, tracer, sweep_id: str, trial_id: int, params: Dict[str, Any]):
         from pytorch_lightning import Trainer
-        from pytorch_lightning.loggers import TensorBoardLogger as PLTensorBoardLogger
 
         # Create a space logs under the sweep_id folder
-        drive = Drive(f"lit://{sweep_id}", component_name="logs")
-
+        drive = Drive("lit://logs", component_name=f"{sweep_id}/{trial_id}")
         use_localhost = "LIGHTNING_APP_STATE_URL" not in os.environ
-        save_dir = os.path.join(drive.root, str(trial_id))
 
-        if not use_localhost:
-            save_dir = "s3://" + save_dir
-
-        logger = PLTensorBoardLogger(save_dir)
-        # logger._fs = filesystem()
+        if use_localhost:
+            logger = TensorBoardLogger(save_dir=str(drive.root))
+        else:
+            logger = DriveTensorBoardLogger(save_dir=".", name="", drive=drive, refresh_time=5)
 
         print("Injecting Tensorboard")
 

@@ -15,5 +15,6 @@ class TensorboardController(Controller):
         for config in configs:
             if config.sweep_id not in self.resources:
                 self.resources[config.sweep_id] = Tensorboard(
-                    drive=Drive(f"lit://{config.sweep_id}", component_name="logs")
+                    component_name=config.sweep_id,
+                    drive=Drive("lit://logs"),
                 )

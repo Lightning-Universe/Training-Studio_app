@@ -148,3 +148,4 @@ thomas-*
 boring_train.py
 database.db
 *artefacts*
+tensorboard_logs
