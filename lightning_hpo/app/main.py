@@ -76,9 +76,9 @@ class MainFlow(LightningFlow):
         for sweep_id, tensorboard in self.tensorboard_controller.resources.items():
             tabs += [{"name": f"tensorboard_{sweep_id}", "content": tensorboard}]
 
-        for notebook_id, notebook in self.notebook_controller.resources.items():
+        for notebook_name, notebook in self.notebook_controller.resources.items():
             if notebook._config.desired_state == Status.RUNNING:
-                tabs += [{"name": f"notebook_{notebook_id}", "content": notebook}]
+                tabs += [{"name": notebook_name, "content": notebook}]
         return tabs
 
     def show_artefacts(self, config: ShowArtefactsConfig):
