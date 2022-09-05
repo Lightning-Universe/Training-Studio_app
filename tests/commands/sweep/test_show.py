@@ -11,7 +11,7 @@ from rich.table import Table
 from lightning_hpo.commands.sweep import show
 from lightning_hpo.commands.sweep.show import ShowSweepsCommand
 from lightning_hpo.components.sweep import Sweep, SweepConfig
-from lightning_hpo.controllers.sweeper import SweepController
+from lightning_hpo.controllers.sweep import SweepController
 
 
 def test_show_sweeps_client(monkeypatch):

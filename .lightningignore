@@ -16,3 +16,5 @@ wandb
 thomas-*
 venv
 dist
+tensorboard_logs
+jupyter_lab_*

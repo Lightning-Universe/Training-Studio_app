@@ -8,7 +8,7 @@ from lightning.app.storage import Drive
 
 from lightning_hpo.commands.sweep.stop import StopSweepConfig
 from lightning_hpo.components.sweep import Sweep, SweepConfig
-from lightning_hpo.controllers.sweeper import SweepController
+from lightning_hpo.controllers.sweep import SweepController
 from lightning_hpo.utilities.enum import Status
 
 

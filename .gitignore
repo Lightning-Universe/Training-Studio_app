@@ -148,3 +148,5 @@ thomas-*
 boring_train.py
 database.db
 *artefacts*
+tensorboard_logs
+jupyter_lab_*

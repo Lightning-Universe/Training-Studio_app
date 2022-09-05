@@ -40,7 +40,7 @@ class SweepController(Controller):
             if sweep.logger == LoggerType.TENSORBOARD.value and id not in self.tensorboard_sweep_id:
                 self.tensorboard_sweep_id.append(id)
                 drive = Drive(f"lit://{id}", component_name="logs")
-                self.db.put(TensorboardConfig(sweep_id=id, shared_folder=str(drive.root)), "id")
+                self.db.post(TensorboardConfig(sweep_id=id, shared_folder=str(drive.root)), "id")
 
             if id not in self.resources:
                 self.resources[id] = Sweep.from_config(
@@ -124,7 +124,7 @@ def render_fn(state):
         st.header("You haven't launched any sweeps yet.")
         st.write("Here is an example to submit a sweep.")
         st.code(
-            'lightning sweep train.py --n_trials=2 --num_nodes=2 --model.lr="log_uniform(0.001, 0.1)" --trainer.max_epochs=5 --trainer.callbacks=ModelCheckpoint'
+            'lightning run sweep train.py --n_trials=2 --num_nodes=2 --model.lr="log_uniform(0.001, 0.1)" --trainer.max_epochs=5 --trainer.callbacks=ModelCheckpoint'
         )
         return
 

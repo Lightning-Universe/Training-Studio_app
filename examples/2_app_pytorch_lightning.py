@@ -2,7 +2,7 @@ import os.path as ops
 
 from lightning import LightningApp
 
-from lightning_hpo import CloudCompute, Sweep
+from lightning_hpo import HPOCloudCompute, Sweep
 from lightning_hpo.algorithm.optuna import OptunaAlgorithm
 from lightning_hpo.distributions.distributions import Categorical, IntUniform, LogUniform, Uniform
 
@@ -18,7 +18,7 @@ app = LightningApp(
             "trainer.max_epochs": IntUniform(3, 15),
         },
         algorithm=OptunaAlgorithm(direction="maximize"),
-        cloud_compute=CloudCompute("gpu-fast-multi", count=2),  # 2 * 4 V100
+        cloud_compute=HPOCloudCompute("gpu-fast-multi", count=2),  # 2 * 4 V100
         framework="pytorch_lightning",
         logger="wandb",
         sweep_id="Optimizing a Simple CNN over MNIST with Lightning HPO",

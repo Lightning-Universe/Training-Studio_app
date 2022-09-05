@@ -22,7 +22,7 @@ T = TypeVar("T")
 
 
 @dataclass
-class CloudCompute(LightningCloudCompute):
+class HPOCloudCompute(LightningCloudCompute):
     count: int = 1
 
 

@@ -1,72 +1,36 @@
-import logging
-import os
-import subprocess
-import sys
+from subprocess import Popen
 from typing import Optional
 
-from lightning import CloudCompute, LightningWork
-from lightning.app.storage import Path
+from lightning.app.utilities.component import _is_work_context
+from lit_jupyter import JupyterLab
 
-logger = logging.getLogger(__name__)
+from lightning_hpo.commands.notebooks.run import NotebookConfig
+from lightning_hpo.utilities.enum import Status
 
 
-class JupyterLabWork(LightningWork):
-    def __init__(self, cloud_compute: Optional[CloudCompute] = None):
-        super().__init__(cloud_compute=cloud_compute, parallel=True)
-        self.pid = None
-        self.token = None
-        self.exit_code = None
-        self.storage = None
+class JupyterLab(JupyterLab):
+    def __init__(self, *args, config: NotebookConfig, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._config = config
+        self.ready = False
+        self.has_updated = False
+        self._process: Optional[Popen] = None
 
-    def run(self):
-        self.storage = Path(".")
+    def run(self, *args, **kwargs):
+        super().run()
+        self.ready = True
+        self.has_updated = True
 
-        jupyter_notebook_config_path = Path.home() / ".jupyter/jupyter_notebook_config.py"
-
-        if os.path.exists(jupyter_notebook_config_path):
-            os.remove(jupyter_notebook_config_path)
-
-        with subprocess.Popen(
-            f"{sys.executable} -m notebook --generate-config".split(" "),
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            bufsize=0,
-            close_fds=True,
-        ) as proc:
-            self.pid = proc.pid
-
-            self.exit_code = proc.wait()
-            if self.exit_code != 0:
-                raise Exception(self.exit_code)
-
-        with open(jupyter_notebook_config_path, "a") as f:
-            f.write(
-                """c.NotebookApp.tornado_settings = {'headers': {'Content-Security-Policy': "frame-ancestors * 'self' "}}"""  # noqa E501
-            )
-
-        with open(f"jupyter_lab_{self.port}", "w") as f:
-            proc = subprocess.Popen(
-                f"{sys.executable} -m jupyter lab --ip {self.host} --port {self.port} --no-browser --config={jupyter_notebook_config_path}".split(
-                    " "
-                ),
-                bufsize=0,
-                close_fds=True,
-                stdout=f,
-                stderr=f,
-            )
-
-        with open(f"jupyter_lab_{self.port}") as f:
-            while True:
-                for line in f.readlines():
-                    if "lab?token=" in line:
-                        self.token = line.split("lab?token=")[-1]
-                        proc.wait()
+    # TODO: Cleanup exit mechanism in lightning.
+    def on_exit(self):
+        if _is_work_context():
+            assert self._process
+            self._process.kill()
 
     @property
-    def url(self):
-        if not self.token:
-            return ""
-        if self._future_url:
-            return f"{self._future_url}/lab?token={self.token}"
-        else:
-            return f"http://{self.host}:{self.port}/lab?token={self.token}"
+    def updates(self):
+        if self.has_updated and self.ready:
+            self._config.status = Status.RUNNING
+            self.has_updated = False
+            return [self._config]
+        return []

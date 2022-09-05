@@ -1,7 +1,9 @@
+import os
 from typing import List, Optional, Type
 
 from fastapi import FastAPI
 from lightning import BuildConfig, LightningWork
+from lightning.app.storage import Path
 from sqlmodel import create_engine, select, Session, SQLModel
 from uvicorn import run
 
@@ -64,7 +66,7 @@ class Database(LightningWork):
         models: Optional[List[Type[SQLModel]]] = None,  # Just meant to be imported.
     ):
         super().__init__(parallel=True, cloud_build_config=BuildConfig(["sqlmodel"]))
-        self.db_file_name = db_file_name
+        self.db_file_name = Path(db_file_name)
         self.debug = debug
         self._models = models
 
@@ -84,8 +86,17 @@ class Database(LightningWork):
         app.put("/general/")(general_put)
         app.delete("/general/")(general_delete)
 
-        run(app, host=self.host, port=self.port)
+        run(app, host=self.host, port=self.port, log_level="error")
 
     def alive(self):
         """Hack: Returns whether the server is alive."""
-        return self.url != ""
+        return self.db_url != ""
+
+    @property
+    def db_url(self) -> Optional[str]:
+        use_localhost = "LIGHTNING_APP_STATE_URL" not in os.environ
+        if use_localhost:
+            return self.url
+        if self.internal_ip != "":
+            return f"http://{self.internal_ip}:{self.port}"
+        return self.internal_ip
