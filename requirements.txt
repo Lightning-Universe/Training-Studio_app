@@ -1,6 +1,7 @@
 pytorch_lightning
 jsonargparse[signatures]
-git+https://github.com/Lightning-AI/lightning.git@master  # TODO: repelace with lightning once 0.6.0 is released
+git+https://github.com/Lightning-AI/lightning.git@master  # TODO: replace with lightning once 0.6.0 is released
+https://github.com/Lightning-AI/LAI-Jupyter-Component.git@main   # TODO: replace with lightning-notebook once released.
 lightning_cloud
 torchvision
 optuna

@@ -11,12 +11,16 @@ from lightning_hpo.utilities.enum import Status
 from lightning_hpo.utilities.utils import pydantic_column_type
 
 
-class RunNotebookConfig(SQLModel, table=True):
+class NotebookConfig(SQLModel, table=True):
+
+    __table_args__ = {"extend_existing": True}
+
     id: Optional[str] = Field(default=None, primary_key=True)
     name: str
     requirements: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
     cloud_compute: str
     status: str = Status.NOT_STARTED
+    desired_state: str = Status.RUNNING
 
 
 class RunNotebookCommand(ClientCommand):
@@ -30,12 +34,11 @@ class RunNotebookCommand(ClientCommand):
         hparams, _ = parser.parse_known_args()
         id = str(uuid4()).split("-")[0]
 
-        config = RunNotebookConfig(
+        config = NotebookConfig(
             id=f"{getuser()}-{id}",
             name=hparams.name,
             requirements=hparams.requirements,
             cloud_compute=hparams.cloud_compute,
-            status=Status.NOT_STARTED,
         )
         response = self.invoke_handler(config=config)
         print(response)

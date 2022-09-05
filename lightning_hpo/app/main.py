@@ -10,7 +10,7 @@ from lightning_hpo.commands.artefacts.show import _collect_artefact_paths, ShowA
 from lightning_hpo.components.servers.db import Database, DatabaseViz
 from lightning_hpo.components.servers.file_server import FileServer
 from lightning_hpo.controllers.notebook import NotebookController
-from lightning_hpo.controllers.sweeper import SweepController
+from lightning_hpo.controllers.sweep import SweepController
 from lightning_hpo.controllers.tensorboard import TensorboardController
 
 
@@ -71,8 +71,12 @@ class MainFlow(LightningFlow):
         for sweep in self.sweep_controller.resources.values():
             if sweep.show:
                 tabs += sweep.configure_layout()
+
         for sweep_id, tensorboard in self.tensorboard_controller.resources.items():
             tabs += [{"name": f"tensorboard_{sweep_id}", "content": tensorboard}]
+
+        for notebook_id, notebook in self.notebook_controller.resources.items():
+            tabs += [{"name": f"notebook_{notebook_id}", "content": notebook}]
         return tabs
 
     def show_artefacts(self, config: ShowArtefactsConfig):

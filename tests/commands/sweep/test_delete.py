@@ -11,7 +11,7 @@ from lightning_hpo.commands.sweep.delete import DeleteSweepConfig
 from lightning_hpo.components.servers.db import server
 from lightning_hpo.components.servers.db.server import general_delete, general_get, general_post, GeneralModel
 from lightning_hpo.components.sweep import Sweep, SweepConfig
-from lightning_hpo.controllers.sweeper import SweepController
+from lightning_hpo.controllers.sweep import SweepController
 from lightning_hpo.utilities.enum import Status
 
 

@@ -124,7 +124,7 @@ def render_fn(state):
         st.header("You haven't launched any sweeps yet.")
         st.write("Here is an example to submit a sweep.")
         st.code(
-            'lightning sweep train.py --n_trials=2 --num_nodes=2 --model.lr="log_uniform(0.001, 0.1)" --trainer.max_epochs=5 --trainer.callbacks=ModelCheckpoint'
+            'lightning run sweep train.py --n_trials=2 --num_nodes=2 --model.lr="log_uniform(0.001, 0.1)" --trainer.max_epochs=5 --trainer.callbacks=ModelCheckpoint'
         )
         return
 

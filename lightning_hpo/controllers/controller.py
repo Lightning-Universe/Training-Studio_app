@@ -34,7 +34,7 @@ class Controller(LightningFlow):
         if db_configs:
             self.on_reconcile_start(db_configs)
 
-        # 2: Iterate over the sweeps and collect updates
+        # 2: Iterate over the resources and collect updates
         updates = []
         for resource in self.resources.values():
             resource.run()
@@ -43,7 +43,7 @@ class Controller(LightningFlow):
         if not updates:
             return
 
-        # 3: Reconcile sweep on end
+        # 3: Reconcile resources on end
         for update in updates:
             self.db.put(update)
 
@@ -53,7 +53,7 @@ class Controller(LightningFlow):
     def db(self) -> DatabaseConnector:
         if self._database is None:
             assert self.db_url
-            self._database = DatabaseConnector(self.model, self.db_url + "/general/", self.model_id)
+            self._database = DatabaseConnector(self.model, self.db_url + "/general/", self.model_id or "id")
         return self._database
 
     @abstractmethod
