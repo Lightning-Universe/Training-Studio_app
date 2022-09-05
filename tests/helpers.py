@@ -17,7 +17,7 @@ class MockSession:
     def __init__(self, data):
         self.data = data
 
-    def get(self, url, data):
+    def get(self, *args, **kwargs):
         return MockResponse(data=[v for _, v in self.data.items()])
 
     def post(self, url, data):
@@ -32,6 +32,12 @@ class MockSession:
         general = GeneralModel.parse_raw(data)
         data = general.convert_to_model()
         self.data[getattr(data, general.id)] = data.dict()
+        return MockResponse(data=None)
+
+    def delete(self, url, data):
+        general = GeneralModel.parse_raw(data)
+        data = general.convert_to_model()
+        del self.data[getattr(data, general.id)]
         return MockResponse(data=None)
 
 
