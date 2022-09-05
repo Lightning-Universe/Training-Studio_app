@@ -12,6 +12,7 @@ def _show_notebooks(notebooks: List[NotebookConfig]):
         "id",
         "name",
         "status",
+        "desired_status",
         "cloud_compute",
         "requirements",
         title="Notebooks",
@@ -24,6 +25,7 @@ def _show_notebooks(notebooks: List[NotebookConfig]):
             notebook.id,
             notebook.name,
             notebook.status,
+            notebook.desired_state,
             notebook.cloud_compute,
             str(notebook.requirements),
         )

@@ -16,7 +16,7 @@ class NotebookController(Controller):
 
     def on_reconcile_start(self, configs: List[NotebookConfig]):
         for config in configs:
-            if config.name not in self.resources:
+            if config.name not in self.resources and config.desired_state == Status.RUNNING:
                 self.resources[config.name] = JupyterLab(
                     cloud_compute=CloudCompute(name=config.cloud_compute),
                     config=config,
@@ -29,12 +29,20 @@ class NotebookController(Controller):
         return f"The notebook `{config.name}` has been created."
 
     def stop_notebook(self, config: StopNotebookConfig) -> str:
-        if config.name in self.resources:
-            notebook: JupyterLab = self.resources[config.name]
-            notebook.stop()
-            notebook._config.desired_state = notebook._config.status = Status.STOPPED
-            self.db.put(notebook._config)
-            return f"The notebook `{config.name}` has been stopped."
+        matched_notebook = None
+        notebooks: List[NotebookConfig] = self.db.get()
+        for notebook in notebooks:
+            if notebook.name == config.name:
+                matched_notebook = notebook
+
+        if matched_notebook:
+            if matched_notebook.name in self.resources:
+                notebook: JupyterLab = self.resources[config.name]
+                notebook.stop()
+                notebook._config.desired_state = notebook._config.status = Status.STOPPED
+                self.db.put(notebook._config)
+                return f"The notebook `{config.name}` has been stopped."
+            return f"The notebook `{config.name}` is stopped."
         return f"The notebook `{config.name}` doesn't exist."
 
     def show_notebook(self):
