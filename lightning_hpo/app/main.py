@@ -12,6 +12,7 @@ from lightning_hpo.components.servers.file_server import FileServer
 from lightning_hpo.controllers.notebook import NotebookController
 from lightning_hpo.controllers.sweep import SweepController
 from lightning_hpo.controllers.tensorboard import TensorboardController
+from lightning_hpo.utilities.enum import Status
 
 
 class MainFlow(LightningFlow):
@@ -76,7 +77,8 @@ class MainFlow(LightningFlow):
             tabs += [{"name": f"tensorboard_{sweep_id}", "content": tensorboard}]
 
         for notebook_id, notebook in self.notebook_controller.resources.items():
-            tabs += [{"name": f"notebook_{notebook_id}", "content": notebook}]
+            if notebook._config.desired_state == Status.RUNNING:
+                tabs += [{"name": f"notebook_{notebook_id}", "content": notebook}]
         return tabs
 
     def show_artefacts(self, config: ShowArtefactsConfig):

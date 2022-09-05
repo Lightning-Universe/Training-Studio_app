@@ -10,4 +10,4 @@ class TensorboardConfig(SQLModel, table=True):
     sweep_id: str
     shared_folder: str
     status: str = Status.NOT_STARTED
-    desired_state: str = Status.NOT_STARTED
+    desired_state: str = Status.RUNNING

@@ -18,6 +18,7 @@ class NotebookController(Controller):
         for config in configs:
             if config.name not in self.resources and config.desired_state == Status.RUNNING:
                 self.resources[config.name] = JupyterLab(
+                    kernel="python",
                     cloud_compute=CloudCompute(name=config.cloud_compute),
                     config=config,
                 )
