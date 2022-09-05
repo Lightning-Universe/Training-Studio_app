@@ -3,7 +3,6 @@ import os
 from copy import deepcopy
 from unittest.mock import MagicMock
 
-import requests
 from lightning.app.storage import Drive
 from sqlmodel import create_engine, SQLModel
 
@@ -28,17 +27,14 @@ def test_delete_sweeps_server(monkeypatch, tmpdir):
     sweep = Sweep.from_config(config=sweep_config)
 
     sweep_controller = SweepController(Drive("lit://code"))
-    sweep_controller.db_url = ""
+    db = MagicMock()
+    sweep_controller._database = db
     sweep_controller.resources[sweep_config.sweep_id] = sweep
-    resp = MagicMock()
-    resp.status_code = 200
-    delete_fn = MagicMock(return_value=resp)
-    monkeypatch.setattr(requests, "delete", delete_fn)
     result = sweep_controller.delete_sweep(config=DeleteSweepConfig(sweep_id=sweep_config.sweep_id))
     assert result == "Deleted the sweep `thomas-cb8f69f0`"
     assert sweep_controller.resources == {}
 
-    general = GeneralModel.parse_raw(delete_fn._mock_call_args[1]["data"])
+    general = GeneralModel.from_obj(db.delete._mock_call_args[0][0], id="sweep_id")
     engine = create_engine(f"sqlite:///{tmpdir}/database.db", echo=True)
     SQLModel.metadata.create_all(engine)
     monkeypatch.setattr(server, "engine", engine)

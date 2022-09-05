@@ -4,7 +4,7 @@ from lightning.app.utilities.commands import ClientCommand
 from rich.console import Console
 from rich.table import Table
 
-from lightning_hpo.commands.notebooks.run import NotebookConfig
+from lightning_hpo.commands.notebook.run import NotebookConfig
 
 
 def _show_notebooks(notebooks: List[NotebookConfig]):

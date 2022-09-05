@@ -89,7 +89,7 @@ class Sweep(LightningFlow):
             "script_path": script_path,
             "env": env,
             "script_args": script_args,
-            "cloud_compute": CloudCompute(name=cloud_compute.name),
+            "cloud_compute": CloudCompute(name=cloud_compute.name if cloud_compute else "cpu"),
             "num_nodes": getattr(cloud_compute, "count", 1) if cloud_compute else 1,
             "logger": logger,
             "code": code,

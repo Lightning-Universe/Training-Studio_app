@@ -6,6 +6,7 @@ from uuid import uuid4
 from lightning import LightningWork
 from lightning.app.storage import Drive
 from lightning.app.storage.path import filesystem
+from lightning.app.utilities.component import _is_work_context
 
 
 class Tensorboard(LightningWork):
@@ -31,9 +32,10 @@ class Tensorboard(LightningWork):
             fs.get(str(self.drive.root), local_folder)
             time.sleep(self.sleep)
 
-    def on_exception(self, exception):
-        self._process.kill()
-        super().on_exception(exception)
+    def on_exit(self):
+        if _is_work_context():
+            assert self._process
+            self._process.kill()
 
     @property
     def updates(self):

@@ -108,7 +108,12 @@ class ShowSweepsCommand(ClientCommand):
         resp = self.invoke_handler()
 
         # 3: Display the Sweeps or Sweep
-        sweeps = [SweepConfig.parse_raw(sweep) for sweep in resp]
+        # TODO: Undestand why the format isn't the same
+        try:
+            sweeps = [SweepConfig.parse_raw(sweep) for sweep in resp]
+        except Exception:
+            sweeps = [SweepConfig(**sweep) for sweep in resp]
+
         if hparams.sweep_id is None:
             _show_sweeps(sweeps)
         else:

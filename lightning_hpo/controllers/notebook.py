@@ -2,9 +2,9 @@ from typing import List
 
 from lightning import CloudCompute
 
-from lightning_hpo.commands.notebooks.run import NotebookConfig, RunNotebookCommand
-from lightning_hpo.commands.notebooks.show import ShowNotebookCommand
-from lightning_hpo.commands.notebooks.stop import StopNotebookCommand, StopNotebookConfig
+from lightning_hpo.commands.notebook.run import NotebookConfig, RunNotebookCommand
+from lightning_hpo.commands.notebook.show import ShowNotebookCommand
+from lightning_hpo.commands.notebook.stop import StopNotebookCommand, StopNotebookConfig
 from lightning_hpo.components.notebook import JupyterLab
 from lightning_hpo.controllers.controller import Controller
 from lightning_hpo.utilities.enum import Status
