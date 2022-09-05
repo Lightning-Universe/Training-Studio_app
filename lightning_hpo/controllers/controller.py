@@ -53,7 +53,7 @@ class Controller(LightningFlow):
     def db(self) -> DatabaseConnector:
         if self._database is None:
             assert self.db_url
-            self._database = DatabaseConnector(self.model, self.db_url, self.model_id)
+            self._database = DatabaseConnector(self.model, self.db_url + "/general/", self.model_id)
         return self._database
 
     @abstractmethod

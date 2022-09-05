@@ -26,7 +26,17 @@ class TensorboardLogger(Logger):
 
         # Create a space logs under the sweep_id folder
         drive = Drive(f"lit://{sweep_id}", component_name="logs")
-        logger = PLTensorBoardLogger(os.path.join(drive.root, str(trial_id)))
+
+        use_localhost = "LIGHTNING_APP_STATE_URL" not in os.environ
+        save_dir = os.path.join(drive.root, str(trial_id))
+
+        if not use_localhost:
+            save_dir = "s3://" + save_dir
+
+        logger = PLTensorBoardLogger(save_dir)
+        # logger._fs = filesystem()
+
+        print("Injecting Tensorboard")
 
         logger.log_hyperparams(params)
 

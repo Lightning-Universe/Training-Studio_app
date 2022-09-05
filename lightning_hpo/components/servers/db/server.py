@@ -86,7 +86,7 @@ class Database(LightningWork):
         app.put("/general/")(general_put)
         app.delete("/general/")(general_delete)
 
-        run(app, host=self.host, port=self.port)
+        run(app, host=self.host, port=self.port, log_level="error")
 
     def alive(self):
         """Hack: Returns whether the server is alive."""
