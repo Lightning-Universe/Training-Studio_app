@@ -2,13 +2,14 @@ from unittest.mock import MagicMock
 
 import lightning_hpo.controllers.notebook as controller_notebook
 from lightning_hpo.commands.notebook.run import NotebookConfig
+from lightning_hpo.commands.notebook.stop import StopNotebookConfig
 from lightning_hpo.controllers import controller
 from lightning_hpo.controllers.notebook import NotebookController
 from lightning_hpo.utilities.enum import Status
 from tests.helpers import MockDatabaseConnector
 
 
-def test_run_notebook(monkeypatch):
+def test_notebook(monkeypatch):
 
     notebook_controller = NotebookController()
     monkeypatch.setattr(controller, "DatabaseConnector", MockDatabaseConnector)
@@ -35,3 +36,21 @@ def test_run_notebook(monkeypatch):
     notebook_controller.resources["a"].run.assert_called()
     config = NotebookConfig(**list(notebook_controller.db.data.values())[0])
     assert config.status == Status.RUNNING
+
+    response = notebook_controller.show_notebook()
+    assert len(response) == 1
+    assert response[0] == config
+
+    notebook_controller.resources["a"]._config = config
+    response = notebook_controller.stop_notebook(StopNotebookConfig(name=config.name))
+    assert "The notebook `a` has been stopped."
+    config = NotebookConfig(**list(notebook_controller.db.data.values())[0])
+    assert config.status == Status.STOPPED
+    assert config.desired_state == Status.STOPPED
+
+    response = notebook_controller.stop_notebook(StopNotebookConfig(name=config.name))
+    assert "The notebook `a` is already stopped."
+
+    del notebook_controller.resources["a"]
+    response = notebook_controller.stop_notebook(StopNotebookConfig(name=config.name))
+    assert "The notebook `a` doesn't exist."
