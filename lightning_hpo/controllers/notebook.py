@@ -31,19 +31,18 @@ class NotebookController(Controller):
 
     def stop_notebook(self, config: StopNotebookConfig) -> str:
         matched_notebook = None
-        notebooks: List[NotebookConfig] = self.db.get()
-        for notebook in notebooks:
-            if notebook.name == config.name:
+        for notebook_name, notebook in self.resources.items():
+            if notebook_name == config.name:
                 matched_notebook = notebook
 
         if matched_notebook:
-            if matched_notebook.name in self.resources:
+            if matched_notebook._config.status != Status.STOPPED:
                 notebook: JupyterLab = self.resources[config.name]
                 notebook.stop()
                 notebook._config.desired_state = notebook._config.status = Status.STOPPED
                 self.db.put(notebook._config)
                 return f"The notebook `{config.name}` has been stopped."
-            return f"The notebook `{config.name}` is stopped."
+            return f"The notebook `{config.name}` is already stopped."
         return f"The notebook `{config.name}` doesn't exist."
 
     def show_notebook(self):
