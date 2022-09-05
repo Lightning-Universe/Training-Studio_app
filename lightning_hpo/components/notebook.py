@@ -4,7 +4,7 @@ from typing import Optional
 from lightning.app.utilities.component import _is_work_context
 from lit_jupyter import JupyterLab
 
-from lightning_hpo.commands.notebooks.run import NotebookConfig
+from lightning_hpo.commands.notebook.run import NotebookConfig
 from lightning_hpo.utilities.enum import Status
 
 

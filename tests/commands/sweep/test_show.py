@@ -60,8 +60,7 @@ def test_show_sweeps_client(monkeypatch):
     sys.argv = ori_sys_argv
 
 
-def test_show_sweeps_server(monkeypatch):
-
+def test_show_sweeps_server():
     with open(os.path.join(os.path.dirname(__file__), "sweep_1.json"), "rb") as f:
         data = json.load(f)
 
@@ -70,13 +69,7 @@ def test_show_sweeps_server(monkeypatch):
     Sweep.from_config(config=sweep_config)
 
     sweep_controller = SweepController(Drive("lit://code"))
-    sweep_controller.db_url = ""
-    resp = MagicMock()
-    resp.json.return_value = data
-    resp.status_code = 200
-    get = MagicMock(return_value=resp)
-    monkeypatch.setattr(requests, "get", get)
+    sweep_controller._database = MagicMock()
+    sweep_controller._database.get.return_value = [sweep_config]
     result = sweep_controller.show_sweeps()
-    assert result == data
-    expected = '{"cls_name": "SweepConfig", "cls_module": "lightning_hpo.commands.sweep.run", "data": "", "id": null}'
-    assert get._mock_call_args.kwargs["data"] == expected
+    assert result[0] == sweep_config.json()
