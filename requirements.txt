@@ -3,6 +3,7 @@ jsonargparse[signatures]
 git+https://github.com/Lightning-AI/LAI-Jupyter-Component.git@main   # TODO: replace with lightning-notebook once released.
 git+https://github.com/Lightning-AI/lightning.git@small_fixes  # TODO: replace with lightning once 0.6.0 is released
 lightning_cloud
+torchvision
 optuna
 sqlmodel
 wandb
@@ -16,4 +17,3 @@ sqlmodel
 sqlite_web
 Flask
 Flask-Cors
-torchvision
