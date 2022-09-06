@@ -10,7 +10,7 @@ from lightning_hpo.algorithm.optuna import OptunaAlgorithm
 from lightning_hpo.commands.sweep.run import Params, SweepConfig, TrialConfig
 from lightning_hpo.distributions import Distribution
 from lightning_hpo.distributions.distributions import parse_distributions, unparse_distributions
-from lightning_hpo.framework.agnostic import BaseObjective
+from lightning_hpo.framework.agnostic import Objective
 from lightning_hpo.loggers import LoggerType
 from lightning_hpo.utilities.enum import Status
 from lightning_hpo.utilities.utils import (
@@ -26,7 +26,7 @@ class Sweep(LightningFlow):
     def __init__(
         self,
         n_trials: int,
-        objective_cls: Optional[Type[BaseObjective]] = None,
+        objective_cls: Optional[Type[Objective]] = None,
         simultaneous_trials: int = 1,
         script_args: Optional[Union[list, str]] = None,
         env: Optional[Dict] = None,
@@ -157,6 +157,7 @@ class Sweep(LightningFlow):
                         params=self._algorithm.get_params(trial_id),
                     )
                     self._sweep_config.trials[trial_id].best_model_score = objective.best_model_score
+                    self._sweep_config.trials[trial_id].best_model_path = objective.best_model_path
                     self._sweep_config.trials[trial_id].monitor = objective.monitor
                     self._sweep_config.trials[trial_id].status = Status.SUCCEEDED
                     self._sweep_config.trials_done += 1

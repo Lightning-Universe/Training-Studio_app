@@ -4,12 +4,12 @@ from sklearn import datasets
 from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import train_test_split
 
-from lightning_hpo import BaseObjective, Sweep
+from lightning_hpo import Objective, Sweep
 from lightning_hpo.algorithm.optuna import OptunaAlgorithm
 from lightning_hpo.distributions.distributions import LogUniform
 
 
-class MyObjective(BaseObjective):
+class MyObjective(Objective):
     def objective(self, alpha: float):
 
         iris = datasets.load_iris()

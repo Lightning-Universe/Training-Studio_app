@@ -133,10 +133,10 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import train_test_split
 from lightning_hpo.distributions import LogUniform
 from lightning_hpo.algorithm import OptunaAlgorithm
-from lightning_hpo import BaseObjective, Sweep
+from lightning_hpo import Objective, Sweep
 
 
-class MyObjective(BaseObjective):
+class MyObjective(Objective):
 
     def objective(self, alpha: float):
 
@@ -260,7 +260,7 @@ lightning connect localhost
 ```
 
 ```bash
-lightning --help           
+lightning --help
 
 You are connected to the local Lightning App.
 Usage: lightning [OPTIONS] COMMAND [ARGS]...

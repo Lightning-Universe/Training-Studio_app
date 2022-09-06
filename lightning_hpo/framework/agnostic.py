@@ -13,7 +13,7 @@ class ObjectiveResult(TypedDict):
     checkpoint: Optional[str]
 
 
-class BaseObjective(TracerPythonScript, ABC):
+class Objective(TracerPythonScript, ABC):
     def objective(self, *args, **kwargs):
         """Override with your own objective logic"""
 
@@ -54,7 +54,7 @@ class BaseObjective(TracerPythonScript, ABC):
 
     def run(self, params: Optional[Dict[str, Any]] = None, restart_count: int = 0):
         self.params = params or {}
-        if is_overridden("objective", self, BaseObjective):
+        if is_overridden("objective", self, Objective):
             self.objective(**self.params)
         else:
             return super().run(params=params)

@@ -16,7 +16,7 @@ from pydantic.main import ModelMetaclass
 from sqlmodel import JSON, TypeDecorator
 
 from lightning_hpo.framework import _OBJECTIVE_FRAMEWORK
-from lightning_hpo.framework.agnostic import BaseObjective
+from lightning_hpo.framework.agnostic import Objective
 
 T = TypeVar("T")
 
@@ -89,8 +89,8 @@ def _resolve_objective_cls(objective_cls, framework: str):
     return objective_cls
 
 
-def _check_status(obj: Union[LightningFlow, BaseObjective], status: str) -> bool:
-    if isinstance(obj, BaseObjective):
+def _check_status(obj: Union[LightningFlow, Objective], status: str) -> bool:
+    if isinstance(obj, Objective):
         return obj.status.stage == status
     else:
         works = obj.works()
