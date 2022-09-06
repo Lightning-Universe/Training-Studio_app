@@ -27,8 +27,7 @@ Install Lightning
 
 .. code-block:: bash
 
-   pip install lightning
-
+   pip install lightning-hpo
 
 Or read the :ref:`advanced install <install>` guide.
 

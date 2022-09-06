@@ -23,8 +23,8 @@ Install with pip
 
 0.  Activate your virtual environment.
 
-1.  Install the ``lightning`` package
+1.  Install the ``lightning-hpo`` package
 
     .. code:: bash
 
-        python -m pip install -U lightning
+        python -m pip install -U lightning-hpo
