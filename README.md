@@ -278,7 +278,7 @@ ______________________________________________________________________
 In terminal 1, run the Training Application.
 
 ```bash
-python -m lightning run app examples/4_app_sweeper.py --env WANDB_ENTITY={ENTITY} --env WANDB_API_KEY={API_KEY}
+lightning run app training_studio_app.py --env WANDB_ENTITY={ENTITY} --env WANDB_API_KEY={API_KEY}
 ```
 
 In terminal 2, connect to the App and run your first sweep or start your notebook.
