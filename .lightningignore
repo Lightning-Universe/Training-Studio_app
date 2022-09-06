@@ -18,3 +18,4 @@ venv
 dist
 tensorboard_logs
 jupyter_lab_*
+*node_modules*
