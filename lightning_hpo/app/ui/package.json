@@ -10,39 +10,33 @@
     "@mui/lab": "^5.0.0-alpha.64",
     "@mui/material": "^5.2.7",
     "@reduxjs/toolkit": "^1.8.0",
-    "@stripe/stripe-js": "^1.29.0",
     "axios": "^0.27.2",
-    "boring-avatars": "^1.6.3",
     "filter-material-ui": "2.7.0",
     "fontfaceobserver": "^2.1.0",
     "lightning-ui": "git+ssh://git@github.com/Lightning-AI/lightning-ui.git",
     "lodash": "^4.17.21",
     "notistack": "^2.0.4",
+    "openapi-typescript-codegen": "^0.23.0",
     "query-string": "^7.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-dropzone": "^14.2.1",
     "react-github-btn": "^1.2.1",
     "react-hook-form": "^7.27.1",
     "react-query": "^3.34.7",
     "react-router-dom": "^6.2.1",
-    "react-scripts": "5.0.0",
     "react-spring": "^9.4.4",
     "react-table": "^7.7.0",
     "rxjs": "^7.5.2",
     "typescript": "^4.4.2",
     "use-debounce": "^7.0.1",
-    "web-vitals": "^2.1.0",
-    "xterm": "^4.18.0",
-    "xterm-addon-fit": "^0.5.0",
-    "xterm-addon-search": "^0.8.2"
+    "web-vitals": "^2.1.0"
   },
   "scripts": {
     "start": "craco start",
     "build": "craco build",
     "lint": "eslint --cache --max-warnings=0 . && prettier -c .",
     "lint:fix": "eslint --cache --max-warnings=0 . --fix && prettier -w .",
-    "eject": "react-scripts eject"
+    "generate": "openapi --input ./spec.json --output ./src/generated --client axios --name AppClient"
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"

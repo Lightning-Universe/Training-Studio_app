@@ -46,7 +46,9 @@ class NotebookController(Controller):
         return f"The notebook `{config.name}` doesn't exist."
 
     def show_notebook(self):
-        return self.db.get()
+        if self.db_url:
+            return self.db.get()
+        return []
 
     def configure_commands(self) -> List:
         return [

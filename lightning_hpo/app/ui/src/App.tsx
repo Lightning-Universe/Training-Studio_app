@@ -1,40 +1,40 @@
-import { Typography } from '@mui/material';
-import Tabs, { TabItem } from 'components/Tabs';
-import { useLightningState } from 'hooks/useLightningState';
-import useSelectedTabState, { SelectedTabProvider } from 'hooks/useSelectedTabState';
 import { SnackbarProvider, Stack } from 'lightning-ui/src/design-system/components';
 import ThemeProvider from 'lightning-ui/src/design-system/theme';
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter } from 'react-router-dom';
+import { AppClient, NotebookConfig } from './generated';
 
 const queryClient = new QueryClient();
 
-function Home(props: { lightningState: any; updateLightningState: (newState: any) => void }) {
-  return (
-    <Stack order="column">
-      <Typography>IN PROGRESS</Typography>
-    </Stack>
+function Main() {
+  const appClient = useMemo(
+    () =>
+      new AppClient({
+        BASE:
+          window.location != window.parent.location
+            ? document.referrer.replace(/\/$/, '')
+            : document.location.href.replace(/\/$/, ''),
+      }),
+    [],
   );
-}
 
-function AppTabs() {
-  const { lightningState, updateLightningState } = useLightningState();
-  const { selectedTab, setSelectedTab } = useSelectedTabState();
+  const [notebooks, setNotebooks] = useState<NotebookConfig[]>([]);
 
-  const tabItems: TabItem[] = [
-    { title: 'Home', content: <Home lightningState={lightningState} updateLightningState={updateLightningState} /> },
-  ];
+  useEffect(() => {
+    appClient.appClientCommand
+      .showNotebooksCommandShowNotebooksPost()
+      .then(data => setNotebooks(data as NotebookConfig[]));
+    const interval = setInterval(() => {
+      appClient.appClientCommand
+        .showNotebooksCommandShowNotebooksPost()
+        .then(data => setNotebooks(data as NotebookConfig[]));
+    }, 1000);
 
-  return (
-    <Tabs
-      selectedTab={selectedTab}
-      onChange={setSelectedTab}
-      tabItems={tabItems}
-      sxTabs={{ width: '100%', backgroundColor: 'white', paddingX: 2, top: 0, position: 'fixed', zIndex: 1000 }}
-      sxContent={{ paddingTop: 0, paddingBottom: 6, marginTop: '48px' }}
-    />
-  );
+    return () => clearInterval(interval);
+  }, []);
+
+  return <Stack order="column">{JSON.stringify(notebooks)}</Stack>;
 }
 
 function App() {
@@ -43,9 +43,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <SnackbarProvider>
-            <SelectedTabProvider>
-              <AppTabs />
-            </SelectedTabProvider>
+            <Main />
           </SnackbarProvider>
         </BrowserRouter>
       </QueryClientProvider>
