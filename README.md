@@ -1,7 +1,9 @@
-# Lightning HPO & Training Studio App
-
-
-![Lightning HPO](https://pl-flash-data.s3.amazonaws.com/assets_lightning/lightning_hpo_repo.png)
+<div align="center">
+    <h1>
+        Lightning HPO & Training Studio App
+    </h1>
+    <img src="https://pl-flash-data.s3.amazonaws.com/assets_lightning/lightning_hpo_repo.png" width="400">
+</div>
 
 Lightning HPO provides a pythonic implementation for Scalable Hyperparameter Tuning.
 
@@ -24,6 +26,8 @@ The Training Studio App relies on Lightning HPO to provide abilities to run, sho
 [![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Lightning-AI/lightning/blob/master/LICENSE)
 
 </div>
+
+______________________________________________________________________
 
 ## Installation
 
@@ -49,6 +53,7 @@ Make sure everything works fine.
 pytest tests --capture=no -v
 ```
 
+______________________________________________________________________
 
 ## Getting started
 
@@ -94,6 +99,8 @@ python -m lightning run app examples/1_app_agnostic.py --cloud
 
 Find the example [here](./examples/1_app_agnostic.py)
 
+______________________________________________________________________
+
 ## PyTorch Lightning Users
 
 Here is how to launch 100 trials 10 at a times with 2 nodes of 4 GPUs for each in the cloud.
@@ -133,6 +140,8 @@ python -m lightning run app examples/2_app_pytorch_lightning.py --cloud --env WA
 Find the example [here](./examples/2_app_pytorch_lightning.py)
 
 ![Lightning App UI](https://pl-flash-data.s3.amazonaws.com/assets_lightning/wandb2.png)
+
+______________________________________________________________________
 
 ## Convert from raw Optuna to a Lightning App
 
@@ -237,6 +246,8 @@ Sweep(..., logger="wandb")
 python -m lightning run app app.py --env WANDB_ENTITY=YOUR_USERNAME --env WANDB_API_KEY=YOUR_API_KEY --cloud
 ```
 
+______________________________________________________________________
+
 ## Use advanced algorithms with your Lightning App
 
 Here is how to use the latest research such as [Hyperband paper](http://www.jmlr.org/papers/volume18/16-558/16-558.pdf)
@@ -261,7 +272,7 @@ Sweep(
 
 Learn more [here](https://optuna.readthedocs.io/en/stable/tutorial/10_key_features/003_efficient_optimization_algorithms.html?highlight=hyperband#activating-pruners)
 
-
+______________________________________________________________________
 ## The Training App (WIP)
 
 In terminal 1, run the Training Application.
