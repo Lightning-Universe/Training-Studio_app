@@ -1,4 +1,9 @@
-# [experimental] Lightning HPO / Training Studio App
+<div align="center">
+    <h1>
+        Lightning HPO & Training Studio App
+    </h1>
+    <img src="https://pl-flash-data.s3.amazonaws.com/assets_lightning/lightning_hpo_repo.png" width="400">
+</div>
 
 Lightning HPO provides a pythonic implementation for Scalable Hyperparameter Tuning.
 
@@ -6,7 +11,23 @@ This library relies on [Optuna](https://optuna.readthedocs.io/en/stable/) for pr
 
 This is built upon the highly scalable and distributed [Lightning App](https://lightning.ai/lightning-docs/get_started/what_app_can_do.html) framework from [lightning.ai](https://lightning.ai/).
 
-The Training Studio App relies on Lightning HPO to provide abilities to run, show, stop, delete Sweeps, Notebooks, Tensorboard, etc.. 
+The [Training Studio App](https://lightning-ai.github.io/lightning-hpo/training_studio.html) relies on Lightning HPO to provide abilities to run, show, stop, delete Sweeps, Notebooks, Tensorboard, etc..
+
+<div align="center">
+
+<p align="center">
+  <a href="https://www.lightning.ai/">Lightning Gallery</a> •
+  <a href="https://lightning-ai.github.io/lightning-hpo">Docs</a> •
+  <a href="https://github.com/Lightning-AI/lightning-hpo/tree/master/examples">Examples</a>
+</p>
+
+[![ReadTheDocs](https://readthedocs.org/projects/pytorch-lightning/badge/?version=stable)](https://lightning-ai.github.io/lightning-hpo)
+[![Slack](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://www.pytorchlightning.ai/community)
+[![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Lightning-AI/lightning/blob/master/LICENSE)
+
+</div>
+
+______________________________________________________________________
 
 ## Installation
 
@@ -32,6 +53,7 @@ Make sure everything works fine.
 pytest tests --capture=no -v
 ```
 
+______________________________________________________________________
 
 ## Getting started
 
@@ -77,6 +99,8 @@ python -m lightning run app examples/1_app_agnostic.py --cloud
 
 Find the example [here](./examples/1_app_agnostic.py)
 
+______________________________________________________________________
+
 ## PyTorch Lightning Users
 
 Here is how to launch 100 trials 10 at a times with 2 nodes of 4 GPUs for each in the cloud.
@@ -117,6 +141,8 @@ Find the example [here](./examples/2_app_pytorch_lightning.py)
 
 ![Lightning App UI](https://pl-flash-data.s3.amazonaws.com/assets_lightning/wandb2.png)
 
+______________________________________________________________________
+
 ## Convert from raw Optuna to a Lightning App
 
 Below, we are going to convert [Optuna Efficient Optimization Algorithms](https://optuna.readthedocs.io/en/stable/tutorial/10_key_features/003_efficient_optimization_algorithms.html#sphx-glr-tutorial-10-key-features-003-efficient-optimization-algorithms-py>) into a Lightning App.
@@ -133,10 +159,10 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import train_test_split
 from lightning_hpo.distributions import LogUniform
 from lightning_hpo.algorithm import OptunaAlgorithm
-from lightning_hpo import BaseObjective, Sweep
+from lightning_hpo import Objective, Sweep
 
 
-class MyObjective(BaseObjective):
+class MyObjective(Objective):
 
     def objective(self, alpha: float):
 
@@ -220,6 +246,8 @@ Sweep(..., logger="wandb")
 python -m lightning run app app.py --env WANDB_ENTITY=YOUR_USERNAME --env WANDB_API_KEY=YOUR_API_KEY --cloud
 ```
 
+______________________________________________________________________
+
 ## Use advanced algorithms with your Lightning App
 
 Here is how to use the latest research such as [Hyperband paper](http://www.jmlr.org/papers/volume18/16-558/16-558.pdf)
@@ -244,23 +272,23 @@ Sweep(
 
 Learn more [here](https://optuna.readthedocs.io/en/stable/tutorial/10_key_features/003_efficient_optimization_algorithms.html?highlight=hyperband#activating-pruners)
 
+______________________________________________________________________
+## The Training Studio App
 
-## The Training App (WIP)
-
-In terminal 1, run the Training Application.
+In terminal 1, run the Lightning App.
 
 ```bash
-python -m lightning run app examples/4_app_sweeper.py --env WANDB_ENTITY={ENTITY} --env WANDB_API_KEY={API_KEY}
+lightning run app training_studio_app.py --env WANDB_ENTITY={ENTITY} --env WANDB_API_KEY={API_KEY}
 ```
 
-In terminal 2, connect to the App and run your first sweep or start your notebook.
+In terminal 2, connect to the Lightning App and run your first sweep or notebook.
 
 ```bash
 lightning connect localhost
 ```
 
 ```bash
-lightning --help           
+lightning --help
 
 You are connected to the local Lightning App.
 Usage: lightning [OPTIONS] COMMAND [ARGS]...
@@ -268,15 +296,27 @@ Usage: lightning [OPTIONS] COMMAND [ARGS]...
   --help     Show this message and exit.
 
 Lightning App Commands
-  delete sweep
+  delete sweep 
   download artefacts
   run notebook
   run sweep
   show artefacts
+  show notebooks
   show sweeps
+  stop notebook
   stop sweep
 ```
 
 ```bash
-cd examples/scripts && lightning run sweep train.py --n_trials=3 --model.lr="log_uniform(0.001, 0.1)" --logger="wandb" --direction=maximize
+cd examples/scripts
+```
+
+```bash
+lightning run sweep train.py \
+  --n_trials=10 \
+  --logger="tensorboard" \
+  --direction=maximize \
+  --model.lr="log_uniform(0.001, 0.1)" \
+  --model.gamma="uniform(0.5, 0.8)" \
+  --data.batch_size="categorical([32, 64])"
 ```

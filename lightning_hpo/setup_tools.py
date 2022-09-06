@@ -32,8 +32,9 @@ def _load_requirements(path_dir: str, file_name: str = "requirements.txt", comme
         # filer all comments
         comment = ""
         if comment_char in ln:
-            comment = ln[ln.index(comment_char) :]
-            ln = ln[: ln.index(comment_char)]
+            start = ln.index(comment_char)
+            comment = ln[start:]
+            ln = ln[:start]
         req = ln.strip()
         # skip directly installed dependencies
         if not req or req.startswith("http") or req.startswith("http") or req.startswith("git") or "@http" in req:

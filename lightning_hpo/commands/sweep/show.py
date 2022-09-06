@@ -66,8 +66,6 @@ def _show_sweep(sweep: SweepConfig):
         "best_model_score",
         "params",
         "monitor",
-        "exception",
-        "best_model_path",
         title="Trials",
         show_header=True,
         header_style="bold green",
@@ -77,11 +75,9 @@ def _show_sweep(sweep: SweepConfig):
         table.add_row(
             str(idx),
             str(trial.status),
-            str(trial.best_model_score),
-            str(trial.params.params),
+            str(round(trial.best_model_score, 2) if trial.best_model_score else None),
+            str({k: round(v, 5) for k, v in trial.params.params.items()}),
             str(trial.monitor),
-            str(trial.exception),
-            str(trial.best_model_path),
         )
     console = Console()
     console.print(table)

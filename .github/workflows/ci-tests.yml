@@ -69,7 +69,7 @@ jobs:
           AWS_DEFAULT_REGION: us-east-1
           PYTEST_ARTIFACT: results-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}.xml
         run: |
-          pytest tests -vvvv --capture=no -v --color=yes
+          python -m coverage run --source lightning_hpo -m pytest tests --junitxml=$PYTEST_ARTIFACT --durations=0 --color=yes -v
 
 #      - name: Upload pytest test results
 #        uses: actions/upload-artifact@v3
@@ -78,12 +78,12 @@ jobs:
 #          path: tests/results-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}.xml
 #        if: failure()
 #
-#      - name: Statistics
-#        if: success()
-#        working-directory: ./tests
-#        run: |
-#          coverage xml -i
-#          coverage report -i
+      - name: Statistics
+        if: success()
+        working-directory: ./
+        run: |
+          coverage xml -i
+          coverage report -i
 
       # - name: Upload coverage to Codecov
       #   uses: codecov/codecov-action@v3

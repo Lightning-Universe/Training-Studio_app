@@ -10,6 +10,7 @@ recursive-include examples *
 recursive-include lightning_hpo *
 recursive-include requirements *
 
+recursive-exclude docs *
 recursive-exclude tests *.py
 recursive-exclude * *.pyc
 recursive-exclude * *.json
