@@ -24,7 +24,6 @@
     "react-hook-form": "^7.27.1",
     "react-query": "^3.34.7",
     "react-router-dom": "^6.2.1",
-    "react-scripts": "5.0.0",
     "react-spring": "^9.4.4",
     "react-table": "^7.7.0",
     "rxjs": "^7.5.2",
@@ -37,7 +36,6 @@
     "build": "craco build",
     "lint": "eslint --cache --max-warnings=0 . && prettier -c .",
     "lint:fix": "eslint --cache --max-warnings=0 . --fix && prettier -w .",
-    "eject": "react-scripts eject",
     "generate": "openapi --input ./spec.json --output ./src/generated --client axios --name AppClient"
   },
   "lint-staged": {
