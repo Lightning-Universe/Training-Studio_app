@@ -273,15 +273,15 @@ Sweep(
 Learn more [here](https://optuna.readthedocs.io/en/stable/tutorial/10_key_features/003_efficient_optimization_algorithms.html?highlight=hyperband#activating-pruners)
 
 ______________________________________________________________________
-## The Training App (WIP)
+## The Training Studio App
 
-In terminal 1, run the Training Application.
+In terminal 1, run the Lightning App.
 
 ```bash
 lightning run app training_studio_app.py --env WANDB_ENTITY={ENTITY} --env WANDB_API_KEY={API_KEY}
 ```
 
-In terminal 2, connect to the App and run your first sweep or start your notebook.
+In terminal 2, connect to the Lightning App and run your first sweep or notebook.
 
 ```bash
 lightning connect localhost
@@ -296,15 +296,27 @@ Usage: lightning [OPTIONS] COMMAND [ARGS]...
   --help     Show this message and exit.
 
 Lightning App Commands
-  delete sweep
+  delete sweep 
   download artefacts
   run notebook
   run sweep
   show artefacts
+  show notebooks
   show sweeps
+  stop notebook
   stop sweep
 ```
 
 ```bash
-cd examples/scripts && lightning run sweep train.py --n_trials=3 --model.lr="log_uniform(0.001, 0.1)" --logger="wandb" --direction=maximize
+cd examples/scripts
+```
+
+```bash
+lightning run sweep train.py \
+  --n_trials=10 \
+  --logger="tensorboard" \
+  --direction=maximize \
+  --model.lr="log_uniform(0.001, 0.1)" \
+  --model.gamma="uniform(0.5, 0.8)" \
+  --data.batch_size="categorical([32, 64])"
 ```
