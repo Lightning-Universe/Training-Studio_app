@@ -60,10 +60,10 @@ Sweep
    :height: 180
 
 .. displayitem::
-   :header: Stop / Delete a Sweep
-   :description: Learn how to stop / delete an existing sweep
+   :header: Stop or delete a Sweep
+   :description: Learn how to stop or delete an existing sweep
    :col_css: col-md-4
-   :button_link: workflows/stop_sweep.html
+   :button_link: workflows/stop_or_delete_sweep.html
    :height: 180
 
 .. raw:: html
@@ -94,14 +94,14 @@ Notebook
    :header: Show Notebooks
    :description: Learn how to view the existing notebooks
    :col_css: col-md-4
-   :button_link: get_started/fundamentals.html
+   :button_link: workflows/show_notebooks.html
    :height: 180
 
 .. displayitem::
-   :header: Stop / Delete a Notebook
-   :description: Learn how to stop / delete an existing notebook
+   :header: Stop or delete a Notebook
+   :description: Learn how to stop or delete an existing notebook
    :col_css: col-md-4
-   :button_link: get_started/build_model.html
+   :button_link: workflows/stop_or_delete_notebooks.html
    :height: 180
 
 .. raw:: html
@@ -122,17 +122,17 @@ Utilities
       <div class="row">
 
 .. displayitem::
-   :header: Show Artefacts
-   :description: Learn how to show your Training Studio App artefacts
+   :header: Show or Download Artefacts
+   :description: Learn how to interact with your Training Studio App artefacts
    :col_css: col-md-6
-   :button_link: get_started/what_app_can_do.html
+   :button_link: workflows/show_or_download_artifacts.html
    :height: 180
 
 .. displayitem::
-   :header: Download Artefacts
-   :description: Learn how to download your Training Studio App artefacts
+   :header: Show or Download Logs
+   :description: Learn how to interact with your Training Studio App logs
    :col_css: col-md-6
-   :button_link: get_started/fundamentals.html
+   :button_link: workflows/show_or_download_logs.html
    :height: 180
 
 .. raw:: html

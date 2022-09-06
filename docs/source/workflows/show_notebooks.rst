@@ -23,9 +23,9 @@ Here is the output of such command above:
 
     You are connected to the local Lightning App.
                                             Notebooks
-    ┏━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓
-    ┃ id              ┃ name        ┃ status  ┃ desired_status ┃ cloud_compute ┃ requirements ┃
-    ┡━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━┩
-    │ thomas-a130d079 │ notebook_2  │ stopped │ stopped        │ cpu           │ []           │
-    │ thomas-c2dd597b │ my_notebook │ running │ running        │ cpu           │ []           │
-    └─────────────────┴─────────────┴─────────┴────────────────┴───────────────┴──────────────┘
+   ┏━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓
+   ┃ id              ┃ name        ┃ status  ┃ desired_status ┃ cloud_compute ┃ requirements ┃
+   ┡━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━┩
+   │ thomas-a130d079 │ notebook_2  │ stopped │ stopped        │ cpu           │ []           │
+   │ thomas-c2dd597b │ my_notebook │ running │ running        │ cpu           │ []           │
+   └─────────────────┴─────────────┴─────────┴────────────────┴───────────────┴──────────────┘

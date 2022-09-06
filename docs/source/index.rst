@@ -121,4 +121,4 @@ Get Started
    Stop or delete a Sweep <workflows/stop_or_delete_sweep>
    Stop or delete a Notebook <workflows/stop_or_delete_notebook>
    Show or download Artefacts <workflows/show_or_download_artifacts>
-   Show or download logs <workflows/show_or_download_logs>
+   Show or download Logs <workflows/show_or_download_logs>
