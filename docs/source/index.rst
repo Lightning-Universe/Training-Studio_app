@@ -62,14 +62,14 @@ Get Started
    :header: Use Lightning HPO with your own scripts
    :description: Discover PyTorch Lightning and train your first Model.
    :col_css: col-md-6
-   :button_link: get_started/build_model.html
+   :button_link: get_started/hpo_with_your_scripts.html
    :height: 180
 
 .. displayitem::
    :header: The Training Studio App
    :description: Use your own App or share it with your teammates.
    :col_css: col-md-6
-   :button_link: get_started/training_with_apps.html
+   :button_link: get_started/training_studio_app.html
    :height: 180
 
 .. raw:: html
