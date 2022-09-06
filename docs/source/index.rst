@@ -21,9 +21,9 @@ Welcome to ⚡ Lightning HPO
 
 ----
 
-*****************
-Install Lightning
-*****************
+*********************
+Install Lightning HPO
+*********************
 
 .. code-block:: bash
 
