@@ -1,4 +1,7 @@
+import os
+
 from lightning import LightningFlow
+from lightning.app.frontend import StaticWebFrontend
 from lightning.app.storage import Drive
 
 from lightning_hpo.commands.artefacts.download import (
@@ -66,6 +69,8 @@ class MainFlow(LightningFlow):
         self.tensorboard_controller.run(self.db.db_url)
 
     def configure_layout(self):
+        if os.environ.get("REACT_UI", "0") == "1":
+            return StaticWebFrontend(os.path.join(os.path.dirname(__file__), "ui", "build"))
         tabs = [{"name": "Dashboard", "content": self.sweep_controller}]
         if self.debug:
             tabs += [{"name": "Database Viz", "content": self.db_viz}]
