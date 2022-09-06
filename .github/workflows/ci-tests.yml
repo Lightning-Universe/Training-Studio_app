@@ -80,7 +80,7 @@ jobs:
 #
       - name: Statistics
         if: success()
-        working-directory: ./tests
+        working-directory: ./
         run: |
           coverage xml -i
           coverage report -i
