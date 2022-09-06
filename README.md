@@ -6,17 +6,15 @@ ______________________________________________________________________
 
 <p align="center">
   <a href="https://www.lightning.ai/">Lightning Gallery</a> •
-  <a href="#key-features">Key Features</a> •
-  <a href="#how-to-use">How To Use</a> •
   <a href="https://lightning-ai.github.io/lightning-hpo">Docs</a> •
-  <a href="#examples">Examples</a> •
-  <a href="#community">Community</a> •
-  <a href="#license">License</a>
+  <a href="https://github.com/Lightning-AI/lightning-hpo/tree/master/examples">Examples</a> •
 </p>
 
 [![ReadTheDocs](https://readthedocs.org/projects/pytorch-lightning/badge/?version=stable)](https://lightning-ai.github.io/lightning-hpo)
 [![Slack](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://www.pytorchlightning.ai/community)
 [![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Lightning-AI/lightning/blob/master/LICENSE)
+
+</div>
 
 Lightning HPO provides a pythonic implementation for Scalable Hyperparameter Tuning.
 
