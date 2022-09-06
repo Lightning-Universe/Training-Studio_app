@@ -1,4 +1,4 @@
-# [experimental] Lightning HPO / Training Studio App
+# Lightning HPO & Training Studio App
 
 
 ![Lightning HPO](https://pl-flash-data.s3.amazonaws.com/assets_lightning/lightning_hpo_repo.png)
@@ -10,6 +10,20 @@ This library relies on [Optuna](https://optuna.readthedocs.io/en/stable/) for pr
 This is built upon the highly scalable and distributed [Lightning App](https://lightning.ai/lightning-docs/get_started/what_app_can_do.html) framework from [lightning.ai](https://lightning.ai/).
 
 The Training Studio App relies on Lightning HPO to provide abilities to run, show, stop, delete Sweeps, Notebooks, Tensorboard, etc..
+
+<div align="center">
+
+<p align="center">
+  <a href="https://www.lightning.ai/">Lightning Gallery</a> •
+  <a href="https://lightning-ai.github.io/lightning-hpo">Docs</a> •
+  <a href="https://github.com/Lightning-AI/lightning-hpo/tree/master/examples">Examples</a>
+</p>
+
+[![ReadTheDocs](https://readthedocs.org/projects/pytorch-lightning/badge/?version=stable)](https://lightning-ai.github.io/lightning-hpo)
+[![Slack](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://www.pytorchlightning.ai/community)
+[![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Lightning-AI/lightning/blob/master/LICENSE)
+
+</div>
 
 ## Installation
 
