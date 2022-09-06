@@ -1,5 +1,23 @@
 # [experimental] Lightning HPO / Training Studio App
 
+**Build and train PyTorch models and connect them to the ML lifecycle using Lightning App templates, without handling DIY infrastructure, cost management, scaling, and other headaches.**
+
+______________________________________________________________________
+
+<p align="center">
+  <a href="https://www.lightning.ai/">Lightning Gallery</a> •
+  <a href="#key-features">Key Features</a> •
+  <a href="#how-to-use">How To Use</a> •
+  <a href="https://lightning-ai.github.io/lightning-hpo">Docs</a> •
+  <a href="#examples">Examples</a> •
+  <a href="#community">Community</a> •
+  <a href="#license">License</a>
+</p>
+
+[![ReadTheDocs](https://readthedocs.org/projects/pytorch-lightning/badge/?version=stable)](https://lightning-ai.github.io/lightning-hpo)
+[![Slack](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://www.pytorchlightning.ai/community)
+[![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Lightning-AI/lightning/blob/master/LICENSE)
+
 Lightning HPO provides a pythonic implementation for Scalable Hyperparameter Tuning.
 
 This library relies on [Optuna](https://optuna.readthedocs.io/en/stable/) for providing state-of-the-art sampling hyper-parameters algorithms and efficient trial pruning strategies.
