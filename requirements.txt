@@ -14,6 +14,6 @@ lightning  # TODO: remove this dependency. (added only for CI)
 sklearn
 sqlmodel
 sqlite_web
-torchvision
 Flask
 Flask-Cors
+torchvision
