@@ -1,10 +1,9 @@
 from time import sleep
-from typing import List, Optional
+from typing import List
 
 import requests
 from lightning.app.frontend import StreamlitFrontend
 from lightning.app.storage import Drive
-from lightning.app.storage.path import Path
 from lightning.app.structures import Dict
 
 from lightning_hpo import Sweep
@@ -17,7 +16,6 @@ from lightning_hpo.components.servers.db.models import GeneralModel
 from lightning_hpo.controllers.controller import Controller
 from lightning_hpo.loggers import LoggerType
 from lightning_hpo.utilities.enum import Status
-from lightning_hpo.utilities.utils import get_best_model_path
 
 
 class SweepController(Controller):
@@ -51,7 +49,7 @@ class SweepController(Controller):
     def on_reconcile_end(self, updates: List[SweepConfig]):
         for update in updates:
             if update.status == Status.SUCCEEDED:
-                for w in self.resources.works:
+                for w in self.resources[update.sweep_id].works():
                     w.stop()
                 self.resources.pop(update.sweep_id)
 
@@ -100,10 +98,6 @@ class SweepController(Controller):
             {"show sweeps": ShowSweepsCommand(self.show_sweeps)},
             {"stop sweep": StopSweepCommand(self.stop_sweep)},
         ]
-
-    @property
-    def best_model_score(self) -> Optional[Path]:
-        return get_best_model_path(self)
 
     def configure_layout(self):
         return StreamlitFrontend(render_fn=render_fn)

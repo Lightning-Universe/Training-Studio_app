@@ -29,6 +29,7 @@ class Tensorboard(LightningWork):
         fs = filesystem()
 
         while True:
+            fs.invalidate_cache()
             fs.get(str(self.drive.root), local_folder)
             time.sleep(self.sleep)
 
