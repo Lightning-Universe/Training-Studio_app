@@ -1,6 +1,7 @@
 import os
 from typing import Any, Dict, Optional
 
+import wandb
 from lightning import LightningFlow
 
 from lightning_hpo.loggers.logger import Logger
@@ -9,8 +10,6 @@ from lightning_hpo.loggers.logger import Logger
 class WandbLogger(Logger):
     def __init__(self):
         super().__init__()
-        import wandb
-
         self._validate_auth()
         os.environ["WANDB_REQUIRE_REPORT_EDITING_V0"] = "1"
         self._api = wandb.Api(api_key=os.environ.get("WANDB_API_KEY"))
@@ -28,8 +27,6 @@ class WandbLogger(Logger):
     ):
 
         from wandb.apis import reports  # noqa F401
-
-        import wandb
 
         if self.sweep_id:
             return
@@ -77,10 +74,9 @@ class WandbLogger(Logger):
         return [{"name": "Project", "content": reports}, {"name": "Report", "content": report}]
 
     def configure_tracer(self, tracer, sweep_id: str, trial_id: int, params: Dict[str, Any]):
+        import wandb
         from pytorch_lightning import Trainer
         from pytorch_lightning.loggers import WandbLogger
-
-        import wandb
 
         wandb.init(
             project=sweep_id,

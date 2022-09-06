@@ -21,7 +21,7 @@ jobs:
           pip list
       - name: mypy
         run: |
-          mypy
+          mypy .
 
   pre-commit-check:
     runs-on: ubuntu-latest
@@ -33,6 +33,7 @@ jobs:
 
       - name: set PY
         run: echo "PY=$(python -VV | sha256sum | cut -d' ' -f1)" >> $GITHUB_ENV
+
       - uses: actions/cache@v3
         with:
           path: ~/.cache/pre-commit
