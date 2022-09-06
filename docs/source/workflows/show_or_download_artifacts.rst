@@ -4,7 +4,7 @@
 Show or download artifacts
 ##########################
 
-.. _run_sweep:
+.. _show_and_download_artifacts:
 
 .. join_slack::
    :align: left
@@ -15,8 +15,8 @@ Show or download artifacts
 Show the arfefacts
 ******************
 
-1. Check available options
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+1. Check available options for show
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The Training Studio App CLI provides an help.
 
@@ -139,8 +139,8 @@ Here is the output of such command above:
 Download arfefacts
 ******************
 
-1. Check available options
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+1. Check available options for download
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block::
 
