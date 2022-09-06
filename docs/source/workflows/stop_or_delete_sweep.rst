@@ -15,11 +15,19 @@ Stop or delete a Sweep
 Stop a Sweep
 ************
 
+To stop a sweep use the following commnand:
+
+.. code-block::
+
+   lightning stop sweep <sweep-name>
+
+For example:
+
 .. code-block::
 
    lightning stop sweep thomas-0f615232
 
-Here is the output of such command above:
+Here is the output of the command:
 
 .. code-block::
 
@@ -30,6 +38,14 @@ Here is the output of such command above:
 **************
 Delete a Sweep
 **************
+
+To delete a sweep use the following command:
+
+.. code-block::
+
+   lightning delete sweep <sweep-name>
+
+For example:
 
 .. code-block::
 

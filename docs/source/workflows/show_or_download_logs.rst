@@ -15,13 +15,13 @@ Show or download logs
 1. Check available options
 **************************
 
-The Training Studio App CLI provides an help.
+The Training Studio App CLI provides its own help.
 
 .. code-block::
 
    lightning show logs --hel
 
-Here is the output of such command above:
+Here is the output of the command:
 
 .. code-block::
 
@@ -53,7 +53,7 @@ Here is the output of such command above:
 2. Show logs
 ************
 
-You can simply view the logs as follows:
+To view the logs use the following command:
 
 .. code-block::
 
@@ -66,7 +66,7 @@ You can simply view the logs as follows:
 3. Download logs
 ****************
 
-You can simply download the logs by piping them within a ``log.txt`` file as follows:
+You can simply download the logs by piping them within a ``log.txt`` file:
 
 .. code-block::
 

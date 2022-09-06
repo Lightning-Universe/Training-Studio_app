@@ -12,19 +12,19 @@ Show or download artifacts
 ----
 
 ******************
-Show the arfefacts
+Show the artifacts
 ******************
 
 1. Check available options for show
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The Training Studio App CLI provides an help.
+The Training Studio App CLI provides its own help.
 
 .. code-block::
 
    lightning show artefacts --help
 
-Here is the output of such command above:
+Here is the output of the command:
 
 .. code-block::
 
@@ -39,6 +39,8 @@ Here is the output of such command above:
 
 2. Show artifacts
 ^^^^^^^^^^^^^^^^^
+
+To show artifacts use the following command:
 
 .. code-block::
 
@@ -112,9 +114,19 @@ Here is the output of such command above:
 2. Show artifacts with filtering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+To filter the artifacts shown use the following command:
+
+.. code-block::
+
+   lightning show artefacts --include=<artifact-id> --exclude=<file-type>
+
+For example:
+
 .. code-block::
 
    lightning show artefacts --include=thomas-0f615232 --exclude=.yaml
+
+Here is the output of the command:
 
 .. code-block::
 
@@ -136,7 +148,7 @@ Here is the output of such command above:
    ...
 
 ******************
-Download arfefacts
+Download artifacts
 ******************
 
 1. Check available options for download
@@ -146,7 +158,7 @@ Download arfefacts
 
    lightning download artefacts --help
 
-Here is the output of such command above:
+Here is the output of the command:
 
 .. code-block::
 
@@ -164,6 +176,8 @@ Here is the output of such command above:
 
 2. Download artifacts
 ^^^^^^^^^^^^^^^^^^^^^
+
+To download artifacts use the following command:
 
 .. code-block::
 

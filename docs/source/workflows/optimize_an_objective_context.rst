@@ -2,7 +2,7 @@
 1. Define your objective
 ************************
 
-Imagine you want to optimize a simple function called ``objective`` inside a ``objective.py`` file.
+Imagine you want to optimize a simple function called ``objective`` inside an ``objective.py`` file.
 
 .. literalinclude:: ../../../examples/scripts/objective.py
 
@@ -34,4 +34,4 @@ or with ``--cloud`` to run it in the cloud.
 
    python -m lightning run app examples/1_app_agnostic.py --cloud
 
-.. note:: Locally, each trial runs into its own process, so there is an overhead if your objective is quick to run.
+.. note:: Locally, each trial runs in its own process, so there is overhead if your objective is quick to run.

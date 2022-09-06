@@ -8,7 +8,7 @@ Training Studio
 
 The Training App is a `Lightning App <https://github.com/Lightning-AI/lightning>`_ runnable locally or on `lightning.ai <https://lightning.ai/>`_.
 
-The Training App enables to quickly perform machine-learning research in collaborative ways by bringing all tools you needs in a single place (notebook, tensorboard, wandb, sweeps, etc...).
+The Training App enables you to quickly perform machine-learning research in collaborative ways by bringing all the tools you need in a single place (notebook, tensorboard, wandb, sweeps, etc...).
 
 .. join_slack::
    :align: left
@@ -24,14 +24,14 @@ Click on the `Lucidchart Diagram <https://lucid.app/lucidchart/9d513fd6-9410-429
 Admin User
 ^^^^^^^^^^
 
-The **Admin User** has access to the Admin View and the one who has runned the App.
+The **Admin User** has access to the Admin View and the one who has run the App.
 
 App User
 ^^^^^^^^
 
 The **App User** has access to the App View and interacts with the Training Studio App by creating notebooks, sweeps, etc.
 
-The **App User** isn't necessary **Admin User**, but it is also possible to connect to **someone else** Training Studio App.
+The **App User** isn't necessarily the **Admin User**, but it is also possible to connect to **someone else** Training Studio App.
 
 ----
 
@@ -122,8 +122,8 @@ Utilities
       <div class="row">
 
 .. displayitem::
-   :header: Show or Download Artefacts
-   :description: Learn how to interact with your Training Studio App artefacts
+   :header: Show or Download Artifacts
+   :description: Learn how to interact with your Training Studio App artifacts
    :col_css: col-md-6
    :button_link: workflows/show_or_download_artifacts.html
    :height: 180
