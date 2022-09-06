@@ -42,6 +42,7 @@ jobs:
         run: |
           pip install  --requirement requirements.txt -U -f https://download.pytorch.org/whl/cpu/torch_stable.html  --quiet
           pip install  --requirement requirements/docs.txt
+          pip install -e .
           python --version ; pip --version ; pip list
         shell: bash
 
