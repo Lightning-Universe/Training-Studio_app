@@ -63,7 +63,9 @@ class SweepController(Controller):
         return f"The current Sweep {config.sweep_id} is running. It couldn't be updated."
 
     def show_sweeps(self) -> List[Dict]:
-        return [sweep.json() for sweep in self.db.get()]
+        if self.db_url:
+            return [sweep.json() for sweep in self.db.get()]
+        return []
 
     def stop_sweep(self, config: StopSweepConfig):
         sweep_ids = list(self.resources.keys())

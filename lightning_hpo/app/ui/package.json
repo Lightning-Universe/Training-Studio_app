@@ -18,6 +18,7 @@
     "lightning-ui": "git+ssh://git@github.com/Lightning-AI/lightning-ui.git",
     "lodash": "^4.17.21",
     "notistack": "^2.0.4",
+    "openapi-typescript-codegen": "^0.23.0",
     "query-string": "^7.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -42,7 +43,8 @@
     "build": "craco build",
     "lint": "eslint --cache --max-warnings=0 . && prettier -c .",
     "lint:fix": "eslint --cache --max-warnings=0 . --fix && prettier -w .",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "generate": "openapi --input ./spec.json --output ./src/generated --client axios --name AppClient"
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"
