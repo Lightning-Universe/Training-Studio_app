@@ -10,15 +10,13 @@ from lightning.app.utilities.component import _is_work_context
 
 
 class Tensorboard(LightningWork):
-    def __init__(self, *args, component_name: str, drive: Drive, sleep: int = 5, **kwargs):
+    def __init__(self, *args, drive: Drive, sleep: int = 5, **kwargs):
         super().__init__(*args, **kwargs)
-        self.component_name = component_name
         self.drive = drive
         self.sleep = sleep
 
     def run(self):
         local_folder = f"./tensorboard_logs/{uuid4()}"
-        self.drive.component_name = self.component_name
 
         os.makedirs(local_folder, exist_ok=True)
 
@@ -30,7 +28,7 @@ class Tensorboard(LightningWork):
 
         while True:
             fs.invalidate_cache()
-            fs.get(str(self.drive.root), local_folder)
+            fs.get(str(self.drive.drive_root), local_folder, recursive=True)
             time.sleep(self.sleep)
 
     def on_exit(self):

@@ -23,7 +23,9 @@ This library relies on [Optuna](https://optuna.readthedocs.io/en/stable/) for pr
 
 This is built upon the highly scalable and distributed [Lightning App](https://lightning.ai/lightning-docs/get_started/what_app_can_do.html) framework from [lightning.ai](https://lightning.ai/).
 
-The [Training Studio App](https://lightning-ai.github.io/lightning-hpo/training_studio.html) relies on Lightning HPO to provide abilities to run, show, stop, delete Sweeps, Notebooks, Tensorboard, etc..
+The [Training Studio App](https://lightning-ai.github.io/lightning-hpo/training_studio.html) relies on Lightning HPO to provide abilities to run, show, stop, delete Sweeps, Notebooks, Tensorboard, etc.
+
+Learn more [here](https://github.com/Lightning-AI/lightning-hpo#the-training-studio-app).
 
 </div>
 
