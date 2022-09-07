@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter } from 'react-router-dom';
 import TableContainer from './components/TableContainer';
-import { AppClient, NotebookConfig, SweepConfig } from './generated';
+import { AppClient, NotebookConfig, SweepConfig, TrialConfig } from './generated';
 
 const queryClient = new QueryClient();
 
@@ -38,8 +38,23 @@ function Notebooks(props: { notebooks: NotebookConfig[] }) {
   );
 }
 
+function TrialToRows(trials: Record<string, TrialConfig>) {
+  return Object.entries(trials).map(entry => [
+    entry[0],
+    <Status status={entry[1].status ? statusToEnum[entry[1].status] : StatusEnum.NOT_STARTED} />,
+    String(entry[1].best_model_score),
+    ...Object.entries(entry[1].params.params).map(value => String(value[1])),
+  ]);
+}
+
+function generateTrialHeader(trialHeader: string[], params) {
+  const paramsHeader = Object.entries(params).map(entry => entry[0]);
+  return trialHeader.concat(paramsHeader);
+}
+
 function Sweeps(props: { sweeps: SweepConfig[] }) {
-  const header = ['Name', 'Status', 'More'];
+  const sweepHeader = ['Name', 'Status', 'More'];
+  const baseTrialHeader = ['Name', 'Status', 'Best Model Score'];
 
   const rows = props.sweeps.map(sweep => [
     sweep.sweep_id,
@@ -49,9 +64,20 @@ function Sweeps(props: { sweeps: SweepConfig[] }) {
     </IconButton>,
   ]);
 
+  const rowDetails = props.sweeps.map(sweep => (
+    <Stack>
+      <TableContainer header={'Trials (' + sweep.trials[0].monitor + ')'}>
+        <Table
+          header={generateTrialHeader(baseTrialHeader, sweep.trials[0].params.params)}
+          rows={TrialToRows(sweep.trials)}
+        />
+      </TableContainer>
+    </Stack>
+  ));
+
   return (
     <TableContainer header="Sweeps">
-      <Table header={header} rows={rows} />
+      <Table header={sweepHeader} rows={rows} rowDetails={rowDetails} />
     </TableContainer>
   );
 }
@@ -90,7 +116,7 @@ function Main() {
   }, []);
 
   return (
-    <Stack order="column">
+    <Stack>
       <Notebooks notebooks={notebooks} />
       <Sweeps sweeps={sweeps} />
     </Stack>
