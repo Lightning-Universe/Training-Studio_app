@@ -6,38 +6,58 @@ Training Studio
 
 .. _training_studio:
 
-The Training App is a `Lightning App <https://github.com/Lightning-AI/lightning>`_ runnable locally or on `lightning.ai <https://lightning.ai/>`_.
-
-The Training App enables you to quickly perform machine-learning research in collaborative ways by bringing all the tools you need in a single place (notebook, tensorboard, wandb, sweeps, etc...).
+.. twocolumns::
+   :left:
+      .. image:: https://pl-flash-data.s3.amazonaws.com/assets_lightning/training_app.png
+         :alt: Logo of the App
+   :right:
+      The Training Studio App is a `Lightning App <https://github.com/Lightning-AI/lightning>`_ that enables you to quickly perform machine-learning research in collaborative ways by bringing
+      all the tools you need in a single place (notebook, tensorboard, wandb, sweeps, etc...) and is runnable locally or on `lightning.ai <https://lightning.ai/>`_ platform.
 
 .. join_slack::
-   :align: left
+   :align: center
+   :margin: 0
 
 ----
 
-**********
-User Flows
-**********
+**********************
+User Flow - Admin User
+**********************
 
 Click on the `Lucidchart Diagram <https://lucid.app/lucidchart/9d513fd6-9410-4292-beac-29e73f1e1c34/edit?viewport_loc=-19%2C-798%2C6351%2C4441%2C0_0&invitationId=inv_d38b9a33-4915-4b7b-ab95-f73894923fbe#>`_ User Flow to understand how to use the Training Studio App.
 
-Admin User
-^^^^^^^^^^
-
 The **Admin User** has access to the Admin View and the one who has run the App.
 
-App User
-^^^^^^^^
+To launch the Lightning Training Studio App in the cloud, simply run:
+
+.. code-block::
+
+   git clone https://github.com/Lightning-AI/lightning-hpo
+   cd lightning-hpo
+   PACKAGE_LIGHTNING=1 lightning run app training_studio_app.py --cloud
+
+
+Check :doc:`install guide <installation>` if you haven't done it yet.
+
+To learn more about the codebase, request access to `recording <https://drive.google.com/file/d/1uqlV_06DkUZijCaqkCbc8arvVGdpzV_a/view>`_ by `@tchaton <https://github.com/tchaton>`_.
+
+----
+
+********************
+User Flow - App User
+********************
 
 The **App User** has access to the App View and interacts with the Training Studio App by creating notebooks, sweeps, etc.
 
 The **App User** isn't necessarily the **Admin User**, but it is also possible to connect to **someone else** Training Studio App.
 
+As an **App User**, you can run **sweep**, **notebooks** and more. Keep reading to learn more.
+
 ----
 
-*****
-Sweep
-*****
+*******************
+Interact with Sweep
+*******************
 
 .. raw:: html
 
@@ -73,9 +93,9 @@ Sweep
 
 ----
 
-********
-Notebook
-********
+**********************
+Interact with Notebook
+**********************
 
 .. raw:: html
 
@@ -111,9 +131,9 @@ Notebook
 
 ----
 
-*********
-Utilities
-*********
+*************
+App Utilities
+*************
 
 .. raw:: html
 
@@ -139,11 +159,3 @@ Utilities
 
       </div>
    </div>
-
-----
-
-**************************************
-Codebase Onboarding (September 6 2022)
-**************************************
-
-Request access to `recording <https://drive.google.com/file/d/1uqlV_06DkUZijCaqkCbc8arvVGdpzV_a/view>`_ by `@tchaton <https://github.com/tchaton>`_.

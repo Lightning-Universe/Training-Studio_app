@@ -62,32 +62,25 @@ Get Started
    :height: 180
 
 .. displayitem::
-   :header: Fundamentals about HyperParameter Optimization (HPO)
+   :header: Fundamentals about HyperParameter Optimization with Optuna
    :description: Learn about its inner workings
    :col_css: col-md-6
-   :button_link: get_started/fundamentals.html
+   :button_link: https://medium.com/optuna/an-introduction-to-the-implementation-of-optuna-a-hyperparameter-optimization-framework-33995d9ec354
    :height: 180
 
 .. displayitem::
    :header: Use Lightning HPO with your own scripts
    :description: Discover PyTorch Lightning and train your first Model.
    :col_css: col-md-6
-   :button_link: get_started/hpo_with_your_scripts.html
+   :button_link: workflows/optimize_with_pytorch_lightning.html
    :height: 180
 
 .. displayitem::
    :header: The Training Studio App
    :description: Use your own App or share it with your teammates.
    :col_css: col-md-6
-   :button_link: get_started/training_studio_app.html
+   :button_link: training_studio.html
    :height: 180
-
-.. raw:: html
-
-      </div>
-   </div>
-
-----
 
 .. raw:: html
 

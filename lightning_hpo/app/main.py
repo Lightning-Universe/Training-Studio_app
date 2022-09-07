@@ -60,7 +60,7 @@ class MainFlow(LightningFlow):
             return
 
         if not self.ready:
-            print(f"The Training App is ready ! Database URL: {self.db.db_url}")
+            print(f"The Training Studio App is ready ! Database URL: {self.db.db_url}")
             self.ready = True
 
         # 3: Run the controllers
