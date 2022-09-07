@@ -2,7 +2,7 @@
     <h1>
         Lightning HPO & Training Studio App
     </h1>
-    <img src="https://pl-flash-data.s3.amazonaws.com/assets_lightning/lightning_hpo_repo.png" width="400">
+    <img src="https://pl-flash-data.s3.amazonaws.com/assets_lightning/lightning_hpo_logo.png">
 </div>
 
 Lightning HPO provides a pythonic implementation for Scalable Hyperparameter Tuning.
@@ -41,9 +41,10 @@ source .venv/bin/activate
 Clone and install lightning-hpo.
 
 ```bash
-git clone https://github.com/Lightning-AI/lightning-hpo.git
+git clone https://github.com/Lightning-AI/lightning-hpo
 cd lightning-hpo
-pip install -r requirements.txt -r requirements/test.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
+pip install -r requirements.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
+pip install git+https://github.com/Lightning-AI/lightning.git@small_fixes
 pip install -e .
 ```
 
@@ -296,7 +297,7 @@ Usage: lightning [OPTIONS] COMMAND [ARGS]...
   --help     Show this message and exit.
 
 Lightning App Commands
-  delete sweep 
+  delete sweep
   download artefacts
   run notebook
   run sweep
