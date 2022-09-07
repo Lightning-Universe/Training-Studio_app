@@ -42,9 +42,9 @@ function Sweeps(props: { sweeps: SweepConfig[] }) {
   const header = ['Name', 'Status', 'More'];
 
   const rows = props.sweeps.map(sweep => [
-    sweep.id,
+    sweep.sweep_id,
     <Status status={sweep.status ? statusToEnum[sweep.status] : StatusEnum.NOT_STARTED} />,
-    <IconButton id={sweep.id + '-button'}>
+    <IconButton id={sweep.sweep_id + '-button'}>
       <MoreHorizIcon sx={{ fontSize: 16 }} />
     </IconButton>,
   ]);
