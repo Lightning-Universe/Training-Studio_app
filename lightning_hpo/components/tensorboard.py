@@ -28,7 +28,10 @@ class Tensorboard(LightningWork):
 
         while True:
             fs.invalidate_cache()
-            fs.get(str(self.drive.drive_root), local_folder, recursive=True)
+            folder = str(self.drive.drive_root)
+            if fs.exists(folder):
+                fs.invalidate_cache()
+                fs.get(str(self.drive.drive_root), local_folder, recursive=True)
             time.sleep(self.sleep)
 
     def on_exit(self):

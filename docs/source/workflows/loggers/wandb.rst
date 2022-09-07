@@ -26,7 +26,7 @@ Wandb Logger
 2. Setup your environment variables
 ***********************************
 
-You can either setup the ``WANDB_ENTITY`` and ``WANDB_API_KEY`` and run the App
+You can either setup the ``WANDB_ENTITY`` and ``WANDB_API_KEY`` and run the App:
 
 .. code-block::
 
@@ -34,7 +34,7 @@ You can either setup the ``WANDB_ENTITY`` and ``WANDB_API_KEY`` and run the App
     export WANDB_API_KEY=...
     lightning run app app.py
 
-Or pass them through the CLI.
+Or pass them through the CLI:
 
 .. code-block::
 
@@ -44,7 +44,7 @@ Or pass them through the CLI.
 3. Check your Wandb Account
 ***************************
 
-Lightning HPO automatically generate a Sweep Report and organize your runs, so everything is a single place.
+Lightning HPO automatically generates a Sweep Report and organizes your runs, so everything is a single place.
 
 .. figure:: https://pl-flash-data.s3.amazonaws.com/assets_lightning/wandb2.png
    :alt: Wandb

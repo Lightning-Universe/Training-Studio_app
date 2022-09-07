@@ -15,13 +15,13 @@ Run a Notebook
 1. Check available options
 **************************
 
-The Training Studio App CLI provides an help.
+The Training Studio App CLI provides its own help.
 
 .. code-block::
 
    lightning run notebook --help
 
-Here is the output of such command above:
+Here is the output of the command:
 
 .. code-block::
 

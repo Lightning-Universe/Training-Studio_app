@@ -15,11 +15,13 @@ Stop or delete Notebooks
 Stop a Notebook
 ***************
 
+To stop a notebook use the following command:
+
 .. code-block::
 
    lightning stop notebook my_notebook_name
 
-Here is the output of such command above:
+Here is the output of the command:
 
 .. code-block::
 

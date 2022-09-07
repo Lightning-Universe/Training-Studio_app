@@ -11,13 +11,13 @@ Show Notebooks
 
 ----
 
-In order to view your notebooks, simply run the following command:
+In order to view your notebooks, use this command:
 
 .. code-block::
 
    lightning show notebooks
 
-Here is the output of such command above:
+Here is the output of the command:
 
 .. code-block::
 

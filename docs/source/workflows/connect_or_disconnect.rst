@@ -66,7 +66,7 @@ Learn more `there <https://github.com/Lightning-AI/lightning/tree/master/docs/so
 The Disconnect Command
 **********************
 
-If you are already connected to a Lightning App, you can disconnect as follows:
+If you are already connected to a Lightning App, disconnect from the App using the following command:
 
 .. code-block::
 

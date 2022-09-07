@@ -15,13 +15,13 @@ Run a Sweep
 1. Check available options
 **************************
 
-The Training Studio App CLI provides an help.
+The Training Studio App CLI provides its own help.
 
 .. code-block::
 
    lightning run sweep --help
 
-Here is the output of such command above:
+Here is the output of the command:
 
 .. code-block::
 
@@ -75,7 +75,7 @@ Here is the command line with the hyper-parameters.
       --model.gamma="uniform(0.5, 0.8)" \
       --data.batch_size="categorical([32, 64])"
 
-Finally, your code is uploaded to the App and the Training Studio App responds the Sweep ``1dbfed8a`` was launched.
+Finally, your code is uploaded to the App and the Training Studio App responds that the Sweep ``1dbfed8a`` was launched.
 
 .. code-block::
 
@@ -84,4 +84,4 @@ Finally, your code is uploaded to the App and the Training Studio App responds t
    Launched a sweep 1dbfed8a
    Your command execution was successful.
 
-.. note:: We are currently supporting only categorical, log_uniform and uniform distribution. Simply open an issue to request more.
+.. note:: We currently only support categorical, log_uniform, and uniform distribution. Please open a feature request to add more!

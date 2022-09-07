@@ -15,13 +15,13 @@ Show Sweeps
 1. Check available options
 **************************
 
-The Training Studio App CLI provides an help.
+The Training Studio App CLI provides its own help.
 
 .. code-block::
 
    lightning show sweeps --help
 
-Here is the output of such command above:
+Here is the output of the command:
 
 .. code-block::
 
@@ -38,9 +38,13 @@ Here is the output of such command above:
 2. Show Sweeps
 **************
 
+To show your sweeps the use the following command:
+
 .. code-block::
 
    lightning show sweeps
+
+Here is the output of the command:
 
 .. code-block::
 
@@ -53,9 +57,19 @@ Here is the output of such command above:
    │ thomas-f5fee22a │ running   │ pytorch_lightn… │ cpu           │ 10       │ 5             │
    └─────────────────┴───────────┴─────────────────┴───────────────┴──────────┴───────────────┘
 
+To show the details of a specific sweep use the following command:
+
+.. code-block::
+
+   lightning show sweeps --sweep_id=<sweep-id>
+
+For example:
+
 .. code-block::
 
    lightning show sweeps --sweep_id=thomas-f5fee22a
+
+Here is the output of the command:
 
 .. code-block::
 
