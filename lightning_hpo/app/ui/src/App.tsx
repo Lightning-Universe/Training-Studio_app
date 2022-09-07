@@ -1,14 +1,23 @@
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { IconButton, SnackbarProvider, Stack, Table } from 'lightning-ui/src/design-system/components';
+import PlayCircleIcon from '@mui/icons-material/PlayCircle';
+import StopCircleIcon from '@mui/icons-material/StopCircle';
+import { SnackbarProvider, Stack, Table } from 'lightning-ui/src/design-system/components';
 import ThemeProvider from 'lightning-ui/src/design-system/theme';
 import Status, { StatusEnum } from 'lightning-ui/src/shared/components/Status';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter } from 'react-router-dom';
+import MoreMenu from './components/MoreMenu';
 import TableContainer from './components/TableContainer';
 import { AppClient, NotebookConfig } from './generated';
 
 const queryClient = new QueryClient();
+
+const appClient = new AppClient({
+  BASE:
+    window.location != window.parent.location
+      ? document.referrer.replace(/\/$/, '')
+      : document.location.href.replace(/\/$/, ''),
+});
 
 const statusToEnum = {
   not_started: StatusEnum.NOT_STARTED,
@@ -26,9 +35,34 @@ function Notebooks(props: { notebooks: NotebookConfig[] }) {
   const rows = props.notebooks.map(notebook => [
     notebook.name,
     <Status status={notebook.status ? statusToEnum[notebook.status] : StatusEnum.NOT_STARTED} />,
-    <IconButton id={notebook.name + '-button'}>
-      <MoreHorizIcon sx={{ fontSize: 16 }} />
-    </IconButton>,
+    <MoreMenu
+      id={notebook.name}
+      items={[
+        {
+          label: notebook.status === 'stopped' ? 'Start' : 'Stop',
+          icon:
+            notebook.status === 'stopped' ? (
+              <PlayCircleIcon sx={{ fontSize: 16 }} />
+            ) : (
+              <StopCircleIcon sx={{ fontSize: 16 }} />
+            ),
+          onClick: () => {
+            if (notebook.status === 'stopped') {
+              console.log('starting');
+              appClient.appClientCommand.runNotebookCommandRunNotebookPost({
+                id: notebook.id,
+                name: notebook.name,
+                requirements: notebook.requirements,
+                cloud_compute: notebook.cloud_compute,
+              });
+            } else {
+              console.log('stopping');
+              appClient.appClientCommand.stopNotebookCommandStopNotebookPost({ name: notebook.name });
+            }
+          },
+        },
+      ]}
+    />,
   ]);
 
   return (
@@ -39,17 +73,6 @@ function Notebooks(props: { notebooks: NotebookConfig[] }) {
 }
 
 function Main() {
-  const appClient = useMemo(
-    () =>
-      new AppClient({
-        BASE:
-          window.location != window.parent.location
-            ? document.referrer.replace(/\/$/, '')
-            : document.location.href.replace(/\/$/, ''),
-      }),
-    [],
-  );
-
   const [notebooks, setNotebooks] = useState<NotebookConfig[]>([]);
 
   useEffect(() => {

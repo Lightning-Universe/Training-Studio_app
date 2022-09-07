@@ -1,3 +1,4 @@
+import sys
 from argparse import ArgumentParser
 from getpass import getuser
 from typing import List, Optional
@@ -17,8 +18,8 @@ class NotebookConfig(SQLModel, table=True):
 
     id: Optional[str] = Field(default=None, primary_key=True)
     name: str
-    requirements: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
-    cloud_compute: str
+    requirements: Optional[List[str]] = Field(default=None, sa_column=Column(pydantic_column_type(List[str])))
+    cloud_compute: Optional[str] = None
     status: str = Status.NOT_STARTED
     desired_state: str = Status.RUNNING
 
@@ -37,8 +38,8 @@ class RunNotebookCommand(ClientCommand):
         config = NotebookConfig(
             id=f"{getuser()}-{id}",
             name=hparams.name,
-            requirements=hparams.requirements,
-            cloud_compute=hparams.cloud_compute,
+            requirements=hparams.requirements if any("requirements" in arg for arg in sys.argv) else None,
+            cloud_compute=hparams.cloud_compute if any("cloud_compute" in arg for arg in sys.argv) else None,
         )
         response = self.invoke_handler(config=config)
         print(response)
