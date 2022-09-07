@@ -22,6 +22,8 @@ class Tensorboard(LightningWork):
         self._config = config
 
     def run(self):
+        use_localhost = "LIGHTNING_APP_STATE_URL" not in os.environ
+
         local_folder = f"./tensorboard_logs/{uuid4()}"
 
         os.makedirs(local_folder, exist_ok=True)
@@ -37,16 +39,23 @@ class Tensorboard(LightningWork):
         while True:
             fs.invalidate_cache()
             if fs.exists(root_folder):
-                for dir, _, files in fs.walk(root_folder):
-                    for filepath in files:
-                        if "events.out.tfevents" not in filepath:
-                            continue
-                        source_path = os.path.join(dir, filepath)
-                        target_path = os.path.join(dir, filepath).replace(root_folder, local_folder)
-                        parent = Path(target_path).resolve().parent
-                        if not parent.exists():
-                            parent.mkdir(exist_ok=True, parents=True)
-                        fs.cp(source_path, str(Path(target_path).resolve()))
+                if use_localhost:
+                    for dir, _, files in fs.walk(root_folder):
+                        for filepath in files:
+                            if "events.out.tfevents" not in filepath:
+                                continue
+                            source_path = os.path.join(dir, filepath)
+                            target_path = os.path.join(dir, filepath).replace(root_folder, local_folder)
+                            if use_localhost:
+                                parent = Path(target_path).resolve().parent
+                                if not parent.exists():
+                                    parent.mkdir(exist_ok=True, parents=True)
+                            fs.cp(source_path, str(Path(target_path).resolve()))
+                else:
+                    # TODO: Debug the cloud support to support the above strategy
+                    # to copy only the logs.
+                    fs.invalidate_cache()
+                    fs.get(str(self.drive.drive_root), local_folder, recursive=True)
             time.sleep(self.sleep)
 
     def on_exit(self):
