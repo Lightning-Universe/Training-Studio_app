@@ -67,7 +67,7 @@ class Tensorboard(LightningWork):
 
     @property
     def updates(self):
-        if self.has_updated:
+        if self.url != "" and self.has_updated:
             self._config.status = Status.RUNNING
             self._config.url = self.url
             self.has_updated = False

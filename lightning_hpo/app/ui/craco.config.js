@@ -18,6 +18,11 @@ const webpack = {
 
 module.exports = {
   ...(IS_DEV ? {} : { webpack }),
+  devServer: {
+    devMiddleware: {
+      writeToDisk: true,
+    },
+  },
   plugins: [
     {
       plugin: cracoBabelLoader,

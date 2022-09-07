@@ -107,7 +107,7 @@ class Sweep(LightningFlow):
         self.show = False
 
     def run(self):
-        if self._sweep_config.status in (Status.FAILED, Status.SUCCEEDED, Status.STOPPED):
+        if self._sweep_config.status in (Status.SUCCEEDED, Status.STOPPED):
             return
 
         if self._sweep_config.trials_done == self._sweep_config.n_trials:

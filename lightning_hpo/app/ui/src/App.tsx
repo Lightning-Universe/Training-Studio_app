@@ -1,5 +1,5 @@
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { IconButton, SnackbarProvider, Stack, Table } from 'lightning-ui/src/design-system/components';
+import { IconButton, Link, SnackbarProvider, Stack, Table } from 'lightning-ui/src/design-system/components';
 import ThemeProvider from 'lightning-ui/src/design-system/theme';
 import Status, { StatusEnum } from 'lightning-ui/src/shared/components/Status';
 import { useEffect, useMemo, useState } from 'react';
@@ -21,11 +21,14 @@ const statusToEnum = {
 } as { [k: string]: StatusEnum };
 
 function Notebooks(props: { notebooks: NotebookConfig[] }) {
-  const header = ['Name', 'Status', 'More'];
+  const header = ['Name', 'Status', 'URL', 'More'];
 
   const rows = props.notebooks.map(notebook => [
     notebook.name,
     <Status status={notebook.status ? statusToEnum[notebook.status] : StatusEnum.NOT_STARTED} />,
+    <Link href={notebook.url} target="_blank">
+      Click Me
+    </Link>,
     <IconButton id={notebook.name + '-button'}>
       <MoreHorizIcon sx={{ fontSize: 16 }} />
     </IconButton>,
@@ -53,12 +56,30 @@ function generateTrialHeader(trialHeader: string[], params) {
 }
 
 function Sweeps(props: { sweeps: SweepConfig[] }) {
-  const sweepHeader = ['Name', 'Status', 'More'];
+  const sweepHeader = [
+    'Name',
+    'Status',
+    'Number of trials',
+    'Number of trials done',
+    'Framework',
+    'Cloud Compute',
+    'Direction',
+    'URL',
+    'More',
+  ];
   const baseTrialHeader = ['Name', 'Status', 'Best Model Score'];
 
   const rows = props.sweeps.map(sweep => [
     sweep.sweep_id,
     <Status status={sweep.status ? statusToEnum[sweep.status] : StatusEnum.NOT_STARTED} />,
+    sweep.n_trials,
+    sweep.trials_done,
+    sweep.framework,
+    sweep.cloud_compute,
+    sweep.direction,
+    <Link href={sweep.url} target="_blank">
+      Click Me
+    </Link>,
     <IconButton id={sweep.sweep_id + '-button'}>
       <MoreHorizIcon sx={{ fontSize: 16 }} />
     </IconButton>,
