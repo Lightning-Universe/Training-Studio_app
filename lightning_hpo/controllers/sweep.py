@@ -62,7 +62,7 @@ class SweepController(Controller):
 
     def show_sweeps(self) -> List[Dict]:
         if self.db_url:
-            return [sweep.json() for sweep in self.db.get()]
+            return [sweep.dict() for sweep in self.db.get()]
         return []
 
     def stop_sweep(self, config: StopSweepConfig):

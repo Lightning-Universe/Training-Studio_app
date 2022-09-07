@@ -66,7 +66,7 @@ class SweepConfig(SQLModel, table=True):
 
     @property
     def num_trials(self) -> int:
-        return self.trials_done + self.simultaneous_trials
+        return min(self.trials_done + self.simultaneous_trials, self.n_trials)
 
     @property
     def username(self) -> str:

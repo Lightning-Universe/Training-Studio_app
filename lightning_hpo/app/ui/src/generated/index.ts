@@ -23,4 +23,5 @@ export type { TrialConfig } from './models/TrialConfig';
 export type { ValidationError } from './models/ValidationError';
 
 export { AppClientCommandService } from './services/AppClientCommandService';
+export { AppCommandService } from './services/AppCommandService';
 export { DefaultService } from './services/DefaultService';

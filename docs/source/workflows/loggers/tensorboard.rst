@@ -21,10 +21,10 @@ Simply add ``logger=tensorboard`` to the ``Sweep`` component.
 
 And Lightning HPO handles the rest:
 
-.. figure:: https://user-images.githubusercontent.com/12861981/188265489-e025cbb5-92a1-479f-a49a-cd66a9bd946c.png
+.. figure:: https://pl-flash-data.s3.amazonaws.com/assets_lightning/tensorboard_sweep.png
    :alt: Tensorboard Logger 1
    :width: 100 %
 
-.. figure:: https://user-images.githubusercontent.com/12861981/188265485-66596fc6-d624-4b5f-9c7f-702f4329ae39.png
+.. figure:: https://pl-flash-data.s3.amazonaws.com/assets_lightning/tensorboard_sweep_2.png
    :alt: Tensorboard Logger 2
    :width: 100 %

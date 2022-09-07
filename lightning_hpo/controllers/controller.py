@@ -7,6 +7,7 @@ from lightning.app.structures import Dict
 from sqlmodel import SQLModel
 
 from lightning_hpo.components.servers.db import DatabaseConnector
+from lightning_hpo.utilities.enum import Status
 
 
 class Controller(LightningFlow):
@@ -20,6 +21,7 @@ class Controller(LightningFlow):
         self.r = Dict()
         self.drive = drive
         self._database = None
+        self.ready = False
 
     def run(self, db_url: str, configs: Optional[List[Type[SQLModel]]] = None):
         self.db_url = db_url
@@ -29,6 +31,12 @@ class Controller(LightningFlow):
         # 1: Read from the database and generate the works accordingly.
         # if self.schedule("* * * * * 0,5,10,15,20,25,30,35,40,45,50,55"):
         db_configs = self.db.get()
+        if not self.ready:
+            for config in db_configs:
+                config.status = Status.NOT_STARTED
+                self.db.put(config)
+            self.ready = True
+
         if configs:
             db_configs += db_configs
         if db_configs:
@@ -36,7 +44,7 @@ class Controller(LightningFlow):
 
         # 2: Iterate over the.r and collect updates
         updates = []
-        for resource in self.r.values():
+        for _, resource in self.r.items():
             resource.run()
             updates.extend(resource.updates)
 
