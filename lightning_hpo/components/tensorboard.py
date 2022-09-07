@@ -1,5 +1,6 @@
 import os
 import time
+from pathlib import Path
 from subprocess import Popen
 from uuid import uuid4
 
@@ -30,14 +31,22 @@ class Tensorboard(LightningWork):
         self._process = Popen(cmd, shell=True, env=os.environ)
 
         self.has_updated = True
-
         fs = filesystem()
+        root_folder = str(self.drive.drive_root)
 
         while True:
             fs.invalidate_cache()
-            folder = str(self.drive.drive_root)
-            if fs.exists(folder):
-                fs.get(str(self.drive.drive_root), local_folder, recursive=True)
+            if fs.exists(root_folder):
+                for dir, _, files in fs.walk(root_folder):
+                    for filepath in files:
+                        if "events.out.tfevents" not in filepath:
+                            continue
+                        source_path = os.path.join(dir, filepath)
+                        target_path = os.path.join(dir, filepath).replace(root_folder, local_folder)
+                        parent = Path(target_path).resolve().parent
+                        if not parent.exists():
+                            parent.mkdir(exist_ok=True, parents=True)
+                        fs.cp(source_path, str(Path(target_path).resolve()))
             time.sleep(self.sleep)
 
     def on_exit(self):
