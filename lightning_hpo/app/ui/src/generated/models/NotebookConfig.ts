@@ -9,4 +9,5 @@ export type NotebookConfig = {
     cloud_compute: string;
     status?: string;
     desired_state?: string;
+    url?: string;
 };

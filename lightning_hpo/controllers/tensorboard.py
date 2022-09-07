@@ -20,3 +20,9 @@ class TensorboardController(Controller):
                         drive=Drive(f"lit://{config.sweep_id}"),
                         config=config,
                     )
+
+    def show_tensorboards(self) -> List[TensorboardConfig]:
+        return self.db.get()
+
+    def configure_commands(self):
+        return [{"show tensorboards": self.show_tensorboards}]

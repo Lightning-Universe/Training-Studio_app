@@ -3,7 +3,7 @@ import ThemeProvider from 'lightning-ui/src/design-system/theme';
 import React, { useEffect, useMemo, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter } from 'react-router-dom';
-import { AppClient, NotebookConfig } from './generated';
+import { AppClient, NotebookConfig, SweepConfig } from './generated';
 
 const queryClient = new QueryClient();
 
@@ -20,21 +20,31 @@ function Main() {
   );
 
   const [notebooks, setNotebooks] = useState<NotebookConfig[]>([]);
+  const [sweeps, setSweeps] = useState<SweepConfig[]>([]);
 
   useEffect(() => {
     appClient.appClientCommand
       .showNotebooksCommandShowNotebooksPost()
       .then(data => setNotebooks(data as NotebookConfig[]));
+
+    appClient.appClientCommand.showSweepsCommandShowSweepsPost().then(data => setSweeps(data as SweepConfig[]));
+
     const interval = setInterval(() => {
       appClient.appClientCommand
         .showNotebooksCommandShowNotebooksPost()
         .then(data => setNotebooks(data as NotebookConfig[]));
+
+      appClient.appClientCommand.showSweepsCommandShowSweepsPost().then(data => setSweeps(data as SweepConfig[]));
     }, 1000);
 
     return () => clearInterval(interval);
   }, []);
 
-  return <Stack order="column">{JSON.stringify(notebooks)}</Stack>;
+  return (
+    <Stack order="column">
+      {JSON.stringify(notebooks)} {JSON.stringify(sweeps)}
+    </Stack>
+  );
 }
 
 function App() {

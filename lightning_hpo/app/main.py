@@ -71,9 +71,12 @@ class MainFlow(LightningFlow):
     def configure_layout(self):
         if os.environ.get("REACT_UI", "0") == "1":
             return StaticWebFrontend(os.path.join(os.path.dirname(__file__), "ui", "build"))
+
         tabs = [{"name": "Dashboard", "content": self.sweep_controller}]
+
         if self.debug:
             tabs += [{"name": "Database Viz", "content": self.db_viz}]
+
         for sweep in self.sweep_controller.r.values():
             if sweep.show:
                 tabs += sweep.configure_layout()
@@ -95,6 +98,7 @@ class MainFlow(LightningFlow):
     def configure_commands(self):
         controller_commands = self.sweep_controller.configure_commands()
         controller_commands += self.notebook_controller.configure_commands()
+        controller_commands += self.tensorboard_controller.configure_commands()
         controller_commands += [
             {"show artefacts": ShowArtefactsCommand(self.show_artefacts)},
             {"download artefacts": DownloadArtefactsCommand(self.download_artefacts)},
