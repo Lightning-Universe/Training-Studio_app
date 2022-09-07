@@ -107,6 +107,7 @@ Get Started
    :maxdepth: 1
    :caption: Get Started
 
+   installation
    workflows/sweep
    training_studio
 
