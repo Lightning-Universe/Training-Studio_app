@@ -67,8 +67,8 @@ Here is the command line with the hyper-parameters.
 
    lightning run sweep train.py \
       --n_trials=10 \
-      --logger="tensorboard" \
-      --direction=maximize \
+      -simultaneous_trials=3 \
+      --cloud_compute=cpu-medium \
 
       # HyperParameters with their distribution
       --model.lr="log_uniform(0.001, 0.1)" \

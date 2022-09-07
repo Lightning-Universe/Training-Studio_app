@@ -11,3 +11,4 @@ class TensorboardConfig(SQLModel, table=True):
     shared_folder: str
     status: str = Status.NOT_STARTED
     desired_state: str = Status.RUNNING
+    url: Optional[str] = None

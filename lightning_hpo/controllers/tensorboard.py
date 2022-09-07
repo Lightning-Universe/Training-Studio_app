@@ -14,7 +14,9 @@ class TensorboardController(Controller):
 
     def on_reconcile_start(self, configs: List[TensorboardConfig]):
         for config in configs:
-            if config.sweep_id not in self.r and config.desired_state == Status.RUNNING:
-                self.r[config.sweep_id] = Tensorboard(
-                    drive=Drive(f"lit://{config.sweep_id}"),
-                )
+            if config.sweep_id not in self.r:
+                if config.status != Status.RUNNING and config.desired_state == Status.RUNNING:
+                    self.r[config.sweep_id] = Tensorboard(
+                        drive=Drive(f"lit://{config.sweep_id}"),
+                        config=config,
+                    )
