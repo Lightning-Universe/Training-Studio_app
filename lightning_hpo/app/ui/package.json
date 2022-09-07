@@ -13,7 +13,7 @@
     "axios": "^0.27.2",
     "filter-material-ui": "2.7.0",
     "fontfaceobserver": "^2.1.0",
-    "lightning-ui": "git+ssh://git@github.com/Lightning-AI/lightning-ui.git",
+    "lightning-ui": "git+ssh://git@github.com/gridai/lightning-ui.git",
     "lodash": "^4.17.21",
     "notistack": "^2.0.4",
     "openapi-typescript-codegen": "^0.23.0",
@@ -32,8 +32,8 @@
     "web-vitals": "^2.1.0"
   },
   "scripts": {
-    "start": "craco start",
-    "build": "craco build",
+    "start": "TSC_COMPILE_ON_ERROR=true craco start",
+    "build": "TSC_COMPILE_ON_ERROR=true craco build",
     "lint": "eslint --cache --max-warnings=0 . && prettier -c .",
     "lint:fix": "eslint --cache --max-warnings=0 . --fix && prettier -w .",
     "generate": "openapi --input ./spec.json --output ./src/generated --client axios --name AppClient"
