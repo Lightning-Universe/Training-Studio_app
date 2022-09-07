@@ -3,15 +3,6 @@
         Lightning HPO & Training Studio App
     </h1>
     <img src="https://pl-flash-data.s3.amazonaws.com/assets_lightning/lightning_hpo_logo.png">
-</div>
-
-Lightning HPO provides a pythonic implementation for Scalable Hyperparameter Tuning.
-
-This library relies on [Optuna](https://optuna.readthedocs.io/en/stable/) for providing state-of-the-art sampling hyper-parameters algorithms and efficient trial pruning strategies.
-
-This is built upon the highly scalable and distributed [Lightning App](https://lightning.ai/lightning-docs/get_started/what_app_can_do.html) framework from [lightning.ai](https://lightning.ai/).
-
-The [Training Studio App](https://lightning-ai.github.io/lightning-hpo/training_studio.html) relies on Lightning HPO to provide abilities to run, show, stop, delete Sweeps, Notebooks, Tensorboard, etc..
 
 <div align="center">
 
@@ -24,6 +15,15 @@ The [Training Studio App](https://lightning-ai.github.io/lightning-hpo/training_
 [![ReadTheDocs](https://readthedocs.org/projects/pytorch-lightning/badge/?version=stable)](https://lightning-ai.github.io/lightning-hpo)
 [![Slack](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://www.pytorchlightning.ai/community)
 [![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Lightning-AI/lightning/blob/master/LICENSE)
+</div>
+
+Lightning HPO provides a pythonic implementation for Scalable Hyperparameter Tuning.
+
+This library relies on [Optuna](https://optuna.readthedocs.io/en/stable/) for providing state-of-the-art sampling hyper-parameters algorithms and efficient trial pruning strategies.
+
+This is built upon the highly scalable and distributed [Lightning App](https://lightning.ai/lightning-docs/get_started/what_app_can_do.html) framework from [lightning.ai](https://lightning.ai/).
+
+The [Training Studio App](https://lightning-ai.github.io/lightning-hpo/training_studio.html) relies on Lightning HPO to provide abilities to run, show, stop, delete Sweeps, Notebooks, Tensorboard, etc..
 
 </div>
 
