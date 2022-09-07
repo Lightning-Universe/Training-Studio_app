@@ -59,9 +59,6 @@ To view the logs use the following command:
 
    lightning show logs training_studio_app
 
-.. code-block::
-
-
 ****************
 3. Download logs
 ****************

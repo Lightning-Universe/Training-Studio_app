@@ -1,12 +1,8 @@
-# Lightning HPO & Training Studio App
-
-Lightning HPO provides a pythonic implementation for Scalable Hyperparameter Tuning.
-
-This library relies on [Optuna](https://optuna.readthedocs.io/en/stable/) for providing state-of-the-art sampling hyper-parameters algorithms and efficient trial pruning strategies.
-
-This is built upon the highly scalable and distributed [Lightning App](https://lightning.ai/lightning-docs/get_started/what_app_can_do.html) framework from [lightning.ai](https://lightning.ai/).
-
-The Training Studio App relies on Lightning HPO to provide abilities to run, show, stop, delete Sweeps, Notebooks, Tensorboard, etc.. 
+<div align="center">
+    <h1>
+        Lightning HPO & Training Studio App
+    </h1>
+    <img src="https://pl-flash-data.s3.amazonaws.com/assets_lightning/lightning_hpo_logo.png">
 
 <div align="center">
 
@@ -19,8 +15,21 @@ The Training Studio App relies on Lightning HPO to provide abilities to run, sho
 [![ReadTheDocs](https://readthedocs.org/projects/pytorch-lightning/badge/?version=stable)](https://lightning-ai.github.io/lightning-hpo)
 [![Slack](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://www.pytorchlightning.ai/community)
 [![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Lightning-AI/lightning/blob/master/LICENSE)
+</div>
+
+Lightning HPO provides a pythonic implementation for Scalable Hyperparameter Tuning.
+
+This library relies on [Optuna](https://optuna.readthedocs.io/en/stable/) for providing state-of-the-art sampling hyper-parameters algorithms and efficient trial pruning strategies.
+
+This is built upon the highly scalable and distributed [Lightning App](https://lightning.ai/lightning-docs/get_started/what_app_can_do.html) framework from [lightning.ai](https://lightning.ai/).
+
+The [Training Studio App](https://lightning-ai.github.io/lightning-hpo/training_studio.html) relies on Lightning HPO to provide abilities to run, show, stop, delete Sweeps, Notebooks, Tensorboard, etc.
+
+Learn more [here](https://github.com/Lightning-AI/lightning-hpo#the-training-studio-app).
 
 </div>
+
+______________________________________________________________________
 
 ## Installation
 
@@ -34,18 +43,20 @@ source .venv/bin/activate
 Clone and install lightning-hpo.
 
 ```bash
-git clone https://github.com/Lightning-AI/lightning-hpo.git
+git clone https://github.com/Lightning-AI/lightning-hpo
 cd lightning-hpo
 pip install -r requirements.txt -r requirements/test.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
+pip install git+https://github.com/Lightning-AI/lightning.git@small_fixes
 pip install -e .
 ```
 
 Make sure everything works fine.
 
 ```bash
-pytest tests --capture=no -v
+pytest tests -v
 ```
 
+______________________________________________________________________
 
 ## Getting started
 
@@ -91,6 +102,8 @@ python -m lightning run app examples/1_app_agnostic.py --cloud
 
 Find the example [here](./examples/1_app_agnostic.py)
 
+______________________________________________________________________
+
 ## PyTorch Lightning Users
 
 Here is how to launch 100 trials 10 at a times with 2 nodes of 4 GPUs for each in the cloud.
@@ -130,6 +143,8 @@ python -m lightning run app examples/2_app_pytorch_lightning.py --cloud --env WA
 Find the example [here](./examples/2_app_pytorch_lightning.py)
 
 ![Lightning App UI](https://pl-flash-data.s3.amazonaws.com/assets_lightning/wandb2.png)
+
+______________________________________________________________________
 
 ## Convert from raw Optuna to a Lightning App
 
@@ -234,6 +249,8 @@ Sweep(..., logger="wandb")
 python -m lightning run app app.py --env WANDB_ENTITY=YOUR_USERNAME --env WANDB_API_KEY=YOUR_API_KEY --cloud
 ```
 
+______________________________________________________________________
+
 ## Use advanced algorithms with your Lightning App
 
 Here is how to use the latest research such as [Hyperband paper](http://www.jmlr.org/papers/volume18/16-558/16-558.pdf)
@@ -258,16 +275,16 @@ Sweep(
 
 Learn more [here](https://optuna.readthedocs.io/en/stable/tutorial/10_key_features/003_efficient_optimization_algorithms.html?highlight=hyperband#activating-pruners)
 
+______________________________________________________________________
+## The Training Studio App
 
-## The Training App (WIP)
-
-In terminal 1, run the Training Application.
+In terminal 1, run the Lightning App.
 
 ```bash
-python -m lightning run app examples/4_app_sweeper.py --env WANDB_ENTITY={ENTITY} --env WANDB_API_KEY={API_KEY}
+lightning run app training_studio_app.py --env WANDB_ENTITY={ENTITY} --env WANDB_API_KEY={API_KEY}
 ```
 
-In terminal 2, connect to the App and run your first sweep or start your notebook.
+In terminal 2, connect to the Lightning App and run your first sweep or notebook.
 
 ```bash
 lightning connect localhost
@@ -287,10 +304,22 @@ Lightning App Commands
   run notebook
   run sweep
   show artefacts
+  show notebooks
   show sweeps
+  stop notebook
   stop sweep
 ```
 
 ```bash
-cd examples/scripts && lightning run sweep train.py --n_trials=3 --model.lr="log_uniform(0.001, 0.1)" --logger="wandb" --direction=maximize
+cd examples/scripts
+```
+
+```bash
+lightning run sweep train.py \
+  --n_trials=10 \
+  --logger="tensorboard" \
+  --direction=maximize \
+  --model.lr="log_uniform(0.001, 0.1)" \
+  --model.gamma="uniform(0.5, 0.8)" \
+  --data.batch_size="categorical([32, 64])"
 ```
