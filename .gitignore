@@ -138,7 +138,6 @@ wandb
 *.ckpt
 *lightning-quick-start-quick_start_train*
 flagged
-wandb
 file_server
 sweep-*
 train.py
@@ -146,7 +145,7 @@ net.py
 thomas-*
 boring_train.py
 database.db
-*artefacts*
+artefacts*
 tensorboard_logs
 jupyter_lab_*
 
