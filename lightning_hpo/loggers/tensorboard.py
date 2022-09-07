@@ -50,11 +50,11 @@ class TensorboardLogger(Logger):
         from pytorch_lightning import Trainer
 
         # Create a space logs under the sweep_id folder
-        drive = Drive("lit://logs", component_name=f"{sweep_id}/{trial_id}")
+        drive = Drive(f"lit://{sweep_id}", component_name=str(trial_id))
         use_localhost = "LIGHTNING_APP_STATE_URL" not in os.environ
 
         if use_localhost:
-            logger = TensorBoardLogger(save_dir=str(drive.root))
+            logger = TensorBoardLogger(save_dir=str(drive.root), name="")
         else:
             logger = DriveTensorBoardLogger(save_dir=".", name="", drive=drive, refresh_time=5)
 
