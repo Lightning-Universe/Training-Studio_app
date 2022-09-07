@@ -1,11 +1,60 @@
-import { SnackbarProvider, Stack } from 'lightning-ui/src/design-system/components';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { IconButton, SnackbarProvider, Stack, Table } from 'lightning-ui/src/design-system/components';
 import ThemeProvider from 'lightning-ui/src/design-system/theme';
-import React, { useEffect, useMemo, useState } from 'react';
+import Status, { StatusEnum } from 'lightning-ui/src/shared/components/Status';
+import { useEffect, useMemo, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter } from 'react-router-dom';
+import TableContainer from './components/TableContainer';
 import { AppClient, NotebookConfig, SweepConfig } from './generated';
 
 const queryClient = new QueryClient();
+
+const statusToEnum = {
+  not_started: StatusEnum.NOT_STARTED,
+  pending: StatusEnum.PENDING,
+  running: StatusEnum.RUNNING,
+  pruned: StatusEnum.DELETED,
+  succeeded: StatusEnum.SUCCEEDED,
+  failed: StatusEnum.FAILED,
+  stopped: StatusEnum.STOPPED,
+} as { [k: string]: StatusEnum };
+
+function Notebooks(props: { notebooks: NotebookConfig[] }) {
+  const header = ['Name', 'Status', 'More'];
+
+  const rows = props.notebooks.map(notebook => [
+    notebook.name,
+    <Status status={notebook.status ? statusToEnum[notebook.status] : StatusEnum.NOT_STARTED} />,
+    <IconButton id={notebook.name + '-button'}>
+      <MoreHorizIcon sx={{ fontSize: 16 }} />
+    </IconButton>,
+  ]);
+
+  return (
+    <TableContainer header="Notebooks">
+      <Table header={header} rows={rows} />
+    </TableContainer>
+  );
+}
+
+function Sweeps(props: { sweeps: SweepConfig[] }) {
+  const header = ['Name', 'Status', 'More'];
+
+  const rows = props.sweeps.map(sweep => [
+    sweep.id,
+    <Status status={sweep.status ? statusToEnum[sweep.status] : StatusEnum.NOT_STARTED} />,
+    <IconButton id={sweep.id + '-button'}>
+      <MoreHorizIcon sx={{ fontSize: 16 }} />
+    </IconButton>,
+  ]);
+
+  return (
+    <TableContainer header="Sweeps">
+      <Table header={header} rows={rows} />
+    </TableContainer>
+  );
+}
 
 function Main() {
   const appClient = useMemo(
@@ -42,7 +91,8 @@ function Main() {
 
   return (
     <Stack order="column">
-      {JSON.stringify(notebooks)} {JSON.stringify(sweeps)}
+      <Notebooks notebooks={notebooks} />
+      <Sweeps sweeps={sweeps} />
     </Stack>
   );
 }
