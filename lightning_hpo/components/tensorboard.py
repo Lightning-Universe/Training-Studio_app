@@ -11,7 +11,7 @@ from lightning.app.utilities.component import _is_work_context
 
 class Tensorboard(LightningWork):
     def __init__(self, *args, drive: Drive, sleep: int = 5, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, parallel=True, **kwargs)
         self.drive = drive
         self.sleep = sleep
 

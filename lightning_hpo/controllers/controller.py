@@ -36,7 +36,7 @@ class Controller(LightningFlow):
 
         # 2: Iterate over the.r and collect updates
         updates = []
-        for resource in self.r.values():
+        for _, resource in self.r.items():
             resource.run()
             updates.extend(resource.updates)
 

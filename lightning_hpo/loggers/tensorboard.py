@@ -60,6 +60,7 @@ class TensorboardLogger(Logger):
 
         print("Injecting Tensorboard")
 
+        # TODO: Collect the monitor + metric at the end.
         logger.log_hyperparams(params)
 
         def trainer_pre_fn(trainer, *args, **kwargs):
