@@ -29,10 +29,10 @@ def test_delete_sweeps_server(monkeypatch, tmpdir):
     sweep_controller = SweepController(Drive("lit://code"))
     db = MagicMock()
     sweep_controller._database = db
-    sweep_controller.resources[sweep_config.sweep_id] = sweep
+    sweep_controller.r[sweep_config.sweep_id] = sweep
     result = sweep_controller.delete_sweep(config=DeleteSweepConfig(sweep_id=sweep_config.sweep_id))
     assert result == "Deleted the sweep `thomas-cb8f69f0`"
-    assert sweep_controller.resources == {}
+    assert sweep_controller.r == {}
 
     general = GeneralModel.from_obj(db.delete._mock_call_args[0][0], id="sweep_id")
     engine = create_engine(f"sqlite:///{tmpdir}/database.db", echo=True)

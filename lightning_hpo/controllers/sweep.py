@@ -40,8 +40,8 @@ class SweepController(Controller):
                 drive = Drive(f"lit://{id}")
                 self.db.post(TensorboardConfig(sweep_id=id, shared_folder=str(drive.drive_root)), "id")
 
-            if id not in self.resources:
-                self.resources[id] = Sweep.from_config(
+            if id not in self.r:
+                self.r[id] = Sweep.from_config(
                     sweep,
                     code={"drive": self.drive, "name": id},
                 )
@@ -49,12 +49,12 @@ class SweepController(Controller):
     def on_reconcile_end(self, updates: List[SweepConfig]):
         for update in updates:
             if update.status == Status.SUCCEEDED:
-                for w in self.resources[update.sweep_id].works():
+                for w in self.r[update.sweep_id].works():
                     w.stop()
-                self.resources.pop(update.sweep_id)
+                self.r.pop(update.sweep_id)
 
     def run_sweep(self, config: SweepConfig) -> str:
-        sweep_ids = list(self.resources.keys())
+        sweep_ids = list(self.r.keys())
         if config.sweep_id not in sweep_ids:
             self.db.post(config)
             return f"Launched a sweep {config.sweep_id}"
@@ -66,10 +66,10 @@ class SweepController(Controller):
         return []
 
     def stop_sweep(self, config: StopSweepConfig):
-        sweep_ids = list(self.resources.keys())
+        sweep_ids = list(self.r.keys())
         if config.sweep_id in sweep_ids:
             # TODO: Add support for __del__ in lightning
-            sweep: Sweep = self.resources[config.sweep_id]
+            sweep: Sweep = self.r[config.sweep_id]
             for w in sweep.works():
                 w.stop()
             sweep_config = sweep._sweep_config
@@ -82,14 +82,14 @@ class SweepController(Controller):
         return f"We didn't find the sweep `{config.sweep_id}`"
 
     def delete_sweep(self, config: DeleteSweepConfig):
-        sweep_ids = list(self.resources.keys())
+        sweep_ids = list(self.r.keys())
         if config.sweep_id in sweep_ids:
-            sweep: Sweep = self.resources[config.sweep_id]
+            sweep: Sweep = self.r[config.sweep_id]
             for w in sweep.works():
                 w.stop()
             sweep_config = sweep._sweep_config
             self.db.delete(sweep_config)
-            del self.resources[config.sweep_id]
+            del self.r[config.sweep_id]
             return f"Deleted the sweep `{config.sweep_id}`"
         return f"We didn't find the sweep `{config.sweep_id}`"
 

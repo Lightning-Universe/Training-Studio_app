@@ -32,8 +32,8 @@ def test_notebook(monkeypatch):
     config.status = Status.RUNNING
     notebook.updates = [config]
     notebook_controller.run("a")
-    assert isinstance(notebook_controller.resources["a"], MagicMock)
-    notebook_controller.resources["a"].run.assert_called()
+    assert isinstance(notebook_controller.r["a"], MagicMock)
+    notebook_controller.r["a"].run.assert_called()
     config = NotebookConfig(**list(notebook_controller.db.data.values())[0])
     assert config.status == Status.RUNNING
 
@@ -41,7 +41,7 @@ def test_notebook(monkeypatch):
     assert len(response) == 1
     assert response[0] == config
 
-    notebook_controller.resources["a"]._config = config
+    notebook_controller.r["a"]._config = config
     response = notebook_controller.stop_notebook(StopNotebookConfig(name=config.name))
     assert "The notebook `a` has been stopped."
     config = NotebookConfig(**list(notebook_controller.db.data.values())[0])
@@ -51,6 +51,6 @@ def test_notebook(monkeypatch):
     response = notebook_controller.stop_notebook(StopNotebookConfig(name=config.name))
     assert "The notebook `a` is already stopped."
 
-    del notebook_controller.resources["a"]
+    del notebook_controller.r["a"]
     response = notebook_controller.stop_notebook(StopNotebookConfig(name=config.name))
     assert "The notebook `a` doesn't exist."

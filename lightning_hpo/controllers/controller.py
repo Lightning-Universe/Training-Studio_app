@@ -17,7 +17,7 @@ class Controller(LightningFlow):
     def __init__(self, drive: Optional[Drive] = None):
         super().__init__()
         self.db_url = None
-        self.resources = Dict()
+        self.r = Dict()
         self.drive = drive
         self._database = None
 
@@ -34,16 +34,16 @@ class Controller(LightningFlow):
         if db_configs:
             self.on_reconcile_start(db_configs)
 
-        # 2: Iterate over the resources and collect updates
+        # 2: Iterate over the.r and collect updates
         updates = []
-        for resource in self.resources.values():
+        for resource in self.r.values():
             resource.run()
             updates.extend(resource.updates)
 
         if not updates:
             return
 
-        # 3: Reconcile resources on end
+        # 3: Reconcile.r on end
         for update in updates:
             self.db.put(update)
 
