@@ -2,6 +2,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Box, Button, IconButton, Link, Stack, Table } from 'lightning-ui/src/design-system/components';
 import Status, { StatusEnum } from 'lightning-ui/src/shared/components/Status';
 import { AppClient, SweepConfig, TensorboardConfig, TrialConfig } from '../generated';
+import useClientDataState from '../hooks/useClientDataState';
 import TableContainer from './TableContainer';
 
 const appClient = new AppClient({
@@ -74,7 +75,10 @@ function createLoggerControl(tensorboardConfig?: TensorboardConfig) {
   }
 }
 
-export function Sweeps(props: { sweeps: SweepConfig[]; tensorboards: TensorboardConfig[] }) {
+export function Sweeps() {
+  const tensorboards = useClientDataState('tensorboards') as TensorboardConfig[];
+  const sweeps = useClientDataState('sweeps') as SweepConfig[];
+
   const sweepHeader = [
     'Name',
     'Status',
@@ -90,13 +94,13 @@ export function Sweeps(props: { sweeps: SweepConfig[]; tensorboards: Tensorboard
 
   const baseTrialHeader = ['Name', 'Status', 'Best Model Score'];
   const tensorboardIdsToStatuses = Object.fromEntries(
-    props.tensorboards.map(e => {
+    tensorboards.map(e => {
       return [e.sweep_id, e];
     }),
   );
 
   /* TODO: Merge the Specs */
-  const rows = props.sweeps.map(sweep => {
+  const rows = sweeps.map(sweep => {
     const tensorboardConfig =
       sweep.sweep_id in tensorboardIdsToStatuses ? tensorboardIdsToStatuses[sweep.sweep_id] : null;
 
@@ -116,7 +120,7 @@ export function Sweeps(props: { sweeps: SweepConfig[]; tensorboards: Tensorboard
     ];
   });
 
-  const rowDetails = props.sweeps.map(sweep => (
+  const rowDetails = sweeps.map(sweep => (
     <Stack>
       <TableContainer header={'Trials (' + sweep.trials[0].monitor + ')'}>
         <Table

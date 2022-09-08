@@ -1,13 +1,15 @@
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { IconButton, Link, SnackbarProvider, Stack, Table } from 'lightning-ui/src/design-system/components';
+import { IconButton, Link, SnackbarProvider, Table } from 'lightning-ui/src/design-system/components';
 import ThemeProvider from 'lightning-ui/src/design-system/theme';
 import Status, { StatusEnum } from 'lightning-ui/src/shared/components/Status';
-import { useEffect, useMemo, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter } from 'react-router-dom';
 import { Sweeps } from './components/SweepTable';
 import TableContainer from './components/TableContainer';
-import { AppClient, NotebookConfig, SweepConfig, TensorboardConfig } from './generated';
+import Tabs, { TabItem } from './components/Tabs';
+import { NotebookConfig } from './generated';
+import useClientDataState, { ClientDataProvider } from './hooks/useClientDataState';
+import useSelectedTabState, { SelectedTabProvider } from './hooks/useSelectedTabState';
 
 const queryClient = new QueryClient();
 
@@ -21,10 +23,12 @@ const statusToEnum = {
   stopped: StatusEnum.STOPPED,
 } as { [k: string]: StatusEnum };
 
-function Notebooks(props: { notebooks: NotebookConfig[] }) {
+function Notebooks() {
+  const notebooks = useClientDataState('notebooks') as NotebookConfig[];
+
   const header = ['Name', 'Status', 'URL', 'More'];
 
-  const rows = props.notebooks.map(notebook => [
+  const rows = notebooks.map(notebook => [
     notebook.name,
     <Status status={notebook.status ? statusToEnum[notebook.status] : StatusEnum.NOT_STARTED} />,
     <Link href={notebook.url} target="_blank">
@@ -42,53 +46,47 @@ function Notebooks(props: { notebooks: NotebookConfig[] }) {
   );
 }
 
-function Main() {
-  const appClient = useMemo(
-    () =>
-      new AppClient({
-        BASE:
-          window.location != window.parent.location
-            ? document.referrer.replace(/\/$/, '').replace('/view/undefined', '')
-            : document.location.href.replace(/\/$/, '').replace('/view/undefined', ''),
-      }),
-    [],
-  );
+function AppTabs() {
+  const { selectedTab, setSelectedTab } = useSelectedTabState();
 
-  const [notebooks, setNotebooks] = useState<NotebookConfig[]>([]);
-  const [sweeps, setSweeps] = useState<SweepConfig[]>([]);
-  const [tensorboards, setTensorboards] = useState<TensorboardConfig[]>([]);
+  let tabItems: TabItem[] = [];
 
-  useEffect(() => {
-    appClient.appClientCommand
-      .showNotebooksCommandShowNotebooksPost()
-      .then(data => setNotebooks(data as NotebookConfig[]));
-
-    appClient.appClientCommand.showSweepsCommandShowSweepsPost().then(data => setSweeps(data as SweepConfig[]));
-
-    appClient.appCommand
-      .showTensorboardsCommandShowTensorboardsPost()
-      .then(data => setTensorboards(data as TensorboardConfig[]));
-
-    const interval = setInterval(() => {
-      appClient.appClientCommand
-        .showNotebooksCommandShowNotebooksPost()
-        .then(data => setNotebooks(data as NotebookConfig[]));
-
-      appClient.appClientCommand.showSweepsCommandShowSweepsPost().then(data => setSweeps(data as SweepConfig[]));
-
-      appClient.appCommand
-        .showTensorboardsCommandShowTensorboardsPost()
-        .then(data => setTensorboards(data as TensorboardConfig[]));
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
+  if (selectedTab == 0) {
+    tabItems = [
+      {
+        title: 'Notebooks',
+        content: (
+          <ClientDataProvider endpoint="notebooks">
+            <Notebooks />
+          </ClientDataProvider>
+        ),
+      },
+      { title: 'Experiments', content: <></> },
+    ];
+  } else if (selectedTab == 1) {
+    tabItems = [
+      { title: 'Notebooks', content: <></> },
+      {
+        title: 'Experiments',
+        content: (
+          <ClientDataProvider endpoint="sweeps">
+            <ClientDataProvider endpoint="tensorboards">
+              <Sweeps />
+            </ClientDataProvider>
+          </ClientDataProvider>
+        ),
+      },
+    ];
+  }
 
   return (
-    <Stack>
-      <Notebooks notebooks={notebooks} />
-      <Sweeps sweeps={sweeps} tensorboards={tensorboards} />
-    </Stack>
+    <Tabs
+      selectedTab={selectedTab}
+      onChange={setSelectedTab}
+      tabItems={tabItems}
+      sxTabs={{ width: '100%', backgroundColor: 'white', paddingX: 2, top: 0, zIndex: 1000 }}
+      sxContent={{ paddingTop: 0, paddingBottom: 6, marginTop: '48px' }}
+    />
   );
 }
 
@@ -98,7 +96,9 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <SnackbarProvider>
-            <Main />
+            <SelectedTabProvider>
+              <AppTabs />
+            </SelectedTabProvider>
           </SnackbarProvider>
         </BrowserRouter>
       </QueryClientProvider>
