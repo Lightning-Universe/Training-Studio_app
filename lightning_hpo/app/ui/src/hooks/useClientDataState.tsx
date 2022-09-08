@@ -14,30 +14,33 @@ const clientEndpoints = {
   tensorboards: (appClient: AppClient) => appClient.appCommand.showTensorboardsCommandShowTensorboardsPost(),
 };
 
-const clientDataContext = React.createContext<{ [k: string]: any[] }>({});
+const clientDataContexts = {
+  sweeps: React.createContext<any[]>([]),
+  notebooks: React.createContext<any[]>([]),
+  tensorboards: React.createContext<any[]>([]),
+};
 
 export const ClientDataProvider = (props: { endpoint: keyof typeof clientEndpoints; children: React.ReactNode }) => {
-  const [state, dispatch] = React.useReducer((state: { [k: string]: any[] }, newValue: { [k: string]: any[] }) => {
-    return { ...newValue, ...state };
-  }, {});
+  const [state, dispatch] = React.useReducer((state: any[], newValue: any[]) => newValue, []);
 
   useEffect(() => {
-    clientEndpoints[props.endpoint](appClient).then(data => dispatch(Object.fromEntries([[props.endpoint, data]])));
+    clientEndpoints[props.endpoint](appClient).then(data => dispatch(data));
 
     const interval = setInterval(() => {
-      clientEndpoints[props.endpoint](appClient).then(data => dispatch(Object.fromEntries([[props.endpoint, data]])));
+      clientEndpoints[props.endpoint](appClient).then(data => dispatch(data));
     }, 1000);
 
     return () => clearInterval(interval);
   }, []);
 
-  return <clientDataContext.Provider value={state}>{props.children}</clientDataContext.Provider>;
+  const context = clientDataContexts[props.endpoint];
+  return <context.Provider value={state}>{props.children}</context.Provider>;
 };
 
 const useClientDataState = (endpoint: keyof typeof clientEndpoints) => {
-  const clientData = React.useContext(clientDataContext);
+  const clientData = React.useContext(clientDataContexts[endpoint]);
 
-  return clientData[endpoint] || [];
+  return clientData;
 };
 
 export default useClientDataState;
