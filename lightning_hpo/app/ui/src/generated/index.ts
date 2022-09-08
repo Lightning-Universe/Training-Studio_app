@@ -18,7 +18,9 @@ export type { Params } from './models/Params';
 export type { ShowArtefactsConfig } from './models/ShowArtefactsConfig';
 export type { StopNotebookConfig } from './models/StopNotebookConfig';
 export type { StopSweepConfig } from './models/StopSweepConfig';
+export type { StopTensorboardConfig } from './models/StopTensorboardConfig';
 export type { SweepConfig } from './models/SweepConfig';
+export type { TensorboardConfig } from './models/TensorboardConfig';
 export type { TrialConfig } from './models/TrialConfig';
 export type { ValidationError } from './models/ValidationError';
 

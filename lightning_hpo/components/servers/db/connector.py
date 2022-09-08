@@ -9,7 +9,7 @@ from urllib3.util.retry import Retry
 from lightning_hpo.components.servers.db.models import GeneralModel
 
 _CONNECTION_RETRY_TOTAL = 5
-_CONNECTION_RETRY_BACKOFF_FACTOR = 0.5
+_CONNECTION_RETRY_BACKOFF_FACTOR = 1
 
 
 def _configure_session() -> Session:

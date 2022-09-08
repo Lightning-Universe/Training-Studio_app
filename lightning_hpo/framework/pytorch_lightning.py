@@ -73,6 +73,10 @@ class ObjectiveLightningTrainingComponent(LightningTrainingComponent):
     def has_failed(self) -> bool:
         return any(w.has_failed for w in self.works())
 
+    @property
+    def status(self):
+        return self.ws[0].status
+
     def stop(self):
         for w in self.works():
             w.stop()

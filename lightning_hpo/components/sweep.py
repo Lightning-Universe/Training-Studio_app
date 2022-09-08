@@ -138,6 +138,7 @@ class Sweep(LightningFlow):
                 if _check_status(objective, Status.FAILED):
                     self._sweep_config.status = Status.FAILED
                     self._sweep_config.trials[trial_id].status = Status.FAILED
+                    self._sweep_config.trials[trial_id].exception = objective.status.message
                     self.has_updated = True
 
                 if objective.reports and not self._sweep_config.trials[trial_id].pruned:
