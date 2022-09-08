@@ -34,7 +34,7 @@ class SweepController(Controller):
 
         for tensorboard in self.db.get(TensorboardConfig):
             if tensorboard.url and tensorboard.sweep_id in self.r:
-                self.r[tensorboard.sweep_id]._sweep_config.url = tensorboard.url
+                self.r[tensorboard.sweep_id].config["url"] = tensorboard.url
                 self.r[tensorboard.sweep_id].has_updated = True
 
         # 2: Create the Sweeps
@@ -43,7 +43,7 @@ class SweepController(Controller):
             if sweep.logger == LoggerType.TENSORBOARD.value and id not in self.tensorboard_sweep_id:
                 self.tensorboard_sweep_id.append(id)
                 drive = Drive(f"lit://{id}")
-                self.db.post(TensorboardConfig(sweep_id=id, shared_folder=str(drive.drive_root)), "id")
+                self.db.post(TensorboardConfig(sweep_id=id, shared_folder=str(drive.drive_root)))
 
             if id not in self.r:
                 self.r[id] = Sweep.from_config(
@@ -77,7 +77,7 @@ class SweepController(Controller):
             sweep: Sweep = self.r[config.sweep_id]
             for w in sweep.works():
                 w.stop()
-            sweep_config = sweep._sweep_config
+            sweep_config = SweepConfig(**sweep.config)
             sweep_config.status = Status.STOPPED
             for trial in sweep_config.trials.values():
                 if trial.status != Status.SUCCEEDED:
@@ -92,8 +92,8 @@ class SweepController(Controller):
             sweep: Sweep = self.r[config.sweep_id]
             for w in sweep.works():
                 w.stop()
-            sweep_config = sweep._sweep_config
-            self.db.delete(sweep_config)
+            sweep_config = sweep.config
+            self.db.delete(SweepConfig(**sweep_config))
             del self.r[config.sweep_id]
             return f"Deleted the sweep `{config.sweep_id}`"
         return f"We didn't find the sweep `{config.sweep_id}`"

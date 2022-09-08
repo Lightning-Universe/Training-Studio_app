@@ -1,9 +1,10 @@
+import functools
 import json
 import os
 import shutil
 import tarfile
 from dataclasses import dataclass
-from typing import Generic, Optional, TypeVar, Union
+from typing import Generic, Optional, Type, TypeVar, Union
 
 from fastapi.encoders import jsonable_encoder
 from lightning import CloudCompute as LightningCloudCompute
@@ -13,7 +14,8 @@ from lightning.app.utilities.enum import WorkStageStatus
 from optuna.distributions import CategoricalDistribution, LogUniformDistribution, UniformDistribution
 from pydantic import parse_obj_as
 from pydantic.main import ModelMetaclass
-from sqlmodel import JSON, TypeDecorator
+from sqlalchemy.inspection import inspect
+from sqlmodel import JSON, SQLModel, TypeDecorator
 
 from lightning_hpo.framework import _OBJECTIVE_FRAMEWORK
 from lightning_hpo.framework.agnostic import Objective
@@ -176,3 +178,13 @@ def pydantic_column_type(pydantic_type):
             return x == y
 
     return PydanticJSONType
+
+
+@functools.lru_cache
+def get_primary_key(model_type: Type[SQLModel]) -> str:
+    primary_keys = inspect(model_type).primary_key
+
+    if len(primary_keys) != 1:
+        raise ValueError(f"The model {model_type.__name__} should have a single primary key field.")
+
+    return primary_keys[0].name

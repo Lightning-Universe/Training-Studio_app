@@ -1,7 +1,5 @@
 from typing import List
 
-from lightning import CloudCompute
-
 from lightning_hpo.commands.notebook.run import NotebookConfig, RunNotebookCommand
 from lightning_hpo.commands.notebook.show import ShowNotebookCommand
 from lightning_hpo.commands.notebook.stop import StopNotebookCommand, StopNotebookConfig
@@ -19,7 +17,6 @@ class NotebookController(Controller):
             if config.name not in self.r and config.desired_state == Status.RUNNING:
                 self.r[config.name] = JupyterLab(
                     kernel="python",
-                    cloud_compute=CloudCompute(name=config.cloud_compute),
                     config=config,
                 )
 
@@ -36,11 +33,11 @@ class NotebookController(Controller):
                 matched_notebook = notebook
 
         if matched_notebook:
-            if matched_notebook._config.status != Status.STOPPED:
+            if matched_notebook.config["status"] != Status.STOPPED:
                 notebook: JupyterLab = self.r[config.name]
                 notebook.stop()
-                notebook._config.desired_state = notebook._config.status = Status.STOPPED
-                self.db.put(notebook._config)
+                notebook.config["desired_state"] = notebook.config["status"] = Status.STOPPED
+                self.db.put(NotebookConfig(**notebook.config))
                 return f"The notebook `{config.name}` has been stopped."
             return f"The notebook `{config.name}` is already stopped."
         return f"The notebook `{config.name}` doesn't exist."

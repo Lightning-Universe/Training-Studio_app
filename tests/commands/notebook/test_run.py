@@ -41,7 +41,7 @@ def test_notebook(monkeypatch):
     assert len(response) == 1
     assert response[0] == config
 
-    notebook_controller.r["a"]._config = config
+    notebook_controller.r["a"].config = config.dict()
     response = notebook_controller.stop_notebook(StopNotebookConfig(name=config.name))
     assert "The notebook `a` has been stopped."
     config = NotebookConfig(**list(notebook_controller.db.data.values())[0])

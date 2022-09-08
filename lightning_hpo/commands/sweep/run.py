@@ -44,8 +44,7 @@ class TrialConfig(SQLModel, table=False):
 class SweepConfig(SQLModel, table=True):
     __table_args__ = {"extend_existing": True}
 
-    id: Optional[int] = Field(default=None, primary_key=True)
-    sweep_id: str
+    sweep_id: str = Field(primary_key=True)
     script_path: str
     n_trials: int
     simultaneous_trials: int

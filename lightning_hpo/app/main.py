@@ -85,7 +85,7 @@ class MainFlow(LightningFlow):
             tabs += [{"name": f"tensorboard_{sweep_id}", "content": tensorboard}]
 
         for notebook_name, notebook in self.notebook_controller.r.items():
-            if notebook._config.desired_state == Status.RUNNING:
+            if notebook.config["desired_state"] == Status.RUNNING:
                 tabs += [{"name": notebook_name, "content": notebook}]
         return tabs
 

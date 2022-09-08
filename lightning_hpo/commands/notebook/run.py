@@ -15,8 +15,7 @@ class NotebookConfig(SQLModel, table=True):
 
     __table_args__ = {"extend_existing": True}
 
-    id: Optional[str] = Field(default=None, primary_key=True)
-    name: str
+    name: str = Field(primary_key=True)
     requirements: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
     cloud_compute: str
     status: str = Status.NOT_STARTED

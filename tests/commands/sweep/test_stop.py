@@ -32,6 +32,6 @@ def test_stop_sweeps_server(monkeypatch):
     monkeypatch.setattr(requests, "put", MagicMock(return_value=resp))
     result = sweep_controller.stop_sweep(config=StopSweepConfig(sweep_id=sweep_config.sweep_id))
     assert result == "Stopped the sweep `thomas-cb8f69f0`"
-    assert sweep._sweep_config.status == Status.STOPPED
-    assert sweep._sweep_config.trials[0].status == Status.SUCCEEDED
-    assert sweep._sweep_config.trials[1].status == Status.STOPPED
+    assert sweep.config["status"] == Status.STOPPED
+    assert sweep.config["trials"][0].status == Status.SUCCEEDED
+    assert sweep.config["trials"][1].status == Status.STOPPED

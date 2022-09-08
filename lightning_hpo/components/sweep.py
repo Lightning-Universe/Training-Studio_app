@@ -61,7 +61,7 @@ class Sweep(LightningFlow):
         """
         super().__init__()
         # Sweep Database Spec
-        self._sweep_config = SweepConfig(
+        self.config = SweepConfig(
             sweep_id=sweep_id or str(uuid.uuid4()).split("-")[0],
             script_path=script_path,
             n_trials=n_trials,
@@ -77,7 +77,7 @@ class Sweep(LightningFlow):
             direction=direction,
             trials=trials or {},
             status=status,
-        )
+        ).dict()
 
         self._objective_cls = _resolve_objective_cls(objective_cls, framework)
 
@@ -93,7 +93,7 @@ class Sweep(LightningFlow):
             "num_nodes": getattr(cloud_compute, "count", 1) if cloud_compute else 1,
             "logger": logger,
             "code": code,
-            "sweep_id": self._sweep_config.sweep_id,
+            "sweep_id": self.config["sweep_id"],
             "raise_exception": False,
             **objective_kwargs,
         }
@@ -102,20 +102,18 @@ class Sweep(LightningFlow):
         )
         self._algorithm.register_trials([t for t in trials.values() if t.status == Status.SUCCEEDED] if trials else [])
         self.restart_count = 0
-        self.has_updated = False
         self.sweep = False
         self.show = False
 
     def run(self):
-        if self._sweep_config.status in (Status.SUCCEEDED, Status.STOPPED):
+        if self.config["status"] in (Status.SUCCEEDED, Status.STOPPED):
             return
 
-        if self._sweep_config.trials_done == self._sweep_config.n_trials:
-            self._sweep_config.status = Status.SUCCEEDED
-            self.has_updated = True
+        if self.config["trials_done"] == self.config["n_trials"]:
+            self.config["status"] = Status.SUCCEEDED
             return
 
-        for trial_id in range(self._sweep_config.num_trials):
+        for trial_id in range(self.config["n_trials"]):
 
             objective = self._get_objective(trial_id)
 
@@ -123,12 +121,13 @@ class Sweep(LightningFlow):
 
                 if _check_status(objective, Status.NOT_STARTED):
                     self._algorithm.trial_start(trial_id)
-                    self._logger.on_after_trial_start(self._sweep_config.sweep_id)
+                    self._logger.on_after_trial_start(self.config["sweep_id"])
 
-                if not self._sweep_config.trials[trial_id].params.params:
-                    self._sweep_config.status = Status.RUNNING
-                    self._sweep_config.trials[trial_id].params = Params(params=self._algorithm.get_params(trial_id))
-                    self.has_updated = True
+                if not self.config["trials"][trial_id]["params"]["params"]:
+                    self.config["status"] = Status.RUNNING
+                    self.config["trials"][trial_id]["params"] = Params(
+                        params=self._algorithm.get_params(trial_id)
+                    ).dict()
 
                 objective.run(
                     params=self._algorithm.get_params(trial_id),
@@ -136,32 +135,29 @@ class Sweep(LightningFlow):
                 )
 
                 if _check_status(objective, Status.FAILED):
-                    self._sweep_config.status = Status.FAILED
-                    self._sweep_config.trials[trial_id].status = Status.FAILED
-                    self.has_updated = True
+                    self.config["status"] = Status.FAILED
+                    self.config["trials"][trial_id]["status"] = Status.FAILED
 
-                if objective.reports and not self._sweep_config.trials[trial_id].pruned:
+                if objective.reports and not self.config["trials"][trial_id]["pruned"]:
                     if self._algorithm.should_prune(trial_id, objective.reports):
-                        self._sweep_config.trials[trial_id].status = Status.PRUNED
-                        self.has_updated = True
+                        self.config["trials"][trial_id]["status"] = Status.PRUNED
                         objective.stop()
                         continue
 
                 if objective.best_model_score and not objective.has_stopped and not objective.pruned:
                     self._algorithm.trial_end(trial_id, objective.best_model_score)
                     self._logger.on_after_trial_end(
-                        sweep_id=self._sweep_config.sweep_id,
+                        sweep_id=self.config["sweep_id"],
                         trial_id=objective.trial_id,
                         monitor=objective.monitor,
                         score=objective.best_model_score,
                         params=self._algorithm.get_params(trial_id),
                     )
-                    self._sweep_config.trials[trial_id].best_model_score = objective.best_model_score
-                    self._sweep_config.trials[trial_id].best_model_path = objective.best_model_path
-                    self._sweep_config.trials[trial_id].monitor = objective.monitor
-                    self._sweep_config.trials[trial_id].status = Status.SUCCEEDED
-                    self._sweep_config.trials_done += 1
-                    self.has_updated = True
+                    self.config["trials"][trial_id]["best_model_score"] = objective.best_model_score
+                    self.config["trials"][trial_id]["best_model_path"] = objective.best_model_path
+                    self.config["trials"][trial_id]["monitor"] = objective.monitor
+                    self.config["trials"][trial_id]["status"] = Status.SUCCEEDED
+                    self.config["trials_done"] += 1
                     objective.stop()
 
     @property
@@ -176,7 +172,7 @@ class Sweep(LightningFlow):
         return self._logger.configure_layout()
 
     def _get_objective(self, trial_id: int):
-        trial_config = self._sweep_config.trials.get(trial_id, None)
+        trial_config = self.config["trials"].get(trial_id, None)
         if trial_config is None:
             trial_config = TrialConfig(
                 best_model_score=None,
@@ -184,10 +180,10 @@ class Sweep(LightningFlow):
                 best_model_path=None,
                 status=Status.PENDING,
                 params=Params(params={}),
-            )
-            self._sweep_config.trials[trial_id] = trial_config
+            ).dict()
+            self.config["trials"][trial_id] = trial_config
 
-        if trial_config.status == Status.SUCCEEDED:
+        if trial_config["status"] == Status.SUCCEEDED:
             return
 
         objective = getattr(self, f"w_{trial_id}", None)
@@ -195,14 +191,6 @@ class Sweep(LightningFlow):
             objective = self._objective_cls(trial_id=trial_id, **self._kwargs)
             setattr(self, f"w_{trial_id}", objective)
         return objective
-
-    @property
-    def updates(self) -> List[SweepConfig]:
-        res = []
-        if self.has_updated:
-            res = [self._sweep_config]
-        self.has_updated = False
-        return res
 
     @classmethod
     def from_config(cls, config: SweepConfig, code: Optional[Code] = None):

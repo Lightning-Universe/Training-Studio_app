@@ -18,8 +18,7 @@ class Tensorboard(LightningWork):
         super().__init__(*args, parallel=True, **kwargs)
         self.drive = drive
         self.sleep = sleep
-        self.has_updated = False
-        self._config = config
+        self.config = config.dict()
 
     def run(self):
         use_localhost = "LIGHTNING_APP_STATE_URL" not in os.environ
@@ -32,7 +31,8 @@ class Tensorboard(LightningWork):
         cmd = f"tensorboard --logdir={local_folder} --host {self.host} --port {self.port}"
         self._process = Popen(cmd, shell=True, env=os.environ)
 
-        self.has_updated = True
+        self.config["status"] = Status.RUNNING
+        self.config["url"] = self.url
         fs = filesystem()
         root_folder = str(self.drive.drive_root)
 
@@ -63,13 +63,4 @@ class Tensorboard(LightningWork):
             assert self._process
             self._process.kill()
         else:
-            self._config.status = Status.NOT_STARTED
-
-    @property
-    def updates(self):
-        if self.url != "" and self.has_updated:
-            self._config.status = Status.RUNNING
-            self._config.url = self.url
-            self.has_updated = False
-            return [self._config]
-        return []
+            self.config["status"] = Status.NOT_STARTED
