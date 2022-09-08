@@ -22,7 +22,9 @@ class TensorboardController(Controller):
                     )
 
     def show_tensorboards(self) -> List[TensorboardConfig]:
-        return self.db.get()
+        if self.db_url:
+            return self.db.get()
+        return []
 
     def configure_commands(self):
         return [{"show tensorboards": self.show_tensorboards}]

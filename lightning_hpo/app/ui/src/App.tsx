@@ -5,8 +5,9 @@ import Status, { StatusEnum } from 'lightning-ui/src/shared/components/Status';
 import { useEffect, useMemo, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter } from 'react-router-dom';
+import { Sweeps } from './components/SweepTable';
 import TableContainer from './components/TableContainer';
-import { AppClient, NotebookConfig, SweepConfig, TrialConfig } from './generated';
+import { AppClient, NotebookConfig, SweepConfig, TensorboardConfig } from './generated';
 
 const queryClient = new QueryClient();
 
@@ -41,68 +42,6 @@ function Notebooks(props: { notebooks: NotebookConfig[] }) {
   );
 }
 
-function TrialToRows(trials: Record<string, TrialConfig>) {
-  return Object.entries(trials).map(entry => [
-    entry[0],
-    <Status status={entry[1].status ? statusToEnum[entry[1].status] : StatusEnum.NOT_STARTED} />,
-    String(entry[1].best_model_score),
-    ...Object.entries(entry[1].params.params).map(value => String(value[1])),
-  ]);
-}
-
-function generateTrialHeader(trialHeader: string[], params) {
-  const paramsHeader = Object.entries(params).map(entry => entry[0]);
-  return trialHeader.concat(paramsHeader);
-}
-
-function Sweeps(props: { sweeps: SweepConfig[] }) {
-  const sweepHeader = [
-    'Name',
-    'Status',
-    'Number of trials',
-    'Number of trials done',
-    'Framework',
-    'Cloud Compute',
-    'Direction',
-    'URL',
-    'More',
-  ];
-  const baseTrialHeader = ['Name', 'Status', 'Best Model Score'];
-
-  const rows = props.sweeps.map(sweep => [
-    sweep.sweep_id,
-    <Status status={sweep.status ? statusToEnum[sweep.status] : StatusEnum.NOT_STARTED} />,
-    sweep.n_trials,
-    sweep.trials_done,
-    sweep.framework,
-    sweep.cloud_compute,
-    sweep.direction,
-    <Link href={sweep.url} target="_blank">
-      Click Me
-    </Link>,
-    <IconButton id={sweep.sweep_id + '-button'}>
-      <MoreHorizIcon sx={{ fontSize: 16 }} />
-    </IconButton>,
-  ]);
-
-  const rowDetails = props.sweeps.map(sweep => (
-    <Stack>
-      <TableContainer header={'Trials (' + sweep.trials[0].monitor + ')'}>
-        <Table
-          header={generateTrialHeader(baseTrialHeader, sweep.trials[0].params.params)}
-          rows={TrialToRows(sweep.trials)}
-        />
-      </TableContainer>
-    </Stack>
-  ));
-
-  return (
-    <TableContainer header="Sweeps">
-      <Table header={sweepHeader} rows={rows} rowDetails={rowDetails} />
-    </TableContainer>
-  );
-}
-
 function Main() {
   const appClient = useMemo(
     () =>
@@ -117,6 +56,7 @@ function Main() {
 
   const [notebooks, setNotebooks] = useState<NotebookConfig[]>([]);
   const [sweeps, setSweeps] = useState<SweepConfig[]>([]);
+  const [tensorboards, setTensorboards] = useState<TensorboardConfig[]>([]);
 
   useEffect(() => {
     appClient.appClientCommand
@@ -125,12 +65,20 @@ function Main() {
 
     appClient.appClientCommand.showSweepsCommandShowSweepsPost().then(data => setSweeps(data as SweepConfig[]));
 
+    appClient.appCommand
+      .showTensorboardsCommandShowTensorboardsPost()
+      .then(data => setTensorboards(data as TensorboardConfig[]));
+
     const interval = setInterval(() => {
       appClient.appClientCommand
         .showNotebooksCommandShowNotebooksPost()
         .then(data => setNotebooks(data as NotebookConfig[]));
 
       appClient.appClientCommand.showSweepsCommandShowSweepsPost().then(data => setSweeps(data as SweepConfig[]));
+
+      appClient.appCommand
+        .showTensorboardsCommandShowTensorboardsPost()
+        .then(data => setTensorboards(data as TensorboardConfig[]));
     }, 1000);
 
     return () => clearInterval(interval);
@@ -139,7 +87,7 @@ function Main() {
   return (
     <Stack>
       <Notebooks notebooks={notebooks} />
-      <Sweeps sweeps={sweeps} />
+      <Sweeps sweeps={sweeps} tensorboards={tensorboards} />
     </Stack>
   );
 }
