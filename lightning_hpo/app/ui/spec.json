@@ -261,6 +261,24 @@
         "cls_name": "ShowNotebookCommand"
       }
     },
+    "/command/run_tensorboard": {
+      "post": {
+        "tags": ["app_command"],
+        "summary": "Run Tensorboard",
+        "operationId": "run_tensorboard_command_run_tensorboard_post",
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TensorboardConfig" } } },
+          "required": true
+        },
+        "responses": {
+          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } },
+          "422": {
+            "description": "Validation Error",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
+          }
+        }
+      }
+    },
     "/command/show_tensorboards": {
       "post": {
         "tags": ["app_command"],
@@ -268,6 +286,24 @@
         "operationId": "show_tensorboards_command_show_tensorboards_post",
         "responses": {
           "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
+        }
+      }
+    },
+    "/command/stop_tensorboard": {
+      "post": {
+        "tags": ["app_command"],
+        "summary": "Stop Tensorboard",
+        "operationId": "stop_tensorboard_command_stop_tensorboard_post",
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StopTensorboardConfig" } } },
+          "required": true
+        },
+        "responses": {
+          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } },
+          "422": {
+            "description": "Validation Error",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
+          }
         }
       }
     },
@@ -431,6 +467,12 @@
         "type": "object",
         "properties": { "sweep_id": { "title": "Sweep Id", "type": "string" } }
       },
+      "StopTensorboardConfig": {
+        "title": "StopTensorboardConfig",
+        "required": ["sweep_id"],
+        "type": "object",
+        "properties": { "sweep_id": { "title": "Sweep Id", "type": "string" } }
+      },
       "SweepConfig": {
         "title": "SweepConfig",
         "required": [
@@ -474,6 +516,19 @@
           "logger": { "title": "Logger", "type": "string" },
           "direction": { "title": "Direction", "type": "string" },
           "status": { "title": "Status", "type": "string", "default": "not_started" }
+        }
+      },
+      "TensorboardConfig": {
+        "title": "TensorboardConfig",
+        "required": ["sweep_id", "shared_folder"],
+        "type": "object",
+        "properties": {
+          "id": { "title": "Id", "type": "integer" },
+          "sweep_id": { "title": "Sweep Id", "type": "string" },
+          "shared_folder": { "title": "Shared Folder", "type": "string" },
+          "status": { "title": "Status", "type": "string", "default": "not_started" },
+          "desired_state": { "title": "Desired State", "type": "string", "default": "running" },
+          "url": { "title": "Url", "type": "string" }
         }
       },
       "TrialConfig": {

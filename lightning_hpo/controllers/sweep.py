@@ -33,9 +33,11 @@ class SweepController(Controller):
             self.tensorboard_sweep_id = [c.sweep_id for c in self.db.get(TensorboardConfig)]
 
         for tensorboard in self.db.get(TensorboardConfig):
-            if tensorboard.url and tensorboard.sweep_id in self.r:
-                self.r[tensorboard.sweep_id]._sweep_config.url = tensorboard.url
-                self.r[tensorboard.sweep_id].has_updated = True
+            if tensorboard.sweep_id in self.r:
+                sweep = self.r[tensorboard.sweep_id]
+                if tensorboard.url != sweep._sweep_config.url:
+                    sweep._sweep_config.url = tensorboard.url
+                    sweep.has_updated = True
 
         # 2: Create the Sweeps
         for sweep in sweeps:
