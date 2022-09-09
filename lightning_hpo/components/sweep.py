@@ -130,6 +130,7 @@ class Sweep(LightningFlow, ControllerResource):
 
                 logger_url = self._logger.get_url(trial_id)
                 if logger_url is not None and self.logger_url != logger_url:
+                    breakpoint()
                     self.logger_url = logger_url
 
                 objective.run(
