@@ -1,12 +1,10 @@
 import { useSnackbar } from 'lightning-ui/src/design-system/components';
 import React, { useEffect } from 'react';
 import { AppClient } from '../generated';
+import { getUrl } from '../utilities';
 
 export const appClient = new AppClient({
-  BASE:
-    window.location != window.parent.location
-      ? document.referrer.replace(/\/$/, '').replace('/view/undefined', '')
-      : document.location.href.replace(/\/$/, '').replace('/view/undefined', ''),
+  BASE: getUrl(),
 });
 
 const clientEndpoints = {
