@@ -46,15 +46,17 @@ def test_notebook(monkeypatch):
     response = notebook_controller.stop_notebook(StopNotebookConfig(name=config.notebook_name))
     assert "The notebook `a` has been stopped."
     config = NotebookConfig(**list(notebook_controller.db.data.values())[0])
-    assert config.stage == Stage.STOPPING
-    assert config.desired_stage == Stage.STOPPED
+    assert notebook_controller.r["a"].stage == Stage.STOPPED
+    assert notebook_controller.r["a"].desired_stage == Stage.STOPPED
+    config.stage = Stage.STOPPED
+    config.desired_stage = Stage.STOPPED
 
     response = notebook_controller.stop_notebook(StopNotebookConfig(name=config.notebook_name))
     assert "The notebook `a` is already stopped."
 
     notebook_controller.r["a"].has_stopped = True
     notebook_controller.run("a")
-    assert notebook_controller.r["a"].stage == Stage.STOPPED
+    assert notebook_controller.r["a"].stage == Stage.PENDING
 
     del notebook_controller.r["a"]
     response = notebook_controller.stop_notebook(StopNotebookConfig(name=config.notebook_name))
