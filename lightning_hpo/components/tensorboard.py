@@ -10,16 +10,25 @@ from lightning.app.storage.path import filesystem
 from lightning.app.utilities.component import _is_work_context
 
 from lightning_hpo.commands.tensorboard.stop import TensorboardConfig
-from lightning_hpo.utilities.enum import Status
+from lightning_hpo.controllers.controller import ControllerResource
+from lightning_hpo.utilities.enum import Stage
 
 
-class Tensorboard(LightningWork):
+class Tensorboard(LightningWork, ControllerResource):
+
+    model = TensorboardConfig
+
     def __init__(self, *args, drive: Drive, sleep: int = 5, config: TensorboardConfig, **kwargs):
         super().__init__(*args, parallel=True, **kwargs)
         self.drive = drive
         self.sleep = sleep
-        self.has_updated = False
-        self._config = config
+        self.id = config.id
+        self.sweep_id = config.sweep_id
+        self.shared_folder = config.shared_folder
+        self.stage = config.stage
+        self.desired_stage = config.desired_stage
+
+        self.config = config.dict()
 
     def run(self):
         use_localhost = "LIGHTNING_APP_STATE_URL" not in os.environ
@@ -32,7 +41,7 @@ class Tensorboard(LightningWork):
         cmd = f"tensorboard --logdir={local_folder} --host {self.host} --port {self.port}"
         self._process = Popen(cmd, shell=True, env=os.environ)
 
-        self.has_updated = True
+        self.stage = Stage.RUNNING
         fs = filesystem()
         root_folder = str(self.drive.drive_root)
 
@@ -63,13 +72,7 @@ class Tensorboard(LightningWork):
             assert self._process
             self._process.kill()
         else:
-            self._config.status = Status.NOT_STARTED
+            self.stage = Stage.NOT_STARTED
 
-    @property
-    def updates(self):
-        if self.url != "" and self.has_updated:
-            self._config.status = Status.RUNNING
-            self._config.url = self.url
-            self.has_updated = False
-            return [self._config]
-        return []
+    def on_collect_model(self, model_dict):
+        model_dict["url"] = self.url

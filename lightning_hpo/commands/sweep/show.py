@@ -26,7 +26,7 @@ def _show_sweeps(sweeps: List[SweepConfig]):
     for sweep in sweeps:
         table.add_row(
             sweep.sweep_id,
-            sweep.status,
+            sweep.stage,
             sweep.framework,
             sweep.cloud_compute,
             str(sweep.n_trials),
@@ -51,7 +51,7 @@ def _show_sweep(sweep: SweepConfig):
 
     table.add_row(
         sweep.sweep_id,
-        sweep.status,
+        sweep.stage,
         sweep.framework,
         sweep.cloud_compute,
         str(sweep.n_trials),
@@ -74,7 +74,7 @@ def _show_sweep(sweep: SweepConfig):
     for idx, trial in sweep.trials.items():
         table.add_row(
             str(idx),
-            str(trial.status),
+            str(trial.stage),
             str(round(trial.best_model_score, 2) if trial.best_model_score else None),
             str({k: round(v, 5) for k, v in trial.params.params.items()}),
             str(trial.monitor),

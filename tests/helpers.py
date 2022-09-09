@@ -2,6 +2,7 @@ from uuid import uuid4
 
 from lightning_hpo.components.servers.db.connector import DatabaseConnector
 from lightning_hpo.components.servers.db.models import GeneralModel
+from lightning_hpo.utilities.utils import get_primary_key
 
 
 class MockResponse:
@@ -23,21 +24,24 @@ class MockSession:
     def post(self, url, data):
         general = GeneralModel.parse_raw(data)
         data = general.convert_to_model()
-        if getattr(data, general.id) is None:
-            setattr(data, general.id, str(uuid4()))
-        self.data[getattr(data, general.id)] = data.dict()
+        primary_key = get_primary_key(data.__class__)
+        if getattr(data, primary_key) is None:
+            setattr(data, primary_key, str(uuid4()))
+        self.data[getattr(data, primary_key)] = data.dict()
         return MockResponse(data=None)
 
     def put(self, url, data):
         general = GeneralModel.parse_raw(data)
         data = general.convert_to_model()
-        self.data[getattr(data, general.id)] = data.dict()
+        primary_key = get_primary_key(data.__class__)
+        self.data[getattr(data, primary_key)] = data.dict()
         return MockResponse(data=None)
 
     def delete(self, url, data):
         general = GeneralModel.parse_raw(data)
         data = general.convert_to_model()
-        del self.data[getattr(data, general.id)]
+        primary_key = get_primary_key(data.__class__)
+        del self.data[getattr(data, primary_key)]
         return MockResponse(data=None)
 
 

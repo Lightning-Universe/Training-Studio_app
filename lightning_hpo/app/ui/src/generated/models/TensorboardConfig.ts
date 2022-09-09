@@ -6,7 +6,7 @@ export type TensorboardConfig = {
     id?: number;
     sweep_id: string;
     shared_folder: string;
-    status?: string;
-    desired_state?: string;
+    stage?: string;
+    desired_stage?: string;
     url?: string;
 };

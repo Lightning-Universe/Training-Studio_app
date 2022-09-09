@@ -1,37 +1,41 @@
 from subprocess import Popen
 from typing import Optional
 
+from lightning import CloudCompute
 from lightning.app.utilities.component import _is_work_context
 from lit_jupyter import JupyterLab
 
 from lightning_hpo.commands.notebook.run import NotebookConfig
-from lightning_hpo.utilities.enum import Status
+from lightning_hpo.controllers.controller import ControllerResource
+from lightning_hpo.utilities.enum import Stage
 
 
-class JupyterLab(JupyterLab):
-    def __init__(self, *args, config: NotebookConfig, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._config = config
-        self.has_updated = False
+class JupyterLab(JupyterLab, ControllerResource):
+
+    model = NotebookConfig
+
+    def __init__(self, config: NotebookConfig, **kwargs):
+        super().__init__(cloud_compute=CloudCompute(name=config.cloud_compute), **kwargs)
         self._process: Optional[Popen] = None
+
+        self.notebook_name = config.notebook_name
+        self.requirements = config.requirements
+        self.cloud_compute = config.cloud_compute
+        self.desired_stage = config.desired_stage
+        self.stage = config.stage
 
     def run(self, *args, **kwargs):
         super().run()
-        self.has_updated = True
+        self.stage = Stage.RUNNING
 
     # TODO: Cleanup exit mechanism in lightning.
     def on_exit(self):
         if _is_work_context():
             assert self._process
             self._process.kill()
-        else:
-            self._config.status = Status.NOT_STARTED
 
-    @property
-    def updates(self):
-        if self.url != "" and self.has_updated:
-            self._config.status = Status.RUNNING
-            self._config.url = self.url
-            self.has_updated = False
-            return [self._config]
-        return []
+    def on_collect_model(self, model_dict):
+        if self.url:
+            model_dict["url"] = self.url
+        else:
+            model_dict["url"] = None

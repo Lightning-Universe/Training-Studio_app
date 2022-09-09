@@ -13,7 +13,7 @@ from lightning.app.utilities.commands import ClientCommand
 from sqlalchemy import Column
 from sqlmodel import Field, SQLModel
 
-from lightning_hpo.utilities.enum import Status
+from lightning_hpo.utilities.enum import Stage
 from lightning_hpo.utilities.utils import pydantic_column_type
 
 
@@ -32,20 +32,19 @@ class TrialConfig(SQLModel, table=False):
     best_model_score: Optional[float]
     monitor: Optional[str]
     best_model_path: Optional[str]
-    status: str = Status.NOT_STARTED
+    stage: str = Stage.NOT_STARTED
     params: Params = Field(sa_column=Column(pydantic_column_type(Params)))
     exception: Optional[str]
 
     @property
     def pruned(self) -> bool:
-        return self.status == Status.PRUNED
+        return self.stage == Stage.PRUNED
 
 
 class SweepConfig(SQLModel, table=True):
     __table_args__ = {"extend_existing": True}
 
-    id: Optional[int] = Field(default=None, primary_key=True)
-    sweep_id: str
+    sweep_id: str = Field(primary_key=True)
     script_path: str
     n_trials: int
     simultaneous_trials: int
@@ -55,14 +54,15 @@ class SweepConfig(SQLModel, table=True):
     distributions: Dict[str, Distributions] = Field(
         ..., sa_column=Column(pydantic_column_type(Dict[str, Distributions]))
     )
-    url: Optional[str] = None
+    logger_url: str = ""
     trials: Dict[int, TrialConfig] = Field(..., sa_column=Column(pydantic_column_type(Dict[int, TrialConfig])))
     framework: str
     cloud_compute: str
     num_nodes: int = 1
     logger: str
     direction: str
-    status: str = Status.NOT_STARTED
+    stage: str = Stage.NOT_STARTED
+    desired_stage: str = Stage.RUNNING
 
     @property
     def num_trials(self) -> int:
