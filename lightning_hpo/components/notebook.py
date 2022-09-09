@@ -20,7 +20,6 @@ class JupyterLab(JupyterLab, ControllerResource):
 
         self.notebook_name = config.notebook_name
         self.requirements = config.requirements
-        self.cloud_compute = config.cloud_compute
         self.desired_stage = config.desired_stage
         self.stage = config.stage
 
@@ -35,6 +34,7 @@ class JupyterLab(JupyterLab, ControllerResource):
             self._process.kill()
 
     def on_collect_model(self, model_dict):
+        model_dict["cloud_compute"] = self.cloud_compute.name
         if self.url:
             model_dict["url"] = self.url
         else:
