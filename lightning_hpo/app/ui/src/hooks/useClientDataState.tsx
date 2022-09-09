@@ -20,19 +20,28 @@ const clientDataContexts = {
 };
 
 export const ClientDataProvider = (props: { endpoint: keyof typeof clientEndpoints; children: React.ReactNode }) => {
+  const [isErrorState, setIsErrorState] = React.useState(false);
   const [state, dispatch] = React.useReducer((state: any[], newValue: any[]) => newValue, []);
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     const post = () => {
       clientEndpoints[props.endpoint](appClient)
-        .then(data => dispatch(data))
+        .then(data => {
+          if (isErrorState) {
+            setIsErrorState(false);
+          }
+          dispatch(data);
+        })
         .catch(error => {
-          enqueueSnackbar({
-            title: 'Error Fetching Data',
-            children: 'Try reloading the page',
-            severity: 'error',
-          });
+          if (!isErrorState) {
+            setIsErrorState(true);
+            enqueueSnackbar({
+              title: 'Error Fetching Data',
+              children: 'Try reloading the page',
+              severity: 'error',
+            });
+          }
         });
     };
 
@@ -43,7 +52,7 @@ export const ClientDataProvider = (props: { endpoint: keyof typeof clientEndpoin
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [isErrorState]);
 
   const context = clientDataContexts[props.endpoint];
   return <context.Provider value={state}>{props.children}</context.Provider>;
