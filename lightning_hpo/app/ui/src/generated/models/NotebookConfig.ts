@@ -3,11 +3,10 @@
 /* eslint-disable */
 
 export type NotebookConfig = {
-    id?: string;
-    name: string;
+    notebook_name: string;
     requirements: Array<string>;
     cloud_compute: string;
-    status?: string;
-    desired_state?: string;
+    stage?: string;
+    desired_stage?: string;
     url?: string;
 };

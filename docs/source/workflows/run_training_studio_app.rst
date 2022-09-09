@@ -39,16 +39,6 @@ If you want to enable the `Weights And Biases Logger <https://wandb.ai/>`_, foll
 
 .. note:: This is only temporary as some changes are being released to PiPy
 
-First, you would need to install the **lightning** in editable mode on the lightning ``small_fixes`` branch.
-
-.. code-block::
-
-   git clone https://github.com/Lightning-AI/lightning
-   git checkout small_fixes
-   pip install -e .
-
-Secondly, you would need to set the **PACKAGE_LIGHTNING=1** environment variable to package the ``small_fixes`` branch in the cloud.
-
 .. code-block::
 
    PACKAGE_LIGHTNING=1 lightning run app training_studio_app.py --cloud

@@ -11,7 +11,7 @@ from lightning_hpo.components.servers.db import server
 from lightning_hpo.components.servers.db.server import general_delete, general_get, general_post, GeneralModel
 from lightning_hpo.components.sweep import Sweep, SweepConfig
 from lightning_hpo.controllers.sweep import SweepController
-from lightning_hpo.utilities.enum import Status
+from lightning_hpo.utilities.enum import Stage
 
 
 def test_delete_sweeps_server(monkeypatch, tmpdir):
@@ -21,7 +21,7 @@ def test_delete_sweeps_server(monkeypatch, tmpdir):
 
     sweep_config = SweepConfig(**data[0])
     trial = deepcopy(sweep_config.trials[0])
-    trial.status = Status.RUNNING
+    trial.stage = Stage.RUNNING
     sweep_config.trials[1] = trial
     sweep_config.logger = "streamlit"
     sweep = Sweep.from_config(config=sweep_config)
@@ -34,11 +34,11 @@ def test_delete_sweeps_server(monkeypatch, tmpdir):
     assert result == "Deleted the sweep `thomas-cb8f69f0`"
     assert sweep_controller.r == {}
 
-    general = GeneralModel.from_obj(db.delete._mock_call_args[0][0], id="sweep_id")
+    general = GeneralModel.from_obj(db.delete._mock_call_args[0][0])
     engine = create_engine(f"sqlite:///{tmpdir}/database.db", echo=True)
     SQLModel.metadata.create_all(engine)
     monkeypatch.setattr(server, "engine", engine)
-    general_post(GeneralModel.from_obj(sweep_config, id="sweep_id"))
+    general_post(GeneralModel.from_obj(sweep_config))
     assert len(general_get(GeneralModel.from_cls(SweepConfig))) == 1
     general_delete(general)
     assert general_get(GeneralModel.from_cls(SweepConfig)) == []

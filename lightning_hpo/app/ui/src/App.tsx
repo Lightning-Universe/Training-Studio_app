@@ -43,36 +43,41 @@ function Notebooks() {
 
   const header = ['Status', 'Name', 'Cloud compute', 'URL', 'More'];
 
-  const rows = notebooks.map(notebook => [
-    <Status status={notebook.status ? statusToEnum[notebook.status] : StatusEnum.NOT_STARTED} />,
-    notebook.name,
-    notebook.cloud_compute,
-    <Link href={notebook.url} target="_blank" underline="hover">
-      <Stack direction="row" alignItems="center" spacing={0.5}>
-        <OpenInNewIcon sx={{ fontSize: 20 }} />
-        <Typography variant="subtitle2">Open</Typography>
-      </Stack>
-    </Link>,
-    <MoreMenu
-      id={notebook.name}
-      items={[
-        StartStopMenuItem(
-          notebook.status || '',
-          () => {
-            appClient.appClientCommand.runNotebookCommandRunNotebookPost({
-              id: notebook.id,
-              name: notebook.name,
-              requirements: notebook.requirements,
-              cloud_compute: notebook.cloud_compute,
-            });
-          },
-          () => {
-            appClient.appClientCommand.stopNotebookCommandStopNotebookPost({ name: notebook.name });
-          },
-        ),
-      ]}
-    />,
-  ]);
+  const rows = notebooks.map(notebook => {
+    const link = (
+      <Link href={notebook.url} target="_blank" underline="hover">
+        <Stack direction="row" alignItems="center" spacing={0.5}>
+          <OpenInNewIcon sx={{ fontSize: 20 }} />
+          <Typography variant="subtitle2">Open</Typography>
+        </Stack>
+      </Link>
+    );
+
+    return [
+      <Status status={notebook.stage ? statusToEnum[notebook.stage] : StatusEnum.NOT_STARTED} />,
+      notebook.notebook_name,
+      notebook.cloud_compute,
+      notebook.url ? link : null,
+      <MoreMenu
+        id={notebook.notebook_name}
+        items={[
+          StartStopMenuItem(
+            notebook.stage || '',
+            () => {
+              appClient.appClientCommand.runNotebookCommandRunNotebookPost({
+                notebook_name: notebook.notebook_name,
+                requirements: notebook.requirements,
+                cloud_compute: notebook.cloud_compute,
+              });
+            },
+            () => {
+              appClient.appClientCommand.stopNotebookCommandStopNotebookPost({ name: notebook.notebook_name });
+            },
+          ),
+        ]}
+      />,
+    ];
+  });
 
   return <Table header={header} rows={rows} />;
 }

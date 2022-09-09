@@ -28,7 +28,15 @@ Install with pip
     .. code:: bash
 
         git clone https://github.com/Lightning-AI/lightning-hpo
+
+
         cd lightning-hpo
+
+
         pip install -r requirements.txt -r requirements/test.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
+
+
         pip install git+https://github.com/Lightning-AI/lightning.git@small_fixes
+
+
         pip install -e .

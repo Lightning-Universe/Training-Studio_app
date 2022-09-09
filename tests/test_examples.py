@@ -7,11 +7,11 @@ from lightning.app.testing import application_testing, LightningTestApp
 
 class LightningHPOTestApp(LightningTestApp):
     def __init__(self, root, n_trials=4, **kwargs):
-        root._sweep_config.n_trials = n_trials
+        root.n_trials = n_trials
         super().__init__(root, **kwargs)
 
     def on_before_run_once(self):
-        if self.root._sweep_config.trials_done == self.root._sweep_config.n_trials:
+        if self.root.trials_done == self.root.n_trials:
             return True
 
 

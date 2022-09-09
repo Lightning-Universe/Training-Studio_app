@@ -25,7 +25,7 @@ const statusToEnum = {
 
 function trialToRows(trials: Record<string, TrialConfig>) {
   return Object.entries(trials).map(entry => [
-    <Status status={entry[1].status ? statusToEnum[entry[1].status] : StatusEnum.NOT_STARTED} />,
+    <Status status={entry[1].stage ? statusToEnum[entry[1].stage] : StatusEnum.NOT_STARTED} />,
     entry[0],
     String(entry[1].best_model_score),
     ...Object.entries(entry[1].params.params).map(value => String(value[1])),
@@ -62,16 +62,16 @@ function runTensorboard(tensorboardConfig?: TensorboardConfig) {
     id: tensorboardConfig.id,
     sweep_id: tensorboardConfig.sweep_id,
     shared_folder: tensorboardConfig.shared_folder,
-    status: StatusEnum.RUNNING.toLowerCase(),
-    desired_state: StatusEnum.RUNNING.toLowerCase(),
+    stage: StatusEnum.RUNNING.toLowerCase(),
+    desired_stage: StatusEnum.RUNNING.toLowerCase(),
     url: undefined,
   });
 }
 
 function createLoggerControl(tensorboardConfig?: TensorboardConfig) {
-  const status = tensorboardConfig?.status ? statusToEnum[tensorboardConfig.status] : StatusEnum.NOT_STARTED;
+  const status = tensorboardConfig?.stage ? statusToEnum[tensorboardConfig.stage] : StatusEnum.NOT_STARTED;
   if (status == StatusEnum.RUNNING) {
-    return <Button onClick={_ => stopTensorboard(tensorboardConfig)} text="Stop" />;
+    return tensorboardConfig.url ? <Button onClick={_ => stopTensorboard(tensorboardConfig)} text="Stop" /> : null;
   } else if (status == StatusEnum.STOPPED) {
     return <Button onClick={_ => runTensorboard(tensorboardConfig)} text="Run" />;
   } else {
@@ -109,15 +109,15 @@ export function Sweeps() {
       sweep.sweep_id in tensorboardIdsToStatuses ? tensorboardIdsToStatuses[sweep.sweep_id] : null;
 
     return [
-      <Status status={sweep.status ? statusToEnum[sweep.status] : StatusEnum.NOT_STARTED} />,
+      <Status status={sweep.stage ? statusToEnum[sweep.stage] : StatusEnum.NOT_STARTED} />,
       sweep.sweep_id,
       sweep.n_trials,
       sweep.trials_done,
       sweep.framework,
       sweep.cloud_compute,
       sweep.direction,
-      createLoggerUrl(sweep.url),
-      createLoggerControl(tensorboardConfig),
+      createLoggerUrl(tensorboardConfig ? tensorboardConfig.url : sweep.logger_url),
+      tensorboardConfig ? createLoggerControl(tensorboardConfig) : null,
       <IconButton id={sweep.sweep_id + '-button'}>
         <MoreHorizIcon sx={{ fontSize: 16 }} />
       </IconButton>,

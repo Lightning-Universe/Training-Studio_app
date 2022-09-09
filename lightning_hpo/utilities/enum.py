@@ -1,4 +1,4 @@
-class Status:
+class Stage:
     NOT_STARTED = "not_started"
     PENDING = "pending"
     RUNNING = "running"
@@ -6,3 +6,4 @@ class Status:
     SUCCEEDED = "succeeded"
     FAILED = "failed"
     STOPPED = "stopped"
+    STOPPING = "stopping"

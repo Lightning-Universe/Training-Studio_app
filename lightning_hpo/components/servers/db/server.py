@@ -8,6 +8,7 @@ from sqlmodel import create_engine, select, Session, SQLModel
 from uvicorn import run
 
 from lightning_hpo.components.servers.db.models import GeneralModel
+from lightning_hpo.utilities.utils import get_primary_key
 
 engine = None
 
@@ -30,10 +31,10 @@ def general_post(config: GeneralModel):
 
 def general_put(config: GeneralModel):
     with Session(engine) as session:
-        assert config.id
         update_data = config.convert_to_model()
-        identifier = getattr(update_data.__class__, config.id, None)
-        statement = select(update_data.__class__).where(identifier == getattr(update_data, config.id))
+        primary_key = get_primary_key(update_data.__class__)
+        identifier = getattr(update_data.__class__, primary_key, None)
+        statement = select(update_data.__class__).where(identifier == getattr(update_data, primary_key))
         results = session.exec(statement)
         result = results.one()
         for k, v in vars(update_data).items():
@@ -48,10 +49,10 @@ def general_put(config: GeneralModel):
 
 def general_delete(config: GeneralModel):
     with Session(engine) as session:
-        assert config.id
         update_data = config.convert_to_model()
-        identifier = getattr(update_data.__class__, config.id, None)
-        statement = select(update_data.__class__).where(identifier == getattr(update_data, config.id))
+        primary_key = get_primary_key(update_data.__class__)
+        identifier = getattr(update_data.__class__, primary_key, None)
+        statement = select(update_data.__class__).where(identifier == getattr(update_data, primary_key))
         results = session.exec(statement)
         result = results.one()
         session.delete(result)

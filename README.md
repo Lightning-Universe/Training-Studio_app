@@ -44,9 +44,13 @@ Clone and install lightning-hpo.
 
 ```bash
 git clone https://github.com/Lightning-AI/lightning-hpo
+
 cd lightning-hpo
+
 pip install -r requirements.txt -r requirements/test.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
+
 pip install git+https://github.com/Lightning-AI/lightning.git@small_fixes
+
 pip install -e .
 ```
 
@@ -317,7 +321,7 @@ cd examples/scripts
 ```bash
 lightning run sweep train.py \
   --n_trials=10 \
-  -simultaneous_trials=3 \
+  --simultaneous_trials=3 \
   --cloud_compute=cpu-medium \
   --logger="tensorboard" \
   --direction=maximize \

@@ -61,16 +61,21 @@ Here is the output of the command:
 
 In this example, we are going to run a Sweep from this `train.py <https://github.com/Lightning-AI/lightning-hpo/blob/master/examples/scripts/train.py>`_ file.
 
+Download the training script as follows:
+
+.. code-block::
+
+   wget https://raw.githubusercontent.com/Lightning-AI/lightning-hpo/master/examples/scripts/train.py > train.py
+
+
 Here is the command line with the hyper-parameters.
 
 .. code-block::
 
    lightning run sweep train.py \
       --n_trials=10 \
-      -simultaneous_trials=3 \
+      --simultaneous_trials=3 \
       --cloud_compute=cpu-medium \
-
-      # HyperParameters with their distribution
       --model.lr="log_uniform(0.001, 0.1)" \
       --model.gamma="uniform(0.5, 0.8)" \
       --data.batch_size="categorical([32, 64])"

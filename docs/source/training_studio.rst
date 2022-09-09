@@ -32,8 +32,6 @@ To launch the Lightning Training Studio App in the cloud, simply run:
 
 .. code-block::
 
-   git clone https://github.com/Lightning-AI/lightning-hpo
-   cd lightning-hpo
    PACKAGE_LIGHTNING=1 lightning run app training_studio_app.py --cloud
 
 
