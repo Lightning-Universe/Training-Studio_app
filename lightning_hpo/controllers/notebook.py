@@ -36,7 +36,6 @@ class NotebookController(Controller):
             self.db.put(config)
             return f"The notebook `{config.name}` has been updated."
 
-        # Populate config with defaults
         self.db.post(config)
         return f"The notebook `{config.name}` has been created."
 
