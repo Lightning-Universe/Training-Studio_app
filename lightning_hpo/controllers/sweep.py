@@ -1,8 +1,5 @@
-from time import sleep
 from typing import List
 
-import requests
-from lightning.app.frontend import StreamlitFrontend
 from lightning.app.storage import Drive
 from lightning.app.structures import Dict
 
@@ -12,7 +9,6 @@ from lightning_hpo.commands.sweep.run import RunSweepCommand, SweepConfig
 from lightning_hpo.commands.sweep.show import ShowSweepsCommand
 from lightning_hpo.commands.sweep.stop import StopSweepCommand, StopSweepConfig
 from lightning_hpo.commands.tensorboard.stop import TensorboardConfig
-from lightning_hpo.components.servers.db.models import GeneralModel
 from lightning_hpo.controllers.controller import Controller
 from lightning_hpo.loggers import LoggerType
 from lightning_hpo.utilities.enum import State
@@ -103,56 +99,3 @@ class SweepController(Controller):
             {"show sweeps": ShowSweepsCommand(self.show_sweeps)},
             {"stop sweep": StopSweepCommand(self.stop_sweep)},
         ]
-
-    def configure_layout(self):
-        return StreamlitFrontend(render_fn=render_fn)
-
-
-def render_fn(state):
-    import streamlit as st
-    import streamlit.components.v1 as components
-
-    if not state.db_url:
-        sleep(1)
-        st.experimental_rerun()
-
-    resp = requests.get(state.db_url + "/general/", data=GeneralModel.from_cls(SweepConfig).json())
-    sweeps: List[SweepConfig] = resp.json()
-
-    if not sweeps:
-        st.header("You haven't launched any sweeps yet.")
-        st.write("Here is an example to submit a sweep.")
-        st.code(
-            'lightning run sweep train.py --n_trials=2 --num_nodes=2 --model.lr="log_uniform(0.001, 0.1)" --trainer.max_epochs=5 --trainer.callbacks=ModelCheckpoint'
-        )
-        return
-
-    user_sweeps = {}
-    for sweep in sweeps:
-        username, sweep_id = sweep["sweep_id"].split("-")
-        if username not in user_sweeps:
-            user_sweeps[username] = {}
-        user_sweeps[username][sweep_id] = sweep
-
-    user_tabs = st.tabs(user_sweeps)
-    for tab, username in zip(user_tabs, user_sweeps):
-        with tab:
-            for sweep_id, sweep in user_sweeps[username].items():
-                with st.expander(f"{sweep_id} / {sweep['status']}"):
-                    trials_tab, logging_tab = st.tabs(["Trials", "Logging"])
-                    with trials_tab:
-                        for trial_id, trial in sweep["trials"].items():
-                            if st.checkbox(f"Trial {trial_id}", key=f"checkbox_{trial_id}_{sweep_id}"):
-                                st.json(
-                                    {
-                                        "params": trial["params"]["params"],
-                                        "monitor": trial["monitor"],
-                                        "best_model_score": trial["best_model_score"],
-                                    }
-                                )
-                            with logging_tab:
-                                url = trial.get("url", None)
-                                if url:
-                                    components.html(
-                                        f'<a href="{url}" target="_blank">Weights & Biases URL</a>', height=50
-                                    )

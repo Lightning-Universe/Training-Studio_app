@@ -121,7 +121,7 @@ Interact with Notebook
    :header: Stop or delete a Notebook
    :description: Learn how to stop or delete an existing notebook
    :col_css: col-md-4
-   :button_link: workflows/stop_or_delete_notebooks.html
+   :button_link: workflows/stop_or_delete_notebook.html
    :height: 180
 
 .. raw:: html

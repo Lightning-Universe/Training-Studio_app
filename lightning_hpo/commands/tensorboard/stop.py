@@ -2,13 +2,17 @@ from typing import Optional
 
 from sqlmodel import Field, SQLModel
 
-from lightning_hpo.utilities.enum import State
+from lightning_hpo.utilities.enum import Stage
 
 
 class TensorboardConfig(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     sweep_id: str
     shared_folder: str
-    state: str = State.NOT_STARTED
-    desired_state: str = State.RUNNING
+    stage: str = Stage.NOT_STARTED
+    desired_stage: str = Stage.RUNNING
     url: Optional[str] = None
+
+
+class StopTensorboardConfig(SQLModel):
+    sweep_id: str

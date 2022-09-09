@@ -57,3 +57,42 @@ You can simply start a notebook as follows:
    You are connected to the local Lightning App.
    The notebook `my_notebook` has been created.
    Your command execution was successful
+
+----
+
+**********
+Next Steps
+**********
+
+.. raw:: html
+
+   <br />
+   <div class="display-card-container">
+      <div class="row">
+
+.. displayitem::
+   :header: Show Notebooks
+   :description: Learn how to view the existing notebooks
+   :col_css: col-md-4
+   :button_link: show_notebooks.html
+   :height: 180
+
+.. displayitem::
+   :header: Stop or delete a Notebook
+   :description: Learn how to stop or delete an existing notebook
+   :col_css: col-md-4
+   :button_link: stop_or_delete_notebook.html
+   :height: 180
+
+.. displayitem::
+   :header: Run a Sweep
+   :description: Learn how to run a Sweep with your own python script
+   :col_css: col-md-4
+   :button_link: run_sweep.html
+   :height: 180
+
+
+.. raw:: html
+
+      </div>
+   </div>

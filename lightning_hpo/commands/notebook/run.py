@@ -5,7 +5,7 @@ from lightning.app.utilities.commands import ClientCommand
 from sqlalchemy import Column
 from sqlmodel import Field, SQLModel
 
-from lightning_hpo.utilities.enum import State
+from lightning_hpo.utilities.enum import Stage
 from lightning_hpo.utilities.utils import pydantic_column_type
 
 
@@ -16,8 +16,8 @@ class NotebookConfig(SQLModel, table=True):
     notebook_name: str = Field(primary_key=True)
     requirements: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
     cloud_compute: str
-    state: str = State.NOT_STARTED
-    desired_state: str = State.RUNNING
+    stage: str = Stage.NOT_STARTED
+    desired_stage: str = Stage.RUNNING
     url: Optional[str] = None
 
 

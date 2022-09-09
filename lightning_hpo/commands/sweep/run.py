@@ -13,7 +13,7 @@ from lightning.app.utilities.commands import ClientCommand
 from sqlalchemy import Column
 from sqlmodel import Field, SQLModel
 
-from lightning_hpo.utilities.enum import State
+from lightning_hpo.utilities.enum import Stage
 from lightning_hpo.utilities.utils import pydantic_column_type
 
 
@@ -32,13 +32,13 @@ class TrialConfig(SQLModel, table=False):
     best_model_score: Optional[float]
     monitor: Optional[str]
     best_model_path: Optional[str]
-    stage: str = State.NOT_STARTED
+    stage: str = Stage.NOT_STARTED
     params: Params = Field(sa_column=Column(pydantic_column_type(Params)))
     exception: Optional[str]
 
     @property
     def pruned(self) -> bool:
-        return self.stage == State.PRUNED
+        return self.stage == Stage.PRUNED
 
 
 class SweepConfig(SQLModel, table=True):
@@ -61,7 +61,8 @@ class SweepConfig(SQLModel, table=True):
     num_nodes: int = 1
     logger: str
     direction: str
-    state: str = State.NOT_STARTED
+    stage: str = Stage.NOT_STARTED
+    desired_stage: str = Stage.RUNNING
 
     @property
     def num_trials(self) -> int:
@@ -204,7 +205,7 @@ class RunSweepCommand(ClientCommand):
 
         repo = CustomLocalSourceCodeDir(path=Path(hparams.script_path).parent.resolve())
         # TODO: Resolve this bug.
-        url = self.state.file_server._state["vars"]["_url"]
+        url = self.Stage.file_server._state["vars"]["_url"]
         repo.package()
         repo.upload(url=f"{url}/uploadfile/{sweep_id}")
 
