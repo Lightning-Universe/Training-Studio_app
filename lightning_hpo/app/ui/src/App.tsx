@@ -40,6 +40,7 @@ function Notebooks() {
         <OpenInNewIcon sx={{ fontSize: 20 }} />
         <Typography variant="subtitle2">Open</Typography>
       </Stack>
+      ,
     </Link>,
     <MoreMenu
       id={notebook.notebook_name}

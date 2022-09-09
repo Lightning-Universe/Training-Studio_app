@@ -7,6 +7,7 @@ from lit_jupyter import JupyterLab
 
 from lightning_hpo.commands.notebook.run import NotebookConfig
 from lightning_hpo.controllers.controller import ControllerResource
+from lightning_hpo.utilities.enum import Stage
 
 
 class JupyterLab(JupyterLab, ControllerResource):
@@ -25,6 +26,7 @@ class JupyterLab(JupyterLab, ControllerResource):
 
     def run(self, *args, **kwargs):
         super().run()
+        self.stage = Stage.RUNNING
 
     # TODO: Cleanup exit mechanism in lightning.
     def on_exit(self):

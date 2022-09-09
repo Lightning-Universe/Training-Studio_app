@@ -25,12 +25,14 @@ class NotebookController(Controller):
                     kernel="python",
                     config=config,
                 )
+                # TODO: Without this the work keeps getting recreated
+                self.r[config.notebook_name].stage = Stage.PENDING
 
     def run_notebook(self, config: NotebookConfig) -> str:
         configs = self.db.get()
         if any(existing_config.notebook_name == config.notebook_name for existing_config in configs):
             # Update config in the database
-            config.status = Stage.PENDING
+            config.stage = Stage.PENDING
             self.db.put(config)
             return f"The notebook `{config.notebook_name}` has been updated."
 
