@@ -2,7 +2,7 @@ import { useSnackbar } from 'lightning-ui/src/design-system/components';
 import React, { useEffect } from 'react';
 import { AppClient } from '../generated';
 
-const appClient = new AppClient({
+export const appClient = new AppClient({
   BASE:
     window.location != window.parent.location
       ? document.referrer.replace(/\/$/, '').replace('/view/undefined', '')

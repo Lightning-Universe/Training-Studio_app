@@ -16,16 +16,26 @@ class NotebookController(Controller):
 
     def on_reconcile_start(self, configs: List[NotebookConfig]):
         for config in configs:
-            if config.name not in self.r and config.desired_state == Status.RUNNING:
+            if config.desired_state == Status.RUNNING:
+                # If the work is already there and status is pending then we don't need to recreate it
+                if config.name in self.r and self.r[config.name]._config.status in (Status.PENDING, Status.RUNNING):
+                    return
                 self.r[config.name] = JupyterLab(
                     kernel="python",
                     cloud_compute=CloudCompute(name=config.cloud_compute),
                     config=config,
                 )
+                # TODO: Without this the work keeps getting recreated
+                self.r[config.name]._config.status = Status.PENDING
 
     def run_notebook(self, config: NotebookConfig) -> str:
-        if config.name in self.r:
-            return f"The notebook `{config.name}` already exists."
+        configs = self.db.get()
+        if any(existing_config.name == config.name for existing_config in configs):
+            # Update config in the database
+            config.status = Status.PENDING
+            self.db.put(config)
+            return f"The notebook `{config.name}` has been updated."
+
         self.db.post(config)
         return f"The notebook `{config.name}` has been created."
 

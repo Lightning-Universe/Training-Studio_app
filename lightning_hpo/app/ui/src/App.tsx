@@ -1,15 +1,17 @@
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { Stack, Typography } from '@mui/material';
-import { IconButton, Link, SnackbarProvider, Table } from 'lightning-ui/src/design-system/components';
+import { Typography } from '@mui/material';
+import { Link, SnackbarProvider, Stack, Table } from 'lightning-ui/src/design-system/components';
 import ThemeProvider from 'lightning-ui/src/design-system/theme';
 import Status, { StatusEnum } from 'lightning-ui/src/shared/components/Status';
+import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter } from 'react-router-dom';
+import MoreMenu from './components/MoreMenu';
+import StartStopMenuItem from './components/StartStopMenuItem';
 import { Sweeps } from './components/SweepTable';
 import Tabs, { TabItem } from './components/Tabs';
 import { NotebookConfig } from './generated';
-import useClientDataState, { ClientDataProvider } from './hooks/useClientDataState';
+import useClientDataState, { appClient, ClientDataProvider } from './hooks/useClientDataState';
 import useSelectedTabState, { SelectedTabProvider } from './hooks/useSelectedTabState';
 
 const queryClient = new QueryClient();
@@ -39,9 +41,25 @@ function Notebooks() {
         <Typography variant="subtitle2">Open</Typography>
       </Stack>
     </Link>,
-    <IconButton id={notebook.name + '-button'}>
-      <MoreHorizIcon sx={{ fontSize: 16 }} />
-    </IconButton>,
+    <MoreMenu
+      id={notebook.name}
+      items={[
+        StartStopMenuItem(
+          notebook.status || '',
+          () => {
+            appClient.appClientCommand.runNotebookCommandRunNotebookPost({
+              id: notebook.id,
+              name: notebook.name,
+              requirements: notebook.requirements,
+              cloud_compute: notebook.cloud_compute,
+            });
+          },
+          () => {
+            appClient.appClientCommand.stopNotebookCommandStopNotebookPost({ name: notebook.name });
+          },
+        ),
+      ]}
+    />,
   ]);
 
   return <Table header={header} rows={rows} />;
