@@ -50,10 +50,10 @@ class NotebookController(Controller):
             if model.stage != Stage.STOPPED:
                 notebook: JupyterLab = self.r[config.name]
                 notebook.stop()
-                model = notebook.collect_model()
-                model.desired_stage = Stage.STOPPED
-                model.stage = Stage.STOPPING
-                self.db.put(model)
+                notebook.stage = Stage.STOPPED
+                notebook.desired_stage = Stage.STOPPED
+                notebook._url = ""
+                self.db.put(notebook.collect_model())
                 return f"The notebook `{config.name}` has been stopped."
             return f"The notebook `{config.name}` is already stopped."
         return f"The notebook `{config.name}` doesn't exist."
