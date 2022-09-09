@@ -157,7 +157,6 @@ class Sweep(LightningFlow, ControllerResource):
                     if self.trials[trial_id]["stage"] == Stage.SUCCEEDED:
                         pass
                     elif self.trials[trial_id]["stage"] not in ("pruned", "stopped"):
-                        print("HERE")
                         self._algorithm.trial_end(trial_id, objective.best_model_score)
                         self._logger.on_after_trial_end(
                             sweep_id=self.sweep_id,
@@ -167,7 +166,7 @@ class Sweep(LightningFlow, ControllerResource):
                             params=self._algorithm.get_params(trial_id),
                         )
                         self.trials[trial_id]["best_model_score"] = objective.best_model_score
-                        self.trials[trial_id]["best_model_path"] = objective.best_model_path
+                        self.trials[trial_id]["best_model_path"] = str(objective.best_model_path)
                         self.trials[trial_id]["monitor"] = objective.monitor
                         self.trials[trial_id]["stage"] = Stage.SUCCEEDED
                         self.trials_done += 1

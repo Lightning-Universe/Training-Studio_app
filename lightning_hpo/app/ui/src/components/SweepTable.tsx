@@ -113,7 +113,7 @@ export function Sweeps() {
       sweep.cloud_compute,
       sweep.direction,
       createLoggerUrl(sweep.logger_url),
-      createLoggerControl(tensorboardConfig),
+      createLoggerControl(sweep.logger_url ? tensorboardConfig : null),
       <IconButton id={sweep.sweep_id + '-button'}>
         <MoreHorizIcon sx={{ fontSize: 16 }} />
       </IconButton>,
