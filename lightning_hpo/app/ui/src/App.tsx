@@ -1,11 +1,12 @@
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { Stack, Typography } from '@mui/material';
 import { IconButton, Link, SnackbarProvider, Table } from 'lightning-ui/src/design-system/components';
 import ThemeProvider from 'lightning-ui/src/design-system/theme';
 import Status, { StatusEnum } from 'lightning-ui/src/shared/components/Status';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter } from 'react-router-dom';
 import { Sweeps } from './components/SweepTable';
-import TableContainer from './components/TableContainer';
 import Tabs, { TabItem } from './components/Tabs';
 import { NotebookConfig } from './generated';
 import useClientDataState, { ClientDataProvider } from './hooks/useClientDataState';
@@ -26,24 +27,24 @@ const statusToEnum = {
 function Notebooks() {
   const notebooks = useClientDataState('notebooks') as NotebookConfig[];
 
-  const header = ['Name', 'Status', 'URL', 'More'];
+  const header = ['Status', 'Name', 'Cloud compute', 'URL', 'More'];
 
   const rows = notebooks.map(notebook => [
-    notebook.name,
     <Status status={notebook.status ? statusToEnum[notebook.status] : StatusEnum.NOT_STARTED} />,
-    <Link href={notebook.url} target="_blank">
-      Click Me
+    notebook.name,
+    notebook.cloud_compute,
+    <Link href={notebook.url} target="_blank" underline="hover">
+      <Stack direction="row" alignItems="center" spacing={0.5}>
+        <OpenInNewIcon sx={{ fontSize: 20 }} />
+        <Typography variant="subtitle2">Open</Typography>
+      </Stack>
     </Link>,
     <IconButton id={notebook.name + '-button'}>
       <MoreHorizIcon sx={{ fontSize: 16 }} />
     </IconButton>,
   ]);
 
-  return (
-    <TableContainer header="Notebooks">
-      <Table header={header} rows={rows} />
-    </TableContainer>
-  );
+  return <Table header={header} rows={rows} />;
 }
 
 function AppTabs() {
@@ -85,7 +86,6 @@ function AppTabs() {
       onChange={setSelectedTab}
       tabItems={tabItems}
       sxTabs={{ width: '100%', backgroundColor: 'white', paddingX: 2, top: 0, zIndex: 1000 }}
-      sxContent={{ paddingTop: 0, paddingBottom: 6, marginTop: '48px' }}
     />
   );
 }

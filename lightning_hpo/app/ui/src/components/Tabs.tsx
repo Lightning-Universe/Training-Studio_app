@@ -44,7 +44,7 @@ const Tabs = (props: TabsProps) => {
         </Grid>
       </Grid>
       <Divider />
-      <Box paddingTop={3} paddingBottom={1.5} sx={props.sxContent}>
+      <Box paddingY="30px" paddingX="14px" sx={props.sxContent}>
         {props.tabItems.map((tabItem: any, index) => (
           <TabPanel key={index.toString()} value={props.selectedTab} index={index}>
             <TabContent>{tabItem.content}</TabContent>

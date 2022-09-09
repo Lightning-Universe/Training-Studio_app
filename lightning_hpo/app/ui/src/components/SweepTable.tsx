@@ -1,9 +1,10 @@
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { Typography } from '@mui/material';
 import { Box, Button, IconButton, Link, Stack, Table } from 'lightning-ui/src/design-system/components';
 import Status, { StatusEnum } from 'lightning-ui/src/shared/components/Status';
 import { AppClient, SweepConfig, TensorboardConfig, TrialConfig } from '../generated';
 import useClientDataState from '../hooks/useClientDataState';
-import TableContainer from './TableContainer';
 
 const appClient = new AppClient({
   BASE:
@@ -24,8 +25,8 @@ const statusToEnum = {
 
 function trialToRows(trials: Record<string, TrialConfig>) {
   return Object.entries(trials).map(entry => [
-    entry[0],
     <Status status={entry[1].status ? statusToEnum[entry[1].status] : StatusEnum.NOT_STARTED} />,
+    entry[0],
     String(entry[1].best_model_score),
     ...Object.entries(entry[1].params.params).map(value => String(value[1])),
     entry[1].exception,
@@ -39,8 +40,11 @@ function generateTrialHeader(trialHeader: string[], params) {
 
 function createLoggerUrl(url?: string) {
   const cell = url ? (
-    <Link href={url} target="_blank">
-      Click Me !
+    <Link href={url} target="_blank" underline="hover">
+      <Stack direction="row" alignItems="center" spacing={0.5}>
+        <OpenInNewIcon sx={{ fontSize: 20 }} />
+        <Typography variant="subtitle2">Open</Typography>
+      </Stack>
     </Link>
   ) : (
     <Box>{StatusEnum.NOT_STARTED}</Box>
@@ -80,8 +84,8 @@ export function Sweeps() {
   const sweeps = useClientDataState('sweeps') as SweepConfig[];
 
   const sweepHeader = [
-    'Name',
     'Status',
+    'Name',
     'Number of trials',
     'Number of trials done',
     'Framework',
@@ -92,7 +96,7 @@ export function Sweeps() {
     'More',
   ];
 
-  const baseTrialHeader = ['Name', 'Status', 'Best Model Score'];
+  const baseTrialHeader = ['Status', 'Name', 'Best model score'];
   const tensorboardIdsToStatuses = Object.fromEntries(
     tensorboards.map(e => {
       return [e.sweep_id, e];
@@ -105,8 +109,8 @@ export function Sweeps() {
       sweep.sweep_id in tensorboardIdsToStatuses ? tensorboardIdsToStatuses[sweep.sweep_id] : null;
 
     return [
-      sweep.sweep_id,
       <Status status={sweep.status ? statusToEnum[sweep.status] : StatusEnum.NOT_STARTED} />,
+      sweep.sweep_id,
       sweep.n_trials,
       sweep.trials_done,
       sweep.framework,
@@ -122,18 +126,12 @@ export function Sweeps() {
 
   const rowDetails = sweeps.map(sweep => (
     <Stack>
-      <TableContainer header={'Trials (' + sweep.trials[0].monitor + ')'}>
-        <Table
-          header={generateTrialHeader(baseTrialHeader, sweep.trials[0].params.params)}
-          rows={trialToRows(sweep.trials)}
-        />
-      </TableContainer>
+      <Table
+        header={generateTrialHeader(baseTrialHeader, sweep.trials[0].params.params)}
+        rows={trialToRows(sweep.trials)}
+      />
     </Stack>
   ));
 
-  return (
-    <TableContainer header="Sweeps">
-      <Table header={sweepHeader} rows={rows} rowDetails={rowDetails} />
-    </TableContainer>
-  );
+  return <Table header={sweepHeader} rows={rows} rowDetails={rowDetails} />;
 }
