@@ -130,6 +130,11 @@ class Sweep(LightningFlow):
                     self._sweep_config.trials[trial_id].params = Params(params=self._algorithm.get_params(trial_id))
                     self.has_updated = True
 
+                logger_url = self._logger.get_url(trial_id)
+                if logger_url and self._sweep_config.url != logger_url:
+                    self._sweep_config.url = logger_url
+                    self.has_updated = True
+
                 objective.run(
                     params=self._algorithm.get_params(trial_id),
                     restart_count=self.restart_count,
