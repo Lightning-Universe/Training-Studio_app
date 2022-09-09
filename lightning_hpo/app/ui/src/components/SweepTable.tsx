@@ -71,7 +71,7 @@ function runTensorboard(tensorboardConfig?: TensorboardConfig) {
 function createLoggerControl(tensorboardConfig?: TensorboardConfig) {
   const status = tensorboardConfig?.stage ? statusToEnum[tensorboardConfig.stage] : StatusEnum.NOT_STARTED;
   if (status == StatusEnum.RUNNING) {
-    return <Button onClick={_ => stopTensorboard(tensorboardConfig)} text="Stop" />;
+    return tensorboardConfig.url ? <Button onClick={_ => stopTensorboard(tensorboardConfig)} text="Stop" /> : null;
   } else if (status == StatusEnum.STOPPED) {
     return <Button onClick={_ => runTensorboard(tensorboardConfig)} text="Run" />;
   } else {
@@ -116,8 +116,8 @@ export function Sweeps() {
       sweep.framework,
       sweep.cloud_compute,
       sweep.direction,
-      createLoggerUrl(sweep.logger_url),
-      createLoggerControl(sweep.logger_url ? tensorboardConfig : null),
+      createLoggerUrl(tensorboardConfig?.url),
+      createLoggerControl(tensorboardConfig),
       <IconButton id={sweep.sweep_id + '-button'}>
         <MoreHorizIcon sx={{ fontSize: 16 }} />
       </IconButton>,
