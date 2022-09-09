@@ -11,7 +11,7 @@ class TensorboardConfig(SQLModel, table=True):
     shared_folder: str
     stage: str = Stage.NOT_STARTED
     desired_stage: str = Stage.RUNNING
-    url: Optional[str] = None
+    url: str = ""
 
 
 class StopTensorboardConfig(SQLModel):

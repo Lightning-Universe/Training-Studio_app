@@ -30,7 +30,7 @@ function Notebooks() {
 
   const rows = notebooks.map(notebook => [
     notebook.notebook_name,
-    <Status status={notebook.state ? statusToEnum[notebook.state] : StatusEnum.NOT_STARTED} />,
+    <Status status={notebook.stage ? statusToEnum[notebook.stage] : StatusEnum.NOT_STARTED} />,
     <Link href={notebook.url} target="_blank">
       Click Me
     </Link>,

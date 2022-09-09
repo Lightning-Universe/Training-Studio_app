@@ -54,7 +54,7 @@ class SweepConfig(SQLModel, table=True):
     distributions: Dict[str, Distributions] = Field(
         ..., sa_column=Column(pydantic_column_type(Dict[str, Distributions]))
     )
-    url: Optional[str] = None
+    logger_url: str = ""
     trials: Dict[int, TrialConfig] = Field(..., sa_column=Column(pydantic_column_type(Dict[int, TrialConfig])))
     framework: str
     cloud_compute: str
@@ -205,7 +205,7 @@ class RunSweepCommand(ClientCommand):
 
         repo = CustomLocalSourceCodeDir(path=Path(hparams.script_path).parent.resolve())
         # TODO: Resolve this bug.
-        url = self.Stage.file_server._state["vars"]["_url"]
+        url = self.state.file_server._state["vars"]["_url"]
         repo.package()
         repo.upload(url=f"{url}/uploadfile/{sweep_id}")
 

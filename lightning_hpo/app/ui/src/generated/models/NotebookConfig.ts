@@ -6,7 +6,7 @@ export type NotebookConfig = {
     notebook_name: string;
     requirements: Array<string>;
     cloud_compute: string;
-    state?: string;
-    desired_state?: string;
+    stage?: string;
+    desired_stage?: string;
     url?: string;
 };

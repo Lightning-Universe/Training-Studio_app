@@ -25,7 +25,7 @@ const statusToEnum = {
 function trialToRows(trials: Record<string, TrialConfig>) {
   return Object.entries(trials).map(entry => [
     entry[0],
-    <Status status={entry[1].status ? statusToEnum[entry[1].status] : StatusEnum.NOT_STARTED} />,
+    <Status status={entry[1].stage ? statusToEnum[entry[1].stage] : StatusEnum.NOT_STARTED} />,
     String(entry[1].best_model_score),
     ...Object.entries(entry[1].params.params).map(value => String(value[1])),
     entry[1].exception,
@@ -58,14 +58,14 @@ function runTensorboard(tensorboardConfig?: TensorboardConfig) {
     id: tensorboardConfig.id,
     sweep_id: tensorboardConfig.sweep_id,
     shared_folder: tensorboardConfig.shared_folder,
-    status: StatusEnum.RUNNING.toLowerCase(),
-    desired_state: StatusEnum.RUNNING.toLowerCase(),
+    stage: StatusEnum.RUNNING.toLowerCase(),
+    desired_stage: StatusEnum.RUNNING.toLowerCase(),
     url: undefined,
   });
 }
 
 function createLoggerControl(tensorboardConfig?: TensorboardConfig) {
-  const status = tensorboardConfig?.status ? statusToEnum[tensorboardConfig.status] : StatusEnum.NOT_STARTED;
+  const status = tensorboardConfig?.stage ? statusToEnum[tensorboardConfig.stage] : StatusEnum.NOT_STARTED;
   if (status == StatusEnum.RUNNING) {
     return <Button onClick={_ => stopTensorboard(tensorboardConfig)} text="Stop" />;
   } else if (status == StatusEnum.STOPPED) {
@@ -106,13 +106,13 @@ export function Sweeps() {
 
     return [
       sweep.sweep_id,
-      <Status status={sweep.status ? statusToEnum[sweep.status] : StatusEnum.NOT_STARTED} />,
+      <Status status={sweep.stage ? statusToEnum[sweep.stage] : StatusEnum.NOT_STARTED} />,
       sweep.n_trials,
       sweep.trials_done,
       sweep.framework,
       sweep.cloud_compute,
       sweep.direction,
-      createLoggerUrl(sweep.url),
+      createLoggerUrl(sweep.logger_url),
       createLoggerControl(tensorboardConfig),
       <IconButton id={sweep.sweep_id + '-button'}>
         <MoreHorizIcon sx={{ fontSize: 16 }} />

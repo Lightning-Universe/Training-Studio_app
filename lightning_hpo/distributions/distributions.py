@@ -67,3 +67,10 @@ def unparse_distributions(distributions: Optional[Dict[str, Distribution]]) -> D
         for k, x in distributions.items()
     }
     return dist
+
+
+def get_params(distribution: Dict[str, Dict]) -> Dict[str, Dict]:
+    params = distribution["params"]
+    if "params" in params:
+        params = params["params"]
+    return params

@@ -6,3 +6,4 @@ class Stage:
     SUCCEEDED = "succeeded"
     FAILED = "failed"
     STOPPED = "stopped"
+    STOPPING = "stopping"

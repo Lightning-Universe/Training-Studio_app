@@ -423,8 +423,8 @@
           "notebook_name": { "title": "Notebook Name", "type": "string" },
           "requirements": { "title": "Requirements", "type": "array", "items": { "type": "string" } },
           "cloud_compute": { "title": "Cloud Compute", "type": "string" },
-          "state": { "title": "State", "type": "string", "default": "not_started" },
-          "desired_state": { "title": "Desired State", "type": "string", "default": "running" },
+          "stage": { "title": "Stage", "type": "string", "default": "not_started" },
+          "desired_stage": { "title": "Desired Stage", "type": "string", "default": "running" },
           "url": { "title": "Url", "type": "string" }
         }
       },
@@ -502,7 +502,7 @@
             "type": "object",
             "additionalProperties": { "$ref": "#/components/schemas/Distributions" }
           },
-          "url": { "title": "Url", "type": "string" },
+          "logger_url": { "title": "Logger Url", "type": "string" },
           "trials": {
             "title": "Trials",
             "type": "object",
@@ -513,7 +513,8 @@
           "num_nodes": { "title": "Num Nodes", "type": "integer", "default": 1 },
           "logger": { "title": "Logger", "type": "string" },
           "direction": { "title": "Direction", "type": "string" },
-          "state": { "title": "State", "type": "string", "default": "not_started" }
+          "stage": { "title": "Stage", "type": "string", "default": "not_started" },
+          "desired_stage": { "title": "Desired Stage", "type": "string", "default": "running" }
         }
       },
       "TensorboardConfig": {
@@ -524,8 +525,8 @@
           "id": { "title": "Id", "type": "integer" },
           "sweep_id": { "title": "Sweep Id", "type": "string" },
           "shared_folder": { "title": "Shared Folder", "type": "string" },
-          "status": { "title": "Status", "type": "string", "default": "not_started" },
-          "desired_state": { "title": "Desired State", "type": "string", "default": "running" },
+          "stage": { "title": "Stage", "type": "string", "default": "not_started" },
+          "desired_stage": { "title": "Desired Stage", "type": "string", "default": "running" },
           "url": { "title": "Url", "type": "string" }
         }
       },

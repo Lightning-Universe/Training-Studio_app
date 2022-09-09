@@ -5,7 +5,7 @@ from lightning_hpo.commands.notebook.show import ShowNotebookCommand
 from lightning_hpo.commands.notebook.stop import StopNotebookCommand, StopNotebookConfig
 from lightning_hpo.components.notebook import JupyterLab
 from lightning_hpo.controllers.controller import Controller
-from lightning_hpo.utilities.enum import State
+from lightning_hpo.utilities.enum import Stage
 
 
 class NotebookController(Controller):
@@ -14,11 +14,14 @@ class NotebookController(Controller):
 
     def on_reconcile_start(self, configs: List[NotebookConfig]):
         for config in configs:
-            if config.notebook_name not in self.r and config.desired_state == State.RUNNING:
+            if config.notebook_name not in self.r and config.desired_stage == Stage.RUNNING:
                 self.r[config.notebook_name] = JupyterLab(
                     kernel="python",
                     config=config,
                 )
+            elif config.notebook_name in self.r and config.stage == Stage.STOPPING:
+                if self.r[config.notebook_name].has_stopped:
+                    self.r[config.notebook_name].stage = Stage.STOPPED
 
     def run_notebook(self, config: NotebookConfig) -> str:
         if config.notebook_name in self.r:
@@ -34,13 +37,13 @@ class NotebookController(Controller):
 
         if matched_notebook:
             model: NotebookConfig = notebook.collect_model()
-            if model.state != State.STOPPED:
+            if model.stage != Stage.STOPPED:
                 notebook: JupyterLab = self.r[config.name]
                 notebook.stop()
-                breakpoint()
                 model = notebook.collect_model()
-                model.desired_state = model.state = State.STOPPED
-                self.db.put(NotebookConfig(**notebook.config))
+                model.desired_stage = Stage.STOPPED
+                model.stage = Stage.STOPPING
+                self.db.put(model)
                 return f"The notebook `{config.name}` has been stopped."
             return f"The notebook `{config.name}` is already stopped."
         return f"The notebook `{config.name}` doesn't exist."

@@ -11,7 +11,7 @@ from lightning_hpo.commands.sweep.stop import StopSweepCommand, StopSweepConfig
 from lightning_hpo.commands.tensorboard.stop import TensorboardConfig
 from lightning_hpo.controllers.controller import Controller
 from lightning_hpo.loggers import LoggerType
-from lightning_hpo.utilities.enum import State
+from lightning_hpo.utilities.enum import Stage
 
 
 class SweepController(Controller):
@@ -28,8 +28,8 @@ class SweepController(Controller):
             self.tensorboard_sweep_id = [c.sweep_id for c in self.db.get(TensorboardConfig)]
 
         for tensorboard in self.db.get(TensorboardConfig):
-            if tensorboard.url and tensorboard.sweep_id in self.r:
-                self.r[tensorboard.sweep_id].url = tensorboard.url
+            if tensorboard.sweep_id in self.r:
+                self.r[tensorboard.sweep_id].logger_url = tensorboard.url
 
         # 2: Create the Sweeps
         for sweep in sweeps:
@@ -47,7 +47,7 @@ class SweepController(Controller):
 
     def on_reconcile_end(self, updates: List[SweepConfig]):
         for update in updates:
-            if update.stage == State.SUCCEEDED:
+            if update.stage == Stage.SUCCEEDED:
                 for w in self.r[update.sweep_id].works():
                     w.stop()
                 self.r.pop(update.sweep_id)
@@ -71,11 +71,11 @@ class SweepController(Controller):
             sweep: Sweep = self.r[config.sweep_id]
             for w in sweep.works():
                 w.stop()
-            sweep_config = SweepConfig(**sweep.config)
-            sweep_config.stage = State.STOPPED
+            sweep.stage = Stage.STOPPED
+            sweep_config = sweep.collect_model()
             for trial in sweep_config.trials.values():
-                if trial.stage != State.SUCCEEDED:
-                    trial.stage = State.STOPPED
+                if trial.stage == Stage.RUNNING:
+                    trial.stage = Stage.STOPPED
             self.db.put(sweep_config)
             return f"Stopped the sweep `{config.sweep_id}`"
         return f"We didn't find the sweep `{config.sweep_id}`"
@@ -86,8 +86,7 @@ class SweepController(Controller):
             sweep: Sweep = self.r[config.sweep_id]
             for w in sweep.works():
                 w.stop()
-            sweep_config = sweep.config
-            self.db.delete(SweepConfig(**sweep_config))
+            self.db.delete(sweep.collect_model())
             del self.r[config.sweep_id]
             return f"Deleted the sweep `{config.sweep_id}`"
         return f"We didn't find the sweep `{config.sweep_id}`"

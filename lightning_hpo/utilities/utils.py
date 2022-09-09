@@ -91,7 +91,7 @@ def _resolve_objective_cls(objective_cls, framework: str):
     return objective_cls
 
 
-def _check_status(obj: Union[LightningFlow, Objective], status: str) -> bool:
+def _check_stage(obj: Union[LightningFlow, Objective], status: str) -> bool:
     if isinstance(obj, Objective):
         return obj.status.stage == status
     else:

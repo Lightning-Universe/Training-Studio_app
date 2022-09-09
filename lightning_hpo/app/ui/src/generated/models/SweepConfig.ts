@@ -14,12 +14,13 @@ export type SweepConfig = {
     requirements: Array<string>;
     script_args: Array<string>;
     distributions: Record<string, Distributions>;
-    url?: string;
+    logger_url?: string;
     trials: Record<string, TrialConfig>;
     framework: string;
     cloud_compute: string;
     num_nodes?: number;
     logger: string;
     direction: string;
-    state?: string;
+    stage?: string;
+    desired_stage?: string;
 };

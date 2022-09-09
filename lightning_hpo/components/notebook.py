@@ -20,7 +20,7 @@ class JupyterLab(JupyterLab, ControllerResource):
         self.notebook_name = config.notebook_name
         self.requirements = config.requirements
         self.cloud_compute = config.cloud_compute
-        self.desired_state = config.desired_state
+        self.desired_stage = config.desired_stage
 
     def run(self, *args, **kwargs):
         super().run()

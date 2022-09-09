@@ -15,11 +15,12 @@ class TensorboardController(Controller):
     def on_reconcile_start(self, configs: List[TensorboardConfig]):
         for config in configs:
             if config.sweep_id not in self.r:
-                if config.stage in (Stage.STOPPED, Stage.NOT_STARTED) and config.desired_state == Stage.RUNNING:
+                if config.stage in (Stage.STOPPED, Stage.NOT_STARTED) and config.desired_stage == Stage.RUNNING:
                     self.r[config.sweep_id] = Tensorboard(
                         drive=Drive(f"lit://{config.sweep_id}"),
                         config=config,
                     )
+                    self.r[config.sweep_id].stage = Stage.PENDING
 
     def show_tensorboards(self) -> List[TensorboardConfig]:
         if self.db_url:
@@ -35,8 +36,8 @@ class TensorboardController(Controller):
                 matched_tensorboard = config
 
         if matched_tensorboard:
-            matched_tensorboard.status = Stage.STOPPED
-            matched_tensorboard.desired_state = Stage.RUNNING
+            matched_tensorboard.stage = Stage.STOPPED
+            matched_tensorboard.desired_stage = Stage.RUNNING
             self.db.put(matched_tensorboard)
             return f"Re-Launched a Tensorboard `{config.sweep_id}`."
 
@@ -46,10 +47,10 @@ class TensorboardController(Controller):
     def stop_tensorboard(self, config: StopTensorboardConfig):
         if config.sweep_id in self.r:
             self.r[config.sweep_id].stop()
-            self.r[config.sweep_id]._config.url = None
-            self.r[config.sweep_id]._config.status = Stage.STOPPED
-            self.r[config.sweep_id]._config.desired_state = Stage.STOPPED
-            self.db.put(self.r[config.sweep_id]._config)
+            self.r[config.sweep_id]._url = ""
+            self.r[config.sweep_id].stage = Stage.STOPPED
+            self.r[config.sweep_id].desired_stage = Stage.STOPPED
+            self.db.put(self.r[config.sweep_id].collect_model())
             del self.r[config.sweep_id]
             return f"Tensorboard `{config.sweep_id}` was stopped."
         return f"Tensorboard `{config.sweep_id}` doesn't exist."

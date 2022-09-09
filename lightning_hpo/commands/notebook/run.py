@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from typing import List, Optional
+from typing import List
 
 from lightning.app.utilities.commands import ClientCommand
 from sqlalchemy import Column
@@ -18,7 +18,7 @@ class NotebookConfig(SQLModel, table=True):
     cloud_compute: str
     stage: str = Stage.NOT_STARTED
     desired_stage: str = Stage.RUNNING
-    url: Optional[str] = None
+    url: str = ""
 
 
 class RunNotebookCommand(ClientCommand):
