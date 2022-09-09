@@ -12,13 +12,11 @@ class JupyterLab(JupyterLab):
     def __init__(self, *args, config: NotebookConfig, **kwargs):
         super().__init__(*args, **kwargs)
         self._config = config
-        self.ready = False
         self.has_updated = False
         self._process: Optional[Popen] = None
 
     def run(self, *args, **kwargs):
         super().run()
-        self.ready = True
         self.has_updated = True
 
     # TODO: Cleanup exit mechanism in lightning.
@@ -26,11 +24,14 @@ class JupyterLab(JupyterLab):
         if _is_work_context():
             assert self._process
             self._process.kill()
+        else:
+            self._config.status = Status.NOT_STARTED
 
     @property
     def updates(self):
-        if self.has_updated and self.ready:
+        if self.url != "" and self.has_updated:
             self._config.status = Status.RUNNING
+            self._config.url = self.url
             self.has_updated = False
             return [self._config]
         return []

@@ -73,4 +73,4 @@ def test_show_sweeps_server():
     sweep_controller.db_url = "a"
     sweep_controller._database.get.return_value = [sweep_config]
     result = sweep_controller.show_sweeps()
-    assert result[0] == sweep_config.json()
+    assert result[0] == sweep_config.dict()

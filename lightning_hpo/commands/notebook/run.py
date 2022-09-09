@@ -22,6 +22,7 @@ class NotebookConfig(SQLModel, table=True):
     cloud_compute: Optional[str] = None
     status: str = Status.NOT_STARTED
     desired_state: str = Status.RUNNING
+    url: Optional[str] = None
 
 
 class RunNotebookCommand(ClientCommand):

@@ -153,7 +153,7 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/sweep/delete.py",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/delete.py",
         "cls_name": "DeleteSweepCommand"
       }
     },
@@ -173,7 +173,7 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/sweep/run.py",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/run.py",
         "cls_name": "RunSweepCommand"
       }
     },
@@ -185,7 +185,7 @@
         "responses": {
           "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
         },
-        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/sweep/show.py",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/show.py",
         "cls_name": "ShowSweepsCommand"
       }
     },
@@ -205,7 +205,7 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/sweep/stop.py",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/stop.py",
         "cls_name": "StopSweepCommand"
       }
     },
@@ -225,7 +225,7 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/notebook/run.py",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/notebook/run.py",
         "cls_name": "RunNotebookCommand"
       }
     },
@@ -245,7 +245,7 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/notebook/stop.py",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/notebook/stop.py",
         "cls_name": "StopNotebookCommand"
       }
     },
@@ -257,8 +257,54 @@
         "responses": {
           "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
         },
-        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/notebook/show.py",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/notebook/show.py",
         "cls_name": "ShowNotebookCommand"
+      }
+    },
+    "/command/run_tensorboard": {
+      "post": {
+        "tags": ["app_command"],
+        "summary": "Run Tensorboard",
+        "operationId": "run_tensorboard_command_run_tensorboard_post",
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TensorboardConfig" } } },
+          "required": true
+        },
+        "responses": {
+          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } },
+          "422": {
+            "description": "Validation Error",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
+          }
+        }
+      }
+    },
+    "/command/show_tensorboards": {
+      "post": {
+        "tags": ["app_command"],
+        "summary": "Show Tensorboards",
+        "operationId": "show_tensorboards_command_show_tensorboards_post",
+        "responses": {
+          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
+        }
+      }
+    },
+    "/command/stop_tensorboard": {
+      "post": {
+        "tags": ["app_command"],
+        "summary": "Stop Tensorboard",
+        "operationId": "stop_tensorboard_command_stop_tensorboard_post",
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StopTensorboardConfig" } } },
+          "required": true
+        },
+        "responses": {
+          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } },
+          "422": {
+            "description": "Validation Error",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
+          }
+        }
       }
     },
     "/command/show_artefacts": {
@@ -277,7 +323,7 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/artefacts/show.py",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/artefacts/show.py",
         "cls_name": "ShowArtefactsCommand"
       }
     },
@@ -297,7 +343,7 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/artefacts/download.py",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/artefacts/download.py",
         "cls_name": "DownloadArtefactsCommand"
       }
     },
@@ -379,7 +425,8 @@
           "requirements": { "title": "Requirements", "type": "array", "items": { "type": "string" } },
           "cloud_compute": { "title": "Cloud Compute", "type": "string" },
           "status": { "title": "Status", "type": "string", "default": "not_started" },
-          "desired_state": { "title": "Desired State", "type": "string", "default": "running" }
+          "desired_state": { "title": "Desired State", "type": "string", "default": "running" },
+          "url": { "title": "Url", "type": "string" }
         }
       },
       "Params": {
@@ -416,6 +463,12 @@
       },
       "StopSweepConfig": {
         "title": "StopSweepConfig",
+        "required": ["sweep_id"],
+        "type": "object",
+        "properties": { "sweep_id": { "title": "Sweep Id", "type": "string" } }
+      },
+      "StopTensorboardConfig": {
+        "title": "StopTensorboardConfig",
         "required": ["sweep_id"],
         "type": "object",
         "properties": { "sweep_id": { "title": "Sweep Id", "type": "string" } }
@@ -463,6 +516,19 @@
           "logger": { "title": "Logger", "type": "string" },
           "direction": { "title": "Direction", "type": "string" },
           "status": { "title": "Status", "type": "string", "default": "not_started" }
+        }
+      },
+      "TensorboardConfig": {
+        "title": "TensorboardConfig",
+        "required": ["sweep_id", "shared_folder"],
+        "type": "object",
+        "properties": {
+          "id": { "title": "Id", "type": "integer" },
+          "sweep_id": { "title": "Sweep Id", "type": "string" },
+          "shared_folder": { "title": "Shared Folder", "type": "string" },
+          "status": { "title": "Status", "type": "string", "default": "not_started" },
+          "desired_state": { "title": "Desired State", "type": "string", "default": "running" },
+          "url": { "title": "Url", "type": "string" }
         }
       },
       "TrialConfig": {

@@ -1,23 +1,20 @@
-import PlayCircleIcon from '@mui/icons-material/PlayCircle';
-import StopCircleIcon from '@mui/icons-material/StopCircle';
-import { SnackbarProvider, Stack, Table } from 'lightning-ui/src/design-system/components';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { Typography } from '@mui/material';
+import { Link, SnackbarProvider, Stack, Table } from 'lightning-ui/src/design-system/components';
 import ThemeProvider from 'lightning-ui/src/design-system/theme';
 import Status, { StatusEnum } from 'lightning-ui/src/shared/components/Status';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter } from 'react-router-dom';
 import MoreMenu from './components/MoreMenu';
-import TableContainer from './components/TableContainer';
-import { AppClient, NotebookConfig } from './generated';
+import StartStopMenuItem from './components/StartStopMenuItem';
+import { Sweeps } from './components/SweepTable';
+import Tabs, { TabItem } from './components/Tabs';
+import { NotebookConfig } from './generated';
+import useClientDataState, { appClient, ClientDataProvider } from './hooks/useClientDataState';
+import useSelectedTabState, { SelectedTabProvider } from './hooks/useSelectedTabState';
 
 const queryClient = new QueryClient();
-
-const appClient = new AppClient({
-  BASE:
-    window.location != window.parent.location
-      ? document.referrer.replace(/\/$/, '')
-      : document.location.href.replace(/\/$/, ''),
-});
 
 const statusToEnum = {
   not_started: StatusEnum.NOT_STARTED,
@@ -29,69 +26,85 @@ const statusToEnum = {
   stopped: StatusEnum.STOPPED,
 } as { [k: string]: StatusEnum };
 
-function Notebooks(props: { notebooks: NotebookConfig[] }) {
-  const header = ['Name', 'Status', 'More'];
+function Notebooks() {
+  const notebooks = useClientDataState('notebooks') as NotebookConfig[];
 
-  const rows = props.notebooks.map(notebook => [
-    notebook.name,
+  const header = ['Status', 'Name', 'Cloud compute', 'URL', 'More'];
+
+  const rows = notebooks.map(notebook => [
     <Status status={notebook.status ? statusToEnum[notebook.status] : StatusEnum.NOT_STARTED} />,
+    notebook.name,
+    notebook.cloud_compute,
+    <Link href={notebook.url} target="_blank" underline="hover">
+      <Stack direction="row" alignItems="center" spacing={0.5}>
+        <OpenInNewIcon sx={{ fontSize: 20 }} />
+        <Typography variant="subtitle2">Open</Typography>
+      </Stack>
+    </Link>,
     <MoreMenu
       id={notebook.name}
       items={[
-        {
-          label: notebook.status === 'stopped' ? 'Start' : 'Stop',
-          icon:
-            notebook.status === 'stopped' ? (
-              <PlayCircleIcon sx={{ fontSize: 16 }} />
-            ) : (
-              <StopCircleIcon sx={{ fontSize: 16 }} />
-            ),
-          onClick: () => {
-            if (notebook.status === 'stopped') {
-              console.log('starting');
-              appClient.appClientCommand.runNotebookCommandRunNotebookPost({
-                id: notebook.id,
-                name: notebook.name,
-                requirements: notebook.requirements,
-                cloud_compute: notebook.cloud_compute,
-              });
-            } else {
-              console.log('stopping');
-              appClient.appClientCommand.stopNotebookCommandStopNotebookPost({ name: notebook.name });
-            }
+        StartStopMenuItem(
+          notebook.status || '',
+          () => {
+            appClient.appClientCommand.runNotebookCommandRunNotebookPost({
+              id: notebook.id,
+              name: notebook.name,
+              requirements: notebook.requirements,
+              cloud_compute: notebook.cloud_compute,
+            });
           },
-        },
+          () => {
+            appClient.appClientCommand.stopNotebookCommandStopNotebookPost({ name: notebook.name });
+          },
+        ),
       ]}
     />,
   ]);
 
-  return (
-    <TableContainer header="Notebooks">
-      <Table header={header} rows={rows} />
-    </TableContainer>
-  );
+  return <Table header={header} rows={rows} />;
 }
 
-function Main() {
-  const [notebooks, setNotebooks] = useState<NotebookConfig[]>([]);
+function AppTabs() {
+  const { selectedTab, setSelectedTab } = useSelectedTabState();
 
-  useEffect(() => {
-    appClient.appClientCommand
-      .showNotebooksCommandShowNotebooksPost()
-      .then(data => setNotebooks(data as NotebookConfig[]));
-    const interval = setInterval(() => {
-      appClient.appClientCommand
-        .showNotebooksCommandShowNotebooksPost()
-        .then(data => setNotebooks(data as NotebookConfig[]));
-    }, 1000);
+  let tabItems: TabItem[] = [];
 
-    return () => clearInterval(interval);
-  }, []);
+  if (selectedTab == 0) {
+    tabItems = [
+      {
+        title: 'Notebooks',
+        content: (
+          <ClientDataProvider endpoint="notebooks">
+            <Notebooks />
+          </ClientDataProvider>
+        ),
+      },
+      { title: 'Sweeps & Trials', content: <></> },
+    ];
+  } else if (selectedTab == 1) {
+    tabItems = [
+      { title: 'Notebooks', content: <></> },
+      {
+        title: 'Sweeps & Trials',
+        content: (
+          <ClientDataProvider endpoint="sweeps">
+            <ClientDataProvider endpoint="tensorboards">
+              <Sweeps />
+            </ClientDataProvider>
+          </ClientDataProvider>
+        ),
+      },
+    ];
+  }
 
   return (
-    <Stack order="column">
-      <Notebooks notebooks={notebooks} />
-    </Stack>
+    <Tabs
+      selectedTab={selectedTab}
+      onChange={setSelectedTab}
+      tabItems={tabItems}
+      sxTabs={{ width: '100%', backgroundColor: 'white', paddingX: 2, top: 0, zIndex: 1000 }}
+    />
   );
 }
 
@@ -101,7 +114,9 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <SnackbarProvider>
-            <Main />
+            <SelectedTabProvider>
+              <AppTabs />
+            </SelectedTabProvider>
           </SnackbarProvider>
         </BrowserRouter>
       </QueryClientProvider>

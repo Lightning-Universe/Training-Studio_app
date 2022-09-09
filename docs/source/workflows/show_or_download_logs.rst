@@ -68,3 +68,42 @@ You can simply download the logs by piping them within a ``log.txt`` file:
 .. code-block::
 
    lightning show logs training_studio_app > logs.txt
+
+----
+
+**********
+Next Steps
+**********
+
+.. raw:: html
+
+   <br />
+   <div class="display-card-container">
+      <div class="row">
+
+.. displayitem::
+   :header: Show or Download Artifacts
+   :description: Learn how to interact with your Training Studio App artifacts
+   :col_css: col-md-4
+   :button_link: show_or_download_artifacts.html
+   :height: 180
+
+
+.. displayitem::
+   :header: Run a Sweep
+   :description: Learn how to run a Sweep with your own python script
+   :col_css: col-md-4
+   :button_link: run_sweep.html
+   :height: 180
+
+.. displayitem::
+   :header: Run a Notebook
+   :description: Learn how to run a notebook locally or in the cloud
+   :col_css: col-md-4
+   :button_link: run_notebook.html
+   :height: 180
+
+.. raw:: html
+
+      </div>
+   </div>

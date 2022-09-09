@@ -67,8 +67,8 @@ Here is the command line with the hyper-parameters.
 
    lightning run sweep train.py \
       --n_trials=10 \
-      --logger="tensorboard" \
-      --direction=maximize \
+      -simultaneous_trials=3 \
+      --cloud_compute=cpu-medium \
 
       # HyperParameters with their distribution
       --model.lr="log_uniform(0.001, 0.1)" \
@@ -85,3 +85,41 @@ Finally, your code is uploaded to the App and the Training Studio App responds t
    Your command execution was successful.
 
 .. note:: We currently only support categorical, log_uniform, and uniform distribution. Please open a feature request to add more!
+
+----
+
+**********
+Next Steps
+**********
+
+.. raw:: html
+
+   <br />
+   <div class="display-card-container">
+      <div class="row">
+
+.. displayitem::
+   :header: Show Sweeps
+   :description: Learn how to view the existing sweeps
+   :col_css: col-md-4
+   :button_link: show_sweeps.html
+   :height: 180
+
+.. displayitem::
+   :header: Stop or delete a Sweep
+   :description: Learn how to stop or delete an existing sweep
+   :col_css: col-md-4
+   :button_link: stop_or_delete_sweep.html
+   :height: 180
+
+.. displayitem::
+   :header: Run a Notebook
+   :description: Learn how to run a notebook locally or in the cloud
+   :col_css: col-md-4
+   :button_link: run_notebook.html
+   :height: 180
+
+.. raw:: html
+
+      </div>
+   </div>

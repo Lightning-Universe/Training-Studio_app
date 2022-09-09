@@ -107,7 +107,7 @@ class Sweep(LightningFlow):
         self.show = False
 
     def run(self):
-        if self._sweep_config.status in (Status.FAILED, Status.SUCCEEDED, Status.STOPPED):
+        if self._sweep_config.status in (Status.SUCCEEDED, Status.STOPPED):
             return
 
         if self._sweep_config.trials_done == self._sweep_config.n_trials:
@@ -130,6 +130,11 @@ class Sweep(LightningFlow):
                     self._sweep_config.trials[trial_id].params = Params(params=self._algorithm.get_params(trial_id))
                     self.has_updated = True
 
+                logger_url = self._logger.get_url(trial_id)
+                if logger_url and self._sweep_config.url != logger_url:
+                    self._sweep_config.url = logger_url
+                    self.has_updated = True
+
                 objective.run(
                     params=self._algorithm.get_params(trial_id),
                     restart_count=self.restart_count,
@@ -138,6 +143,7 @@ class Sweep(LightningFlow):
                 if _check_status(objective, Status.FAILED):
                     self._sweep_config.status = Status.FAILED
                     self._sweep_config.trials[trial_id].status = Status.FAILED
+                    self._sweep_config.trials[trial_id].exception = objective.status.message
                     self.has_updated = True
 
                 if objective.reports and not self._sweep_config.trials[trial_id].pruned:
