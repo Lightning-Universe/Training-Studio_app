@@ -143,6 +143,8 @@ Lightning Apps are:
    <br />
    <br />
 
+----
+
 **********
 Next Steps
 **********

@@ -116,6 +116,7 @@ Get Started
    :maxdepth: 1
    :caption: Training Studio: How to...
 
+   Run the Training Studio App <workflows/run_training_studio_app>
    Connect or Disconnect to a Lightning App <workflows/connect_or_disconnect>
    Run a Sweep <workflows/run_sweep>
    Run a Notebook <workflows/run_notebook>

@@ -91,3 +91,41 @@ Here is the output of the command:
    │ 4  │ succeeded │ 0.15             │ {'model.lr': 0.05112, 'data.batch_size': 4.0} │ val_acc │
    │ 5  │ pending   │ None             │ {'model.lr': 0.09735, 'data.batch_size': 4.0} │ None    │
    └────┴───────────┴──────────────────┴───────────────────────────────────────────────┴─────────┘
+
+----
+
+**********
+Next Steps
+**********
+
+.. raw:: html
+
+   <br />
+   <div class="display-card-container">
+      <div class="row">
+
+.. displayitem::
+   :header: Stop or delete a Sweep
+   :description: Learn how to stop or delete an existing sweep
+   :col_css: col-md-4
+   :button_link: stop_or_delete_sweep.html
+   :height: 180
+
+.. displayitem::
+   :header: Run a Notebook
+   :description: Learn how to run a notebook locally or in the cloud
+   :col_css: col-md-4
+   :button_link: run_notebook.html
+   :height: 180
+
+.. displayitem::
+   :header: Show or Download Artifacts
+   :description: Learn how to interact with your Training Studio App artifacts
+   :col_css: col-md-4
+   :button_link: show_or_download_artifacts.html
+   :height: 180
+
+.. raw:: html
+
+      </div>
+   </div>
