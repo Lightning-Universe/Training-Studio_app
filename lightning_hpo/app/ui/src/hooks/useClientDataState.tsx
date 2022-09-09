@@ -4,8 +4,8 @@ import { AppClient } from '../generated';
 const appClient = new AppClient({
   BASE:
     window.location != window.parent.location
-      ? document.referrer.replace(/\/$/, '')
-      : document.location.href.replace(/\/$/, ''),
+      ? document.referrer.replace(/\/$/, '').replace('/view/undefined', '')
+      : document.location.href.replace(/\/$/, '').replace('/view/undefined', ''),
 });
 
 const clientEndpoints = {
