@@ -61,13 +61,13 @@ function AppTabs() {
           </ClientDataProvider>
         ),
       },
-      { title: 'Experiments', content: <></> },
+      { title: 'Sweeps & Trials', content: <></> },
     ];
   } else if (selectedTab == 1) {
     tabItems = [
       { title: 'Notebooks', content: <></> },
       {
-        title: 'Experiments',
+        title: 'Sweeps & Trials',
         content: (
           <ClientDataProvider endpoint="sweeps">
             <ClientDataProvider endpoint="tensorboards">
