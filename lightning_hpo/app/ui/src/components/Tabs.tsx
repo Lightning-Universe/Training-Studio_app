@@ -22,7 +22,7 @@ export type TabsProps = {
 
 const Tabs = (props: TabsProps) => {
   return (
-    <Box>
+    <Box sx={{ overflowX: 'hidden' }}>
       <Grid container spacing={1}>
         <Grid item xs={12} sm="auto">
           <Box sx={{ marginX: '14px', marginY: '8px' }}>
@@ -35,7 +35,6 @@ const Tabs = (props: TabsProps) => {
             onChange={(e, value) => props.onChange(value)}
             variant={'scrollable'}
             sx={props.sxTabs}>
-            {/*<Box><Typography variant="h6">Training Studio</Typography></Box>*/}
             {props.tabItems.map((tabItem: any, index) => (
               // @ts-ignore
               <MuiTab key={tabItem.title} label={tabItem.title} variant={props.variant} />
@@ -44,7 +43,7 @@ const Tabs = (props: TabsProps) => {
         </Grid>
       </Grid>
       <Divider />
-      <Box paddingTop={3} paddingBottom={1.5} sx={props.sxContent}>
+      <Box paddingY="30px" paddingX="14px" sx={props.sxContent}>
         {props.tabItems.map((tabItem: any, index) => (
           <TabPanel key={index.toString()} value={props.selectedTab} index={index}>
             <TabContent>{tabItem.content}</TabContent>

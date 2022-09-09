@@ -21,6 +21,7 @@ class JupyterLab(JupyterLab, ControllerResource):
         self.requirements = config.requirements
         self.cloud_compute = config.cloud_compute
         self.desired_stage = config.desired_stage
+        self.stage = config.stage
 
     def run(self, *args, **kwargs):
         super().run()

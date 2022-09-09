@@ -425,7 +425,7 @@
           "cloud_compute": { "title": "Cloud Compute", "type": "string" },
           "stage": { "title": "Stage", "type": "string", "default": "not_started" },
           "desired_stage": { "title": "Desired Stage", "type": "string", "default": "running" },
-          "url": { "title": "Url", "type": "string" }
+          "url": { "title": "Url", "type": "string", "default": "" }
         }
       },
       "Params": {
@@ -502,7 +502,7 @@
             "type": "object",
             "additionalProperties": { "$ref": "#/components/schemas/Distributions" }
           },
-          "logger_url": { "title": "Logger Url", "type": "string" },
+          "logger_url": { "title": "Logger Url", "type": "string", "default": "" },
           "trials": {
             "title": "Trials",
             "type": "object",
@@ -527,7 +527,7 @@
           "shared_folder": { "title": "Shared Folder", "type": "string" },
           "stage": { "title": "Stage", "type": "string", "default": "not_started" },
           "desired_stage": { "title": "Desired Stage", "type": "string", "default": "running" },
-          "url": { "title": "Url", "type": "string" }
+          "url": { "title": "Url", "type": "string", "default": "" }
         }
       },
       "TrialConfig": {

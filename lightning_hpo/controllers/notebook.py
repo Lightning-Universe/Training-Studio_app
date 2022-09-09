@@ -14,18 +14,26 @@ class NotebookController(Controller):
 
     def on_reconcile_start(self, configs: List[NotebookConfig]):
         for config in configs:
-            if config.notebook_name not in self.r and config.desired_stage == Stage.RUNNING:
+            if config.desired_stage == Stage.RUNNING:
+                # If the work is already there and status is pending then we don't need to recreate it
+                if config.notebook_name in self.r and self.r[config.notebook_name].stage in (
+                    Stage.PENDING,
+                    Stage.RUNNING,
+                ):
+                    return
                 self.r[config.notebook_name] = JupyterLab(
                     kernel="python",
                     config=config,
                 )
-            elif config.notebook_name in self.r and config.stage == Stage.STOPPING:
-                if self.r[config.notebook_name].has_stopped:
-                    self.r[config.notebook_name].stage = Stage.STOPPED
 
     def run_notebook(self, config: NotebookConfig) -> str:
-        if config.notebook_name in self.r:
-            return f"The notebook `{config.notebook_name}` already exists."
+        configs = self.db.get()
+        if any(existing_config.notebook_name == config.notebook_name for existing_config in configs):
+            # Update config in the database
+            config.status = Stage.PENDING
+            self.db.put(config)
+            return f"The notebook `{config.notebook_name}` has been updated."
+
         self.db.post(config)
         return f"The notebook `{config.notebook_name}` has been created."
 
