@@ -36,7 +36,6 @@ export const ClientDataProvider = (props: { endpoint: keyof typeof clientEndpoin
             severity: 'error',
           });
         });
-      clearInterval(interval);
     };
 
     post();
