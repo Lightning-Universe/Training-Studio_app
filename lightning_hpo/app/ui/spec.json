@@ -381,14 +381,13 @@
       },
       "NotebookConfig": {
         "title": "NotebookConfig",
-        "required": ["name", "requirements", "cloud_compute"],
+        "required": ["notebook_name", "requirements", "cloud_compute"],
         "type": "object",
         "properties": {
-          "id": { "title": "Id", "type": "string" },
-          "name": { "title": "Name", "type": "string" },
+          "notebook_name": { "title": "Notebook Name", "type": "string" },
           "requirements": { "title": "Requirements", "type": "array", "items": { "type": "string" } },
           "cloud_compute": { "title": "Cloud Compute", "type": "string" },
-          "status": { "title": "Status", "type": "string", "default": "not_started" },
+          "state": { "title": "State", "type": "string", "default": "not_started" },
           "desired_state": { "title": "Desired State", "type": "string", "default": "running" },
           "url": { "title": "Url", "type": "string" }
         }
@@ -449,7 +448,6 @@
         ],
         "type": "object",
         "properties": {
-          "id": { "title": "Id", "type": "integer" },
           "sweep_id": { "title": "Sweep Id", "type": "string" },
           "script_path": { "title": "Script Path", "type": "string" },
           "n_trials": { "title": "N Trials", "type": "integer" },
@@ -473,7 +471,7 @@
           "num_nodes": { "title": "Num Nodes", "type": "integer", "default": 1 },
           "logger": { "title": "Logger", "type": "string" },
           "direction": { "title": "Direction", "type": "string" },
-          "status": { "title": "Status", "type": "string", "default": "not_started" }
+          "state": { "title": "State", "type": "string", "default": "not_started" }
         }
       },
       "TrialConfig": {
@@ -484,7 +482,7 @@
           "best_model_score": { "title": "Best Model Score", "type": "number" },
           "monitor": { "title": "Monitor", "type": "string" },
           "best_model_path": { "title": "Best Model Path", "type": "string" },
-          "status": { "title": "Status", "type": "string", "default": "not_started" },
+          "stage": { "title": "Stage", "type": "string", "default": "not_started" },
           "params": { "$ref": "#/components/schemas/Params" },
           "exception": { "title": "Exception", "type": "string" }
         }

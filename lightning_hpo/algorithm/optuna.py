@@ -12,7 +12,6 @@ from optuna.distributions import (
 )
 
 from lightning_hpo.algorithm.base import Algorithm
-from lightning_hpo.commands.sweep.run import TrialConfig
 from lightning_hpo.distributions import DistributionDict
 
 _logger = logging.getLogger(__name__)
@@ -35,13 +34,15 @@ class OptunaAlgorithm(Algorithm):
     def register_distributions(self, distributions: Dict[str, DistributionDict]):
         for var_name, distribution in distributions.items():
             distribution_cls = _DISTRIBUTION_TO_OPTUNA[distribution["distribution"]]
-            distribution = distribution_cls(**distribution["params"])
+            distribution = distribution_cls(**distribution["params"]["params"])
             self.distributions[var_name] = distribution
 
-    def register_trials(self, trials_config: List[TrialConfig]) -> None:
+    def register_trials(self, trials_config: List[Dict]) -> None:
         for trial_config in trials_config:
             trial = optuna.trial.create_trial(
-                params=trial_config.params.params, distributions=self.distributions, value=trial_config.best_model_score
+                params=trial_config["params"]["params"],
+                distributions=self.distributions,
+                value=trial_config["best_model_score"],
             )
             self.study.add_trial(trial)
 

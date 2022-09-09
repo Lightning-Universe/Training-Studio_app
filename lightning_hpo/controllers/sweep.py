@@ -15,13 +15,12 @@ from lightning_hpo.commands.tensorboard.stop import TensorboardConfig
 from lightning_hpo.components.servers.db.models import GeneralModel
 from lightning_hpo.controllers.controller import Controller
 from lightning_hpo.loggers import LoggerType
-from lightning_hpo.utilities.enum import Status
+from lightning_hpo.utilities.enum import State
 
 
 class SweepController(Controller):
 
     model = SweepConfig
-    model_id = "sweep_id"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -34,8 +33,7 @@ class SweepController(Controller):
 
         for tensorboard in self.db.get(TensorboardConfig):
             if tensorboard.url and tensorboard.sweep_id in self.r:
-                self.r[tensorboard.sweep_id].config["url"] = tensorboard.url
-                self.r[tensorboard.sweep_id].has_updated = True
+                self.r[tensorboard.sweep_id].url = tensorboard.url
 
         # 2: Create the Sweeps
         for sweep in sweeps:
@@ -53,7 +51,7 @@ class SweepController(Controller):
 
     def on_reconcile_end(self, updates: List[SweepConfig]):
         for update in updates:
-            if update.status == Status.SUCCEEDED:
+            if update.stage == State.SUCCEEDED:
                 for w in self.r[update.sweep_id].works():
                     w.stop()
                 self.r.pop(update.sweep_id)
@@ -78,10 +76,10 @@ class SweepController(Controller):
             for w in sweep.works():
                 w.stop()
             sweep_config = SweepConfig(**sweep.config)
-            sweep_config.status = Status.STOPPED
+            sweep_config.stage = State.STOPPED
             for trial in sweep_config.trials.values():
-                if trial.status != Status.SUCCEEDED:
-                    trial.status = Status.STOPPED
+                if trial.stage != State.SUCCEEDED:
+                    trial.stage = State.STOPPED
             self.db.put(sweep_config)
             return f"Stopped the sweep `{config.sweep_id}`"
         return f"We didn't find the sweep `{config.sweep_id}`"

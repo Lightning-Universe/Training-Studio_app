@@ -6,7 +6,6 @@ import type { Distributions } from './Distributions';
 import type { TrialConfig } from './TrialConfig';
 
 export type SweepConfig = {
-    id?: number;
     sweep_id: string;
     script_path: string;
     n_trials: number;
@@ -22,5 +21,5 @@ export type SweepConfig = {
     num_nodes?: number;
     logger: string;
     direction: string;
-    status?: string;
+    state?: string;
 };

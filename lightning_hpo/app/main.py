@@ -15,7 +15,6 @@ from lightning_hpo.components.servers.file_server import FileServer
 from lightning_hpo.controllers.notebook import NotebookController
 from lightning_hpo.controllers.sweep import SweepController
 from lightning_hpo.controllers.tensorboard import TensorboardController
-from lightning_hpo.utilities.enum import Status
 
 
 class MainFlow(LightningFlow):
@@ -69,25 +68,7 @@ class MainFlow(LightningFlow):
         self.tensorboard_controller.run(self.db.db_url)
 
     def configure_layout(self):
-        if os.environ.get("REACT_UI", "0") == "1":
-            return StaticWebFrontend(os.path.join(os.path.dirname(__file__), "ui", "build"))
-
-        tabs = [{"name": "Dashboard", "content": self.sweep_controller}]
-
-        if self.debug:
-            tabs += [{"name": "Database Viz", "content": self.db_viz}]
-
-        for sweep in self.sweep_controller.r.values():
-            if sweep.show:
-                tabs += sweep.configure_layout()
-
-        for sweep_id, tensorboard in self.tensorboard_controller.r.items():
-            tabs += [{"name": f"tensorboard_{sweep_id}", "content": tensorboard}]
-
-        for notebook_name, notebook in self.notebook_controller.r.items():
-            if notebook.config["desired_state"] == Status.RUNNING:
-                tabs += [{"name": notebook_name, "content": notebook}]
-        return tabs
+        return StaticWebFrontend(os.path.join(os.path.dirname(__file__), "ui", "build"))
 
     def show_artefacts(self, config: ShowArtefactsConfig):
         return _collect_artefact_paths(config)

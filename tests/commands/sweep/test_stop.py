@@ -9,7 +9,7 @@ from lightning.app.storage import Drive
 from lightning_hpo.commands.sweep.stop import StopSweepConfig
 from lightning_hpo.components.sweep import Sweep, SweepConfig
 from lightning_hpo.controllers.sweep import SweepController
-from lightning_hpo.utilities.enum import Status
+from lightning_hpo.utilities.enum import State
 
 
 def test_stop_sweeps_server(monkeypatch):
@@ -19,7 +19,7 @@ def test_stop_sweeps_server(monkeypatch):
 
     sweep_config = SweepConfig(**data[0])
     trial = deepcopy(sweep_config.trials[0])
-    trial.status = Status.RUNNING
+    trial.stage = State.RUNNING
     sweep_config.trials[1] = trial
     sweep_config.logger = "streamlit"
     sweep = Sweep.from_config(config=sweep_config)
@@ -32,6 +32,6 @@ def test_stop_sweeps_server(monkeypatch):
     monkeypatch.setattr(requests, "put", MagicMock(return_value=resp))
     result = sweep_controller.stop_sweep(config=StopSweepConfig(sweep_id=sweep_config.sweep_id))
     assert result == "Stopped the sweep `thomas-cb8f69f0`"
-    assert sweep.config["status"] == Status.STOPPED
-    assert sweep.config["trials"][0].status == Status.SUCCEEDED
-    assert sweep.config["trials"][1].status == Status.STOPPED
+    assert sweep.config["stage"] == State.STOPPED
+    assert sweep.config["trials"][0].stage == State.SUCCEEDED
+    assert sweep.config["trials"][1].stage == State.STOPPED

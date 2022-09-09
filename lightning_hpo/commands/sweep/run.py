@@ -13,7 +13,7 @@ from lightning.app.utilities.commands import ClientCommand
 from sqlalchemy import Column
 from sqlmodel import Field, SQLModel
 
-from lightning_hpo.utilities.enum import Status
+from lightning_hpo.utilities.enum import State
 from lightning_hpo.utilities.utils import pydantic_column_type
 
 
@@ -32,13 +32,13 @@ class TrialConfig(SQLModel, table=False):
     best_model_score: Optional[float]
     monitor: Optional[str]
     best_model_path: Optional[str]
-    status: str = Status.NOT_STARTED
+    stage: str = State.NOT_STARTED
     params: Params = Field(sa_column=Column(pydantic_column_type(Params)))
     exception: Optional[str]
 
     @property
     def pruned(self) -> bool:
-        return self.status == Status.PRUNED
+        return self.stage == State.PRUNED
 
 
 class SweepConfig(SQLModel, table=True):
@@ -61,7 +61,7 @@ class SweepConfig(SQLModel, table=True):
     num_nodes: int = 1
     logger: str
     direction: str
-    status: str = Status.NOT_STARTED
+    state: str = State.NOT_STARTED
 
     @property
     def num_trials(self) -> int:

@@ -1,4 +1,4 @@
-class Status:
+class State:
     NOT_STARTED = "not_started"
     PENDING = "pending"
     RUNNING = "running"

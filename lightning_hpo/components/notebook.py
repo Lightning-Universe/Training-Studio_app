@@ -7,7 +7,6 @@ from lit_jupyter import JupyterLab
 
 from lightning_hpo.commands.notebook.run import NotebookConfig
 from lightning_hpo.controllers.controller import ControllerResource
-from lightning_hpo.utilities.enum import Status
 
 
 class JupyterLab(JupyterLab, ControllerResource):
@@ -16,20 +15,24 @@ class JupyterLab(JupyterLab, ControllerResource):
 
     def __init__(self, config: NotebookConfig, **kwargs):
         super().__init__(cloud_compute=CloudCompute(name=config.cloud_compute), **kwargs)
-
-        self.config = config.dict()
-
         self._process: Optional[Popen] = None
+
+        self.notebook_name = config.notebook_name
+        self.requirements = config.requirements
+        self.cloud_compute = config.cloud_compute
+        self.desired_state = config.desired_state
 
     def run(self, *args, **kwargs):
         super().run()
-        self.config["url"] = self.url
-        self.config["status"] = Status.RUNNING
 
     # TODO: Cleanup exit mechanism in lightning.
     def on_exit(self):
         if _is_work_context():
             assert self._process
             self._process.kill()
+
+    def on_collect_model(self, model_dict):
+        if self.url:
+            model_dict["url"] = self.url
         else:
-            self.config["status"] = Status.NOT_STARTED
+            model_dict["url"] = None

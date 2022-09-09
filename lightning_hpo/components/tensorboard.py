@@ -10,7 +10,7 @@ from lightning.app.storage.path import filesystem
 from lightning.app.utilities.component import _is_work_context
 
 from lightning_hpo.commands.tensorboard.stop import TensorboardConfig
-from lightning_hpo.utilities.enum import Status
+from lightning_hpo.utilities.enum import State
 
 
 class Tensorboard(LightningWork):
@@ -31,7 +31,7 @@ class Tensorboard(LightningWork):
         cmd = f"tensorboard --logdir={local_folder} --host {self.host} --port {self.port}"
         self._process = Popen(cmd, shell=True, env=os.environ)
 
-        self.config["status"] = Status.RUNNING
+        self.config["status"] = State.RUNNING
         self.config["url"] = self.url
         fs = filesystem()
         root_folder = str(self.drive.drive_root)
@@ -63,4 +63,4 @@ class Tensorboard(LightningWork):
             assert self._process
             self._process.kill()
         else:
-            self.config["status"] = Status.NOT_STARTED
+            self.config["status"] = State.NOT_STARTED

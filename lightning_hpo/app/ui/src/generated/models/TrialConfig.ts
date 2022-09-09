@@ -8,7 +8,7 @@ export type TrialConfig = {
     best_model_score?: number;
     monitor?: string;
     best_model_path?: string;
-    status?: string;
+    stage?: string;
     params: Params;
     exception?: string;
 };

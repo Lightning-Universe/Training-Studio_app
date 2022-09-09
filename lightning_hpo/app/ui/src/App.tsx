@@ -21,15 +21,15 @@ const statusToEnum = {
 } as { [k: string]: StatusEnum };
 
 function Notebooks(props: { notebooks: NotebookConfig[] }) {
-  const header = ['Name', 'Status', 'URL', 'More'];
+  const header = ['Name', 'Stage', 'URL', 'More'];
 
   const rows = props.notebooks.map(notebook => [
-    notebook.name,
-    <Status status={notebook.status ? statusToEnum[notebook.status] : StatusEnum.NOT_STARTED} />,
+    notebook.notebook_name,
+    <Status status={notebook.state ? statusToEnum[notebook.state] : StatusEnum.NOT_STARTED} />,
     <Link href={notebook.url} target="_blank">
       Click Me
     </Link>,
-    <IconButton id={notebook.name + '-button'}>
+    <IconButton id={notebook.notebook_name + '-button'}>
       <MoreHorizIcon sx={{ fontSize: 16 }} />
     </IconButton>,
   ]);
@@ -71,7 +71,7 @@ function Sweeps(props: { sweeps: SweepConfig[] }) {
 
   const rows = props.sweeps.map(sweep => [
     sweep.sweep_id,
-    <Status status={sweep.status ? statusToEnum[sweep.status] : StatusEnum.NOT_STARTED} />,
+    <Status status={sweep.state ? statusToEnum[sweep.state] : StatusEnum.NOT_STARTED} />,
     sweep.n_trials,
     sweep.trials_done,
     sweep.framework,

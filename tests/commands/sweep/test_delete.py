@@ -11,7 +11,7 @@ from lightning_hpo.components.servers.db import server
 from lightning_hpo.components.servers.db.server import general_delete, general_get, general_post, GeneralModel
 from lightning_hpo.components.sweep import Sweep, SweepConfig
 from lightning_hpo.controllers.sweep import SweepController
-from lightning_hpo.utilities.enum import Status
+from lightning_hpo.utilities.enum import State
 
 
 def test_delete_sweeps_server(monkeypatch, tmpdir):
@@ -21,7 +21,7 @@ def test_delete_sweeps_server(monkeypatch, tmpdir):
 
     sweep_config = SweepConfig(**data[0])
     trial = deepcopy(sweep_config.trials[0])
-    trial.status = Status.RUNNING
+    trial.stage = State.RUNNING
     sweep_config.trials[1] = trial
     sweep_config.logger = "streamlit"
     sweep = Sweep.from_config(config=sweep_config)

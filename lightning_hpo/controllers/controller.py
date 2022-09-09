@@ -1,6 +1,5 @@
-import typing
 from abc import abstractmethod
-from typing import Any, List, Optional, Type
+from typing import List, Optional, Type
 
 from lightning import LightningFlow
 from lightning.app.storage import Drive
@@ -8,13 +7,22 @@ from lightning.app.structures import Dict
 from sqlmodel import SQLModel
 
 from lightning_hpo.components.servers.db import DatabaseConnector
-from lightning_hpo.utilities.enum import Status
+from lightning_hpo.utilities.enum import State
 from lightning_hpo.utilities.utils import get_primary_key
 
 
 class ControllerResource:
 
-    config: typing.Dict[str, Any]
+    model: Type[SQLModel]
+
+    def on_collect_model(self, model_dict):
+        """Override to add the missing elements to the model_dict."""
+
+    def collect_model(self):
+        keys = list(self.model.__fields__)
+        model_dict = {key: getattr(self, key) for key in keys if key in self._state}
+        self.on_collect_model(model_dict)
+        return self.model(**model_dict)
 
 
 class Controller(LightningFlow):
@@ -39,7 +47,7 @@ class Controller(LightningFlow):
         db_configs = self.db.get()
         if not self.ready:
             for config in db_configs:
-                config.status = Status.NOT_STARTED
+                config.state = State.NOT_STARTED
                 self.db.put(config)
             self.ready = True
 
@@ -52,12 +60,12 @@ class Controller(LightningFlow):
         configs = []
         for resource in self.r.values():
             resource.run()
-            configs.append(self.model(**resource.config))
+            configs.append(resource.collect_model())
 
         if not configs:
             return
 
-        # 3: Reconcile.r on end
+        # 3: Reconciler on end
         primary_key = get_primary_key(self.model)
         db_configs = {getattr(config, primary_key): config for config in db_configs}
         for config in configs:
