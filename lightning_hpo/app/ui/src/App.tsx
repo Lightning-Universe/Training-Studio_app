@@ -14,6 +14,7 @@ import UserGuide, { UserGuideBody, UserGuideComment } from './components/UserGui
 import { NotebookConfig } from './generated';
 import useClientDataState, { appClient, ClientDataProvider } from './hooks/useClientDataState';
 import useSelectedTabState, { SelectedTabProvider } from './hooks/useSelectedTabState';
+import { getAppId } from './utilities';
 
 const queryClient = new QueryClient();
 
@@ -34,7 +35,7 @@ function Notebooks() {
     return (
       <UserGuide title="Want to start a notebook?" subtitle="Use the commands below">
         <UserGuideComment>Connect to the app</UserGuideComment>
-        <UserGuideBody>{'lightning connect {APP_ID_OR_NAME_OR_LOCALHOST} --yes'}</UserGuideBody>
+        <UserGuideBody>{`lightning connect ${getAppId()} --yes`}</UserGuideBody>
         <UserGuideComment>Run a notebook</UserGuideComment>
         <UserGuideBody>lightning run notebook my_notebook</UserGuideBody>
       </UserGuide>
