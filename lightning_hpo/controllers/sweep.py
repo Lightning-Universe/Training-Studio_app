@@ -39,7 +39,7 @@ class SweepController(Controller):
                 drive = Drive(f"lit://{id}")
                 self.db.post(TensorboardConfig(sweep_id=id, shared_folder=str(drive.drive_root)))
 
-            if id not in self.r:
+            if id not in self.r and sweep.stage != Stage.SUCCEEDED:
                 self.r[id] = Sweep.from_config(
                     sweep,
                     code={"drive": self.drive, "name": id},
@@ -50,6 +50,7 @@ class SweepController(Controller):
             if update.stage == Stage.SUCCEEDED:
                 for w in self.r[update.sweep_id].works():
                     w.stop()
+                self.r.pop(update.sweep_id)
 
     def run_sweep(self, config: SweepConfig) -> str:
         sweep_ids = list(self.r.keys())
