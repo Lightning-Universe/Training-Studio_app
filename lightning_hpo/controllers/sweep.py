@@ -50,7 +50,6 @@ class SweepController(Controller):
             if update.stage == Stage.SUCCEEDED:
                 for w in self.r[update.sweep_id].works():
                     w.stop()
-                self.r.pop(update.sweep_id)
 
     def run_sweep(self, config: SweepConfig) -> str:
         sweep_ids = list(self.r.keys())

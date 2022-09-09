@@ -47,6 +47,7 @@ class Sweep(LightningFlow, ControllerResource):
         requirements: Optional[List[str]] = None,
         trials: Optional[Dict[int, Dict]] = None,
         stage: Optional[str] = Stage.NOT_STARTED,
+        logger_url: str = "",
         **objective_kwargs: Any,
     ):
         """The Sweep class enables to easily run a Python Script with Lightning
@@ -83,7 +84,7 @@ class Sweep(LightningFlow, ControllerResource):
         self.direction = direction
         self.trials = trials or {}
         self.stage = stage
-        self.logger_url = None
+        self.logger_url = logger_url
 
         self._objective_cls = _resolve_objective_cls(objective_cls, framework)
         self._algorithm = algorithm or OptunaAlgorithm(direction=direction)
@@ -130,7 +131,6 @@ class Sweep(LightningFlow, ControllerResource):
 
                 logger_url = self._logger.get_url(trial_id)
                 if logger_url is not None and self.logger_url != logger_url:
-                    breakpoint()
                     self.logger_url = logger_url
 
                 objective.run(
@@ -224,4 +224,5 @@ class Sweep(LightningFlow, ControllerResource):
             trials={k: v.dict() for k, v in config.trials.items()},
             direction=config.direction,
             stage=config.stage,
+            logger_url=config.logger_url,
         )
