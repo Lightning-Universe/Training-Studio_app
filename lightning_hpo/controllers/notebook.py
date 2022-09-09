@@ -30,24 +30,13 @@ class NotebookController(Controller):
 
     def run_notebook(self, config: NotebookConfig) -> str:
         configs = self.db.get()
-        existing_config = None
-        for c in configs:
-            if c.name == config.name:
-                existing_config = c
-        if existing_config is not None:
-            for key, value in config.dict().items():
-                if value is not None:
-                    setattr(existing_config, key, value)
-            existing_config.status = Status.PENDING
+        if any(existing_config.name == config.name for existing_config in configs):
             # Update config in the database
-            self.db.put(existing_config)
+            config.status = Status.PENDING
+            self.db.put(config)
             return f"The notebook `{config.name}` has been updated."
 
         # Populate config with defaults
-        if config.cloud_compute is None:
-            config.cloud_compute = "cpu"
-        if config.requirements is None:
-            config.requirements = []
         self.db.post(config)
         return f"The notebook `{config.name}` has been created."
 
