@@ -1,9 +1,9 @@
 import os
 from typing import Any, Dict, Optional
 
-import wandb
 from lightning import LightningFlow
 
+import wandb
 from lightning_hpo.loggers.logger import Logger
 
 
@@ -74,9 +74,10 @@ class WandbLogger(Logger):
         return [{"name": "Project", "content": reports}, {"name": "Report", "content": report}]
 
     def configure_tracer(self, tracer, sweep_id: str, trial_id: int, params: Dict[str, Any]):
-        import wandb
         from pytorch_lightning import Trainer
         from pytorch_lightning.loggers import WandbLogger
+
+        import wandb
 
         wandb.init(
             project=sweep_id,
@@ -107,6 +108,9 @@ class WandbLogger(Logger):
 
     @staticmethod
     def _validate_auth():
+        import wandb
+
+        wandb.login()
         if os.getenv("WANDB_API_KEY") is None or os.getenv("WANDB_ENTITY") is None:
             raise Exception(
                 "You are trying to use wandb without setting your API key or entity. "

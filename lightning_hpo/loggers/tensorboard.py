@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional
 from lightning import LightningFlow
 from lightning.app.storage import Drive
 from lightning.pytorch.loggers import TensorBoardLogger
-from lightning.pytorch.utilities.rank_zero import rank_zero_only
+from lightning_utilities.core.rank_zero import rank_zero_only
 
 from lightning_hpo.loggers.logger import Logger
 

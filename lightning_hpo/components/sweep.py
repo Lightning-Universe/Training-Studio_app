@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Type, Union
 from lightning import BuildConfig, CloudCompute, LightningFlow
 from lightning.app.components.python.tracer import Code
 from lightning.app.storage.path import Path
-from lightning.app.utilities.apply_func import apply_to_collection
+from lightning_utilities.core.apply_func import apply_to_collection
 
 from lightning_hpo.algorithm.base import Algorithm
 from lightning_hpo.algorithm.optuna import OptunaAlgorithm
@@ -37,7 +37,7 @@ class Sweep(LightningFlow, ControllerResource):
         cloud_compute: Optional[HPOCloudCompute] = None,
         script_path: Optional[str] = None,
         algorithm: Optional[Algorithm] = None,
-        logger: str = "streamlit",
+        logger: str = "tensorboard",
         sweep_id: Optional[str] = None,
         distributions: Optional[Dict[str, Union[Dict, Distribution]]] = None,
         framework: str = "base",
