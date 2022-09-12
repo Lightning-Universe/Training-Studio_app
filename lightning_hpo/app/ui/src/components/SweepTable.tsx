@@ -3,8 +3,11 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { Typography } from '@mui/material';
 import { Box, Button, IconButton, Link, Stack, Table } from 'lightning-ui/src/design-system/components';
 import Status, { StatusEnum } from 'lightning-ui/src/shared/components/Status';
+import React from 'react';
 import { AppClient, SweepConfig, TensorboardConfig, TrialConfig } from '../generated';
 import useClientDataState from '../hooks/useClientDataState';
+import { getAppId } from '../utilities';
+import UserGuide, { UserGuideBody, UserGuideComment } from './UserGuide';
 
 const appClient = new AppClient({
   BASE:
@@ -82,6 +85,27 @@ function createLoggerControl(tensorboardConfig?: TensorboardConfig) {
 export function Sweeps() {
   const tensorboards = useClientDataState('tensorboards') as TensorboardConfig[];
   const sweeps = useClientDataState('sweeps') as SweepConfig[];
+
+  if (sweeps.length == 0) {
+    return (
+      <UserGuide title="Want to start a hyper-parameter sweep?" subtitle="Use the commands below">
+        <UserGuideComment>Connect to the app</UserGuideComment>
+        <UserGuideBody>{`lightning connect ${getAppId()} --yes`}</UserGuideBody>
+        <UserGuideComment>Download example script</UserGuideComment>
+        <UserGuideBody>
+          {
+            'wget https://raw.githubusercontent.com/Lightning-AI/lightning-hpo/master/examples/scripts/train.py > train.py'
+          }
+        </UserGuideBody>
+        <UserGuideComment>Run a sweep</UserGuideComment>
+        <UserGuideBody>
+          lightning run sweep train.py --n_trials=10 --simultaneous_trials=3 --cloud_compute=cpu-medium
+          --model.lr="log_uniform(0.001, 0.1)" --model.gamma="uniform(0.5, 0.8)" --data.batch_size="categorical([32,
+          64])"
+        </UserGuideBody>
+      </UserGuide>
+    );
+  }
 
   const sweepHeader = [
     'Status',
