@@ -47,8 +47,15 @@ Run the Training Studio App
 .. displayitem::
    :header: Run the Training Studio App
    :description: Learn how to start the Lightning App.
-   :col_css: col-md-4
+   :col_css: col-md-6
    :button_link: workflows/run_training_studio_app.html
+   :height: 180
+
+.. displayitem::
+   :header: Connect to the Training Studio App
+   :description: Learn how to connect and disconnect from the Training Studio App.
+   :col_css: col-md-6
+   :button_link: workflows/connect_or_disconnect.html
    :height: 180
 
 .. raw:: html

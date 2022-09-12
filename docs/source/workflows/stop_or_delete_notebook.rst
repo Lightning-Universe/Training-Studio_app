@@ -19,7 +19,7 @@ To stop a notebook use the following command:
 
 .. code-block::
 
-   lightning stop notebook my_notebook_name
+   lightning stop notebook --name=my_notebook_name
 
 Here is the output of the command:
 

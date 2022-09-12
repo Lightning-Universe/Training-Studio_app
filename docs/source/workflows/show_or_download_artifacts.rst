@@ -163,16 +163,14 @@ Here is the output of the command:
 .. code-block::
 
    You are connected to the local Lightning App.
-   usage: artefacts [-h] [--include INCLUDE] [--exclude EXCLUDE] [--overwrite OVERWRITE] output_dir
-
-   positional arguments:
-   output_dir            Provide the output directory for the artefacts..
+   usage: artefacts [-h] [--output_dir OUTPUT_DIR] [--include INCLUDE] [--exclude EXCLUDE]
 
    optional arguments:
    -h, --help            show this help message and exit
+   --output_dir OUTPUT_DIR
+                           Provide the output directory for the artefacts..
    --include INCLUDE     Provide a regex to include some specific files.
    --exclude EXCLUDE     Provide a regex to exclude some specific files.
-   --overwrite OVERWRITE Whether to overwrite the artefacts if they exist.
 
 2. Download artifacts
 ^^^^^^^^^^^^^^^^^^^^^
@@ -182,7 +180,7 @@ To download artifacts use the following command:
 .. code-block::
 
    mkdir output_artefacts
-   lightning download artefacts ./output_artefacts
+   lightning download artefacts --output_dir=./output_artefacts
 
 ----
 

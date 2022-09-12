@@ -21,15 +21,15 @@ The Training Studio App CLI provides its own help.
 
    lightning run sweep --help
 
-Here is the output of the command:
+   Here is the output of the command:
 
 .. code-block::
 
    You are connected to the local Lightning App.
    usage: sweep [-h] [--n_trials N_TRIALS] [--simultaneous_trials SIMULTANEOUS_TRIALS]
                [--requirements REQUIREMENTS [REQUIREMENTS ...]] [--framework FRAMEWORK]
-               [--cloud_compute CLOUD_COMPUTE] [--sweep_id SWEEP_ID] [--num_nodes NUM_NODES]
-               [--logger LOGGER] [--direction {minimize,maximize}]
+               [--cloud_compute CLOUD_COMPUTE] [--name NAME] [--num_nodes NUM_NODES] [--logger LOGGER]
+               [--direction {minimize,maximize}]
                script_path
 
    positional arguments:
@@ -46,7 +46,7 @@ Here is the output of the command:
                            The framework you are using.
    --cloud_compute CLOUD_COMPUTE
                            The machine to use in the cloud.
-   --sweep_id SWEEP_ID   The sweep you want to run upon.
+   --name NAME           The sweep you want to run upon.
    --num_nodes NUM_NODES
                            The number of nodes to train upon.
    --logger LOGGER       The logger to use with your sweep.

@@ -170,7 +170,7 @@ class RunSweepCommand(ClientCommand):
         parser.add_argument("--requirements", nargs="+", default=[], help="Requirements file.")
         parser.add_argument("--framework", default="pytorch_lightning", type=str, help="The framework you are using.")
         parser.add_argument("--cloud_compute", default="cpu", type=str, help="The machine to use in the cloud.")
-        parser.add_argument("--sweep_id", default=None, type=str, help="The sweep you want to run upon.")
+        parser.add_argument("--name", default=None, type=str, help="The sweep you want to run upon.")
         parser.add_argument("--num_nodes", default=1, type=int, help="The number of nodes to train upon.")
         parser.add_argument("--logger", default="streamlit", type=str, help="The logger to use with your sweep.")
         parser.add_argument(
@@ -198,7 +198,7 @@ class RunSweepCommand(ClientCommand):
                 script_args.append(arg)
 
         id = str(uuid4()).split("-")[0]
-        sweep_id = hparams.sweep_id or f"{getuser()}-{id}"
+        name = hparams.name or f"{getuser()}-{id}"
 
         if not os.path.exists(hparams.script_path):
             raise Exception("The provided script doesn't exists.")
@@ -207,7 +207,7 @@ class RunSweepCommand(ClientCommand):
         # TODO: Resolve this bug.
         url = self.state.file_server._state["vars"]["_url"]
         repo.package()
-        repo.upload(url=f"{url}/uploadfile/{sweep_id}")
+        repo.upload(url=f"{url}/uploadfile/{name}")
 
         distributions = {
             k: Distributions(distribution=x["distribution"], params=Params(params=x["params"]))
@@ -215,7 +215,7 @@ class RunSweepCommand(ClientCommand):
         }
 
         config = SweepConfig(
-            sweep_id=sweep_id,
+            sweep_id=name,
             script_path=hparams.script_path,
             n_trials=int(hparams.n_trials),
             simultaneous_trials=hparams.simultaneous_trials,

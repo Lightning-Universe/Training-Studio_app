@@ -42,7 +42,7 @@ def test_download_artefacts(monkeypatch, tmpdir):
 
         output_dir = osp.join(str(tmpdir), ".shared/")
         os.makedirs(output_dir)
-        sys.argv = ["", output_dir, "--include=a/b"]
+        sys.argv = ["", "--output_dir", output_dir, "--include=a/b"]
         command = DownloadArtefactsCommand(None)
         command.command_name = ""
         command.app_url = ""

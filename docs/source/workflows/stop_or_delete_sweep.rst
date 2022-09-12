@@ -19,13 +19,13 @@ To stop a sweep use the following commnand:
 
 .. code-block::
 
-   lightning stop sweep <sweep-name>
+   lightning stop sweep --name=<sweep-name>
 
 For example:
 
 .. code-block::
 
-   lightning stop sweep thomas-0f615232
+   lightning stop sweep --name=thomas-0f615232
 
 Here is the output of the command:
 
@@ -45,13 +45,13 @@ To delete a sweep use the following command:
 
 .. code-block::
 
-   lightning delete sweep <sweep-name>
+   lightning delete sweep --name=<sweep-name>
 
 For example:
 
 .. code-block::
 
-   lightning delete sweep thomas-0f615232
+   lightning delete sweep --name=thomas-0f615232
 
 ----
 

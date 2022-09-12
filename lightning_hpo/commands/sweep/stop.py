@@ -14,7 +14,7 @@ class StopSweepCommand(ClientCommand):
 
     def run(self) -> None:
         parser = ArgumentParser()
-        parser.add_argument("sweep_id", type=str, help="The associated `sweep_id` to stop.")
+        parser.add_argument("--name", type=str, help="The associated `sweep_id` to stop.")
         hparams = parser.parse_args()
-        response = self.invoke_handler(config=StopSweepConfig(sweep_id=hparams.sweep_id))
+        response = self.invoke_handler(config=StopSweepConfig(sweep_id=hparams.name))
         print(response)

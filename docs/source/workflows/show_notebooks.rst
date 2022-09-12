@@ -21,14 +21,14 @@ Here is the output of the command:
 
 .. code-block::
 
-    You are connected to the local Lightning App.
-                                            Notebooks
-   ┏━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓
-   ┃ id              ┃ name        ┃ status  ┃ desired_status ┃ cloud_compute ┃ requirements ┃
-   ┡━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━┩
-   │ thomas-a130d079 │ notebook_2  │ stopped │ stopped        │ cpu           │ []           │
-   │ thomas-c2dd597b │ my_notebook │ running │ running        │ cpu           │ []           │
-   └─────────────────┴─────────────┴─────────┴────────────────┴───────────────┴──────────────┘
+   You are connected to the local Lightning App.
+                                    Notebooks
+   ┳━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓
+   ┃ name        ┃ stage   ┃ desired_stage  ┃ cloud_compute ┃ requirements ┃
+   ╇━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━┩
+   │ notebook_2  │ stopped │ stopped        │ cpu           │ []           │
+   │ my_notebook │ running │ running        │ cpu           │ []           │
+   ┴─────────────┴─────────┴────────────────┴───────────────┴──────────────┘
 
 ----
 
