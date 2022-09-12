@@ -1,12 +1,11 @@
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { Typography } from '@mui/material';
-import { Box, Button, IconButton, Link, Stack, Table } from 'lightning-ui/src/design-system/components';
+import { Box, Button, IconButton, Link, Stack, Table, Typography } from 'lightning-ui/src/design-system/components';
 import Status, { StatusEnum } from 'lightning-ui/src/shared/components/Status';
-import React from 'react';
 import { AppClient, SweepConfig, TensorboardConfig, TrialConfig } from '../generated';
 import useClientDataState from '../hooks/useClientDataState';
 import { getAppId } from '../utilities';
+import BorderLinearProgress from './BorderLinearProgress';
 import UserGuide, { UserGuideBody, UserGuideComment } from './UserGuide';
 
 const appClient = new AppClient({
@@ -110,8 +109,7 @@ export function Sweeps() {
   const sweepHeader = [
     'Status',
     'Name',
-    'Number of trials',
-    'Number of trials done',
+    'Progress',
     'Framework',
     'Cloud Compute',
     'Direction',
@@ -132,11 +130,28 @@ export function Sweeps() {
     const tensorboardConfig =
       sweep.sweep_id in tensorboardIdsToStatuses ? tensorboardIdsToStatuses[sweep.sweep_id] : null;
 
+    const progress = sweep.trials_done ? Math.round(100 * (sweep.trials_done / sweep.n_trials)) : 0;
+
+    const progressBar =
+      progress == 100 ? (
+        <Box sx={{ minWidth: 35 }}>
+          <Typography variant="subtitle2">{`${progress}%`}</Typography>
+        </Box>
+      ) : (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ width: '100%', mr: 1 }}>
+            <BorderLinearProgress variant={progress == 0 ? null : 'determinate'} value={progress} />
+          </Box>
+          <Box sx={{ minWidth: 35 }}>
+            <Typography variant="caption" display="block">{`${progress}%`}</Typography>
+          </Box>
+        </Box>
+      );
+
     return [
       <Status status={sweep.stage ? statusToEnum[sweep.stage] : StatusEnum.NOT_STARTED} />,
       sweep.sweep_id,
-      sweep.n_trials,
-      sweep.trials_done,
+      progressBar,
       sweep.framework,
       sweep.cloud_compute,
       sweep.direction,

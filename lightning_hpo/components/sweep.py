@@ -115,7 +115,7 @@ class Sweep(LightningFlow, ControllerResource):
             self.stage = Stage.SUCCEEDED
             return
 
-        for trial_id in range(self.n_trials):
+        for trial_id in range(self.num_trials):
 
             objective = self._get_objective(trial_id)
 
@@ -149,7 +149,7 @@ class Sweep(LightningFlow, ControllerResource):
                         objective.stop()
                         continue
 
-                if self.trials[trial_id]["stage"] == Stage.PENDING:
+                if self.stage != Stage.FAILED and self.trials[trial_id]["stage"] == Stage.PENDING:
                     if self.trials[trial_id]["stage"] != objective.status:
                         self.stage = Stage.RUNNING
                         self.trials[trial_id]["stage"] = Stage.RUNNING
@@ -172,6 +172,10 @@ class Sweep(LightningFlow, ControllerResource):
                         self.trials[trial_id]["stage"] = Stage.SUCCEEDED
                         self.trials_done += 1
                         objective.stop()
+
+    @property
+    def num_trials(self) -> int:
+        return min(self.trials_done + self.simultaneous_trials, self.n_trials)
 
     @property
     def best_model_score(self) -> Optional[float]:
