@@ -15,7 +15,7 @@ Run a Sweep with PyTorch Lightning
 Why Lightning HPO ?
 *******************
 
-If you're already a PyTorch Lightning user and looking forward to do hyper-parameters optimization.
+If you're already a PyTorch Lightning user and are looking forward to doing hyper-parameter optimization.
 
 You are in the right place and Lightning HPO is what you are looking for !
 
