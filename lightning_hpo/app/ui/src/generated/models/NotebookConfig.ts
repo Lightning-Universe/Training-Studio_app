@@ -9,4 +9,5 @@ export type NotebookConfig = {
     stage?: string;
     desired_stage?: string;
     url?: string;
+    start_time?: number;
 };
