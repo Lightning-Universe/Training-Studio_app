@@ -35,6 +35,7 @@ class TrialConfig(SQLModel, table=False):
     stage: str = Stage.NOT_STARTED
     params: Params = Field(sa_column=Column(pydantic_column_type(Params)))
     exception: Optional[str]
+    progress: Optional[float]
 
     @property
     def pruned(self) -> bool:

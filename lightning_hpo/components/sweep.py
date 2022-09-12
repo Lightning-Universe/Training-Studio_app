@@ -138,6 +138,8 @@ class Sweep(LightningFlow, ControllerResource):
                     restart_count=self.restart_count,
                 )
 
+                self.trials[trial_id]["progress"] = objective.progress
+
                 if _check_stage(objective, Stage.FAILED):
                     self.stage = Stage.FAILED
                     self.trials[trial_id]["stage"] = Stage.FAILED
