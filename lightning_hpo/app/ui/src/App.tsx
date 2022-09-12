@@ -33,7 +33,7 @@ function Notebooks() {
 
   if (notebooks.length == 0) {
     return (
-      <UserGuide title="Want to start a notebook?" subtitle="Use the commands below">
+      <UserGuide title="Want to start a notebook?" subtitle="Use the commands below or click on 'New'">
         <UserGuideComment>Connect to the app</UserGuideComment>
         <UserGuideBody>{`lightning connect ${getAppId()} --yes`}</UserGuideBody>
         <UserGuideComment>Run a notebook</UserGuideComment>
