@@ -26,11 +26,11 @@ Here is the output of the command:
 .. code-block::
 
    You are connected to the local Lightning App.
-   usage: sweeps [-h] [--sweep_id SWEEP_ID]
+   usage: sweeps [-h] [--name NAME]
 
    optional arguments:
-   -h, --help           show this help message and exit
-   --sweep_id SWEEP_ID  Provide the `sweep_id` to be showed.
+   -h, --help   show this help message and exit
+   --name NAME  Provide the `name` to be showed.
 
 ----
 
@@ -49,7 +49,7 @@ Here is the output of the command:
 .. code-block::
 
    ┏━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
-   ┃ id              ┃ status    ┃ framework       ┃ cloud_compute ┃ n_trials ┃ n_trials_done ┃
+   ┃ name            ┃ status    ┃ framework       ┃ cloud_compute ┃ n_trials ┃ n_trials_done ┃
    ┡━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
    │ thomas-85982a9b │ succeeded │ pytorch_lightn… │ cpu           │ 10       │ 10            │
    │ thomas-1dbfed8a │ failed    │ pytorch_lightn… │ cpu           │ 10       │ 0             │
@@ -61,13 +61,13 @@ To show the details of a specific sweep use the following command:
 
 .. code-block::
 
-   lightning show sweeps --sweep_id=<sweep-id>
+   lightning show sweeps --name=<sweep-id>
 
 For example:
 
 .. code-block::
 
-   lightning show sweeps --sweep_id=thomas-f5fee22a
+   lightning show sweeps --name=thomas-f5fee22a
 
 Here is the output of the command:
 
@@ -76,7 +76,7 @@ Here is the output of the command:
    You are connected to the local Lightning App.
                                              Sweep
    ┏━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
-   ┃ id              ┃ status  ┃ framework         ┃ cloud_compute ┃ n_trials ┃ n_trials_done ┃
+   ┃ name            ┃ status  ┃ framework         ┃ cloud_compute ┃ n_trials ┃ n_trials_done ┃
    ┡━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
    │ thomas-f5fee22a │ running │ pytorch_lightning │ cpu           │ 10       │ 5             │
    └─────────────────┴─────────┴───────────────────┴───────────────┴──────────┴───────────────┘

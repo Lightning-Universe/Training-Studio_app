@@ -26,15 +26,12 @@ Here is the output of the command:
 .. code-block::
 
    You are connected to the local Lightning App.
-   usage: notebook [-h] [--requirements REQUIREMENTS [REQUIREMENTS ...]]
+   usage: notebook [-h] [--name NAME] [--requirements REQUIREMENTS [REQUIREMENTS ...]]
                   [--cloud_compute CLOUD_COMPUTE]
-                  name
-
-   positional arguments:
-   name                  The name of your notebook to run.
 
    optional arguments:
    -h, --help            show this help message and exit
+   --name NAME           The name of your notebook to run.
    --requirements REQUIREMENTS [REQUIREMENTS ...]
                            Requirements file.
    --cloud_compute CLOUD_COMPUTE
@@ -50,7 +47,7 @@ You can simply start a notebook as follows:
 
 .. code-block::
 
-   lightning run notebook my_notebook
+   lightning run notebook --name=my_notebook
 
 .. code-block::
 

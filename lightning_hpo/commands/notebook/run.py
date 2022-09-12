@@ -25,7 +25,7 @@ class RunNotebookCommand(ClientCommand):
     def run(self) -> None:
         parser = ArgumentParser()
 
-        parser.add_argument("name", help="The name of your notebook to run.")
+        parser.add_argument("--name", help="The name of your notebook to run.")
         parser.add_argument("--requirements", nargs="+", default=[], help="Requirements file.")
         parser.add_argument("--cloud_compute", default="cpu", type=str, help="The machine to use in the cloud.")
 

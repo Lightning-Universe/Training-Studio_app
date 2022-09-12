@@ -40,14 +40,14 @@ def test_show_sweeps_client(monkeypatch):
 
     monkeypatch.setattr(show, "Console", console)
     with pytest.raises(Exception, match="thomas-cb8f69f0"):
-        sys.argv = ["", "--sweep_id=1234"]
+        sys.argv = ["", "--name=1234"]
         command = ShowSweepsCommand(None)
         command.command_name = ""
         command.app_url = ""
         command.run()
 
     monkeypatch.setattr(show, "Console", console)
-    sys.argv = ["", "--sweep_id=thomas-cb8f69f0"]
+    sys.argv = ["", "--name=thomas-cb8f69f0"]
     command = ShowSweepsCommand(None)
     command.command_name = ""
     command.app_url = ""
