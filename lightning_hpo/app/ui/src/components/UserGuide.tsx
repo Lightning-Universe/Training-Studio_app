@@ -1,6 +1,7 @@
-import { Card, CardContent, Typography } from '@mui/material';
-import { Stack } from 'lightning-ui/src/design-system/components';
-import React from 'react';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { Card, CardContent, Tooltip, Typography } from '@mui/material';
+import { Box, IconButton, Stack } from 'lightning-ui/src/design-system/components';
+import React, { useState } from 'react';
 import cloud from '../assets/cloud.svg';
 
 export type UserGuideProps = {
@@ -27,6 +28,13 @@ export const UserGuideComment = ({ children }: { children: string }) => {
 };
 
 export const UserGuideBody = ({ children }: { children: string }) => {
+  const [tooltip, setTooltip] = useState('Copy command');
+
+  const copyText = (text: string) => {
+    window.navigator?.clipboard?.writeText(text);
+    setTooltip('Copied!');
+  };
+
   return (
     <Typography
       sx={{
@@ -38,6 +46,11 @@ export const UserGuideBody = ({ children }: { children: string }) => {
         color: 'grey.100',
       }}>
       {children}
+      <Tooltip title={tooltip} onOpen={() => setTooltip('Copy command')}>
+        <IconButton sx={{ margin: '0px 8px', padding: '0px' }} aria-label="copy" onClick={() => copyText(children)}>
+          <ContentCopyIcon sx={{ fontSize: 16 }} />
+        </IconButton>
+      </Tooltip>
     </Typography>
   );
 };
@@ -67,7 +80,12 @@ const UserGuide = ({ title, subtitle, children }: UserGuideProps) => {
           {subtitle}
         </Typography>
       </Stack>
-      <Card elevation={2} sx={{ borderRadius: '10px', backgroundColor: 'grey.10' }}>
+      <Card elevation={2} sx={{ position: 'relative', borderRadius: '10px', backgroundColor: 'grey.10' }}>
+        <Stack direction="row" sx={{ position: 'absolute', left: '10px', top: '10px' }} spacing="8px">
+          <Box sx={{ borderRadius: '50%', width: '12px', height: '12px', backgroundColor: 'grey.20' }} />
+          <Box sx={{ borderRadius: '50%', width: '12px', height: '12px', backgroundColor: 'grey.20' }} />
+          <Box sx={{ borderRadius: '50%', width: '12px', height: '12px', backgroundColor: 'grey.20' }} />
+        </Stack>
         <CardContent sx={{ width: { xs: 'auto', md: '614px' } }}>{children}</CardContent>
       </Card>
     </Stack>
