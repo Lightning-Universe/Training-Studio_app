@@ -19,6 +19,7 @@ class NotebookConfig(SQLModel, table=True):
     stage: str = Stage.NOT_STARTED
     desired_stage: str = Stage.RUNNING
     url: str = ""
+    start_time: float = -1
 
 
 class RunNotebookCommand(ClientCommand):

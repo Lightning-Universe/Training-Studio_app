@@ -14,7 +14,7 @@ import UserGuide, { UserGuideBody, UserGuideComment } from './components/UserGui
 import { NotebookConfig } from './generated';
 import useClientDataState, { appClient, ClientDataProvider } from './hooks/useClientDataState';
 import useSelectedTabState, { SelectedTabProvider } from './hooks/useSelectedTabState';
-import { getAppId } from './utilities';
+import { formatDurationFrom, getAppId } from './utilities';
 
 const queryClient = new QueryClient();
 
@@ -42,7 +42,7 @@ function Notebooks() {
     );
   }
 
-  const header = ['Status', 'Name', 'Cloud compute', 'URL', 'More'];
+  const header = ['Status', 'Name', 'Cloud compute', 'Run time', 'URL', 'More'];
 
   const rows = notebooks.map(notebook => {
     const link = (
@@ -58,7 +58,8 @@ function Notebooks() {
       <Status status={notebook.stage ? statusToEnum[notebook.stage] : StatusEnum.NOT_STARTED} />,
       notebook.notebook_name,
       notebook.cloud_compute,
-      notebook.url ? link : null,
+      notebook.stage == 'running' ? formatDurationFrom(notebook.start_time || 0) : '-',
+      notebook.url ? link : '-',
       <MoreMenu
         id={notebook.notebook_name}
         items={[
