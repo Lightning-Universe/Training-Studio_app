@@ -26,6 +26,7 @@ const statusToEnum = {
   succeeded: StatusEnum.SUCCEEDED,
   failed: StatusEnum.FAILED,
   stopped: StatusEnum.STOPPED,
+  stopping: StatusEnum.STOPPING,
 } as { [k: string]: StatusEnum };
 
 function Notebooks() {
