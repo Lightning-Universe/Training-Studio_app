@@ -153,8 +153,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "DeleteSweepCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/delete.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/delete.py",
+        "cls_name": "DeleteSweepCommand"
       }
     },
     "/command/run_sweep": {
@@ -173,8 +173,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "RunSweepCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/run.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/run.py",
+        "cls_name": "RunSweepCommand"
       }
     },
     "/command/show_sweeps": {
@@ -185,8 +185,8 @@
         "responses": {
           "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
         },
-        "cls_name": "ShowSweepsCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/show.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/show.py",
+        "cls_name": "ShowSweepsCommand"
       }
     },
     "/command/stop_sweep": {
@@ -205,8 +205,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "StopSweepCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/stop.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/stop.py",
+        "cls_name": "StopSweepCommand"
       }
     },
     "/command/run_notebook": {
@@ -225,8 +225,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "RunNotebookCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/notebook/run.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/notebook/run.py",
+        "cls_name": "RunNotebookCommand"
       }
     },
     "/command/stop_notebook": {
@@ -245,8 +245,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "StopNotebookCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/notebook/stop.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/notebook/stop.py",
+        "cls_name": "StopNotebookCommand"
       }
     },
     "/command/show_notebooks": {
@@ -257,8 +257,8 @@
         "responses": {
           "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
         },
-        "cls_name": "ShowNotebookCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/notebook/show.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/notebook/show.py",
+        "cls_name": "ShowNotebookCommand"
       }
     },
     "/command/run_tensorboard": {
@@ -323,8 +323,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "ShowArtefactsCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/artefacts/show.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/artefacts/show.py",
+        "cls_name": "ShowArtefactsCommand"
       }
     },
     "/command/download_artefacts": {
@@ -343,8 +343,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "DownloadArtefactsCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/artefacts/download.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/artefacts/download.py",
+        "cls_name": "DownloadArtefactsCommand"
       }
     },
     "/api{full_path}": {
@@ -425,7 +425,8 @@
           "cloud_compute": { "title": "Cloud Compute", "type": "string" },
           "stage": { "title": "Stage", "type": "string", "default": "not_started" },
           "desired_stage": { "title": "Desired Stage", "type": "string", "default": "running" },
-          "url": { "title": "Url", "type": "string", "default": "" }
+          "url": { "title": "Url", "type": "string", "default": "" },
+          "start_time": { "title": "Start Time", "type": "number", "default": -1 }
         }
       },
       "Params": {

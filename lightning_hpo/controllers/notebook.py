@@ -14,25 +14,30 @@ class NotebookController(Controller):
 
     def on_reconcile_start(self, configs: List[NotebookConfig]):
         for config in configs:
-            if config.desired_stage == Stage.RUNNING:
-                # If the work is already there and status is pending then we don't need to recreate it
-                if config.notebook_name in self.r and self.r[config.notebook_name].stage in (
-                    Stage.PENDING,
-                    Stage.RUNNING,
-                ):
-                    return
+            if config.notebook_name in self.r and self.r[config.notebook_name].status.stage == Stage.STOPPED:
+                self.r[config.notebook_name].stage = Stage.STOPPED
+
+            if config.desired_stage == Stage.RUNNING and config.stage not in [Stage.PENDING, Stage.RUNNING]:
                 self.r[config.notebook_name] = JupyterLab(
                     kernel="python",
                     config=config,
                 )
-                # TODO: Without this the work keeps getting recreated
                 self.r[config.notebook_name].stage = Stage.PENDING
+            elif all(
+                [
+                    config.notebook_name in self.r,
+                    config.desired_stage == Stage.STOPPED,
+                    config.stage not in [Stage.STOPPING, Stage.STOPPED],
+                ]
+            ):
+                self.r[config.notebook_name].stop()
+                self.r[config.notebook_name]._url = ""
+                self.r[config.notebook_name].stage = Stage.STOPPING
 
     def run_notebook(self, config: NotebookConfig) -> str:
         configs = self.db.get()
         if any(existing_config.notebook_name == config.notebook_name for existing_config in configs):
             # Update config in the database
-            config.stage = Stage.PENDING
             self.db.put(config)
             return f"The notebook `{config.notebook_name}` has been updated."
 
@@ -47,12 +52,9 @@ class NotebookController(Controller):
 
         if matched_notebook:
             model: NotebookConfig = notebook.collect_model()
-            if model.stage != Stage.STOPPED:
+            if model.desired_stage != Stage.STOPPED:
                 notebook: JupyterLab = self.r[config.name]
-                notebook.stop()
-                notebook.stage = Stage.STOPPED
                 notebook.desired_stage = Stage.STOPPED
-                notebook._url = ""
                 self.db.put(notebook.collect_model())
                 return f"The notebook `{config.name}` has been stopped."
             return f"The notebook `{config.name}` is already stopped."

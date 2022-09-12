@@ -1,3 +1,4 @@
+import time
 from subprocess import Popen
 from typing import Optional
 
@@ -22,10 +23,12 @@ class JupyterLab(JupyterLab, ControllerResource):
         self.requirements = config.requirements
         self.desired_stage = config.desired_stage
         self.stage = config.stage
+        self.start_time = config.start_time
 
     def run(self, *args, **kwargs):
         super().run()
         self.stage = Stage.RUNNING
+        self.start_time = time.time()
 
     # TODO: Cleanup exit mechanism in lightning.
     def on_exit(self):
