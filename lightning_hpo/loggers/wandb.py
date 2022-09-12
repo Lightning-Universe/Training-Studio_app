@@ -1,9 +1,9 @@
 import os
 from typing import Any, Dict, Optional
 
-import wandb
 from lightning import LightningFlow
 
+import wandb
 from lightning_hpo.loggers.logger import Logger
 
 
@@ -74,9 +74,10 @@ class WandbLogger(Logger):
         return [{"name": "Project", "content": reports}, {"name": "Report", "content": report}]
 
     def configure_tracer(self, tracer, sweep_id: str, trial_id: int, params: Dict[str, Any]):
-        import wandb
         from pytorch_lightning import Trainer
         from pytorch_lightning.loggers import WandbLogger
+
+        import wandb
 
         wandb.init(
             project=sweep_id,

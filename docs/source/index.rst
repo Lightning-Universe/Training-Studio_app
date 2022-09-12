@@ -63,21 +63,7 @@ Get Started
       <div class="row">
 
 .. displayitem::
-   :header: Discover what Lightning Apps can do in 5 min
-   :description: Browse through mind-blowing ML Systems
-   :col_css: col-md-6
-   :button_link: get_started/what_app_can_do.html
-   :height: 180
-
-.. displayitem::
-   :header: Fundamentals about HyperParameter Optimization with Optuna
-   :description: Learn about its inner workings
-   :col_css: col-md-6
-   :button_link: https://medium.com/optuna/an-introduction-to-the-implementation-of-optuna-a-hyperparameter-optimization-framework-33995d9ec354
-   :height: 180
-
-.. displayitem::
-   :header: Use Lightning HPO with your own scripts
+   :header: Run a Sweep with PyTorch Lightning
    :description: Discover PyTorch Lightning and train your first Model.
    :col_css: col-md-6
    :button_link: workflows/optimize_with_pytorch_lightning.html
@@ -85,7 +71,7 @@ Get Started
 
 .. displayitem::
    :header: The Training Studio App
-   :description: Use your own App or share it with your teammates.
+   :description: Manage Sweeps and Tools to accelerate Training.
    :col_css: col-md-6
    :button_link: training_studio.html
    :height: 180

@@ -20,36 +20,41 @@ Training Studio
 
 ----
 
-**********************
-User Flow - Admin User
-**********************
+********************************
+The Training Studio App Benefits
+********************************
 
-Click on the `Lucidchart Diagram <https://lucid.app/lucidchart/9d513fd6-9410-4292-beac-29e73f1e1c34/edit?viewport_loc=-19%2C-798%2C6351%2C4441%2C0_0&invitationId=inv_d38b9a33-4915-4b7b-ab95-f73894923fbe#>`_ User Flow to understand how to use the Training Studio App.
+The Training Studio App builds on the Lightning HPO Sweep Component to provide a way to manage sweeps and accelerate ML development with some added benefits:
 
-The **Admin User** has access to the Admin View and the one who has run the App.
-
-To launch the Lightning Training Studio App in the cloud, simply run:
-
-.. code-block::
-
-   PACKAGE_LIGHTNING=1 lightning run app training_studio_app.py --cloud
-
-
-Check :doc:`install guide <installation>` if you haven't done it yet.
-
-To learn more about the codebase, request access to `recording <https://drive.google.com/file/d/1uqlV_06DkUZijCaqkCbc8arvVGdpzV_a/view>`_ by `@tchaton <https://github.com/tchaton>`_.
+* A Command-Line Interface to run your local scripts as sweeps or create development tools such as notebooks.
+* A React UI to easily keep track of your sweeps and tools.
+* Ability to run the Training Studio App on your own GPU machines (on-prem) or on `lightning.ai <https://lightning.ai/>`_ cloud platform.
+* Ability to have several users connect to the same App and collaborate together.
+* Organize your sweeps checkpoints or logging with several loggers of your choice such as Wandb, Tensorboard.
 
 ----
 
-********************
-User Flow - App User
-********************
+***************************
+Run the Training Studio App
+***************************
 
-The **App User** has access to the App View and interacts with the Training Studio App by creating notebooks, sweeps, etc.
+.. raw:: html
 
-The **App User** isn't necessarily the **Admin User**, but it is also possible to connect to **someone else** Training Studio App.
+   <br />
+   <div class="display-card-container">
+      <div class="row">
 
-As an **App User**, you can run **sweep**, **notebooks** and more. Keep reading to learn more.
+.. displayitem::
+   :header: Run the Training Studio App
+   :description: Learn how to start the Lightning App.
+   :col_css: col-md-4
+   :button_link: workflows/run_training_studio_app.html
+   :height: 180
+
+.. raw:: html
+
+      </div>
+   </div>
 
 ----
 
