@@ -108,9 +108,6 @@ class WandbLogger(Logger):
 
     @staticmethod
     def _validate_auth():
-        import wandb
-
-        wandb.login()
         if os.getenv("WANDB_API_KEY") is None or os.getenv("WANDB_ENTITY") is None:
             raise Exception(
                 "You are trying to use wandb without setting your API key or entity. "
