@@ -24,7 +24,7 @@ Training Studio
 The Training Studio App Benefits
 ********************************
 
-The Training Studio App builds upon the Lightning HPO Sweep Component and provides a way to manage sweeps and common tools to accelerate your ML training developments with some added benefits:
+The Training Studio App builds on the Lightning HPO Sweep Component to provide a way to manage sweeps and accelerate ML development with some added benefits:
 
 * A Command-Line Interface to run your local script as sweeps or create development tools such as notebooks.
 * A React UI to easily keep track of your sweeps and tools.
