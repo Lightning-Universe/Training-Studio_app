@@ -46,7 +46,7 @@ def test_notebook(monkeypatch):
     response = notebook_controller.stop_notebook(StopNotebookConfig(name=config.notebook_name))
     assert "The notebook `a` has been stopped."
     config = NotebookConfig(**list(notebook_controller.db.data.values())[0])
-    assert notebook_controller.r["a"].stage == Stage.STOPPED
+    assert notebook_controller.r["a"].stage == Stage.PENDING
     assert notebook_controller.r["a"].desired_stage == Stage.STOPPED
     config.stage = Stage.STOPPED
     config.desired_stage = Stage.STOPPED
