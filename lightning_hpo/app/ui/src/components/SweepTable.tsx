@@ -30,6 +30,11 @@ function trialToRows(trials: Record<string, TrialConfig>) {
     <Status status={entry[1].stage ? statusToEnum[entry[1].stage] : StatusEnum.NOT_STARTED} />,
     entry[0],
     String(entry[1].best_model_score),
+    <Box sx={{ minWidth: 35 }}>
+      <Typography variant="caption" display="block">{`${
+        entry[1].progress == null ? '0' : entry[1].progress
+      }%`}</Typography>
+    </Box>,
     ...Object.entries(entry[1].params.params).map(value => String(value[1])),
     entry[1].exception,
   ]);
@@ -118,7 +123,7 @@ export function Sweeps() {
     'More',
   ];
 
-  const baseTrialHeader = ['Status', 'Name', 'Best model score'];
+  const baseTrialHeader = ['Status', 'Name', 'Best Score', 'Progress'];
   const tensorboardIdsToStatuses = Object.fromEntries(
     tensorboards.map(e => {
       return [e.sweep_id, e];

@@ -11,4 +11,5 @@ export type TrialConfig = {
     stage?: string;
     params: Params;
     exception?: string;
+    progress?: number;
 };
