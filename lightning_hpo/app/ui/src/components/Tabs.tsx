@@ -5,6 +5,7 @@ import { Box, SxProps, Theme } from 'lightning-ui/src/design-system/components';
 import TabContent from 'lightning-ui/src/design-system/components/tabs/TabContent';
 import TabPanel from 'lightning-ui/src/design-system/components/tabs/TabPanel';
 import { ReactNode } from 'react';
+import NewMenu from './NewMenu';
 
 export type TabItem = {
   title: string;
@@ -23,6 +24,9 @@ export type TabsProps = {
 const Tabs = (props: TabsProps) => {
   return (
     <Box sx={{ overflowX: 'hidden' }}>
+      <Box sx={{ paddingX: '14px', paddingY: '9px', position: 'absolute', top: 0, right: 0, zIndex: 1000 }}>
+        <NewMenu />
+      </Box>
       <Grid container spacing={1}>
         <Grid item xs={12} sm="auto">
           <Box sx={{ marginX: '14px', marginY: '8px' }}>
