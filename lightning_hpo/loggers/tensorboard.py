@@ -2,6 +2,7 @@ import os
 from time import time
 from typing import Any, Dict, Optional
 
+import pytorch_lightning
 from lightning import LightningFlow
 from lightning.app.storage import Drive
 from lightning.pytorch.loggers import TensorBoardLogger
@@ -47,8 +48,6 @@ class TensorboardLogger(Logger):
         return []
 
     def configure_tracer(self, tracer, sweep_id: str, trial_id: int, params: Dict[str, Any]):
-        from pytorch_lightning import Trainer
-
         # Create a space logs under the sweep_id folder
         drive = Drive(f"lit://{sweep_id}", component_name=str(trial_id), allow_duplicates=True)
         use_localhost = "LIGHTNING_APP_STATE_URL" not in os.environ
@@ -67,7 +66,7 @@ class TensorboardLogger(Logger):
             kwargs["logger"] = logger
             return {}, args, kwargs
 
-        tracer.add_traced(Trainer, "__init__", pre_fn=trainer_pre_fn)
+        tracer.add_traced(pytorch_lightning.Trainer, "__init__", pre_fn=trainer_pre_fn)
 
     def get_url(self, trial_id: int) -> None:
         pass

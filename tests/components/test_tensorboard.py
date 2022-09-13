@@ -7,7 +7,7 @@ from lightning_hpo.commands.tensorboard.stop import TensorboardConfig
 from lightning_hpo.components import tensorboard as T
 
 
-def test_tensorboard(monkeypatch):
+def test_tensorboard_work(monkeypatch):
     def fn(*_):
         raise Exception("HERE")
 
