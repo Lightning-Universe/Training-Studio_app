@@ -1,7 +1,6 @@
 from sqlalchemy import Column
 from sqlmodel import Field, SQLModel
 
-from lightning_hpo.components.sweep import Sweep
 from lightning_hpo.distributions import Uniform
 from lightning_hpo.distributions.distributions import Categorical
 from lightning_hpo.utilities.enum import Stage
@@ -10,6 +9,7 @@ from tests.helpers import MockObjective
 
 
 def test_score_and_path():
+    from lightning_hpo.components.sweep import Sweep
 
     sweep = Sweep(
         5,
