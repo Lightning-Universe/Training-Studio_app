@@ -10,7 +10,6 @@ from lightning_hpo.commands.sweep.show import ShowSweepsCommand
 from lightning_hpo.commands.sweep.stop import StopSweepCommand, StopSweepConfig
 from lightning_hpo.commands.tensorboard.stop import TensorboardConfig
 from lightning_hpo.controllers.controller import Controller
-from lightning_hpo.loggers import LoggerType
 from lightning_hpo.utilities.enum import Stage
 
 
@@ -34,7 +33,7 @@ class SweepController(Controller):
         # 2: Create the Sweeps
         for sweep in sweeps:
             id = sweep.sweep_id
-            if sweep.logger == LoggerType.TENSORBOARD.value and id not in self.tensorboard_sweep_id:
+            if sweep.is_tensorboard() and id not in self.tensorboard_sweep_id:
                 self.tensorboard_sweep_id.append(id)
                 drive = Drive(f"lit://{id}")
                 self.db.post(TensorboardConfig(sweep_id=id, shared_folder=str(drive.drive_root)))
@@ -56,8 +55,8 @@ class SweepController(Controller):
         sweep_ids = list(self.r.keys())
         if config.sweep_id not in sweep_ids:
             self.db.post(config)
-            return f"Launched a sweep {config.sweep_id}"
-        return f"The current Sweep {config.sweep_id} is running. It couldn't be updated."
+            return f"Launched a Sweep '{config.sweep_id}'."
+        return f"The current Sweep '{config.sweep_id}' is running. It couldn't be updated."
 
     def show_sweeps(self) -> List[Dict]:
         if self.db_url:
