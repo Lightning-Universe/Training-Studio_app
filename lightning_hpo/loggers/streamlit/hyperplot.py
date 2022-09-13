@@ -27,5 +27,6 @@ def render_fn(state: AppState):
         return
 
     xp = hip.Experiment.from_iterable(state.data)
+    breakpoint()
     ret_val = xp.to_streamlit(ret="selected_uids", key="hip").display()
     st.markdown("hiplot returned " + json.dumps(ret_val))
