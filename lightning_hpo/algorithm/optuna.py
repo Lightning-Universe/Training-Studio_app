@@ -53,7 +53,12 @@ class OptunaAlgorithm(Algorithm):
             self.trials[trial_id] = self.study.ask(self.distributions)
 
     def trial_end(self, trial_id: int, score: float):
-        self.study.tell(trial_id, score)
+        try:
+            self.study.tell(trial_id, score)
+        except RuntimeError as e:
+            # The trial has already been added to the study.
+            print(e)
+            pass
 
         _logger.info(
             f"Trial {trial_id} finished with value: {score} and parameters: {self.trials[trial_id].params}. "  # noqa: E501

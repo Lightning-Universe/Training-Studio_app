@@ -74,7 +74,6 @@ Here is the command line with the hyper-parameters.
 
    lightning run sweep train.py \
       --n_trials=10 \
-      --simultaneous_trials=3 \
       --cloud_compute=cpu-medium \
       --model.lr="log_uniform(0.001, 0.1)" \
       --model.gamma="uniform(0.5, 0.8)" \

@@ -1,7 +1,7 @@
 import os
-import time
 from pathlib import Path
 from subprocess import Popen
+from time import sleep
 from uuid import uuid4
 
 from lightning import LightningWork
@@ -65,7 +65,7 @@ class Tensorboard(LightningWork, ControllerResource):
                     # to copy only the logs.
                     fs.invalidate_cache()
                     fs.get(str(self.drive.drive_root), local_folder, recursive=True)
-            time.sleep(self.sleep)
+            sleep(self.sleep)
 
     def on_exit(self):
         if _is_work_context():
