@@ -14,7 +14,6 @@ export type { Distributions } from './models/Distributions';
 export type { DownloadArtefactsConfig } from './models/DownloadArtefactsConfig';
 export type { HTTPValidationError } from './models/HTTPValidationError';
 export type { NotebookConfig } from './models/NotebookConfig';
-export type { Params } from './models/Params';
 export type { ShowArtefactsConfig } from './models/ShowArtefactsConfig';
 export type { StopNotebookConfig } from './models/StopNotebookConfig';
 export type { StopSweepConfig } from './models/StopSweepConfig';

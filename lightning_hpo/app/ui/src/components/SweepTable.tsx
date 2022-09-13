@@ -35,7 +35,7 @@ function trialToRows(trials: Record<string, TrialConfig>) {
         entry[1].progress == null ? '0' : entry[1].progress
       }%`}</Typography>
     </Box>,
-    ...Object.entries(entry[1].params.params).map(value => String(value[1])),
+    ...Object.entries(entry[1].params).map(value => String(value[1])),
     entry[1].exception,
   ]);
 }
@@ -170,10 +170,7 @@ export function Sweeps() {
 
   const rowDetails = sweeps.map(sweep => (
     <Stack>
-      <Table
-        header={generateTrialHeader(baseTrialHeader, sweep.trials[0].params.params)}
-        rows={trialToRows(sweep.trials)}
-      />
+      <Table header={generateTrialHeader(baseTrialHeader, sweep.trials[0].params)} rows={trialToRows(sweep.trials)} />
     </Stack>
   ));
 
