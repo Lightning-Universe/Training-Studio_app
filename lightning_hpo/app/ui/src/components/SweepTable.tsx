@@ -103,7 +103,7 @@ export function Sweeps() {
         </UserGuideBody>
         <UserGuideComment>Run a sweep</UserGuideComment>
         <UserGuideBody>
-          lightning run sweep train.py --n_trials=10 --simultaneous_trials=3 --cloud_compute=cpu-medium
+          lightning run sweep train.py --n_trials=3 --simultaneous_trials=1 --cloud_compute=cpu-medium
           --model.lr="log_uniform(0.001, 0.1)" --model.gamma="uniform(0.5, 0.8)" --data.batch_size="categorical([32,
           64])"
         </UserGuideBody>
