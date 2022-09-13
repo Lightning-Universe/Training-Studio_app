@@ -30,12 +30,15 @@ Here is the output of the command:
                   [--cloud_compute CLOUD_COMPUTE]
 
    optional arguments:
-   -h, --help            show this help message and exit
-   --name NAME           The name of your notebook to run.
+   -h, --help              show this help message and exit
+   --name NAME             The name of your notebook to run.
    --requirements REQUIREMENTS [REQUIREMENTS ...]
                            Requirements file.
    --cloud_compute CLOUD_COMPUTE
                            The machine to use in the cloud.
+   --drive DRIVE           The path to a public S3 bucket to mount in the notebook.
+   --drive_mount_dir DRIVE_MOUNT_DIR
+                           The path where the drive will be mounted.
 
 ----
 
@@ -57,6 +60,26 @@ You can simply start a notebook as follows:
 
 ----
 
+*********************
+3. Mount an S3 Bucket
+*********************
+
+You can mount a public S3 bucket to your notebook using the ``--drive`` flag as follows:
+
+.. code-block::
+
+   lightning run notebook --name=my_notebook --drive="s3://pl-flash-data/"
+
+.. code-block::
+
+   You are connected to the local Lightning App.
+   The notebook `my_notebook` has been created.
+   Your command execution was successful
+
+.. note:: By default this will mount the bucket under ``/data``. The mount directory can be changed with the ``--drive_mount_dir`` flag.
+
+----
+
 **********
 Next Steps
 **********
@@ -66,6 +89,13 @@ Next Steps
    <br />
    <div class="display-card-container">
       <div class="row">
+
+.. displayitem::
+   :header: Run a Notebook with a Drive
+   :description: Learn how to view the existing notebooks
+   :col_css: col-md-4
+   :button_link: run_notebook_with_drive.html
+   :height: 180
 
 .. displayitem::
    :header: Show Notebooks

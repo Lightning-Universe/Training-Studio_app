@@ -16,7 +16,7 @@ const NewNotebookDialog = ({ open, setOpen }: NewNotebookDialogProps) => {
     (config: NotebookConfig, newConfig: Partial<NotebookConfig>) => {
       return { ...config, ...newConfig };
     },
-    { notebook_name: '', cloud_compute: 'cpu', requirements: [] },
+    { notebook_name: '', cloud_compute: 'cpu', requirements: [], drive: '', drive_mount_dir: 'data/' },
   );
 
   const cancel = () => {
@@ -51,6 +51,19 @@ const NewNotebookDialog = ({ open, setOpen }: NewNotebookDialogProps) => {
               <ToggleButton value="gpu-fast">Fast GPU</ToggleButton>
             </LightningToggleButtonGroup>
           </FormControl>
+          <TextField
+            label="Drive"
+            helperText="Optional"
+            value={config.drive}
+            onChange={value => setConfig({ drive: value || '' })}
+            fullWidth
+          />
+          <TextField
+            label="Mount drive to"
+            value={config.drive_mount_dir}
+            onChange={value => setConfig({ drive_mount_dir: value || '' })}
+            fullWidth
+          />
         </Stack>
       </DialogContent>
       <DialogActions sx={{ padding: '16px 24px' }}>

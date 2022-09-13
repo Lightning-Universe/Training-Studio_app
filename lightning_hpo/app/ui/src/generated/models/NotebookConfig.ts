@@ -6,6 +6,8 @@ export type NotebookConfig = {
     notebook_name: string;
     requirements: Array<string>;
     cloud_compute: string;
+    drive: string;
+    drive_mount_dir: string;
     stage?: string;
     desired_stage?: string;
     url?: string;
