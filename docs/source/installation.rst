@@ -36,7 +36,7 @@ Install with pip
         pip install -r requirements.txt -r requirements/test.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
 
 
-        pip install git+https://github.com/Lightning-AI/lightning.git@small_fixes
+        pip install git+https://github.com/Lightning-AI/lightning.git@master
 
 
         pip install -e .

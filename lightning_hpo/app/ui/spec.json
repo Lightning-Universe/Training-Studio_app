@@ -153,7 +153,7 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/sweep/delete.py",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/delete.py",
         "cls_name": "DeleteSweepCommand"
       }
     },
@@ -173,7 +173,7 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/sweep/run.py",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/run.py",
         "cls_name": "RunSweepCommand"
       }
     },
@@ -185,7 +185,7 @@
         "responses": {
           "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
         },
-        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/sweep/show.py",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/show.py",
         "cls_name": "ShowSweepsCommand"
       }
     },
@@ -205,7 +205,7 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/sweep/stop.py",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/stop.py",
         "cls_name": "StopSweepCommand"
       }
     },
@@ -225,7 +225,7 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/notebook/run.py",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/notebook/run.py",
         "cls_name": "RunNotebookCommand"
       }
     },
@@ -245,7 +245,7 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/notebook/stop.py",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/notebook/stop.py",
         "cls_name": "StopNotebookCommand"
       }
     },
@@ -257,7 +257,7 @@
         "responses": {
           "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
         },
-        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/notebook/show.py",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/notebook/show.py",
         "cls_name": "ShowNotebookCommand"
       }
     },
@@ -323,7 +323,7 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/artefacts/show.py",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/artefacts/show.py",
         "cls_name": "ShowArtefactsCommand"
       }
     },
@@ -343,7 +343,7 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/artefacts/download.py",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/artefacts/download.py",
         "cls_name": "DownloadArtefactsCommand"
       }
     },
@@ -397,7 +397,19 @@
         "type": "object",
         "properties": {
           "distribution": { "title": "Distribution", "type": "string" },
-          "params": { "$ref": "#/components/schemas/Params" }
+          "params": {
+            "title": "Params",
+            "type": "object",
+            "additionalProperties": {
+              "anyOf": [
+                { "type": "number" },
+                { "type": "integer" },
+                { "type": "string" },
+                { "type": "array", "items": { "type": "number" } },
+                { "type": "array", "items": { "type": "string" } }
+              ]
+            }
+          }
         }
       },
       "DownloadArtefactsConfig": {
@@ -429,25 +441,6 @@
           "desired_stage": { "title": "Desired Stage", "type": "string", "default": "running" },
           "url": { "title": "Url", "type": "string", "default": "" },
           "start_time": { "title": "Start Time", "type": "number", "default": -1 }
-        }
-      },
-      "Params": {
-        "title": "Params",
-        "required": ["params"],
-        "type": "object",
-        "properties": {
-          "params": {
-            "title": "Params",
-            "type": "object",
-            "additionalProperties": {
-              "anyOf": [
-                { "type": "number" },
-                { "type": "integer" },
-                { "type": "array", "items": { "type": "number" } },
-                { "type": "array", "items": { "type": "string" } }
-              ]
-            }
-          }
         }
       },
       "ShowArtefactsConfig": {
@@ -542,7 +535,19 @@
           "monitor": { "title": "Monitor", "type": "string" },
           "best_model_path": { "title": "Best Model Path", "type": "string" },
           "stage": { "title": "Stage", "type": "string", "default": "not_started" },
-          "params": { "$ref": "#/components/schemas/Params" },
+          "params": {
+            "title": "Params",
+            "type": "object",
+            "additionalProperties": {
+              "anyOf": [
+                { "type": "number" },
+                { "type": "integer" },
+                { "type": "string" },
+                { "type": "array", "items": { "type": "number" } },
+                { "type": "array", "items": { "type": "string" } }
+              ]
+            }
+          },
           "exception": { "title": "Exception", "type": "string" },
           "progress": { "title": "Progress", "type": "number" }
         }

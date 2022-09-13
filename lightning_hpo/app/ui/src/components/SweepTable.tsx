@@ -35,7 +35,7 @@ function trialToRows(trials: Record<string, TrialConfig>) {
         entry[1].progress == null ? '0' : entry[1].progress
       }%`}</Typography>
     </Box>,
-    ...Object.entries(entry[1].params.params).map(value => String(value[1])),
+    ...Object.entries(entry[1].params).map(value => String(value[1])),
     entry[1].exception,
   ]);
 }
@@ -103,7 +103,7 @@ export function Sweeps() {
         </UserGuideBody>
         <UserGuideComment>Run a sweep</UserGuideComment>
         <UserGuideBody>
-          lightning run sweep train.py --n_trials=10 --simultaneous_trials=3 --cloud_compute=cpu-medium
+          lightning run sweep train.py --n_trials=3 --simultaneous_trials=1 --cloud_compute=cpu-medium
           --model.lr="log_uniform(0.001, 0.1)" --model.gamma="uniform(0.5, 0.8)" --data.batch_size="categorical([32,
           64])"
         </UserGuideBody>
@@ -170,10 +170,7 @@ export function Sweeps() {
 
   const rowDetails = sweeps.map(sweep => (
     <Stack>
-      <Table
-        header={generateTrialHeader(baseTrialHeader, sweep.trials[0].params.params)}
-        rows={trialToRows(sweep.trials)}
-      />
+      <Table header={generateTrialHeader(baseTrialHeader, sweep.trials[0].params)} rows={trialToRows(sweep.trials)} />
     </Stack>
   ));
 

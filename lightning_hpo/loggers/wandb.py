@@ -1,9 +1,10 @@
 import os
 from typing import Any, Dict, Optional
 
+import pytorch_lightning
+import wandb
 from lightning import LightningFlow
 
-import wandb
 from lightning_hpo.loggers.logger import Logger
 
 
@@ -43,18 +44,16 @@ class WandbLogger(Logger):
         self.report_url = f"https://wandb.ai/{self.entity}/{self.sweep_id}/reports/{self.sweep_id}--{self.report.id}"
 
     def on_after_trial_end(self, sweep_id: str, trial_id: int, monitor: str, score: float, params: Dict[str, Any]):
-        from wandb.apis import reports
-
         if getattr(self.report, "blocks"):
             return
 
-        panel_grid = reports.PanelGrid()
-        run_set = reports.RunSet()
+        panel_grid = wandb.apis.reports.PanelGrid()
+        run_set = wandb.apis.reports.RunSet()
         run_set.entity = self.entity
         run_set.project = self.sweep_id
         panel_grid.runsets = [run_set]
         keys = list(params.keys()) + [monitor]
-        coords = reports.ParallelCoordinatesPlot([reports.PCColumn(p) for p in keys])
+        coords = wandb.apis.reports.ParallelCoordinatesPlot([wandb.apis.reports.PCColumn(p) for p in keys])
         coords.layout = {"x": 0, "y": 0, "w": 24, "h": 10}
         coords.entity = self.entity
         coords.project = self.sweep_id
@@ -74,11 +73,6 @@ class WandbLogger(Logger):
         return [{"name": "Project", "content": reports}, {"name": "Report", "content": report}]
 
     def configure_tracer(self, tracer, sweep_id: str, trial_id: int, params: Dict[str, Any]):
-        from pytorch_lightning import Trainer
-        from pytorch_lightning.loggers import WandbLogger
-
-        import wandb
-
         wandb.init(
             project=sweep_id,
             entity=self.entity,
@@ -90,7 +84,7 @@ class WandbLogger(Logger):
             wandb.summary[k] = v
 
         def trainer_pre_fn(trainer, *args, **kwargs):
-            logger = WandbLogger(
+            logger = pytorch_lightning.loggers.WandbLogger(
                 save_dir=os.path.join(os.getcwd(), "wandb/lightning_logs"),
                 project=sweep_id,
                 entity=self.entity,
@@ -99,7 +93,7 @@ class WandbLogger(Logger):
             kwargs["logger"] = [logger]
             return {}, args, kwargs
 
-        tracer.add_traced(Trainer, "__init__", pre_fn=trainer_pre_fn)
+        tracer.add_traced(pytorch_lightning.Trainer, "__init__", pre_fn=trainer_pre_fn)
 
     def get_url(self, trial_id: int) -> None:
         if self.storage_id is not None:

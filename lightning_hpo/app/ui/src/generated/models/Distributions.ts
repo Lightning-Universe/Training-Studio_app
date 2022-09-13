@@ -2,9 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { Params } from './Params';
-
 export type Distributions = {
     distribution: string;
-    params: Params;
+    params: Record<string, (number | string | Array<number> | Array<string>)>;
 };
