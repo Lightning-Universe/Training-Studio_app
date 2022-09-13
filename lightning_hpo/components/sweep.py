@@ -8,7 +8,7 @@ from lightning_utilities.core.apply_func import apply_to_collection
 
 from lightning_hpo.algorithm.base import Algorithm
 from lightning_hpo.algorithm.optuna import OptunaAlgorithm
-from lightning_hpo.commands.sweep.run import Params, SweepConfig, TrialConfig
+from lightning_hpo.commands.sweep.run import SweepConfig, TrialConfig
 from lightning_hpo.controllers.controller import ControllerResource
 from lightning_hpo.distributions.distributions import Distribution
 from lightning_hpo.framework.agnostic import Objective
@@ -76,7 +76,7 @@ class Sweep(LightningFlow, ControllerResource):
         self.trials_done = trials_done or 0
         self.requirements = requirements or []
         self.script_args = script_args
-        self.distributions = distributions
+        self.distributions = distributions or {}
         self.framework = framework
         self.cloud_compute = getattr(cloud_compute, "name", "default")
         self.num_nodes = getattr(cloud_compute, "count", 1) if cloud_compute else 1
@@ -125,9 +125,9 @@ class Sweep(LightningFlow, ControllerResource):
                     self._algorithm.trial_start(trial_id)
                     self._logger.on_after_trial_start(self.sweep_id)
 
-                if not self.trials[trial_id]["params"]["params"]:
+                if not self.trials[trial_id]["params"]:
                     self.stage = Stage.RUNNING
-                    self.trials[trial_id]["params"] = Params(params=self._algorithm.get_params(trial_id)).dict()
+                    self.trials[trial_id]["params"] = self._algorithm.get_params(trial_id)
 
                 logger_url = self._logger.get_url(trial_id)
                 if logger_url is not None and self.logger_url != logger_url:
@@ -149,6 +149,7 @@ class Sweep(LightningFlow, ControllerResource):
                     if self._algorithm.should_prune(trial_id, objective.reports):
                         self.trials[trial_id]["stage"] = Stage.PRUNED
                         objective.stop()
+                        self.trials_done += 1
                         continue
 
                 if self.stage != Stage.FAILED and self.trials[trial_id]["stage"] == Stage.PENDING:
@@ -198,7 +199,7 @@ class Sweep(LightningFlow, ControllerResource):
                 monitor=None,
                 best_model_path=None,
                 stage=Stage.PENDING,
-                params=Params(params={}),
+                params={},
             ).dict()
             self.trials[trial_id] = trial_config
 

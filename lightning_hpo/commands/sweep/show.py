@@ -76,7 +76,7 @@ def _show_sweep(sweep: SweepConfig):
             str(idx),
             str(trial.stage),
             str(round(trial.best_model_score, 2) if trial.best_model_score else None),
-            str({k: round(v, 5) for k, v in trial.params.params.items()}),
+            str({k: round(v, 5) for k, v in trial.params.items()}),
             str(trial.monitor),
         )
     console = Console()

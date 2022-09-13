@@ -13,19 +13,16 @@ from lightning.app.utilities.commands import ClientCommand
 from sqlalchemy import Column
 from sqlmodel import Field, SQLModel
 
+from lightning_hpo.loggers import LoggerType
 from lightning_hpo.utilities.enum import Stage
 from lightning_hpo.utilities.utils import pydantic_column_type
 
 
-class Params(SQLModel, table=False):
-    params: Dict[str, Union[float, int, List[float], List[str]]] = Field(
-        sa_column=Column(pydantic_column_type(Dict[str, Union[float, int, List[float], List[str]]]))
-    )
-
-
 class Distributions(SQLModel, table=False):
     distribution: str
-    params: Params = Field(sa_column=Column(pydantic_column_type(Params)))
+    params: Dict[str, Union[float, int, str, List[float], List[str]]] = Field(
+        sa_column=Column(pydantic_column_type(Dict[str, Union[float, int, List[float], List[str]]]))
+    )
 
 
 class TrialConfig(SQLModel, table=False):
@@ -33,7 +30,9 @@ class TrialConfig(SQLModel, table=False):
     monitor: Optional[str]
     best_model_path: Optional[str]
     stage: str = Stage.NOT_STARTED
-    params: Params = Field(sa_column=Column(pydantic_column_type(Params)))
+    params: Dict[str, Union[float, int, str, List[float], List[str]]] = Field(
+        sa_column=Column(pydantic_column_type(Dict[str, Union[float, int, List[float], List[str]]]))
+    )
     exception: Optional[str]
     progress: Optional[float]
 
@@ -76,6 +75,9 @@ class SweepConfig(SQLModel, table=True):
     @property
     def hash(self) -> str:
         return self.sweep_id.split("-")[1]
+
+    def is_tensorboard(self):
+        return self.logger == LoggerType.TENSORBOARD.value
 
 
 class DistributionParser:
@@ -211,8 +213,7 @@ class RunSweepCommand(ClientCommand):
         repo.upload(url=f"{url}/uploadfile/{name}")
 
         distributions = {
-            k: Distributions(distribution=x["distribution"], params=Params(params=x["params"]))
-            for k, x in distributions.items()
+            k: Distributions(distribution=x["distribution"], params=x["params"]) for k, x in distributions.items()
         }
 
         config = SweepConfig(

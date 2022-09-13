@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Literal, Optional, Tuple, Union
 
 import optuna
 from optuna import create_study, Study, Trial
@@ -12,7 +12,7 @@ from optuna.distributions import (
 )
 
 from lightning_hpo.algorithm.base import Algorithm
-from lightning_hpo.distributions import DistributionDict, get_params
+from lightning_hpo.distributions import DistributionDict
 
 _logger = logging.getLogger(__name__)
 
@@ -25,7 +25,9 @@ _DISTRIBUTION_TO_OPTUNA = {
 
 
 class OptunaAlgorithm(Algorithm):
-    def __init__(self, study: Optional[Study] = None, direction: Optional[str] = "minimize") -> None:
+    def __init__(
+        self, study: Optional[Union[Study, Literal["grid_search"]]] = None, direction: Optional[str] = "minimize"
+    ) -> None:
         self.study = study or create_study(direction=direction)
         self.trials: Dict[int, Trial] = {}
         self.reports = {}
@@ -34,13 +36,13 @@ class OptunaAlgorithm(Algorithm):
     def register_distributions(self, distributions: Dict[str, DistributionDict]):
         for var_name, distribution in distributions.items():
             distribution_cls = _DISTRIBUTION_TO_OPTUNA[distribution["distribution"]]
-            distribution = distribution_cls(**get_params(distribution))
+            distribution = distribution_cls(**distribution["params"])
             self.distributions[var_name] = distribution
 
     def register_trials(self, trials_config: List[Dict]) -> None:
         for trial_config in trials_config:
             trial = optuna.trial.create_trial(
-                params=get_params(trial_config),
+                params=trial_config["params"],
                 distributions=self.distributions,
                 value=trial_config["best_model_score"],
             )
@@ -79,7 +81,7 @@ class OptunaAlgorithm(Algorithm):
         params = self.trials[trial_id].params
         out = {}
         for k, v in params.items():
-            if v == int(v):
+            if isinstance(v, float) and v == int(v):
                 out[k] = int(v)
             else:
                 out[k] = v
