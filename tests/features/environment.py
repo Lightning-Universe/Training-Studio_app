@@ -4,13 +4,20 @@ import sys
 import tempfile
 import time
 
-import playwright
+import psutil
 from behave import fixture, use_fixture
 from lightning_app.cli.lightning_cli import get_app_url
 from lightning_app.runners.runtime_type import RuntimeType
 from playwright.sync_api import expect, sync_playwright
 
 from lightning_hpo import _PROJECT_ROOT
+
+
+def kill(proc_pid):
+    process = psutil.Process(proc_pid)
+    for proc in process.children(recursive=True):
+        proc.kill()
+    process.kill()
 
 
 @fixture
@@ -30,10 +37,7 @@ def run_app(context):
         os.chmod(tmpdir, 0o777)
         # TODO: Doesn't work if you pass tmpdir as cwd to the Popen call
         os.chdir(tmpdir)
-        process = subprocess.Popen(
-            cmd,
-            env=os.environ.copy(),
-        )
+        process = subprocess.Popen(cmd, env=os.environ.copy(), preexec_fn=os.setsid)
 
         context.app_id = "localhost"
 
@@ -48,17 +52,15 @@ def run_app(context):
                     locator = context.page.frame_locator("iframe").locator("text=Training Studio")
                     expect(locator).to_be_visible(timeout=30 * 1000)
                     break
-                except (
-                    playwright._impl._api_types.Error,
-                    playwright._impl._api_types.TimeoutError,
-                ):
+                except:  # noqa: E722
                     pass
 
             yield context.browser
 
             context.browser.close()
-        process.terminate()
-        process.wait()
+
+        print("Killing App Process")
+        kill(process.pid)
 
 
 def before_scenario(context, scenario):
