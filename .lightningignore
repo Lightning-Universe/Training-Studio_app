@@ -1,10 +1,8 @@
 *lightning_logs*
-data
-data/*
+*data/*
 .shared
 *.ckpt
 *.shared*
-*data*
 *.git*
 *MNIST*
 *artifacts*

@@ -3,7 +3,7 @@ from typing import List, Type
 from lightning import LightningFlow
 from sqlmodel import SQLModel
 
-from lightning_hpo.components.servers.db.server import create_engine
+from lightning_hpo.components.servers.db.work_db import create_engine
 
 
 class FlowDatabase(LightningFlow):

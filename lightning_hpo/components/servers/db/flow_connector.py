@@ -3,7 +3,7 @@ from typing import Optional, Type
 from sqlmodel import SQLModel
 
 from lightning_hpo.components.servers.db.models import GeneralModel
-from lightning_hpo.components.servers.db.server import general_delete, general_get, general_post, general_put
+from lightning_hpo.components.servers.db.work_db import general_delete, general_get, general_post, general_put
 
 
 class FlowDatabaseConnector:
