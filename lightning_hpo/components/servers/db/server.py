@@ -1,4 +1,5 @@
 import os
+import pathlib
 from typing import List, Optional, Type
 
 from fastapi import FastAPI
@@ -75,7 +76,7 @@ class Database(LightningWork):
         global engine
 
         app = FastAPI()
-        engine = create_engine(f"sqlite:///{self.db_file_name}", echo=self.debug)
+        engine = create_engine(f"sqlite:///{pathlib.Path(self.db_file_name).resolve()}", echo=self.debug)
 
         @app.on_event("startup")
         def on_startup():
