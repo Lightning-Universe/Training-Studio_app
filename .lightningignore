@@ -23,3 +23,4 @@ docs
 coverage.xml
 LICENSE
 spec.json
+database.db

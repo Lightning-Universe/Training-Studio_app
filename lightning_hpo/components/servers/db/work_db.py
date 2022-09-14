@@ -4,11 +4,14 @@ from typing import List, Optional, Type
 from fastapi import FastAPI
 from lightning import BuildConfig, LightningWork
 from lightning.app.storage import Path
+from lightning_app.utilities.app_helpers import Logger
 from sqlmodel import select, Session, SQLModel
 from uvicorn import run
 
 from lightning_hpo.components.servers.db.models import GeneralModel
 from lightning_hpo.utilities.utils import get_primary_key
+
+logger = Logger(__name__)
 
 engine = None
 
@@ -64,11 +67,10 @@ def create_engine(db_file_name: str, models: List[Type[SQLModel]], echo: bool):
 
     from sqlmodel import create_engine, SQLModel
 
-    if not os.path.exists(db_file_name):
-        engine = create_engine(f"sqlite:///{db_file_name}", echo=echo)
+    engine = create_engine(f"sqlite:///{db_file_name}", echo=echo)
 
-        print(f"Creating the following tables {models}")
-        SQLModel.metadata.create_all(engine)
+    logger.debug(f"Creating the following tables {models}")
+    SQLModel.metadata.create_all(engine)
 
 
 class Database(LightningWork):
