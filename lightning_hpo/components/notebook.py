@@ -1,7 +1,6 @@
 import os
 import pathlib
 import time
-import uuid
 from subprocess import Popen
 from typing import Optional
 
@@ -32,11 +31,10 @@ class JupyterLab(JupyterLab, ControllerResource):
         self.start_time = config.start_time
 
         if config.drive:
-            os.makedirs(pathlib.Path(config.drive_mount_dir).resolve())
-            setattr(self, uuid.uuid4().hex, Drive(config.drive, root_folder=config.drive_mount_dir))
+            os.makedirs(pathlib.Path(config.drive_mount_dir).resolve(), exist_ok=True)
+            self.mounted_drive = Drive(config.drive, root_folder=config.drive_mount_dir)
 
     def run(self, *args, **kwargs):
-        print(os.listdir(self.drive_mount_dir))
         super().run()
         self.stage = Stage.RUNNING
         self.start_time = time.time()
