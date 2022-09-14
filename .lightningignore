@@ -24,5 +24,4 @@ docs
 .coverage
 coverage.xml
 LICENSE
-README.md
 spec.json
