@@ -66,7 +66,7 @@ jobs:
       - name: Configure coverage for multiprocessing
         run: |
           SITE=$(python -c 'import site; import os; print(os.path.join(site.getsitepackages()[0], "sitecustomize.py"))')
-          echo "\nimport os\nos.environ['COVERAGE_PROCESS_START'] = True\nimport coverage\ncoverage.process_startup()\nprint('Running with coverage')" >> $SITE
+          echo "import os; os.environ['COVERAGE_PROCESS_START'] = True; import coverage; coverage.process_startup(); print('Running with coverage')" >> $SITE
         shell: bash
 
       - name: Tests
