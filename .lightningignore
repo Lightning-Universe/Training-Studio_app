@@ -19,3 +19,10 @@ dist
 tensorboard_logs
 jupyter_lab_*
 *node_modules*
+docs
+.storage
+.coverage
+coverage.xml
+LICENSE
+README.md
+spec.json

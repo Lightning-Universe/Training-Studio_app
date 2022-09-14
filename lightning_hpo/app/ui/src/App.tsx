@@ -31,14 +31,16 @@ const statusToEnum = {
 
 function Notebooks() {
   const notebooks = useClientDataState('notebooks') as NotebookConfig[];
+  const appId = getAppId();
+  const enableClipBoard = appId == 'localhost' ? false : true;
 
   if (notebooks.length == 0) {
     return (
       <UserGuide title="Want to start a notebook?" subtitle="Use the commands below or click on 'New'">
         <UserGuideComment>Connect to the app</UserGuideComment>
-        <UserGuideBody>{`lightning connect ${getAppId()} --yes`}</UserGuideBody>
+        <UserGuideBody enableClipBoard={enableClipBoard}>{`lightning connect ${appId} --yes`}</UserGuideBody>
         <UserGuideComment>Run a notebook</UserGuideComment>
-        <UserGuideBody>lightning run notebook my_notebook</UserGuideBody>
+        <UserGuideBody enableClipBoard={enableClipBoard}>lightning run notebook my_notebook</UserGuideBody>
       </UserGuide>
     );
   }

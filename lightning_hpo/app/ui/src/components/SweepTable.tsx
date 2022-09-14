@@ -90,19 +90,22 @@ export function Sweeps() {
   const tensorboards = useClientDataState('tensorboards') as TensorboardConfig[];
   const sweeps = useClientDataState('sweeps') as SweepConfig[];
 
+  const appId = getAppId();
+  const enableClipBoard = appId == 'localhost' ? false : true;
+
   if (sweeps.length == 0) {
     return (
       <UserGuide title="Want to start a hyper-parameter sweep?" subtitle="Use the commands below">
         <UserGuideComment>Connect to the app</UserGuideComment>
-        <UserGuideBody>{`lightning connect ${getAppId()} --yes`}</UserGuideBody>
+        <UserGuideBody enableClipBoard={enableClipBoard}>{`lightning connect ${appId} --yes`}</UserGuideBody>
         <UserGuideComment>Download example script</UserGuideComment>
-        <UserGuideBody>
+        <UserGuideBody enableClipBoard={enableClipBoard}>
           {
             'wget https://raw.githubusercontent.com/Lightning-AI/lightning-hpo/master/examples/scripts/train.py > train.py'
           }
         </UserGuideBody>
         <UserGuideComment>Run a sweep</UserGuideComment>
-        <UserGuideBody>
+        <UserGuideBody enableClipBoard={enableClipBoard}>
           lightning run sweep train.py --n_trials=3 --simultaneous_trials=1 --cloud_compute=cpu-medium
           --model.lr="log_uniform(0.001, 0.1)" --model.gamma="uniform(0.5, 0.8)" --data.batch_size="categorical([32,
           64])"

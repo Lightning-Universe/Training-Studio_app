@@ -31,6 +31,11 @@ Once you are setup, you can run the App locally from the **lightning-hpo** direc
 
 If you want to enable the `Weights And Biases Logger <https://wandb.ai/>`_, follow the following :doc:`guide <loggers/wandb>`.
 
+
+.. warning::
+
+   The Training Studio App is fault-tolerant and tracks all information within an Sqlite Database. You can clean up the database with the following command: **rm database.db**.
+
 ----
 
 ***************************
