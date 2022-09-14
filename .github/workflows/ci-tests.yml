@@ -74,7 +74,7 @@ jobs:
 
       - name: Story Tests
         run: |
-          python -m coverage run --source lightning_hpo -m behave "tests/features/"  -v
+          python -m coverage run --append --source lightning_hpo -m behave "tests/features/"  -v
 
 #      - name: Upload pytest test results
 #        uses: actions/upload-artifact@v3
