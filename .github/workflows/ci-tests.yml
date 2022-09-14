@@ -65,7 +65,7 @@ jobs:
 
       - name: Configure coverage for multiprocessing
         run: |
-          echo "import coverage\ncoverage.process_startup()" >> sitecustomize.py
+          echo "import coverage\ncoverage.process_startup()\nprint('Running with coverage')" >> sitecustomize.py
         shell: bash
 
       - name: Tests
