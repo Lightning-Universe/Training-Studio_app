@@ -63,8 +63,14 @@ jobs:
           pip list
         shell: bash
 
+      - name: Configure coverage for multiprocessing
+        run: |
+          echo "import coverage\ncoverage.process_startup()" >> my_file.txt
+        shell: bash
+
       - name: Tests
         env:
+          COVERAGE_PROCESS_START: 1
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: us-east-1
@@ -73,6 +79,8 @@ jobs:
           python -m coverage run --source lightning_hpo -m pytest tests --junitxml=$PYTEST_ARTIFACT --durations=0 --color=yes -v
 
       - name: Story Tests
+        env:
+          COVERAGE_PROCESS_START: 1
         run: |
           python -m coverage run --append --source lightning_hpo -m behave "tests/features/"  -v
 
