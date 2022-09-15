@@ -94,6 +94,7 @@ jobs:
         if: success()
         working-directory: ./
         run: |
+          coverage combine -a
           coverage xml -i
           coverage report -i
 

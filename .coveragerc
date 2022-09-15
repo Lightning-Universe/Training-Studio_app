@@ -4,3 +4,4 @@ source =
 concurrency =
     thread
     multiprocessing
+parallel = True
