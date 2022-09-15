@@ -28,7 +28,7 @@ The Training Studio App CLI provides its own help.
    You are connected to the local Lightning App.
    usage: sweep [-h] [--n_trials N_TRIALS] [--simultaneous_trials SIMULTANEOUS_TRIALS]
                [--requirements REQUIREMENTS [REQUIREMENTS ...]] [--framework FRAMEWORK]
-               [--cloud_compute CLOUD_COMPUTE] [--name NAME] [--num_nodes NUM_NODES] [--logger LOGGER]
+               [--cloud_compute CLOUD_COMPUTE] [--name NAME] [--logger LOGGER]
                [--direction {minimize,maximize}]
                script_path
 
