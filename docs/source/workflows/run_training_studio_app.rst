@@ -44,15 +44,6 @@ If you want to enable the `Weights And Biases Logger <https://wandb.ai/>`_, foll
 
 .. note:: This is only temporary as some changes are being released to PiPy
 
-In order to run Training Studio in the cloud, you need to install lightning in editable mode in the same virtual environment.
-
-In another folder, clone and install lightning.
-
-.. code-block::
-
-   git clone -b reduce_cost https://github.com/Lightning-AI/lightning.git
-   cd lightning && pip install -e .
-
 Go back within the ``lightning_hpo`` folder
 
 .. code-block::

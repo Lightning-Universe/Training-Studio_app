@@ -29,20 +29,22 @@ You can use `conda <https://conda.io/projects/conda/en/latest/user-guide/tasks/m
 
     .. code:: bash
 
-        git clone https://github.com/Lightning-AI/lightning-hpo
+      git clone https://github.com/Lightning-AI/lightning-hpo && cd lightning-hpo
+
+      pip install -r requirements.txt -r requirements/test.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
+
+      cd .. && git clone -b reduce_cost https://github.com/Lightning-AI/lightning.git && cd lightning && pip install -e .
+
+      cd ../lightning-hpo && pip install -e .
+
+.. note:: This is only temporary as some changes are being released to PiPy
 
 
-        cd lightning-hpo
+2. Makes sure everything works
 
+.. code-block::
 
-        pip install -r requirements.txt -r requirements/test.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
-
-
-        pip install git+https://github.com/Lightning-AI/lightning.git@reduce_cost
-
-
-        pip install -e .
-
+   python -m lightning run app app.py
 
 ----
 

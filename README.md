@@ -43,21 +43,19 @@ source .venv/bin/activate
 Clone and install lightning-hpo.
 
 ```bash
-git clone https://github.com/Lightning-AI/lightning-hpo
-
-cd lightning-hpo
+git clone https://github.com/Lightning-AI/lightning-hpo && cd lightning-hpo
 
 pip install -r requirements.txt -r requirements/test.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
 
-pip install git+https://github.com/Lightning-AI/lightning.git@reduce_cost
+cd .. && git clone -b reduce_cost https://github.com/Lightning-AI/lightning.git && cd lightning && pip install -e .
 
-pip install -e .
+cd ../lightning-hpo && pip install -e .
 ```
 
 Make sure everything works fine.
 
 ```bash
-pytest tests -v
+python -m lightning run app app.py
 ```
 
 ______________________________________________________________________
