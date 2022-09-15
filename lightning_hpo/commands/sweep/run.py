@@ -214,7 +214,7 @@ class RunSweepCommand(ClientCommand):
         port = APP_SERVER_PORT if use_localhost else None
         url = f"{APP_SERVER_HOST}:{port}" if use_localhost else APP_SERVER_HOST
         repo.package()
-        repo.upload(url=f"{url}/api/v1/upload_file/{id}")
+        repo.upload(url=f"{url}/api/v1/upload_file/{name}")
 
         distributions = {
             k: Distributions(distribution=x["distribution"], params=x["params"]) for k, x in distributions.items()
