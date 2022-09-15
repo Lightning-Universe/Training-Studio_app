@@ -7,6 +7,7 @@ from typing import Dict, List, Optional, Union
 from uuid import uuid4
 
 import requests
+from lightning.app.core.constants import APP_SERVER_HOST, APP_SERVER_PORT
 from lightning.app.source_code import LocalSourceCodeDir
 from lightning.app.source_code.uploader import FileUploader
 from lightning.app.utilities.commands import ClientCommand
@@ -130,8 +131,8 @@ class CategoricalDistributionParser(DistributionParser):
 
 class CustomFileUploader(FileUploader):
     def _upload_data(self, s: requests.Session, url: str, data: bytes):
-        resp = s.put(url, files={"file": data})
-        return resp.status_code
+        resp = s.put(url, files={"uploaded_file": data})
+        assert resp.status_code == 200
 
 
 class CustomLocalSourceCodeDir(LocalSourceCodeDir):
@@ -208,9 +209,12 @@ class RunSweepCommand(ClientCommand):
 
         repo = CustomLocalSourceCodeDir(path=Path(hparams.script_path).parent.resolve())
         # TODO: Resolve this bug.
-        url = self.state.file_server._state["vars"]["_url"]
+
+        URL = self.state._state["vars"]["_layout"]["target"].replace("/root", "")
+        if "localhost" in URL:
+            URL = f"{APP_SERVER_HOST}:{APP_SERVER_PORT}"
         repo.package()
-        repo.upload(url=f"{url}/uploadfile/{name}")
+        repo.upload(url=f"{URL}/api/v1/upload_file/{name}")
 
         distributions = {
             k: Distributions(distribution=x["distribution"], params=x["params"]) for k, x in distributions.items()

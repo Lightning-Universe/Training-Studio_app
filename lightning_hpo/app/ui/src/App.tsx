@@ -40,7 +40,7 @@ function Notebooks() {
         <UserGuideComment>Connect to the app</UserGuideComment>
         <UserGuideBody enableClipBoard={enableClipBoard}>{`lightning connect ${appId} --yes`}</UserGuideBody>
         <UserGuideComment>Run a notebook</UserGuideComment>
-        <UserGuideBody enableClipBoard={enableClipBoard}>lightning run notebook my_notebook</UserGuideBody>
+        <UserGuideBody enableClipBoard={enableClipBoard}>lightning run notebook --name=my_notebook</UserGuideBody>
       </UserGuide>
     );
   }

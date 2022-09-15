@@ -4,11 +4,14 @@ from typing import List, Optional, Type
 from fastapi import FastAPI
 from lightning import BuildConfig, LightningWork
 from lightning.app.storage import Path
-from sqlmodel import create_engine, select, Session, SQLModel
+from lightning_app.utilities.app_helpers import Logger
+from sqlmodel import select, Session, SQLModel
 from uvicorn import run
 
 from lightning_hpo.components.servers.db.models import GeneralModel
 from lightning_hpo.utilities.utils import get_primary_key
+
+logger = Logger(__name__)
 
 engine = None
 
@@ -59,6 +62,17 @@ def general_delete(config: GeneralModel):
         session.commit()
 
 
+def create_engine(db_file_name: str, models: List[Type[SQLModel]], echo: bool):
+    global engine
+
+    from sqlmodel import create_engine, SQLModel
+
+    engine = create_engine(f"sqlite:///{db_file_name}", echo=echo)
+
+    logger.debug(f"Creating the following tables {models}")
+    SQLModel.metadata.create_all(engine)
+
+
 class Database(LightningWork):
     def __init__(
         self,
@@ -72,16 +86,9 @@ class Database(LightningWork):
         self._models = models
 
     def run(self):
-        global engine
-
         app = FastAPI()
-        engine = create_engine(f"sqlite:///{self.db_file_name}", echo=self.debug)
 
-        @app.on_event("startup")
-        def on_startup():
-            print(f"Creating the following tables {self._models}")
-            SQLModel.metadata.create_all(engine)
-
+        create_engine(self.db_file_name, self._models, self.debug)
         app.get("/general/")(general_get)
         app.post("/general/")(general_post)
         app.put("/general/")(general_put)

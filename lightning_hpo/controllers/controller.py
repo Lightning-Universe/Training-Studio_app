@@ -1,12 +1,12 @@
 from abc import abstractmethod
-from typing import List, Optional, Type
+from typing import List, Optional, Type, Union
 
 from lightning import LightningFlow
 from lightning.app.storage import Drive
 from lightning.app.structures import Dict
 from sqlmodel import SQLModel
 
-from lightning_hpo.components.servers.db import DatabaseConnector
+from lightning_hpo.components.servers.db import DatabaseConnector, FlowDatabaseConnector
 from lightning_hpo.utilities.enum import Stage
 from lightning_hpo.utilities.utils import get_primary_key
 
@@ -76,10 +76,13 @@ class Controller(LightningFlow):
         self.on_reconcile_end(configs)
 
     @property
-    def db(self) -> DatabaseConnector:
+    def db(self) -> Union[DatabaseConnector, FlowDatabaseConnector]:
         if self._database is None:
             assert self.db_url is not None
-            self._database = DatabaseConnector(self.model, self.db_url + "/general/")
+            if self.db_url == "flow":
+                self._database = FlowDatabaseConnector(self.model)
+            else:
+                self._database = DatabaseConnector(self.model, self.db_url + "/general/")
         return self._database
 
     @abstractmethod
