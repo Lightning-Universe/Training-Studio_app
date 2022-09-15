@@ -90,7 +90,39 @@ Finally, your code is uploaded to the App and the Training Studio App responds t
    Launched a sweep 1dbfed8a
    Your command execution was successful.
 
-.. note:: We currently only support categorical, log_uniform, and uniform distribution. Please open a feature request to add more!
+****************************
+3. Randomize Sweep Arguments
+****************************
+
+We currently only support ``categorical``, ``log_uniform``, and ``uniform`` distributions. Please open a feature request to add more!
+
+To use either ``log_uniform`` or ``uniform`` distributions, simply pass the ``low`` and ``high`` values to be sampled from.
+
+Here is the general format:
+
+.. code-block::
+
+   lightning run sweep ... --X="log_uniform(low_value, high_value)"
+
+   lightning run sweep ... --X="uniform(low_value, high_value)"
+
+Here is an example to sample the model learning rate taken from the command above
+
+.. code-block::
+
+   lightning run sweep ... --model.lr="log_uniform(0.001, 0.1)"
+
+To use the ``categorical`` distribution, pass a list of elements as follows:
+
+.. code-block::
+
+   lightning run sweep ... --X="categorical([..., ..., ...])"
+
+Here is an example to sample the data batch size taken from the command above.
+
+.. code-block::
+
+   lightning run sweep ... --data.batch_size="categorical([32, 64])"
 
 ----
 
