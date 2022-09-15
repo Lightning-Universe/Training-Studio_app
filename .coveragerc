@@ -1,3 +1,6 @@
 [run]
 source =
     lightning_hpo
+concurrency =
+    thread
+    multiprocessing
