@@ -81,7 +81,7 @@ jobs:
 
       - name: Story Tests
         run: |
-          python -m coverage run --append -m behave "tests/features/"  -v
+          python -m coverage run -m behave "tests/features/"  -v
 
 #      - name: Upload pytest test results
 #        uses: actions/upload-artifact@v3
