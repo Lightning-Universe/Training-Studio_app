@@ -69,7 +69,7 @@ jobs:
           COVERAGERC=$(python -c 'import pathlib; print(pathlib.Path(".coveragerc").resolve())')
           echo "import os; os.environ['COVERAGE_PROCESS_START'] = '$COVERAGERC'; import coverage; coverage.process_startup(); print('Running with coverage')" >> $SITE
           COVERAGE=$(python -c 'import pathlib; print(pathlib.Path(".coverage").resolve())')
-          echo "data_file = $COVERAGE" >> $COVERAGERC
+          echo -n "data_file = $COVERAGE" >> $COVERAGERC
         shell: bash
 
       - name: Tests
