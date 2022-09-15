@@ -91,16 +91,7 @@ Get Started
    :caption: Get Started
 
    installation
-   workflows/sweep
    training_studio
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Lightning HPO: How to...
-
-   Convert from raw Optuna <workflows/convert_from_raw_optuna>
-   Optimize with PyTorch Lightning <workflows/optimize_with_pytorch_lightning>
-   Configure your loggers <workflows/loggers>
 
 .. toctree::
    :maxdepth: 1
@@ -116,3 +107,11 @@ Get Started
    Stop or delete a Notebook <workflows/stop_or_delete_notebook>
    Show or download Artefacts <workflows/show_or_download_artifacts>
    Show or download Logs <workflows/show_or_download_logs>
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Lightning HPO: How to...
+
+   Convert from raw Optuna <workflows/convert_from_raw_optuna>
+   Optimize with PyTorch Lightning <workflows/optimize_with_pytorch_lightning>
+   Configure your loggers <workflows/loggers>

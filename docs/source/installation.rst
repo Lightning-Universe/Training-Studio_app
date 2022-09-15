@@ -46,6 +46,13 @@ You can use `conda <https://conda.io/projects/conda/en/latest/user-guide/tasks/m
 
    python -m lightning run app app.py
 
+
+.. raw:: html
+
+   <video id="background-video" autoplay loop muted controls poster="https://pl-flash-data.s3.amazonaws.com/assets_lightning/training_studio_example.PNG" width="100%">
+      <source src="https://pl-flash-data.s3.amazonaws.com/assets_lightning/training_studio.mp4" type="video/mp4" width="100%">
+   </video>
+
 ----
 
 **********

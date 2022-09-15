@@ -23,7 +23,7 @@ Once a Lightning App is running locally or in the cloud, your can simply connect
 
 .. code-block::
 
-    lightning connect {APP_ID_OR_NAME_OR_LOCALHOST} --yes
+    lightning connect {CLOUD_APP_NAME} --yes
 
 .. code-block::
 
