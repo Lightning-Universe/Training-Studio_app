@@ -18,7 +18,7 @@ jobs:
         requires: ["latest"]
 
     # Timeout: https://stackoverflow.com/a/59076067/4521646
-    timeout-minutes: 10
+    timeout-minutes: 30
 
     steps:
       - uses: actions/checkout@v3
@@ -59,6 +59,7 @@ jobs:
           pip --version
           pip install -r requirements.txt -r requirements/test.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
           pip install -e .
+          playwright install
           pip list
         shell: bash
 
@@ -69,7 +70,11 @@ jobs:
           AWS_DEFAULT_REGION: us-east-1
           PYTEST_ARTIFACT: results-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}.xml
         run: |
-          python -m coverage run --source lightning_hpo -m pytest tests --junitxml=$PYTEST_ARTIFACT --durations=0 --color=yes -v
+          python -m coverage run -m pytest tests --junitxml=$PYTEST_ARTIFACT --durations=0 --color=yes -v
+
+      - name: Story Tests
+        run: |
+          python -m coverage run -m behave "tests/features/"  -v
 
 #      - name: Upload pytest test results
 #        uses: actions/upload-artifact@v3
@@ -82,6 +87,8 @@ jobs:
         if: success()
         working-directory: ./
         run: |
+          ls -a
+          coverage combine -a
           coverage xml -i
           coverage report -i
 

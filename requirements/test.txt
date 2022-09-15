@@ -8,3 +8,5 @@ mypy>=0.920
 flake8>=3.9.2
 pre-commit>=1.0
 psutil  # for `DeviceStatsMonitor`
+playwright
+behave
