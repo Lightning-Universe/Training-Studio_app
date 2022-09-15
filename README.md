@@ -49,7 +49,7 @@ cd lightning-hpo
 
 pip install -r requirements.txt -r requirements/test.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
 
-pip install git+https://github.com/Lightning-AI/lightning.git@training_studio_fixes
+pip install git+https://github.com/Lightning-AI/lightning.git@reduce_cost
 
 pip install -e .
 ```
@@ -285,7 +285,7 @@ ______________________________________________________________________
 In terminal 1, run the Lightning App.
 
 ```bash
-lightning run app training_studio_app.py --env WANDB_ENTITY={ENTITY} --env WANDB_API_KEY={API_KEY}
+lightning run app app.py --env WANDB_ENTITY={ENTITY} --env WANDB_API_KEY={API_KEY}
 ```
 
 In terminal 2, connect to the Lightning App and run your first sweep or notebook.

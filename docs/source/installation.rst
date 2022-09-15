@@ -23,6 +23,8 @@ Install with pip
 
 0.  Activate your virtual environment.
 
+You can use `conda <https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands>`_ or `pyenv <https://github.com/pyenv/pyenv>`_.
+
 1.  Install the ``lightning-hpo`` package
 
     .. code:: bash
@@ -36,7 +38,42 @@ Install with pip
         pip install -r requirements.txt -r requirements/test.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
 
 
-        pip install git+https://github.com/Lightning-AI/lightning.git@training_studio_fixes
+        pip install git+https://github.com/Lightning-AI/lightning.git@reduce_cost
 
 
         pip install -e .
+
+
+----
+
+**********
+Next Steps
+**********
+
+.. raw:: html
+
+   <br />
+   <div class="display-card-container">
+      <div class="row">
+
+.. displayitem::
+   :header: Run a Sweep with PyTorch Lightning
+   :description: Discover PyTorch Lightning and train your first Model.
+   :col_css: col-md-6
+   :button_link: workflows/optimize_with_pytorch_lightning.html
+   :height: 180
+
+.. displayitem::
+   :header: The Training Studio App
+   :description: Manage Sweeps and Tools to accelerate Training.
+   :col_css: col-md-6
+   :button_link: training_studio.html
+   :height: 180
+
+.. raw:: html
+
+   <hr class="docutils" style="margin: 50px 0 50px 0">
+
+.. raw:: html
+
+   <div style="display:none">

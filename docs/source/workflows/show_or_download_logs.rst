@@ -59,6 +59,8 @@ To view the logs use the following command:
 
    lightning show logs training_studio_app
 
+.. note:: You get logs only once the Lightning App is ready. Wait for the Open App button to be visible.
+
 ****************
 3. Download logs
 ****************
