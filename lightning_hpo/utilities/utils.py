@@ -1,19 +1,17 @@
+import functools
 import json
-import os
-import shutil
-import tarfile
 from dataclasses import dataclass
-from typing import Generic, Optional, TypeVar, Union
+from typing import Generic, Optional, Type, TypeVar, Union
 
 from fastapi.encoders import jsonable_encoder
 from lightning import CloudCompute as LightningCloudCompute
 from lightning import LightningFlow
 from lightning.app.storage import Path
 from lightning.app.utilities.enum import WorkStageStatus
-from optuna.distributions import CategoricalDistribution, LogUniformDistribution, UniformDistribution
 from pydantic import parse_obj_as
 from pydantic.main import ModelMetaclass
-from sqlmodel import JSON, TypeDecorator
+from sqlalchemy.inspection import inspect
+from sqlmodel import JSON, SQLModel, TypeDecorator
 
 from lightning_hpo.framework import _OBJECTIVE_FRAMEWORK
 from lightning_hpo.framework.agnostic import Objective
@@ -26,58 +24,19 @@ class HPOCloudCompute(LightningCloudCompute):
     count: int = 1
 
 
-def config_to_distributions(config):
-    distributions = {}
-    mapping_name_to_cls = {
-        "categorical": CategoricalDistribution,
-        "uniform": UniformDistribution,
-        "log_uniform": LogUniformDistribution,
-    }
-    for k, v in config.distributions.items():
-        dist_cls = mapping_name_to_cls[v.pop("distribution")]
-        distributions[k] = dist_cls(**v)
-    return distributions
-
-
 def get_best_model_score(flow: LightningFlow) -> Optional[float]:
     metrics = [work.best_model_score for work in flow.works()]
-    if not all(metrics):
+    if not metrics or not all(metrics):
         return None
     return max(metrics)
 
 
 def get_best_model_path(flow: LightningFlow) -> Optional[Path]:
     metrics = {work.best_model_score: work for work in flow.works()}
-    if not all(metrics):
-        return None
-
-    if all(metric is None for metric in metrics):
+    if not all(metrics) or all(metric is None for metric in metrics):
         return None
 
     return metrics[max(metrics)].best_model_path
-
-
-def clean_tarfile(file_path: str, mode):
-    if os.path.exists(file_path):
-        with tarfile.open(file_path, mode=mode) as tar_ref:
-            for member in tar_ref.getmembers():
-                p = member.path
-                if p != "." and os.path.exists(p):
-                    if os.path.isfile(p):
-                        os.remove(p)
-                    else:
-                        shutil.rmtree(p)
-        os.remove(file_path)
-
-
-def extract_tarfile(file_path: str, extract_path: str, mode: str):
-    if os.path.exists(file_path):
-        with tarfile.open(file_path, mode=mode) as tar_ref:
-            for member in tar_ref.getmembers():
-                try:
-                    tar_ref.extract(member, path=extract_path, set_attrs=False)
-                except PermissionError:
-                    raise PermissionError(f"Could not extract tar file {file_path}")
 
 
 def _resolve_objective_cls(objective_cls, framework: str):
@@ -89,7 +48,7 @@ def _resolve_objective_cls(objective_cls, framework: str):
     return objective_cls
 
 
-def _check_status(obj: Union[LightningFlow, Objective], status: str) -> bool:
+def _check_stage(obj: Union[LightningFlow, Objective], status: str) -> bool:
     if isinstance(obj, Objective):
         return obj.status.stage == status
     else:
@@ -176,3 +135,13 @@ def pydantic_column_type(pydantic_type):
             return x == y
 
     return PydanticJSONType
+
+
+@functools.lru_cache
+def get_primary_key(model_type: Type[SQLModel]) -> str:
+    primary_keys = inspect(model_type).primary_key
+
+    if len(primary_keys) != 1:
+        raise ValueError(f"The model {model_type.__name__} should have a single primary key field.")
+
+    return primary_keys[0].name

@@ -43,6 +43,7 @@ class Objective(TracerPythonScript, ABC):
         self.monitor = None
         self.function_name = function_name
         self.has_stored = False
+        self.progress = None
 
     def configure_tracer(self):
         assert self.params is not None

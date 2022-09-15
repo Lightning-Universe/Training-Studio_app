@@ -66,7 +66,7 @@ Learn more `there <https://github.com/Lightning-AI/lightning/tree/master/docs/so
 The Disconnect Command
 **********************
 
-If you are already connected to a Lightning App, you can disconnect as follows:
+If you are already connected to a Lightning App, disconnect from the App using the following command:
 
 .. code-block::
 
@@ -103,3 +103,76 @@ The Lightning Training Studio App provides a CLI to interact with the App once r
         show sweeps
         stop notebook
         stop sweep
+
+----
+
+**********
+Next Steps
+**********
+
+.. raw:: html
+
+   <br />
+   <div class="display-card-container">
+      <div class="row">
+
+.. displayitem::
+   :header: Run a Sweep
+   :description: Learn how to run a Sweep with your own python script
+   :col_css: col-md-4
+   :button_link: run_sweep.html
+   :height: 180
+
+.. displayitem::
+   :header: Show Sweeps
+   :description: Learn how to view the existing sweeps
+   :col_css: col-md-4
+   :button_link: show_sweeps.html
+   :height: 180
+
+.. displayitem::
+   :header: Stop or delete a Sweep
+   :description: Learn how to stop or delete an existing sweep
+   :col_css: col-md-4
+   :button_link: stop_or_delete_sweep.html
+   :height: 180
+
+.. displayitem::
+   :header: Run a Notebook
+   :description: Learn how to run a notebook locally or in the cloud
+   :col_css: col-md-4
+   :button_link: run_notebook.html
+   :height: 180
+
+.. displayitem::
+   :header: Show Notebooks
+   :description: Learn how to view the existing notebooks
+   :col_css: col-md-4
+   :button_link: show_notebooks.html
+   :height: 180
+
+.. displayitem::
+   :header: Stop or delete a Notebook
+   :description: Learn how to stop or delete an existing notebook
+   :col_css: col-md-4
+   :button_link: stop_or_delete_notebook.html
+   :height: 180
+
+.. displayitem::
+   :header: Show or Download Artifacts
+   :description: Learn how to interact with your Training Studio App artifacts
+   :col_css: col-md-6
+   :button_link: show_or_download_artifacts.html
+   :height: 180
+
+.. displayitem::
+   :header: Show or Download Logs
+   :description: Learn how to interact with your Training Studio App logs
+   :col_css: col-md-6
+   :button_link: show_or_download_logs.html
+   :height: 180
+
+.. raw:: html
+
+      </div>
+   </div>

@@ -7,45 +7,45 @@ from typing import Dict, List, Optional, Union
 from uuid import uuid4
 
 import requests
+from lightning.app.core.constants import APP_SERVER_HOST, APP_SERVER_PORT
 from lightning.app.source_code import LocalSourceCodeDir
 from lightning.app.source_code.uploader import FileUploader
 from lightning.app.utilities.commands import ClientCommand
 from sqlalchemy import Column
 from sqlmodel import Field, SQLModel
 
-from lightning_hpo.utilities.enum import Status
+from lightning_hpo.loggers import LoggerType
+from lightning_hpo.utilities.enum import Stage
 from lightning_hpo.utilities.utils import pydantic_column_type
-
-
-class Params(SQLModel, table=False):
-    params: Dict[str, Union[float, int, List[float], List[str]]] = Field(
-        sa_column=Column(pydantic_column_type(Dict[str, Union[float, int, List[float], List[str]]]))
-    )
 
 
 class Distributions(SQLModel, table=False):
     distribution: str
-    params: Params = Field(sa_column=Column(pydantic_column_type(Params)))
+    params: Dict[str, Union[float, int, str, List[float], List[str]]] = Field(
+        sa_column=Column(pydantic_column_type(Dict[str, Union[float, int, List[float], List[str]]]))
+    )
 
 
 class TrialConfig(SQLModel, table=False):
     best_model_score: Optional[float]
     monitor: Optional[str]
     best_model_path: Optional[str]
-    status: str = Status.NOT_STARTED
-    params: Params = Field(sa_column=Column(pydantic_column_type(Params)))
+    stage: str = Stage.NOT_STARTED
+    params: Dict[str, Union[float, int, str, List[float], List[str]]] = Field(
+        sa_column=Column(pydantic_column_type(Dict[str, Union[float, int, List[float], List[str]]]))
+    )
     exception: Optional[str]
+    progress: Optional[float]
 
     @property
     def pruned(self) -> bool:
-        return self.status == Status.PRUNED
+        return self.stage == Stage.PRUNED
 
 
 class SweepConfig(SQLModel, table=True):
     __table_args__ = {"extend_existing": True}
 
-    id: Optional[int] = Field(default=None, primary_key=True)
-    sweep_id: str
+    sweep_id: str = Field(primary_key=True)
     script_path: str
     n_trials: int
     simultaneous_trials: int
@@ -55,18 +55,19 @@ class SweepConfig(SQLModel, table=True):
     distributions: Dict[str, Distributions] = Field(
         ..., sa_column=Column(pydantic_column_type(Dict[str, Distributions]))
     )
-    url: Optional[str] = None
+    logger_url: str = ""
     trials: Dict[int, TrialConfig] = Field(..., sa_column=Column(pydantic_column_type(Dict[int, TrialConfig])))
     framework: str
     cloud_compute: str
     num_nodes: int = 1
     logger: str
     direction: str
-    status: str = Status.NOT_STARTED
+    stage: str = Stage.NOT_STARTED
+    desired_stage: str = Stage.RUNNING
 
     @property
     def num_trials(self) -> int:
-        return self.trials_done + self.simultaneous_trials
+        return min(self.trials_done + self.simultaneous_trials, self.n_trials)
 
     @property
     def username(self) -> str:
@@ -75,6 +76,9 @@ class SweepConfig(SQLModel, table=True):
     @property
     def hash(self) -> str:
         return self.sweep_id.split("-")[1]
+
+    def is_tensorboard(self):
+        return self.logger == LoggerType.TENSORBOARD.value
 
 
 class DistributionParser:
@@ -127,8 +131,8 @@ class CategoricalDistributionParser(DistributionParser):
 
 class CustomFileUploader(FileUploader):
     def _upload_data(self, s: requests.Session, url: str, data: bytes):
-        resp = s.put(url, files={"file": data})
-        return resp.status_code
+        resp = s.put(url, files={"uploaded_file": data})
+        assert resp.status_code == 200
 
 
 class CustomLocalSourceCodeDir(LocalSourceCodeDir):
@@ -170,8 +174,7 @@ class RunSweepCommand(ClientCommand):
         parser.add_argument("--requirements", nargs="+", default=[], help="Requirements file.")
         parser.add_argument("--framework", default="pytorch_lightning", type=str, help="The framework you are using.")
         parser.add_argument("--cloud_compute", default="cpu", type=str, help="The machine to use in the cloud.")
-        parser.add_argument("--sweep_id", default=None, type=str, help="The sweep you want to run upon.")
-        parser.add_argument("--num_nodes", default=1, type=int, help="The number of nodes to train upon.")
+        parser.add_argument("--name", default=None, type=str, help="The sweep you want to run upon.")
         parser.add_argument("--logger", default="streamlit", type=str, help="The logger to use with your sweep.")
         parser.add_argument(
             "--direction",
@@ -198,24 +201,26 @@ class RunSweepCommand(ClientCommand):
                 script_args.append(arg)
 
         id = str(uuid4()).split("-")[0]
-        sweep_id = hparams.sweep_id or f"{getuser()}-{id}"
+        name = hparams.name or f"{getuser()}-{id}"
 
         if not os.path.exists(hparams.script_path):
             raise Exception("The provided script doesn't exists.")
 
         repo = CustomLocalSourceCodeDir(path=Path(hparams.script_path).parent.resolve())
         # TODO: Resolve this bug.
-        url = self.state.file_server._state["vars"]["_url"]
+
+        URL = self.state._state["vars"]["_layout"]["target"].replace("/root", "")
+        if "localhost" in URL:
+            URL = f"{APP_SERVER_HOST}:{APP_SERVER_PORT}"
         repo.package()
-        repo.upload(url=f"{url}/uploadfile/{sweep_id}")
+        repo.upload(url=f"{URL}/api/v1/upload_file/{name}")
 
         distributions = {
-            k: Distributions(distribution=x["distribution"], params=Params(params=x["params"]))
-            for k, x in distributions.items()
+            k: Distributions(distribution=x["distribution"], params=x["params"]) for k, x in distributions.items()
         }
 
         config = SweepConfig(
-            sweep_id=sweep_id,
+            sweep_id=name,
             script_path=hparams.script_path,
             n_trials=int(hparams.n_trials),
             simultaneous_trials=hparams.simultaneous_trials,
@@ -224,7 +229,7 @@ class RunSweepCommand(ClientCommand):
             distributions=distributions,
             framework=hparams.framework,
             cloud_compute=hparams.cloud_compute,
-            num_nodes=hparams.num_nodes,
+            num_nodes=1,
             logger=hparams.logger,
             direction=hparams.direction,
             trials={},

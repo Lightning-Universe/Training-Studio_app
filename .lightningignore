@@ -1,10 +1,8 @@
 *lightning_logs*
-data
-data/*
+*data/*
 .shared
 *.ckpt
 *.shared*
-*data*
 *.git*
 *MNIST*
 *artifacts*
@@ -19,3 +17,10 @@ dist
 tensorboard_logs
 jupyter_lab_*
 *node_modules*
+docs
+.storage
+.coverage
+coverage.xml
+LICENSE
+spec.json
+database.db

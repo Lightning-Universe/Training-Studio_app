@@ -25,11 +25,26 @@ Welcome to ⚡ Lightning HPO
 Install Lightning HPO
 *********************
 
+.. note:: This is only temporary as some changes are being released to PiPy
+
+Python 3.8.x or later (3.8.x, 3.9.x, 3.10.x)
+
 .. code-block:: bash
 
-   pip install lightning-hpo
+   git clone https://github.com/Lightning-AI/lightning-hpo && cd lightning-hpo
 
-Or read the :ref:`advanced install <install>` guide.
+   pip install -r requirements.txt -r requirements/test.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
+
+   cd .. && git clone -b reduce_cost https://github.com/Lightning-AI/lightning.git && cd lightning && pip install -e .
+
+   cd ../lightning-hpo && pip install -e .
+
+
+Make sure everything works fine.
+
+.. code-block:: bash
+
+   python -m lightning run app app.py
 
 ----
 
@@ -44,39 +59,18 @@ Get Started
       <div class="row">
 
 .. displayitem::
-   :header: Discover what Lightning Apps can do in 5 min
-   :description: Browse through mind-blowing ML Systems
-   :col_css: col-md-6
-   :button_link: get_started/what_app_can_do.html
-   :height: 180
-
-.. displayitem::
-   :header: Fundamentals about HyperParameter Optimization (HPO)
-   :description: Learn about its inner workings
-   :col_css: col-md-6
-   :button_link: get_started/fundamentals.html
-   :height: 180
-
-.. displayitem::
-   :header: Use Lightning HPO with your own scripts
+   :header: Run a Sweep with PyTorch Lightning
    :description: Discover PyTorch Lightning and train your first Model.
    :col_css: col-md-6
-   :button_link: get_started/build_model.html
+   :button_link: workflows/optimize_with_pytorch_lightning.html
    :height: 180
 
 .. displayitem::
    :header: The Training Studio App
-   :description: Use your own App or share it with your teammates.
+   :description: Manage Sweeps and Tools to accelerate Training.
    :col_css: col-md-6
-   :button_link: get_started/training_with_apps.html
+   :button_link: training_studio.html
    :height: 180
-
-.. raw:: html
-
-      </div>
-   </div>
-
-----
 
 .. raw:: html
 
@@ -112,6 +106,7 @@ Get Started
    :maxdepth: 1
    :caption: Training Studio: How to...
 
+   Run the Training Studio App <workflows/run_training_studio_app>
    Connect or Disconnect to a Lightning App <workflows/connect_or_disconnect>
    Run a Sweep <workflows/run_sweep>
    Run a Notebook <workflows/run_notebook>

@@ -2,6 +2,7 @@ include *.py
 include *.txt
 exclude *.yaml
 exclude *.toml
+exclude *.coveragerc
 exclude *.lightning
 exclude *.lightningignore
 exclude *.json
@@ -12,5 +13,6 @@ recursive-include requirements *
 
 recursive-exclude docs *
 recursive-exclude tests *.py
+recursive-exclude tests *.feature
 recursive-exclude * *.pyc
 recursive-exclude * *.json

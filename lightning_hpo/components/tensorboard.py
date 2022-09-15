@@ -1,6 +1,7 @@
 import os
-import time
+from pathlib import Path
 from subprocess import Popen
+from time import sleep
 from uuid import uuid4
 
 from lightning import LightningWork
@@ -8,17 +9,31 @@ from lightning.app.storage import Drive
 from lightning.app.storage.path import filesystem
 from lightning.app.utilities.component import _is_work_context
 
+from lightning_hpo.commands.tensorboard.stop import TensorboardConfig
+from lightning_hpo.controllers.controller import ControllerResource
+from lightning_hpo.utilities.enum import Stage
 
-class Tensorboard(LightningWork):
-    def __init__(self, *args, component_name: str, drive: Drive, sleep: int = 5, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.component_name = component_name
+
+class Tensorboard(LightningWork, ControllerResource):
+
+    model = TensorboardConfig
+
+    def __init__(self, *args, drive: Drive, sleep: int = 5, config: TensorboardConfig, **kwargs):
+        super().__init__(*args, parallel=True, **kwargs)
         self.drive = drive
         self.sleep = sleep
+        self.id = config.id
+        self.sweep_id = config.sweep_id
+        self.shared_folder = config.shared_folder
+        self.stage = config.stage
+        self.desired_stage = config.desired_stage
+
+        self.config = config.dict()
 
     def run(self):
+        use_localhost = "LIGHTNING_APP_STATE_URL" not in os.environ
+
         local_folder = f"./tensorboard_logs/{uuid4()}"
-        self.drive.component_name = self.component_name
 
         os.makedirs(local_folder, exist_ok=True)
 
@@ -26,18 +41,38 @@ class Tensorboard(LightningWork):
         cmd = f"tensorboard --logdir={local_folder} --host {self.host} --port {self.port}"
         self._process = Popen(cmd, shell=True, env=os.environ)
 
+        self.stage = Stage.RUNNING
         fs = filesystem()
+        root_folder = str(self.drive.drive_root)
 
         while True:
             fs.invalidate_cache()
-            fs.get(str(self.drive.root), local_folder)
-            time.sleep(self.sleep)
+            if fs.exists(root_folder):
+                if use_localhost:
+                    for dir, _, files in fs.walk(root_folder):
+                        for filepath in files:
+                            if "events.out.tfevents" not in filepath:
+                                continue
+                            source_path = os.path.join(dir, filepath)
+                            target_path = os.path.join(dir, filepath).replace(root_folder, local_folder)
+                            if use_localhost:
+                                parent = Path(target_path).resolve().parent
+                                if not parent.exists():
+                                    parent.mkdir(exist_ok=True, parents=True)
+                            fs.cp(source_path, str(Path(target_path).resolve()))
+                else:
+                    # TODO: Debug the cloud support to support the above strategy
+                    # to copy only the logs.
+                    fs.invalidate_cache()
+                    fs.get(str(self.drive.drive_root), local_folder, recursive=True)
+            sleep(self.sleep)
 
     def on_exit(self):
         if _is_work_context():
             assert self._process
             self._process.kill()
+        else:
+            self.stage = Stage.NOT_STARTED
 
-    @property
-    def updates(self):
-        return []
+    def on_collect_model(self, model_dict):
+        model_dict["url"] = self.url

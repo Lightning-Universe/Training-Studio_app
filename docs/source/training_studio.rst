@@ -6,38 +6,68 @@ Training Studio
 
 .. _training_studio:
 
-The Training App is a `Lightning App <https://github.com/Lightning-AI/lightning>`_ runnable locally or on `lightning.ai <https://lightning.ai/>`_.
-
-The Training App enables to quickly perform machine-learning research in collaborative ways by bringing all tools you needs in a single place (notebook, tensorboard, wandb, sweeps, etc...).
+.. twocolumns::
+   :left:
+      .. image:: https://pl-flash-data.s3.amazonaws.com/assets_lightning/training_app.png
+         :alt: Logo of the App
+   :right:
+      The Training Studio App is a `Lightning App <https://github.com/Lightning-AI/lightning>`_ that enables you to quickly perform machine-learning research in collaborative ways by bringing
+      all the tools you need in a single place (notebook, tensorboard, wandb, sweeps, etc...) and is runnable locally or on `lightning.ai <https://lightning.ai/>`_ platform.
 
 .. join_slack::
-   :align: left
+   :align: center
+   :margin: 0
 
 ----
 
-**********
-User Flows
-**********
+********************************
+The Training Studio App Benefits
+********************************
 
-Click on the `Lucidchart Diagram <https://lucid.app/lucidchart/9d513fd6-9410-4292-beac-29e73f1e1c34/edit?viewport_loc=-19%2C-798%2C6351%2C4441%2C0_0&invitationId=inv_d38b9a33-4915-4b7b-ab95-f73894923fbe#>`_ User Flow to understand how to use the Training Studio App.
+The Training Studio App builds on the Lightning HPO Sweep Component to provide a way to manage sweeps and accelerate ML development with some added benefits:
 
-Admin User
-^^^^^^^^^^
-
-The **Admin User** has access to the Admin View and the one who has runned the App.
-
-App User
-^^^^^^^^
-
-The **App User** has access to the App View and interacts with the Training Studio App by creating notebooks, sweeps, etc.
-
-The **App User** isn't necessary **Admin User**, but it is also possible to connect to **someone else** Training Studio App.
+* A Command-Line Interface to run your local scripts as sweeps or create development tools such as notebooks.
+* A React UI to easily keep track of your sweeps and tools.
+* Ability to run the Training Studio App on your own GPU machines (on-prem) or on `lightning.ai <https://lightning.ai/>`_ cloud platform.
+* Ability to have several users connect to the same App and collaborate together.
+* Organize your sweeps checkpoints or logging with several loggers of your choice such as Wandb, Tensorboard.
 
 ----
 
-*****
-Sweep
-*****
+***************************
+Run the Training Studio App
+***************************
+
+.. raw:: html
+
+   <br />
+   <div class="display-card-container">
+      <div class="row">
+
+.. displayitem::
+   :header: Run the Training Studio App
+   :description: Learn how to start the Lightning App.
+   :col_css: col-md-6
+   :button_link: workflows/run_training_studio_app.html
+   :height: 180
+
+.. displayitem::
+   :header: Connect to the Training Studio App
+   :description: Learn how to connect and disconnect from the Training Studio App.
+   :col_css: col-md-6
+   :button_link: workflows/connect_or_disconnect.html
+   :height: 180
+
+.. raw:: html
+
+      </div>
+   </div>
+
+----
+
+*******************
+Interact with Sweep
+*******************
 
 .. raw:: html
 
@@ -73,9 +103,9 @@ Sweep
 
 ----
 
-********
-Notebook
-********
+**********************
+Interact with Notebook
+**********************
 
 .. raw:: html
 
@@ -101,7 +131,7 @@ Notebook
    :header: Stop or delete a Notebook
    :description: Learn how to stop or delete an existing notebook
    :col_css: col-md-4
-   :button_link: workflows/stop_or_delete_notebooks.html
+   :button_link: workflows/stop_or_delete_notebook.html
    :height: 180
 
 .. raw:: html
@@ -111,9 +141,9 @@ Notebook
 
 ----
 
-*********
-Utilities
-*********
+*************
+App Utilities
+*************
 
 .. raw:: html
 
@@ -122,8 +152,8 @@ Utilities
       <div class="row">
 
 .. displayitem::
-   :header: Show or Download Artefacts
-   :description: Learn how to interact with your Training Studio App artefacts
+   :header: Show or Download Artifacts
+   :description: Learn how to interact with your Training Studio App artifacts
    :col_css: col-md-6
    :button_link: workflows/show_or_download_artifacts.html
    :height: 180
@@ -139,11 +169,3 @@ Utilities
 
       </div>
    </div>
-
-----
-
-**************************************
-Codebase Onboarding (September 6 2022)
-**************************************
-
-Request access to `recording <https://drive.google.com/file/d/1uqlV_06DkUZijCaqkCbc8arvVGdpzV_a/view>`_ by `@tchaton <https://github.com/tchaton>`_.

@@ -23,18 +23,17 @@ class DownloadArtefactsCommand(ClientCommand):
     def run(self) -> None:
         # 1. Parse the user arguments.
         parser = argparse.ArgumentParser()
-        parser.add_argument("output_dir", type=str, help="Provide the output directory for the artefacts..")
+        parser.add_argument(
+            "--output_dir", required=True, type=str, help="Provide the output directory for the artefacts.."
+        )
         parser.add_argument("--include", type=str, default=None, help="Provide a regex to include some specific files.")
         parser.add_argument("--exclude", type=str, default=None, help="Provide a regex to exclude some specific files.")
-        parser.add_argument(
-            "--overwrite", type=str, default=False, help="Whether to overwrite the artefacts if they exist."
-        )
         hparams = parser.parse_args()
 
         output_dir = Path(hparams.output_dir).resolve()
 
         if not output_dir.exists():
-            raise FileNotFoundError(f"The provided directory {output_dir} doesn't exist.")
+            output_dir.mkdir(exist_ok=True)
 
         config = DownloadArtefactsConfig(include=hparams.include, exclude=hparams.exclude)
         response: List[str] = self.invoke_handler(config=config)

@@ -40,14 +40,14 @@ def test_show_sweeps_client(monkeypatch):
 
     monkeypatch.setattr(show, "Console", console)
     with pytest.raises(Exception, match="thomas-cb8f69f0"):
-        sys.argv = ["", "--sweep_id=1234"]
+        sys.argv = ["", "--name=1234"]
         command = ShowSweepsCommand(None)
         command.command_name = ""
         command.app_url = ""
         command.run()
 
     monkeypatch.setattr(show, "Console", console)
-    sys.argv = ["", "--sweep_id=thomas-cb8f69f0"]
+    sys.argv = ["", "--name=thomas-cb8f69f0"]
     command = ShowSweepsCommand(None)
     command.command_name = ""
     command.app_url = ""
@@ -70,6 +70,7 @@ def test_show_sweeps_server():
 
     sweep_controller = SweepController(Drive("lit://code"))
     sweep_controller._database = MagicMock()
+    sweep_controller.db_url = "a"
     sweep_controller._database.get.return_value = [sweep_config]
     result = sweep_controller.show_sweeps()
-    assert result[0] == sweep_config.json()
+    assert result[0] == sweep_config.dict()

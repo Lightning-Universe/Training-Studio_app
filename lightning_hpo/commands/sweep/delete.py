@@ -14,7 +14,7 @@ class DeleteSweepCommand(ClientCommand):
 
     def run(self) -> None:
         parser = ArgumentParser()
-        parser.add_argument("sweep_id", type=str, help="The associated `sweep_id` to delete.")
+        parser.add_argument("--name", type=str, help="The associated `sweep_id` to delete.")
         hparams = parser.parse_args()
-        response = self.invoke_handler(config=DeleteSweepConfig(sweep_id=hparams.sweep_id))
+        response = self.invoke_handler(config=DeleteSweepConfig(sweep_id=hparams.name))
         print(response)

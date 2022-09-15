@@ -12,19 +12,19 @@ Show or download artifacts
 ----
 
 ******************
-Show the arfefacts
+Show the artifacts
 ******************
 
 1. Check available options for show
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The Training Studio App CLI provides an help.
+The Training Studio App CLI provides its own help.
 
 .. code-block::
 
    lightning show artefacts --help
 
-Here is the output of such command above:
+Here is the output of the command:
 
 .. code-block::
 
@@ -39,6 +39,8 @@ Here is the output of such command above:
 
 2. Show artifacts
 ^^^^^^^^^^^^^^^^^
+
+To show artifacts use the following command:
 
 .. code-block::
 
@@ -112,9 +114,19 @@ Here is the output of such command above:
 2. Show artifacts with filtering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+To filter the artifacts shown use the following command:
+
+.. code-block::
+
+   lightning show artefacts --include=<artifact-id> --exclude=<file-type>
+
+For example:
+
 .. code-block::
 
    lightning show artefacts --include=thomas-0f615232 --exclude=.yaml
+
+Here is the output of the command:
 
 .. code-block::
 
@@ -136,7 +148,7 @@ Here is the output of such command above:
    ...
 
 ******************
-Download arfefacts
+Download artifacts
 ******************
 
 1. Check available options for download
@@ -146,26 +158,64 @@ Download arfefacts
 
    lightning download artefacts --help
 
-Here is the output of such command above:
+Here is the output of the command:
 
 .. code-block::
 
    You are connected to the local Lightning App.
-   usage: artefacts [-h] [--include INCLUDE] [--exclude EXCLUDE] [--overwrite OVERWRITE] output_dir
-
-   positional arguments:
-   output_dir            Provide the output directory for the artefacts..
+   usage: artefacts [-h] [--output_dir OUTPUT_DIR] [--include INCLUDE] [--exclude EXCLUDE]
 
    optional arguments:
    -h, --help            show this help message and exit
+   --output_dir OUTPUT_DIR
+                           Provide the output directory for the artefacts..
    --include INCLUDE     Provide a regex to include some specific files.
    --exclude EXCLUDE     Provide a regex to exclude some specific files.
-   --overwrite OVERWRITE Whether to overwrite the artefacts if they exist.
 
 2. Download artifacts
 ^^^^^^^^^^^^^^^^^^^^^
 
+To download artifacts use the following command:
+
 .. code-block::
 
    mkdir output_artefacts
-   lightning download artefacts ./output_artefacts
+   lightning download artefacts --output_dir=./output_artefacts
+
+----
+
+**********
+Next Steps
+**********
+
+.. raw:: html
+
+   <br />
+   <div class="display-card-container">
+      <div class="row">
+
+.. displayitem::
+   :header: Show or Download Logs
+   :description: Learn how to interact with your Training Studio App logs
+   :col_css: col-md-4
+   :button_link: show_or_download_logs.html
+   :height: 180
+
+.. displayitem::
+   :header: Run a Sweep
+   :description: Learn how to run a Sweep with your own python script
+   :col_css: col-md-4
+   :button_link: run_sweep.html
+   :height: 180
+
+.. displayitem::
+   :header: Run a Notebook
+   :description: Learn how to run a notebook locally or in the cloud
+   :col_css: col-md-4
+   :button_link: run_notebook.html
+   :height: 180
+
+.. raw:: html
+
+      </div>
+   </div>

@@ -2,10 +2,11 @@ import os
 from time import time
 from typing import Any, Dict, Optional
 
+import pytorch_lightning
 from lightning import LightningFlow
 from lightning.app.storage import Drive
 from lightning.pytorch.loggers import TensorBoardLogger
-from lightning.pytorch.utilities.rank_zero import rank_zero_only
+from lightning_utilities.core.rank_zero import rank_zero_only
 
 from lightning_hpo.loggers.logger import Logger
 
@@ -47,26 +48,25 @@ class TensorboardLogger(Logger):
         return []
 
     def configure_tracer(self, tracer, sweep_id: str, trial_id: int, params: Dict[str, Any]):
-        from pytorch_lightning import Trainer
-
         # Create a space logs under the sweep_id folder
-        drive = Drive("lit://logs", component_name=f"{sweep_id}/{trial_id}")
+        drive = Drive(f"lit://{sweep_id}", component_name=str(trial_id), allow_duplicates=True)
         use_localhost = "LIGHTNING_APP_STATE_URL" not in os.environ
 
         if use_localhost:
-            logger = TensorBoardLogger(save_dir=str(drive.root))
+            logger = TensorBoardLogger(save_dir=str(drive.root), name="", version="")
         else:
             logger = DriveTensorBoardLogger(save_dir=".", name="", drive=drive, refresh_time=5)
 
         print("Injecting Tensorboard")
 
+        # TODO: Collect the monitor + metric at the end.
         logger.log_hyperparams(params)
 
         def trainer_pre_fn(trainer, *args, **kwargs):
             kwargs["logger"] = logger
             return {}, args, kwargs
 
-        tracer.add_traced(Trainer, "__init__", pre_fn=trainer_pre_fn)
+        tracer.add_traced(pytorch_lightning.Trainer, "__init__", pre_fn=trainer_pre_fn)
 
     def get_url(self, trial_id: int) -> None:
         pass

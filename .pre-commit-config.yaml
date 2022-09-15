@@ -16,7 +16,8 @@ repos:
         exclude: |
           (?x)(
               ^lightning_hpo/app/ui/build|
-              ^lightning_hpo/app/ui/yarn.lock
+              ^lightning_hpo/app/ui/yarn.lock|
+              ^lightning_hpo/app/ui/src/generated
           )
 
   - repo: https://github.com/PyCQA/isort
@@ -47,7 +48,7 @@ repos:
         name: Check PEP8
         args:
           - "--max-line-length=120"
-          - "--ignore=E402,E501"
+          - "--ignore=E402,E501,F811"
 
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v2.7.1
@@ -56,7 +57,11 @@ repos:
         exclude: |
           (?x)(
               ^lightning_hpo/app/ui/build|
-              ^README.md
+              README.md|
+              ^lightning_hpo/app/ui/src/generated|
+              ^.github|
+              ^tests|
+              ^docs
           )
         additional_dependencies:
           - prettier@2.7.1

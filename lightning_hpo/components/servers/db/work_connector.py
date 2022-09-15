@@ -9,7 +9,7 @@ from urllib3.util.retry import Retry
 from lightning_hpo.components.servers.db.models import GeneralModel
 
 _CONNECTION_RETRY_TOTAL = 5
-_CONNECTION_RETRY_BACKOFF_FACTOR = 0.5
+_CONNECTION_RETRY_BACKOFF_FACTOR = 1
 
 
 def _configure_session() -> Session:
@@ -31,10 +31,9 @@ def _configure_session() -> Session:
 
 
 class DatabaseConnector:
-    def __init__(self, model: Type[SQLModel], db_url: str, model_id: Optional[str] = None):
+    def __init__(self, model: Type[SQLModel], db_url: str):
         self.model = model
         self.db_url = db_url
-        self.model_id = model_id
         self.session = _configure_session()
 
     def get(self, config: Optional[Type[SQLModel]] = None):
@@ -43,23 +42,23 @@ class DatabaseConnector:
         assert resp.status_code == 200
         return [cls(**data) for data in resp.json()]
 
-    def post(self, config: SQLModel, model_id: Optional[str] = None):
+    def post(self, config: SQLModel):
         resp = self.session.post(
             self.db_url,
-            data=GeneralModel.from_obj(config, id=model_id or self.model_id).json(),
+            data=GeneralModel.from_obj(config).json(),
         )
         assert resp.status_code == 200
 
-    def put(self, config: SQLModel, model_id: Optional[str] = None):
+    def put(self, config: SQLModel):
         resp = self.session.put(
             self.db_url,
-            data=GeneralModel.from_obj(config, id=self.model_id or self.model_id).json(),
+            data=GeneralModel.from_obj(config).json(),
         )
         assert resp.status_code == 200
 
-    def delete(self, config: SQLModel, model_id: Optional[str] = None):
+    def delete(self, config: SQLModel):
         resp = self.session.delete(
             self.db_url,
-            data=GeneralModel.from_obj(config, id=self.model_id or self.model_id).json(),
+            data=GeneralModel.from_obj(config).json(),
         )
         assert resp.status_code == 200

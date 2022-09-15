@@ -102,7 +102,7 @@ class MNISTDataModule(LightningDataModule):
 
 
 if __name__ == "__main__":
-    print(f"The provided arguments are {sys.argv}")
+    print(f"The provided arguments are {sys.argv[1:]}")
     cli = LightningCLI(
         ImageClassifier,
         MNISTDataModule,
