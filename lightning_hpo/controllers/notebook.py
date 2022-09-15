@@ -37,6 +37,7 @@ class NotebookController(Controller):
     def run_notebook(self, config: NotebookConfig) -> str:
         configs = self.db.get()
         if any(existing_config.notebook_name == config.notebook_name for existing_config in configs):
+            config.desired_stage = Stage.RUNNING
             # Update config in the database
             self.db.put(config)
             return f"The notebook `{config.notebook_name}` has been updated."
@@ -47,18 +48,18 @@ class NotebookController(Controller):
     def stop_notebook(self, config: StopNotebookConfig) -> str:
         matched_notebook = None
         for notebook_name, notebook in self.r.items():
-            if notebook_name == config.name:
+            if notebook_name == config.notebook_name:
                 matched_notebook = notebook
 
         if matched_notebook:
-            model: NotebookConfig = notebook.collect_model()
+            model: NotebookConfig = matched_notebook.collect_model()
             if model.desired_stage != Stage.STOPPED:
-                notebook: JupyterLab = self.r[config.name]
+                notebook: JupyterLab = self.r[config.notebook_name]
                 notebook.desired_stage = Stage.STOPPED
                 self.db.put(notebook.collect_model())
-                return f"The notebook `{config.name}` has been stopped."
-            return f"The notebook `{config.name}` is already stopped."
-        return f"The notebook `{config.name}` doesn't exist."
+                return f"The notebook `{config.notebook_name}` has been stopped."
+            return f"The notebook `{config.notebook_name}` is already stopped."
+        return f"The notebook `{config.notebook_name}` doesn't exist."
 
     def show_notebook(self):
         if self.db_url:

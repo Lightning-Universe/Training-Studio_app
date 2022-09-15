@@ -1,5 +1,7 @@
 from unittest.mock import MagicMock
 
+from lightning_app.utilities.enum import CacheCallsKeys
+
 from lightning_hpo.commands.notebook.run import NotebookConfig
 from lightning_hpo.controllers import controller, notebook
 from lightning_hpo.controllers.notebook import NotebookController
@@ -40,12 +42,17 @@ def test_notebook_controller(monkeypatch):
 
     stop.assert_not_called()
     response = notebook_controller.stop_notebook(config)
+    assert response == "The notebook `a` has been stopped."
+    notebook_controller.run("a")
     stop.assert_called()
-    assert response == "The notebook `{config.name}` has been stopped."
-    assert notebook_controller.r == {}
+    assert notebook_obj_1.collect_model().stage == Stage.STOPPING
+    notebook_obj_1._calls = {
+        CacheCallsKeys.LATEST_CALL_HASH: "call_1",
+        "call_1": {"statuses": [{"stage": Stage.STOPPED, "timestamp": 1, "reason": None}]},
+    }
+    notebook_controller.run("a")
     config = notebook_controller.db.get()[0]
     assert config.stage == Stage.STOPPED
-    assert config.desired_stage == Stage.STOPPED
 
     response = notebook_controller.run_notebook(config)
     config = notebook_controller.db.get()[0]

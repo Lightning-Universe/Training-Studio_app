@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 
 class StopNotebookConfig(BaseModel):
-    name: Optional[str]
+    notebook_name: Optional[str]
 
 
 class StopNotebookCommand(ClientCommand):

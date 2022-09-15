@@ -154,7 +154,7 @@
           }
         },
         "cls_name": "DeleteSweepCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/delete.py"
+        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/sweep/delete.py"
       }
     },
     "/command/run_sweep": {
@@ -174,7 +174,7 @@
           }
         },
         "cls_name": "RunSweepCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/run.py"
+        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/sweep/run.py"
       }
     },
     "/command/show_sweeps": {
@@ -186,7 +186,7 @@
           "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
         },
         "cls_name": "ShowSweepsCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/show.py"
+        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/sweep/show.py"
       }
     },
     "/command/stop_sweep": {
@@ -206,7 +206,7 @@
           }
         },
         "cls_name": "StopSweepCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/stop.py"
+        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/sweep/stop.py"
       }
     },
     "/command/run_notebook": {
@@ -226,7 +226,7 @@
           }
         },
         "cls_name": "RunNotebookCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/notebook/run.py"
+        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/notebook/run.py"
       }
     },
     "/command/stop_notebook": {
@@ -246,7 +246,7 @@
           }
         },
         "cls_name": "StopNotebookCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/notebook/stop.py"
+        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/notebook/stop.py"
       }
     },
     "/command/show_notebooks": {
@@ -258,7 +258,7 @@
           "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
         },
         "cls_name": "ShowNotebookCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/notebook/show.py"
+        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/notebook/show.py"
       }
     },
     "/command/run_tensorboard": {
@@ -324,7 +324,7 @@
           }
         },
         "cls_name": "ShowArtefactsCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/artefacts/show.py"
+        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/artefacts/show.py"
       }
     },
     "/command/download_artefacts": {
@@ -344,7 +344,7 @@
           }
         },
         "cls_name": "DownloadArtefactsCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/artefacts/download.py"
+        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/artefacts/download.py"
       }
     },
     "/api{full_path}": {
@@ -452,7 +452,7 @@
       "StopNotebookConfig": {
         "title": "StopNotebookConfig",
         "type": "object",
-        "properties": { "name": { "title": "Name", "type": "string" } }
+        "properties": { "notebook_name": { "title": "Notebook Name", "type": "string" } }
       },
       "StopSweepConfig": {
         "title": "StopSweepConfig",
