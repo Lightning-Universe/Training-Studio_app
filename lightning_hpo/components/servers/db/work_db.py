@@ -1,4 +1,5 @@
 import os
+import pathlib
 from typing import List, Optional, Type
 
 from fastapi import FastAPI
@@ -67,7 +68,7 @@ def create_engine(db_file_name: str, models: List[Type[SQLModel]], echo: bool):
 
     from sqlmodel import create_engine, SQLModel
 
-    engine = create_engine(f"sqlite:///{db_file_name}", echo=echo)
+    engine = create_engine(f"sqlite:///{pathlib.Path(db_file_name).resolve()}", echo=echo)
 
     logger.debug(f"Creating the following tables {models}")
     SQLModel.metadata.create_all(engine)

@@ -1,0 +1,9 @@
+[run]
+source =
+    lightning_hpo
+concurrency =
+    multiprocessing
+    thread
+parallel = True
+omit =
+    lightning_hpo/setup_tools.py
