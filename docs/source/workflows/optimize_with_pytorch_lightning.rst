@@ -37,7 +37,7 @@ For this example, download ``train.py`` and ``app.py`` files with the following 
 
    mkdir example_demo && cd example_demo && mkdir scripts
 
-   wget -O scripts/train.py https://raw.githubusercontent.com/Lightning-AI/lightning-hpo/master/examples/scripts/train.py
+   wget https://raw.githubusercontent.com/Lightning-AI/lightning-hpo/master/examples/scripts/train.py
 
    wget -O app.py https://raw.githubusercontent.com/Lightning-AI/lightning-hpo/master/examples/2_app_pytorch_lightning.py
 

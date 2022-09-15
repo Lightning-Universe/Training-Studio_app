@@ -27,7 +27,7 @@ Once you are setup, you can run the App locally from the **lightning-hpo** direc
 
 .. code-block::
 
-    lightning run app training_studio_app.py
+   lightning run app app.py
 
 If you want to enable the `Weights And Biases Logger <https://wandb.ai/>`_, follow the following :doc:`guide <loggers/wandb>`.
 
@@ -44,9 +44,11 @@ If you want to enable the `Weights And Biases Logger <https://wandb.ai/>`_, foll
 
 .. note:: This is only temporary as some changes are being released to PiPy
 
+Go back within the ``lightning_hpo`` folder
+
 .. code-block::
 
-   PACKAGE_LIGHTNING=1 lightning run app training_studio_app.py --cloud
+   PACKAGE_LIGHTNING=1 lightning run app app.py --cloud
 
 If you see the following lines in your terminal, this means everything should work as expected !
 
