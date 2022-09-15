@@ -28,7 +28,7 @@ def run_app(context):
         "lightning",
         "run",
         "app",
-        os.path.join(_PROJECT_ROOT, "training_studio_app.py"),
+        os.path.join(_PROJECT_ROOT, "app.py"),
         "--open-ui",
         "False",
     ]
