@@ -210,11 +210,11 @@ class RunSweepCommand(ClientCommand):
         repo = CustomLocalSourceCodeDir(path=Path(hparams.script_path).parent.resolve())
         # TODO: Resolve this bug.
 
-        use_localhost = "LIGHTNING_APP_STATE_URL" not in os.environ
-        port = APP_SERVER_PORT if use_localhost else None
-        url = f"{APP_SERVER_HOST}:{port}" if use_localhost else APP_SERVER_HOST
+        URL = self.state._state["vars"]["_layout"]["target"].replace("/root", "")
+        if "localhost" in URL:
+            URL = f"{APP_SERVER_HOST}:{APP_SERVER_PORT}"
         repo.package()
-        repo.upload(url=f"{url}/api/v1/upload_file/{name}")
+        repo.upload(url=f"{URL}/api/v1/upload_file/{name}")
 
         distributions = {
             k: Distributions(distribution=x["distribution"], params=x["params"]) for k, x in distributions.items()
