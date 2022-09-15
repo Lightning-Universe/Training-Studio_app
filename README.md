@@ -319,6 +319,7 @@ cd examples/scripts
 ```bash
 lightning run sweep train.py \
   --n_trials=3 \
+  --simultaneous_trials=1 \
   --cloud_compute=cpu-medium \
   --logger="tensorboard" \
   --direction=maximize \

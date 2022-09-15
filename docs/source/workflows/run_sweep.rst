@@ -73,6 +73,7 @@ Here is the command line with the hyper-parameters. Under the hood, it uses `Opt
 
    lightning run sweep train.py \
       --n_trials=3 \
+      --simultaneous_trials=1 \
       --logger="tensorboard" \
       --direction=maximize \
       --cloud_compute=cpu-medium \
