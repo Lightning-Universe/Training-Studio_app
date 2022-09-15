@@ -38,7 +38,7 @@ class JupyterLab(JupyterLab, ControllerResource):
 
     def on_collect_model(self, model_dict):
         model_dict["cloud_compute"] = self.cloud_compute.name
-        if self.url:
+        if self.stage == Stage.RUNNING and self.url:
             model_dict["url"] = self.url
         else:
             model_dict["url"] = None
