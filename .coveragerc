@@ -2,7 +2,8 @@
 source =
     lightning_hpo
 concurrency =
-    thread
     multiprocessing
+    thread
 parallel = True
-relative_files = True
+omit =
+    lightning_hpo/setup_tools.py

@@ -80,7 +80,7 @@ jobs:
           AWS_DEFAULT_REGION: us-east-1
           PYTEST_ARTIFACT: results-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}.xml
         run: |
-          python -m coverage run --source lightning_hpo -m pytest tests --junitxml=$PYTEST_ARTIFACT --durations=0 --color=yes -v
+          python -m coverage run -m pytest tests --junitxml=$PYTEST_ARTIFACT --durations=0 --color=yes -v
 
       - name: Story Tests
         run: |
