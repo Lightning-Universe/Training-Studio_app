@@ -5,8 +5,8 @@ from uuid import uuid4
 from lightning.app.utilities.enum import make_status, WorkStageStatus
 
 from lightning_hpo import Objective
-from lightning_hpo.components.servers.db.connector import DatabaseConnector
 from lightning_hpo.components.servers.db.models import GeneralModel
+from lightning_hpo.components.servers.db.work_connector import DatabaseConnector
 from lightning_hpo.utilities.utils import get_primary_key
 
 

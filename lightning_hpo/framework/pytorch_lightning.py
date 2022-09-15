@@ -28,6 +28,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
 
     def on_after_run(self, script_globals):
         PyTorchLightningScriptRunner.on_after_run(self, script_globals)
+        self.best_model_path = str(self.best_model_path)
 
     @classmethod
     def distributions(cls):

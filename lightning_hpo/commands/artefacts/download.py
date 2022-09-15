@@ -23,7 +23,9 @@ class DownloadArtefactsCommand(ClientCommand):
     def run(self) -> None:
         # 1. Parse the user arguments.
         parser = argparse.ArgumentParser()
-        parser.add_argument("--output_dir", type=str, help="Provide the output directory for the artefacts..")
+        parser.add_argument(
+            "--output_dir", required=True, type=str, help="Provide the output directory for the artefacts.."
+        )
         parser.add_argument("--include", type=str, default=None, help="Provide a regex to include some specific files.")
         parser.add_argument("--exclude", type=str, default=None, help="Provide a regex to exclude some specific files.")
         hparams = parser.parse_args()
