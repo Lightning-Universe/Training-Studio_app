@@ -15,5 +15,3 @@ lightning  # TODO: remove this dependency. (added only for CI)
 sklearn
 sqlmodel
 sqlite_web
-Flask
-Flask-Cors
