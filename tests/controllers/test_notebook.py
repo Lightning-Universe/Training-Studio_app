@@ -43,6 +43,10 @@ def test_notebook_controller(monkeypatch):
     stop.assert_not_called()
     response = notebook_controller.stop_notebook(config)
     assert response == "The notebook `a` has been stopped."
+
+    response = notebook_controller.stop_notebook(config)
+    assert response == "The notebook `a` is already stopped."
+
     notebook_controller.run("a")
     stop.assert_called()
     assert notebook_obj_1.collect_model().stage == Stage.STOPPING
@@ -62,3 +66,7 @@ def test_notebook_controller(monkeypatch):
     notebook_controller.run("a")
     assert isinstance(notebook_controller.r["a"], notebook.JupyterLab)
     assert notebook_controller.r["a"] != notebook_obj_1
+
+    del notebook_controller.r["a"]
+    response = notebook_controller.stop_notebook(config)
+    assert response == "The notebook `a` doesn't exist."
