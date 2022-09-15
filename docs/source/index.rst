@@ -25,30 +25,26 @@ Welcome to ⚡ Lightning HPO
 Install Lightning HPO
 *********************
 
+.. note:: This is only temporary as some changes are being released to PiPy
+
 Python 3.8.x or later (3.8.x, 3.9.x, 3.10.x)
 
 .. code-block:: bash
 
-   git clone https://github.com/Lightning-AI/lightning-hpo
-
-
-   cd lightning-hpo
-
+   git clone https://github.com/Lightning-AI/lightning-hpo && cd lightning-hpo
 
    pip install -r requirements.txt -r requirements/test.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
 
+   cd .. && git clone -b reduce_cost https://github.com/Lightning-AI/lightning.git && cd lightning && pip install -e .
 
-   pip install git+https://github.com/Lightning-AI/lightning.git@training_studio_fixes
-
-
-   pip install -e .
+   cd ../lightning-hpo && pip install -e .
 
 
 Make sure everything works fine.
 
 .. code-block:: bash
 
-   pytest tests -v
+   python -m lightning run app app.py
 
 ----
 
