@@ -25,6 +25,8 @@ Welcome to ⚡ Lightning HPO
 Install Lightning HPO
 *********************
 
+.. note:: This is only temporary as some changes are being released to PiPy
+
 Python 3.8.x or later (3.8.x, 3.9.x, 3.10.x)
 
 .. code-block:: bash
