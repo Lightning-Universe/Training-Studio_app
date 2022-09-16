@@ -153,7 +153,7 @@ export function Sweeps() {
         </Box>
       );
 
-    const monitor = '0' in sweep.trials ? sweep.trials[0].monitor : null;
+    const monitor = sweep.trials[0]?.monitor || null;
 
     return [
       <Status status={sweep.stage ? statusToEnum[sweep.stage] : StatusEnum.NOT_STARTED} />,
