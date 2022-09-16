@@ -94,7 +94,7 @@ export function Sweeps() {
 
   if (sweeps.length == 0) {
     return (
-      <UserGuide title="Want to start a hyper-parameter sweep?" subtitle="Use the commands below">
+      <UserGuide title="Want to start a hyper-parameter sweep?" subtitle="Use the commands below in your terminal">
         <UserGuideComment>Connect to the app</UserGuideComment>
         <UserGuideBody enableClipBoard={enableClipBoard}>{`lightning connect ${appId} --yes`}</UserGuideBody>
         <UserGuideComment>Download example script</UserGuideComment>

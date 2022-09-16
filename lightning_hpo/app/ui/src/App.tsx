@@ -38,7 +38,7 @@ function Notebooks() {
     return (
       <UserGuide
         title="Want to start a notebook?"
-        subtitle="Use the commands in another terminal below or click on 'New'">
+        subtitle="Use the commands below in your terminal or click on 'New'">
         <UserGuideComment>Connect to the app</UserGuideComment>
         <UserGuideBody enableClipBoard={enableClipBoard}>{`lightning connect ${appId} --yes`}</UserGuideBody>
         <UserGuideComment>Run a notebook</UserGuideComment>
