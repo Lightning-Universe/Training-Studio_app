@@ -31,7 +31,7 @@ You can use `conda <https://conda.io/projects/conda/en/latest/user-guide/tasks/m
 
       git clone https://github.com/Lightning-AI/lightning-hpo && cd lightning-hpo
 
-      pip install -r requirements.txt -r requirements/test.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
+      pip install -r requirements.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
 
       cd .. && git clone -b reduce_cost https://github.com/Lightning-AI/lightning.git && cd lightning && pip install -e .
 
@@ -40,11 +40,17 @@ You can use `conda <https://conda.io/projects/conda/en/latest/user-guide/tasks/m
 .. note:: This is only temporary as some changes are being released to PiPy
 
 
-2. Makes sure everything works
+2. Makes sure everything works locally
 
-.. code-block::
+.. code-block:: bash
 
    python -m lightning run app app.py
+
+3. Makes sure everything works in the cloud
+
+.. code-block:: bash
+
+   PACKAGE_LIGHTNING=1 python -m lightning run app app.py --cloud
 
 Here is how the Training Studio App looks like:
 

@@ -45,7 +45,7 @@ Clone and install lightning-hpo.
 ```bash
 git clone https://github.com/Lightning-AI/lightning-hpo && cd lightning-hpo
 
-pip install -r requirements.txt -r requirements/test.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
+pip install -r requirements.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
 
 cd .. && git clone -b reduce_cost https://github.com/Lightning-AI/lightning.git && cd lightning && pip install -e .
 
