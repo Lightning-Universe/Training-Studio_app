@@ -94,7 +94,7 @@ export function Sweeps() {
 
   if (sweeps.length == 0) {
     return (
-      <UserGuide title="Want to start a hyper-parameter sweep?" subtitle="Use the commands below">
+      <UserGuide title="Want to start a hyper-parameter sweep?" subtitle="Use the commands below in your terminal">
         <UserGuideComment>Connect to the app</UserGuideComment>
         <UserGuideBody enableClipBoard={enableClipBoard}>{`lightning connect ${appId} --yes`}</UserGuideBody>
         <UserGuideComment>Download example script</UserGuideComment>
@@ -105,7 +105,7 @@ export function Sweeps() {
         <UserGuideBody enableClipBoard={enableClipBoard}>
           lightning run sweep train.py --n_trials=3 --simultaneous_trials=1 --logger="tensorboard" --direction=maximize
           --cloud_compute=cpu-medium --model.lr="log_uniform(0.001, 0.1)" --model.gamma="uniform(0.5, 0.8)"
-          --data.batch_size="categorical([32, 64])"
+          --data.batch_size="categorical([32, 64])" --framework="pytorch_lightning"
         </UserGuideBody>
       </UserGuide>
     );

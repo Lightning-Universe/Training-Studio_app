@@ -1,5 +1,7 @@
 from argparse import ArgumentParser
+from getpass import getuser
 from typing import List
+from uuid import uuid4
 
 from lightning.app.utilities.commands import ClientCommand
 from sqlalchemy import Column
@@ -26,14 +28,23 @@ class RunNotebookCommand(ClientCommand):
     def run(self) -> None:
         parser = ArgumentParser()
 
-        parser.add_argument("--name", help="The name of your notebook to run.")
+        parser.add_argument("--name", default=None, help="The name of your notebook to run.")
         parser.add_argument("--requirements", nargs="+", default=[], help="Requirements file.")
-        parser.add_argument("--cloud_compute", default="cpu", type=str, help="The machine to use in the cloud.")
+        parser.add_argument(
+            "--cloud_compute",
+            default="cpu",
+            choices=["cpu", "cpu-small", "cpu-medium", "gpu", "gpu-fast", "gpu-fast-multi"],
+            type=str,
+            help="The machine to use in the cloud.",
+        )
 
         hparams, _ = parser.parse_known_args()
 
+        id = str(uuid4()).split("-")[0]
+        notebook_name = hparams.name or f"{getuser()}-{id}"
+
         config = NotebookConfig(
-            notebook_name=hparams.name,
+            notebook_name=notebook_name,
             requirements=hparams.requirements,
             cloud_compute=hparams.cloud_compute,
         )

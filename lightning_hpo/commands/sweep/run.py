@@ -167,15 +167,39 @@ class RunSweepCommand(ClientCommand):
     SUPPORTED_DISTRIBUTIONS = ("uniform", "log_uniform", "categorical")
 
     def run(self) -> None:
-        parser = ArgumentParser()
+        parser = ArgumentParser(
+            epilog="""
+                Your Hyper Parameters: \n
+                    They are sampled from a bayesian sampler and passed to your script directly. \n
+                    Currently, we support only 3 distributions: `log_uniform`, `uniform` and `categorical`.  \n
+                    Learn more there: https://lightning-ai.github.io/lightning-hpo/workflows/run_sweep.html#configure-your-hyper-parameters  \n"""
+        )
+
         parser.add_argument("script_path", type=str, help="The path to the script to run.")
         parser.add_argument("--n_trials", type=int, help="Number of trials to run.")
         parser.add_argument("--simultaneous_trials", default=1, type=int, help="Number of trials to run.")
         parser.add_argument("--requirements", nargs="+", default=[], help="Requirements file.")
-        parser.add_argument("--framework", default="pytorch_lightning", type=str, help="The framework you are using.")
-        parser.add_argument("--cloud_compute", default="cpu", type=str, help="The machine to use in the cloud.")
+        parser.add_argument(
+            "--framework",
+            default="pytorch_lightning",
+            type=str,
+            help="The framework you are using. Under the hood, we automate logging, check-pointing, etc..",
+        )
+        parser.add_argument(
+            "--cloud_compute",
+            default="cpu",
+            choices=["cpu", "cpu-small", "cpu-medium", "gpu", "gpu-fast", "gpu-fast-multi"],
+            type=str,
+            help="The machine to use in the cloud.",
+        )
         parser.add_argument("--name", default=None, type=str, help="The sweep you want to run upon.")
-        parser.add_argument("--logger", default="streamlit", type=str, help="The logger to use with your sweep.")
+        parser.add_argument(
+            "--logger",
+            default="tensorboard",
+            choices=["tensorboard", "wandb"],
+            type=str,
+            help="The logger to use with your sweep.",
+        )
         parser.add_argument(
             "--direction",
             default="minimize",

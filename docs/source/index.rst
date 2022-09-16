@@ -33,18 +33,24 @@ Python 3.8.x or later (3.8.x, 3.9.x, 3.10.x)
 
    git clone https://github.com/Lightning-AI/lightning-hpo && cd lightning-hpo
 
-   pip install -r requirements.txt -r requirements/test.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
+   pip install -r requirements.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
 
    cd .. && git clone -b reduce_cost https://github.com/Lightning-AI/lightning.git && cd lightning && pip install -e .
 
    cd ../lightning-hpo && pip install -e .
 
 
-Make sure everything works fine.
+Make sure everything works fine locally:
 
 .. code-block:: bash
 
    python -m lightning run app app.py
+
+Make sure everything works fine in the cloud:
+
+.. code-block:: bash
+
+   PACKAGE_LIGHTNING=1 python -m lightning run app app.py --cloud
 
 Here is how the Training Studio App looks like:
 

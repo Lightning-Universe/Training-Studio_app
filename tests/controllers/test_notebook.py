@@ -69,4 +69,4 @@ def test_notebook_controller(monkeypatch):
 
     del notebook_controller.r["a"]
     response = notebook_controller.stop_notebook(config)
-    assert response == "The notebook `a` doesn't exist."
+    assert response == "You don't have any notebooks. Create a notebook with `lightning run notebook --name=my_name`."

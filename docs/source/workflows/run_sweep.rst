@@ -67,7 +67,7 @@ Download the training script as follows. Alternatively, you can use ``curl``.
    wget https://raw.githubusercontent.com/Lightning-AI/lightning-hpo/master/examples/scripts/train.py
 
 
-Here is the command line with the hyper-parameters. Under the hood, it uses `Optuna <https://optuna.org/>`_ and a `bayesian sampling strategy <https://optuna.readthedocs.io/en/stable/_modules/optuna/samplers/_tpe/sampler.html>`_.
+Here is the command line with the hyper-parameters.
 
 .. code-block::
 
@@ -75,6 +75,7 @@ Here is the command line with the hyper-parameters. Under the hood, it uses `Opt
       --n_trials=3 \
       --simultaneous_trials=1 \
       --logger="tensorboard" \
+      --framework=pytorch_lightning \
       --direction=maximize \
       --cloud_compute=cpu-medium \
       --model.lr="log_uniform(0.001, 0.1)" \
@@ -94,7 +95,9 @@ Finally, your code is uploaded to the App and the Training Studio App responds t
 3. Configure your hyper-parameters
 **********************************
 
-We currently only support ``categorical``, ``log_uniform``, and ``uniform`` distributions. Please open a feature request to add more!
+In order to randomize your sweep arguments, we currently only support ``categorical``, ``log_uniform``, and ``uniform`` distributions. Please open a feature request to add more!
+
+Under the hood, it uses `Optuna <https://optuna.org/>`_ and a `bayesian sampling strategy <https://optuna.readthedocs.io/en/stable/_modules/optuna/samplers/_tpe/sampler.html>`_.
 
 To use either ``log_uniform`` or ``uniform`` distributions, simply pass the ``low`` and ``high`` values to be sampled from.
 
