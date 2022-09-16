@@ -55,7 +55,7 @@ def test_show_sweeps_client(monkeypatch):
     assert len(console._mock_mock_calls) == 6
     table = console._mock_mock_calls[-1].args[0]
     assert isinstance(table, Table)
-    assert table.columns[3]._cells[0] == "{'model.lr': 0.04491}"
+    assert table.columns[3]._cells[0] == "0.04491"
 
     sys.argv = ori_sys_argv
 

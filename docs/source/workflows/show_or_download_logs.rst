@@ -19,7 +19,7 @@ The Training Studio App CLI provides its own help.
 
 .. code-block::
 
-   lightning show logs --hel
+   lightning show logs --help
 
 Here is the output of the command:
 

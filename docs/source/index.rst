@@ -21,9 +21,9 @@ Welcome to ⚡ Lightning HPO
 
 ----
 
-*********************
-Install Lightning HPO
-*********************
+*****************************************************
+Install Lightning HPO and Run the Training Studio App
+*****************************************************
 
 .. note:: This is only temporary as some changes are being released to PiPy
 
@@ -46,6 +46,16 @@ Make sure everything works fine.
 
    python -m lightning run app app.py
 
+Here is how the Training Studio App looks like:
+
+.. raw:: html
+
+   <video id="background-video" autoplay loop muted controls poster="https://pl-flash-data.s3.amazonaws.com/assets_lightning/training_studio_example.PNG" width="100%">
+      <source src="https://pl-flash-data.s3.amazonaws.com/assets_lightning/training_studio.mp4" type="video/mp4" width="100%">
+   </video>
+
+.. note:: On MacOS, if you face OSError: [Errno 24] Too many open files, you can increase the process limit with: **ulimit -Sn 50000**
+
 ----
 
 ***********
@@ -59,17 +69,17 @@ Get Started
       <div class="row">
 
 .. displayitem::
-   :header: Run a Sweep with PyTorch Lightning
-   :description: Discover PyTorch Lightning and train your first Model.
-   :col_css: col-md-6
-   :button_link: workflows/optimize_with_pytorch_lightning.html
-   :height: 180
-
-.. displayitem::
    :header: The Training Studio App
    :description: Manage Sweeps and Tools to accelerate Training.
    :col_css: col-md-6
    :button_link: training_studio.html
+   :height: 180
+
+.. displayitem::
+   :header: Run a Sweep with PyTorch Lightning
+   :description: Discover PyTorch Lightning and train your first Model.
+   :col_css: col-md-6
+   :button_link: workflows/optimize_with_pytorch_lightning.html
    :height: 180
 
 .. raw:: html
@@ -91,16 +101,7 @@ Get Started
    :caption: Get Started
 
    installation
-   workflows/sweep
    training_studio
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Lightning HPO: How to...
-
-   Convert from raw Optuna <workflows/convert_from_raw_optuna>
-   Optimize with PyTorch Lightning <workflows/optimize_with_pytorch_lightning>
-   Configure your loggers <workflows/loggers>
 
 .. toctree::
    :maxdepth: 1
@@ -116,3 +117,11 @@ Get Started
    Stop or delete a Notebook <workflows/stop_or_delete_notebook>
    Show or download Artefacts <workflows/show_or_download_artifacts>
    Show or download Logs <workflows/show_or_download_logs>
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Lightning HPO: How to...
+
+   Convert from raw Optuna <workflows/convert_from_raw_optuna>
+   Optimize with PyTorch Lightning <workflows/optimize_with_pytorch_lightning>
+   Configure your loggers <workflows/loggers>

@@ -36,6 +36,16 @@ def _show_sweeps(sweeps: List[SweepConfig]):
     console.print(table)
 
 
+def _parse_params(params):
+    out = {}
+    for k, v in params.items():
+        if isinstance(v, float) and v == int(v):
+            out[k] = int(v)
+        else:
+            out[k] = v
+    return out
+
+
 def _show_sweep(sweep: SweepConfig):
     table = Table(
         "id",
@@ -60,13 +70,15 @@ def _show_sweep(sweep: SweepConfig):
     console = Console()
     console.print(table)
 
+    params = list(sweep.trials[0].params)
+    monitor = sweep.trials[0].monitor
+
     table = Table(
-        "id",
+        "name",
         "status",
         "best_model_score",
-        "params",
-        "monitor",
-        title="Trials",
+        *params,
+        title=f"Trials monitor=({monitor})",
         show_header=True,
         header_style="bold green",
     )
@@ -76,8 +88,7 @@ def _show_sweep(sweep: SweepConfig):
             str(idx),
             str(trial.stage),
             str(round(trial.best_model_score, 2) if trial.best_model_score else None),
-            str({k: round(v, 5) for k, v in trial.params.items()}),
-            str(trial.monitor),
+            *[str(round(v, 5)) for v in _parse_params(trial.params).values()],
         )
     console = Console()
     console.print(table)
