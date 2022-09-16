@@ -59,17 +59,17 @@ Get Started
       <div class="row">
 
 .. displayitem::
-   :header: Run a Sweep with PyTorch Lightning
-   :description: Discover PyTorch Lightning and train your first Model.
-   :col_css: col-md-6
-   :button_link: workflows/optimize_with_pytorch_lightning.html
-   :height: 180
-
-.. displayitem::
    :header: The Training Studio App
    :description: Manage Sweeps and Tools to accelerate Training.
    :col_css: col-md-6
    :button_link: training_studio.html
+   :height: 180
+
+.. displayitem::
+   :header: Run a Sweep with PyTorch Lightning
+   :description: Discover PyTorch Lightning and train your first Model.
+   :col_css: col-md-6
+   :button_link: workflows/optimize_with_pytorch_lightning.html
    :height: 180
 
 .. raw:: html
