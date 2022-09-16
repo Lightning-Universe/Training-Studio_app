@@ -21,9 +21,9 @@ Welcome to ⚡ Lightning HPO
 
 ----
 
-*********************
-Install Lightning HPO
-*********************
+*****************************************************
+Install Lightning HPO and Run the Training Studio App
+*****************************************************
 
 .. note:: This is only temporary as some changes are being released to PiPy
 
@@ -45,6 +45,16 @@ Make sure everything works fine.
 .. code-block:: bash
 
    python -m lightning run app app.py
+
+Here is how the Training Studio App looks like:
+
+.. raw:: html
+
+   <video id="background-video" autoplay loop muted controls poster="https://pl-flash-data.s3.amazonaws.com/assets_lightning/training_studio_example.PNG" width="100%">
+      <source src="https://pl-flash-data.s3.amazonaws.com/assets_lightning/training_studio.mp4" type="video/mp4" width="100%">
+   </video>
+
+.. note:: On MacOS, if you face OSError: [Errno 24] Too many open files, you can increase the process limit with: **ulimit -Sn 50000**
 
 ----
 

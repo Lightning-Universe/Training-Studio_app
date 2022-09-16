@@ -46,6 +46,7 @@ You can use `conda <https://conda.io/projects/conda/en/latest/user-guide/tasks/m
 
    python -m lightning run app app.py
 
+Here is how the Training Studio App looks like:
 
 .. raw:: html
 
