@@ -54,7 +54,7 @@ Here is the output of the command:
    │ thomas-85982a9b │ succeeded │ pytorch_lightn… │ cpu           │ 10       │ 10            │
    │ thomas-1dbfed8a │ failed    │ pytorch_lightn… │ cpu           │ 10       │ 0             │
    │ thomas-b4a4b274 │ failed    │ pytorch_lightn… │ cpu           │ 10       │ 0             │
-   │ thomas-f5fee22a │ running   │ pytorch_lightn… │ cpu           │ 10       │ 5             │
+   │ thomas-5660535a │ succeeded │ pytorch_lightn… │ cpu-medium    │ 3        │ 3             │
    └─────────────────┴───────────┴─────────────────┴───────────────┴──────────┴───────────────┘
 
 To show the details of a specific sweep use the following command:
@@ -78,19 +78,16 @@ Here is the output of the command:
    ┏━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
    ┃ name            ┃ status  ┃ framework         ┃ cloud_compute ┃ n_trials ┃ n_trials_done ┃
    ┡━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
-   │ thomas-f5fee22a │ running │ pytorch_lightning │ cpu           │ 10       │ 5             │
+   │ thomas-5660535a │ succeeded │ pytorch_lightn… │ cpu-medium    │ 3        │ 3             │
    └─────────────────┴─────────┴───────────────────┴───────────────┴──────────┴───────────────┘
-                                             Trials
-   ┏━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┓
-   ┃ id ┃ status    ┃ best_model_score ┃ params                                        ┃ monitor ┃
-   ┡━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━┩
-   │ 0  │ succeeded │ 0.05             │ {'model.lr': 0.02647, 'data.batch_size': 4.0} │ val_acc │
-   │ 1  │ succeeded │ 0.15             │ {'model.lr': 0.0588, 'data.batch_size': 4.0}  │ val_acc │
-   │ 2  │ succeeded │ 0.15             │ {'model.lr': 0.06855, 'data.batch_size': 4.0} │ val_acc │
-   │ 3  │ succeeded │ 0.12             │ {'model.lr': 0.07618, 'data.batch_size': 8.0} │ val_acc │
-   │ 4  │ succeeded │ 0.15             │ {'model.lr': 0.05112, 'data.batch_size': 4.0} │ val_acc │
-   │ 5  │ pending   │ None             │ {'model.lr': 0.09735, 'data.batch_size': 4.0} │ None    │
-   └────┴───────────┴──────────────────┴───────────────────────────────────────────────┴─────────┘
+                              Trials monitor=(val_acc)
+   ┏━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+   ┃ name ┃ status    ┃ best_model_score ┃ model.lr ┃ model.gamma ┃ data.batch_size ┃
+   ┡━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+   │ 0    │ succeeded │ 0.11             │ 0.09119  │ 0.76141     │ 64              │
+   │ 1    │ succeeded │ 0.12             │ 0.04976  │ 0.74855     │ 32              │
+   │ 2    │ succeeded │ 0.11             │ 0.03404  │ 0.58845     │ 64              │
+   └──────┴───────────┴──────────────────┴──────────┴─────────────┴─────────────────┘
 
 ----
 
