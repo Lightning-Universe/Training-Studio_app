@@ -40,11 +40,17 @@ Python 3.8.x or later (3.8.x, 3.9.x, 3.10.x)
    cd ../lightning-hpo && pip install -e .
 
 
-Make sure everything works fine.
+Make sure everything works fine locally:
 
 .. code-block:: bash
 
    python -m lightning run app app.py
+
+Make sure everything works fine in the cloud:
+
+.. code-block:: bash
+
+   PACKAGE_LIGHTNING=1 python -m lightning run app app.py --cloud
 
 Here is how the Training Studio App looks like:
 

@@ -16,7 +16,7 @@ from lightning_hpo.controllers.sweep import SweepController
 from lightning_hpo.controllers.tensorboard import TensorboardController
 
 
-class MainFlow(LightningFlow):
+class TrainingStudio(LightningFlow):
     def __init__(self, debug: bool = False, work_db: bool = True):
         super().__init__()
         self.debug = debug
@@ -51,7 +51,7 @@ class MainFlow(LightningFlow):
             self.db_viz.run()
 
         if not self.ready:
-            print(f"The Training Studio App is ready ! Database URL: {self.db.db_url}")
+            print("The Training Studio App is ready !")
             self.ready = True
 
         # 3: Run the controllers
