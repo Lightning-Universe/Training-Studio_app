@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from lightning_hpo.commands.notebook.run import NotebookConfig, RunNotebookCommand
 from lightning_hpo.commands.notebook.show import ShowNotebookCommand
@@ -35,8 +35,15 @@ class NotebookController(Controller):
                 self.r[config.notebook_name].stage = Stage.STOPPING
 
     def run_notebook(self, config: NotebookConfig) -> str:
-        configs = self.db.get()
-        if any(existing_config.notebook_name == config.notebook_name for existing_config in configs):
+        matched_notebook: Optional[NotebookConfig] = None
+        for existing_config in self.db.get():
+            if existing_config.notebook_name == config.notebook_name:
+                matched_notebook = existing_config
+
+        if matched_notebook:
+            if matched_notebook.stage == Stage.RUNNING and matched_notebook.desired_stage == Stage.RUNNING:
+                return f"The notebook `{config.notebook_name}` is already running."
+
             config.desired_stage = Stage.RUNNING
             # Update config in the database
             self.db.put(config)
@@ -59,7 +66,7 @@ class NotebookController(Controller):
                 self.db.put(notebook.collect_model())
                 return f"The notebook `{config.notebook_name}` has been stopped."
             return f"The notebook `{config.notebook_name}` is already stopped."
-        return f"The notebook `{config.notebook_name}` doesn't exist."
+        return f"The notebook `{config.notebook_name}` doesn't exist. Found the following notebooks: {list(self.r)}."
 
     def show_notebook(self):
         if self.db_url:
