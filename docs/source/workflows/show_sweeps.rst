@@ -48,14 +48,14 @@ Here is the output of the command:
 
 .. code-block::
 
-   ┏━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
-   ┃ name            ┃ status    ┃ framework       ┃ cloud_compute ┃ n_trials ┃ n_trials_done ┃
-   ┡━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
-   │ thomas-85982a9b │ succeeded │ pytorch_lightn… │ cpu           │ 10       │ 10            │
-   │ thomas-1dbfed8a │ failed    │ pytorch_lightn… │ cpu           │ 10       │ 0             │
-   │ thomas-b4a4b274 │ failed    │ pytorch_lightn… │ cpu           │ 10       │ 0             │
-   │ thomas-5660535a │ succeeded │ pytorch_lightn… │ cpu-medium    │ 3        │ 3             │
-   └─────────────────┴───────────┴─────────────────┴───────────────┴──────────┴───────────────┘
+   You are connected to the local Lightning App.
+                                             Sweeps
+   ┏━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
+   ┃ name            ┃ status    ┃ framework         ┃ cloud_compute ┃ n_trials ┃ n_trials_done ┃
+   ┡━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
+   │ thomas-5660535a │ succeeded │ pytorch_lightning │ cpu-medium    │ 3        │ 3             │
+   └─────────────────┴───────────┴───────────────────┴───────────────┴──────────┴───────────────┘
+   Your command execution was successful.
 
 To show the details of a specific sweep use the following command:
 
@@ -67,7 +67,7 @@ For example:
 
 .. code-block::
 
-   lightning show sweeps --name=thomas-f5fee22a
+   lightning show sweeps --name=thomas-5660535a
 
 Here is the output of the command:
 
@@ -75,11 +75,11 @@ Here is the output of the command:
 
    You are connected to the local Lightning App.
                                              Sweep
-   ┏━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
-   ┃ name            ┃ status  ┃ framework         ┃ cloud_compute ┃ n_trials ┃ n_trials_done ┃
-   ┡━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
-   │ thomas-5660535a │ succeeded │ pytorch_lightn… │ cpu-medium    │ 3        │ 3             │
-   └─────────────────┴─────────┴───────────────────┴───────────────┴──────────┴───────────────┘
+   ┏━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
+   ┃ id              ┃ status    ┃ framework         ┃ cloud_compute ┃ n_trials ┃ n_trials_done ┃
+   ┡━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
+   │ thomas-5660535a │ succeeded │ pytorch_lightning │ cpu-medium    │ 3        │ 3             │
+   └─────────────────┴───────────┴───────────────────┴───────────────┴──────────┴───────────────┘
                               Trials monitor=(val_acc)
    ┏━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
    ┃ name ┃ status    ┃ best_model_score ┃ model.lr ┃ model.gamma ┃ data.batch_size ┃
@@ -88,6 +88,7 @@ Here is the output of the command:
    │ 1    │ succeeded │ 0.12             │ 0.04976  │ 0.74855     │ 32              │
    │ 2    │ succeeded │ 0.11             │ 0.03404  │ 0.58845     │ 64              │
    └──────┴───────────┴──────────────────┴──────────┴─────────────┴─────────────────┘
+   Your command execution was successful.
 
 ----
 
