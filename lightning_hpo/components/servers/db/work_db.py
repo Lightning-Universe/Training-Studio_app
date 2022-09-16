@@ -71,7 +71,10 @@ def create_engine(db_file_name: str, models: List[Type[SQLModel]], echo: bool):
     engine = create_engine(f"sqlite:///{pathlib.Path(db_file_name).resolve()}", echo=echo)
 
     logger.debug(f"Creating the following tables {models}")
-    SQLModel.metadata.create_all(engine)
+    try:
+        SQLModel.metadata.create_all(engine)
+    except Exception as e:
+        logger.debug(e)
 
 
 class Database(LightningWork):
