@@ -76,7 +76,9 @@ function Notebooks() {
               });
             },
             () => {
-              appClient.appClientCommand.stopNotebookCommandStopNotebookPost({ name: notebook.notebook_name });
+              appClient.appClientCommand.stopNotebookCommandStopNotebookPost({
+                notebook_name: notebook.notebook_name,
+              });
             },
           ),
         ]}

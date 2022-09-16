@@ -54,7 +54,7 @@ Here is how the Training Studio App looks like:
       <source src="https://pl-flash-data.s3.amazonaws.com/assets_lightning/training_studio.mp4" type="video/mp4" width="100%">
    </video>
 
-.. note:: On MacOS, if you face OSError: [Errno 24] Too many open files, you can increase the process limit with: **ulimit -Sn 50000**
+.. note:: On MacOS, if you face an OSError: Too many open files, you can increase your Mac process limit with: **ulimit -Sn 50000**
 
 ----
 

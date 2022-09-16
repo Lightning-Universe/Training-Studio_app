@@ -3,5 +3,5 @@
 /* eslint-disable */
 
 export type StopNotebookConfig = {
-    name?: string;
+    notebook_name?: string;
 };
