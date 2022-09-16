@@ -105,7 +105,7 @@ export function Sweeps() {
         <UserGuideBody enableClipBoard={enableClipBoard}>
           lightning run sweep train.py --n_trials=3 --simultaneous_trials=1 --logger="tensorboard" --direction=maximize
           --cloud_compute=cpu-medium --model.lr="log_uniform(0.001, 0.1)" --model.gamma="uniform(0.5, 0.8)"
-          --data.batch_size="categorical([32, 64])"
+          --data.batch_size="categorical([32, 64])" --framework="pytorch_lightning"
         </UserGuideBody>
       </UserGuide>
     );

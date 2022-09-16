@@ -75,6 +75,7 @@ Here is the command line with the hyper-parameters. Under the hood, it uses `Opt
       --n_trials=3 \
       --simultaneous_trials=1 \
       --logger="tensorboard" \
+      --framework=pytorch_lightning \
       --direction=maximize \
       --cloud_compute=cpu-medium \
       --model.lr="log_uniform(0.001, 0.1)" \
@@ -94,7 +95,7 @@ Finally, your code is uploaded to the App and the Training Studio App responds t
 3. Configure your hyper-parameters
 **********************************
 
-We currently only support ``categorical``, ``log_uniform``, and ``uniform`` distributions. Please open a feature request to add more!
+In order to randomize your sweep arguments, we currently only support ``categorical``, ``log_uniform``, and ``uniform`` distributions. Please open a feature request to add more!
 
 To use either ``log_uniform`` or ``uniform`` distributions, simply pass the ``low`` and ``high`` values to be sampled from.
 
