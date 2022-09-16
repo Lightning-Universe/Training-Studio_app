@@ -13,5 +13,4 @@ hiplot
 streamlit_autorefresh
 lightning  # TODO: remove this dependency. (added only for CI)
 sklearn
-sqlmodel
 sqlite_web
