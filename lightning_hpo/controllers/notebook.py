@@ -66,7 +66,10 @@ class NotebookController(Controller):
                 self.db.put(notebook.collect_model())
                 return f"The notebook `{config.notebook_name}` has been stopped."
             return f"The notebook `{config.notebook_name}` is already stopped."
-        return f"The notebook `{config.notebook_name}` doesn't exist. Found the following notebooks: {list(self.r)}."
+        names = list(self.r)
+        if not names:
+            return "You don't have any notebooks. Create a notebook with `lightning run notebook --name=my_name`."
+        return f"The notebook `{config.notebook_name}` doesn't exist. Found the following notebooks: {names}."
 
     def show_notebook(self):
         if self.db_url:

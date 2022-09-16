@@ -30,7 +30,13 @@ class RunNotebookCommand(ClientCommand):
 
         parser.add_argument("--name", default=None, help="The name of your notebook to run.")
         parser.add_argument("--requirements", nargs="+", default=[], help="Requirements file.")
-        parser.add_argument("--cloud_compute", default="cpu", type=str, help="The machine to use in the cloud.")
+        parser.add_argument(
+            "--cloud_compute",
+            default="cpu",
+            choices=["cpu", "cpu-small", "cpu-medium", "gpu", "gpu-fast", "gpu-fast-multi"],
+            type=str,
+            help="The machine to use in the cloud.",
+        )
 
         hparams, _ = parser.parse_known_args()
 

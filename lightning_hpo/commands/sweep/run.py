@@ -185,9 +185,21 @@ class RunSweepCommand(ClientCommand):
             type=str,
             help="The framework you are using. Under the hood, we automate logging, check-pointing, etc..",
         )
-        parser.add_argument("--cloud_compute", default="cpu", type=str, help="The machine to use in the cloud.")
+        parser.add_argument(
+            "--cloud_compute",
+            default="cpu",
+            choices=["cpu", "cpu-small", "cpu-medium", "gpu", "gpu-fast", "gpu-fast-multi"],
+            type=str,
+            help="The machine to use in the cloud.",
+        )
         parser.add_argument("--name", default=None, type=str, help="The sweep you want to run upon.")
-        parser.add_argument("--logger", default="streamlit", type=str, help="The logger to use with your sweep.")
+        parser.add_argument(
+            "--logger",
+            default="tensorboard",
+            choices=["tensorboard", "wandb"],
+            type=str,
+            help="The logger to use with your sweep.",
+        )
         parser.add_argument(
             "--direction",
             default="minimize",
