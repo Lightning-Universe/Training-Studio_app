@@ -1,6 +1,5 @@
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { Box, Button, IconButton, Link, Stack, Table, Typography } from 'lightning-ui/src/design-system/components';
+import { Box, Button, Link, Stack, Table, Typography } from 'lightning-ui/src/design-system/components';
 import Status, { StatusEnum } from 'lightning-ui/src/shared/components/Status';
 import { AppClient, SweepConfig, TensorboardConfig, TrialConfig } from '../generated';
 import useClientDataState from '../hooks/useClientDataState';
@@ -115,13 +114,13 @@ export function Sweeps() {
   const sweepHeader = [
     'Status',
     'Name',
+    'Monitor',
     'Progress',
     'Framework',
     'Cloud Compute',
     'Direction',
     'Logger URL',
     'Logger Control',
-    'More',
   ];
 
   const baseTrialHeader = ['Status', 'Name', 'Best Score', 'Progress'];
@@ -154,18 +153,18 @@ export function Sweeps() {
         </Box>
       );
 
+    const monitor = '0' in sweep.trials ? sweep.trials[0].monitor : null;
+
     return [
       <Status status={sweep.stage ? statusToEnum[sweep.stage] : StatusEnum.NOT_STARTED} />,
       sweep.sweep_id,
+      monitor,
       progressBar,
       sweep.framework,
       sweep.cloud_compute,
       sweep.direction,
       createLoggerUrl(tensorboardConfig ? tensorboardConfig.url : sweep.logger_url),
       tensorboardConfig ? createLoggerControl(tensorboardConfig) : null,
-      <IconButton id={sweep.sweep_id + '-button'}>
-        <MoreHorizIcon sx={{ fontSize: 16 }} />
-      </IconButton>,
     ];
   });
 

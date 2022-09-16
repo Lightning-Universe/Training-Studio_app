@@ -23,40 +23,40 @@ Once a Lightning App is running locally or in the cloud, your can simply connect
 
 .. code-block::
 
-    lightning connect {CLOUD_APP_NAME} --yes
+   lightning connect {CLOUD_APP_NAME} --yes
 
 .. code-block::
 
-    lightning connect localhost --yes
+   lightning connect localhost --yes
 
-    Storing `delete_sweep` under {HOME}/.lightning/lightning_connection/commands/delete_sweep.py
-    You can review all the downloaded commands under {HOME}/.lightning/lightning_connection/commands folder.
+   Storing `delete_sweep` under {HOME}/.lightning/lightning_connection/commands/delete_sweep.py
+   You can review all the downloaded commands under {HOME}/.lightning/lightning_connection/commands folder.
 
-    Storing `run_sweep` under {HOME}/.lightning/lightning_connection/commands/run_sweep.py
-    You can review all the downloaded commands under {HOME}/.lightning/lightning_connection/commands folder.
+   Storing `run_sweep` under {HOME}/.lightning/lightning_connection/commands/run_sweep.py
+   You can review all the downloaded commands under {HOME}/.lightning/lightning_connection/commands folder.
 
-    Storing `show_sweeps` under {HOME}/.lightning/lightning_connection/commands/show_sweeps.py
-    You can review all the downloaded commands under {HOME}/.lightning/lightning_connection/commands folder.
+   Storing `show_sweeps` under {HOME}/.lightning/lightning_connection/commands/show_sweeps.py
+   You can review all the downloaded commands under {HOME}/.lightning/lightning_connection/commands folder.
 
-    Storing `stop_sweep` under {HOME}/.lightning/lightning_connection/commands/stop_sweep.py
-    You can review all the downloaded commands under {HOME}/.lightning/lightning_connection/commands folder.
+   Storing `stop_sweep` under {HOME}/.lightning/lightning_connection/commands/stop_sweep.py
+   You can review all the downloaded commands under {HOME}/.lightning/lightning_connection/commands folder.
 
-    Storing `run_notebook` under {HOME}/.lightning/lightning_connection/commands/run_notebook.py
-    You can review all the downloaded commands under {HOME}/.lightning/lightning_connection/commands folder.
+   Storing `run_notebook` under {HOME}/.lightning/lightning_connection/commands/run_notebook.py
+   You can review all the downloaded commands under {HOME}/.lightning/lightning_connection/commands folder.
 
-    Storing `stop_notebook` under {HOME}/.lightning/lightning_connection/commands/stop_notebook.py
-    You can review all the downloaded commands under {HOME}/.lightning/lightning_connection/commands folder.
+   Storing `stop_notebook` under {HOME}/.lightning/lightning_connection/commands/stop_notebook.py
+   You can review all the downloaded commands under {HOME}/.lightning/lightning_connection/commands folder.
 
-    Storing `show_notebooks` under {HOME}/.lightning/lightning_connection/commands/show_notebooks.py
-    You can review all the downloaded commands under {HOME}/.lightning/lightning_connection/commands folder.
+   Storing `show_notebooks` under {HOME}/.lightning/lightning_connection/commands/show_notebooks.py
+   You can review all the downloaded commands under {HOME}/.lightning/lightning_connection/commands folder.
 
-    Storing `show_artefacts` under {HOME}/.lightning/lightning_connection/commands/show_artefacts.py
-    You can review all the downloaded commands under {HOME}/.lightning/lightning_connection/commands folder.
+   Storing `show_artefacts` under {HOME}/.lightning/lightning_connection/commands/show_artefacts.py
+   You can review all the downloaded commands under {HOME}/.lightning/lightning_connection/commands folder.
 
-    Storing `download_artefacts` under {HOME}/.lightning/lightning_connection/commands/download_artefacts.py
-    You can review all the downloaded commands under {HOME}/.lightning/lightning_connection/commands folder.
+   Storing `download_artefacts` under {HOME}/.lightning/lightning_connection/commands/download_artefacts.py
+   You can review all the downloaded commands under {HOME}/.lightning/lightning_connection/commands folder.
 
-    You are connected to the local Lightning App.
+   You are connected to the local Lightning App.
 
 Learn more `there <https://github.com/Lightning-AI/lightning/tree/master/docs/source-app/workflows/build_command_line_interface>`_.
 
@@ -70,11 +70,11 @@ If you are already connected to a Lightning App, disconnect from the App using t
 
 .. code-block::
 
-    lightning disconnect
+   lightning disconnect
 
 .. code-block::
 
-    You are disconnected from the local Lightning App.
+   You are disconnected from the local Lightning App.
 
 ----
 

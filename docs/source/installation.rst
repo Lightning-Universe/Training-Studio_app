@@ -53,6 +53,8 @@ You can use `conda <https://conda.io/projects/conda/en/latest/user-guide/tasks/m
       <source src="https://pl-flash-data.s3.amazonaws.com/assets_lightning/training_studio.mp4" type="video/mp4" width="100%">
    </video>
 
+.. note:: On MacOS, if you face OSError: [Errno 24] Too many open files, you can increase the process limit with: **ulimit -Sn 50000**
+
 ----
 
 **********

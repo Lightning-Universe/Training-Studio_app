@@ -90,9 +90,9 @@ Finally, your code is uploaded to the App and the Training Studio App responds t
    Launched a sweep 1dbfed8a
    Your command execution was successful.
 
-****************************
-3. Randomize Sweep Arguments
-****************************
+**********************************
+3. Configure your hyper-parameters
+**********************************
 
 We currently only support ``categorical``, ``log_uniform``, and ``uniform`` distributions. Please open a feature request to add more!
 

@@ -68,7 +68,7 @@ def _show_sweep(sweep: SweepConfig):
         "status",
         "best_model_score",
         *params,
-        title=f"Trials monitor={monitor})",
+        title=f"Trials monitor=({monitor})",
         show_header=True,
         header_style="bold green",
     )
