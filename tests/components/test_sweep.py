@@ -24,6 +24,7 @@ def test_sweep_with_failed_trials():
     sweep.run()
     assert sweep.stage == Stage.FAILED
     assert sweep.trials[0]["exception"] == "Error"
+    assert sweep.trials[0]["stage"] == "failed"
 
 
 class PrunedMockObjective(MockObjective):
