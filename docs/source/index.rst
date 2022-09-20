@@ -35,7 +35,7 @@ Python 3.8.x or later (3.8.x, 3.9.x, 3.10.x)
 
    pip install -r requirements.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
 
-   cd .. && git clone -b reduce_cost https://github.com/Lightning-AI/lightning.git && cd lightning && pip install -e .
+   cd .. && git clone -b master https://github.com/Lightning-AI/lightning.git && cd lightning && pip install -e .
 
    cd ../lightning-hpo && pip install -e .
 

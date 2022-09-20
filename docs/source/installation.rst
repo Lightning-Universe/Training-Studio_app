@@ -33,7 +33,7 @@ You can use `conda <https://conda.io/projects/conda/en/latest/user-guide/tasks/m
 
       pip install -r requirements.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
 
-      cd .. && git clone -b reduce_cost https://github.com/Lightning-AI/lightning.git && cd lightning && pip install -e .
+      cd .. && git clone -b master https://github.com/Lightning-AI/lightning.git && cd lightning && pip install -e .
 
       cd ../lightning-hpo && pip install -e .
 

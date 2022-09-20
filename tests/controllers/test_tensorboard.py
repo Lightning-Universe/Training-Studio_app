@@ -15,6 +15,7 @@ def test_tensorboard_controller(monkeypatch):
     stop = MagicMock()
     monkeypatch.setattr(tensorboard.Tensorboard, "run", run)
     monkeypatch.setattr(tensorboard.Tensorboard, "stop", stop)
+    monkeypatch.setattr(tensorboard.Tensorboard, "_check_run_is_implemented", lambda x: None)
     tensorboard_controller.run("a")
     assert tensorboard_controller.db.data == {}
 
