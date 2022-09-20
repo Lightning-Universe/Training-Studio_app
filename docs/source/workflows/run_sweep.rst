@@ -27,9 +27,9 @@ The Training Studio App CLI provides its own help.
 
    You are connected to the local Lightning App.
    usage: sweep [-h] [--n_trials N_TRIALS] [--simultaneous_trials SIMULTANEOUS_TRIALS]
-               [--requirements REQUIREMENTS [REQUIREMENTS ...]] [--framework FRAMEWORK]
-               [--cloud_compute CLOUD_COMPUTE] [--name NAME] [--logger LOGGER]
-               [--direction {minimize,maximize}]
+               [--requirements REQUIREMENTS] [--framework FRAMEWORK]
+               [--cloud_compute {cpu,cpu-small,cpu-medium,gpu,gpu-fast,gpu-fast-multi}] [--name NAME]
+               [--logger {tensorboard,wandb}] [--direction {minimize,maximize}]
                script_path
 
    positional arguments:
@@ -40,17 +40,22 @@ The Training Studio App CLI provides its own help.
    --n_trials N_TRIALS   Number of trials to run.
    --simultaneous_trials SIMULTANEOUS_TRIALS
                            Number of trials to run.
-   --requirements REQUIREMENTS [REQUIREMENTS ...]
-                           Requirements file.
+   --requirements REQUIREMENTS
+                           List of requirements separated by a comma or requirements.txt filepath.
    --framework FRAMEWORK
-                           The framework you are using.
-   --cloud_compute CLOUD_COMPUTE
+                           The framework you are using. Under the hood, we automate logging, check-pointing,
+                           etc..
+   --cloud_compute {cpu,cpu-small,cpu-medium,gpu,gpu-fast,gpu-fast-multi}
                            The machine to use in the cloud.
    --name NAME           The sweep you want to run upon.
-                           The number of nodes to train upon.
-   --logger LOGGER       The logger to use with your sweep.
+   --logger {tensorboard,wandb}
+                           The logger to use with your sweep.
    --direction {minimize,maximize}
                            In which direction to optimize.
+
+   Your Hyper Parameters: They are sampled from a bayesian sampler and passed to your script directly.
+   Currently, we support only 3 distributions: `log_uniform`, `uniform` and `categorical`. Learn more there:
+   https://lightning-ai.github.io/lightning-hpo/workflows/run_sweep.html#configure-your-hyper-parameters
 
 ----
 
@@ -72,15 +77,15 @@ Here is the command line with the hyper-parameters.
 .. code-block::
 
    lightning run sweep train.py \
-      --n_trials=3 \
-      --simultaneous_trials=1 \
-      --logger="tensorboard" \
-      --framework=pytorch_lightning \
-      --direction=maximize \
-      --cloud_compute=cpu-medium \
-      --model.lr="log_uniform(0.001, 0.1)" \
-      --model.gamma="uniform(0.5, 0.8)" \
-      --data.batch_size="categorical([32, 64])"
+         --n_trials=100 \
+         --simultaneous_trials=5 \
+         --logger="tensorboard" \
+         --direction=maximize \
+         --cloud_compute=cpu-medium \
+         --model.lr="log_uniform(0.001, 0.01)" \
+         --model.gamma="uniform(0.5, 0.8)" \
+         --requirements="torchvision, wandb, 'jsonargparse[signatures]'" \
+         --data.batch_size="categorical([32, 64])"
 
 Finally, your code is uploaded to the App and the Training Studio App responds that the Sweep ``1dbfed8a`` was launched.
 

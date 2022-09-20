@@ -1,3 +1,4 @@
+import os
 from argparse import ArgumentParser
 from getpass import getuser
 from typing import List
@@ -29,7 +30,12 @@ class RunNotebookCommand(ClientCommand):
         parser = ArgumentParser()
 
         parser.add_argument("--name", default=None, help="The name of your notebook to run.")
-        parser.add_argument("--requirements", nargs="+", default=[], help="Requirements file.")
+        parser.add_argument(
+            "--requirements",
+            default=[],
+            type=lambda s: [v.replace(" ", "") for v in s.split(",")] if "," in s else s,
+            help="List of requirements separated by a comma or requirements.txt filepath.",
+        )
         parser.add_argument(
             "--cloud_compute",
             default="cpu",
@@ -40,11 +46,15 @@ class RunNotebookCommand(ClientCommand):
 
         hparams, _ = parser.parse_known_args()
 
+        if os.path.exists(hparams.requirements):
+            with open(hparams.requirements, "r") as f:
+                hparams.requirements = [line.replace("\n", "") for line in f.readlines()]
+
         id = str(uuid4()).split("-")[0]
         notebook_name = hparams.name or f"{getuser()}-{id}"
 
         config = NotebookConfig(
-            notebook_name=notebook_name,
+            notebook_name=notebook_name.replace(" ", "_"),
             requirements=hparams.requirements,
             cloud_compute=hparams.cloud_compute,
         )

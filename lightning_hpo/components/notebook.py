@@ -19,6 +19,9 @@ class JupyterLab(JupyterLab, ControllerResource):
         super().__init__(cloud_compute=CloudCompute(name=config.cloud_compute), **kwargs)
         self._process: Optional[Popen] = None
 
+        reqs = self.cloud_build_config.requirements
+        self.cloud_build_config.requirements = (reqs if reqs else []) + config.requirements
+
         self.notebook_name = config.notebook_name
         self.requirements = config.requirements
         self.desired_stage = config.desired_stage

@@ -10,13 +10,13 @@ from tests.helpers import MockDatabaseConnector
 
 
 def test_notebook_controller(monkeypatch):
-
     notebook_controller = NotebookController()
     monkeypatch.setattr(controller, "DatabaseConnector", MockDatabaseConnector)
     run = MagicMock()
     stop = MagicMock()
     monkeypatch.setattr(notebook.JupyterLab, "run", run)
     monkeypatch.setattr(notebook.JupyterLab, "stop", stop)
+    monkeypatch.setattr(notebook.JupyterLab, "_check_run_is_implemented", lambda x: None)
     notebook_controller.run("a")
     assert notebook_controller.db.data == {}
 

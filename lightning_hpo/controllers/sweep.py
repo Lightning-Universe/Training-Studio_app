@@ -33,10 +33,16 @@ class SweepController(Controller):
         # 2: Create the Sweeps
         for sweep in sweeps:
             id = sweep.sweep_id
-            if sweep.is_tensorboard() and id not in self.tensorboard_sweep_id:
-                self.tensorboard_sweep_id.append(id)
+            if sweep.is_tensorboard():
                 drive = Drive(f"lit://{id}")
-                self.db.post(TensorboardConfig(sweep_id=id, shared_folder=str(drive.drive_root)))
+                if id not in self.tensorboard_sweep_id:
+                    self.tensorboard_sweep_id.append(id)
+                    self.db.post(TensorboardConfig(sweep_id=id, shared_folder=str(drive.drive_root)))
+                elif sweep.stage in (Stage.FAILED, Stage.SUCCEEDED):
+                    for tensorboard in self.db.get(TensorboardConfig):
+                        if tensorboard.sweep_id == id:
+                            tensorboard.desired_state = Stage.STOPPED
+                            self.db.put(tensorboard)
 
             if id not in self.r and sweep.stage != Stage.SUCCEEDED:
                 self.r[id] = Sweep.from_config(
