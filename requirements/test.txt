@@ -10,3 +10,14 @@ pre-commit>=1.0
 psutil  # for `DeviceStatsMonitor`
 playwright
 behave
+
+
+pytorch_lightning
+jsonargparse[signatures]
+torchvision
+wandb
+streamlit
+sqlalchemy
+hiplot
+streamlit_autorefresh
+sklearn

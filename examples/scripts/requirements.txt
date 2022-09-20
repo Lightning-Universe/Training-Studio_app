@@ -1,0 +1,2 @@
+'jsonargparse[signatures]'
+torchvision

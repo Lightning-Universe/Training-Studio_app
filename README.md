@@ -318,13 +318,13 @@ cd examples/scripts
 
 ```bash
 lightning run sweep train.py \
-  --n_trials=3 \
-  --simultaneous_trials=1 \
-  --cloud_compute=cpu-medium \
-  --framework=pytorch_lightning \
-  --logger="tensorboard" \
-  --direction=maximize \
-  --model.lr="log_uniform(0.001, 0.1)" \
-  --model.gamma="uniform(0.5, 0.8)" \
-  --data.batch_size="categorical([32, 64])"
+      --n_trials=100 \
+      --simultaneous_trials=5 \
+      --logger="tensorboard" \
+      --direction=maximize \
+      --cloud_compute=cpu-medium \
+      --model.lr="log_uniform(0.001, 0.01)" \
+      --model.gamma="uniform(0.5, 0.8)" \
+      --requirements="torchvision, wandb, 'jsonargparse[signatures]'" \
+      --data.batch_size="categorical([32, 64])"
 ```

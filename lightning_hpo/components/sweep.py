@@ -141,9 +141,9 @@ class Sweep(LightningFlow, ControllerResource):
                 self.trials[trial_id]["progress"] = objective.progress
 
                 if _check_stage(objective, Stage.FAILED):
-                    self.stage = Stage.FAILED
                     self.trials[trial_id]["stage"] = Stage.FAILED
                     self.trials[trial_id]["exception"] = objective.status.message
+                    objective.stop()
 
                 if objective.reports and not self.trials[trial_id]["stage"] == "pruned":
                     if self._algorithm.should_prune(trial_id, objective.reports):
@@ -175,6 +175,8 @@ class Sweep(LightningFlow, ControllerResource):
                         self.trials[trial_id]["stage"] = Stage.SUCCEEDED
                         self.trials_done += 1
                         objective.stop()
+
+        self._check_for_failures()
 
     @property
     def num_trials(self) -> int:
@@ -211,6 +213,15 @@ class Sweep(LightningFlow, ControllerResource):
             objective = self._objective_cls(trial_id=trial_id, **self._kwargs)
             setattr(self, f"w_{trial_id}", objective)
         return objective
+
+    def _check_for_failures(self):
+        has_failed = False
+        for trial_id in range(self.num_trials):
+            objective = self._get_objective(trial_id)
+            if objective:
+                has_failed = has_failed or _check_stage(objective, Stage.FAILED)
+        if has_failed:
+            self.stage = Stage.FAILED
 
     @classmethod
     def from_config(cls, config: SweepConfig, code: Optional[Code] = None):

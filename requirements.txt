@@ -1,16 +1,6 @@
-pytorch_lightning
-jsonargparse[signatures]
-git+https://github.com/Lightning-AI/lightning.git@reduce_cost
-git+https://github.com/Lightning-AI/LAI-Jupyter-Component.git@main   # TODO: replace with lightning-notebook once released.
-lightning_cloud
-torchvision
+tensorboard
+lightning==2022.9.8
+git+https://github.com/Lightning-AI/LAI-Jupyter-Component.git@main
 optuna
 sqlmodel
 wandb
-streamlit
-sqlalchemy
-hiplot
-streamlit_autorefresh
-lightning  # TODO: remove this dependency. (added only for CI)
-sklearn
-sqlite_web

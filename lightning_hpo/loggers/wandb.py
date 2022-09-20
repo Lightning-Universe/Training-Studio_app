@@ -1,11 +1,16 @@
 import os
 from typing import Any, Dict, Optional
 
-import pytorch_lightning
-import wandb
 from lightning import LightningFlow
 
 from lightning_hpo.loggers.logger import Logger
+from lightning_hpo.utilities.imports import _IS_PYTORCH_LIGHTNING_AVAILABLE, _IS_WANDB_AVAILABLE
+
+if _IS_PYTORCH_LIGHTNING_AVAILABLE:
+    import pytorch_lightning
+
+if _IS_WANDB_AVAILABLE:
+    import wandb
 
 
 class WandbLogger(Logger):
