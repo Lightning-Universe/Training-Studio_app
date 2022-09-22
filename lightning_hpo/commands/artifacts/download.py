@@ -47,6 +47,7 @@ class DownloadArtifactsCommand(ClientCommand):
                     path = path[1:]
                 resp = requests.get(url, allow_redirects=True)
                 target_file = Path(os.path.join(output_dir, path))
+                target_file.parent.mkdir(exist_ok=True, parents=True)
                 with open(target_file, "wb") as f:
                     f.write(resp.content)
         else:
