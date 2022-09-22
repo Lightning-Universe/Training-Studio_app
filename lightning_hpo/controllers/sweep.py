@@ -1,3 +1,4 @@
+import urllib.parse
 from typing import List
 
 from lightning.app.storage import Drive
@@ -27,12 +28,14 @@ class SweepController(Controller):
             self.tensorboard_sweep_id = [c.sweep_id for c in self.db.get(TensorboardConfig)]
 
         for tensorboard in self.db.get(TensorboardConfig):
-            if tensorboard.sweep_id in self.r:
-                self.r[tensorboard.sweep_id].logger_url = tensorboard.url
+            work_name = urllib.parse.quote_plus(tensorboard.sweep_id)
+            if work_name in self.r:
+                self.r[work_name].logger_url = tensorboard.url
 
         # 2: Create the Sweeps
         for sweep in sweeps:
             id = sweep.sweep_id
+            work_name = urllib.parse.quote_plus(id)
             if sweep.is_tensorboard():
                 drive = Drive(f"lit://{id}")
                 if id not in self.tensorboard_sweep_id:
@@ -41,11 +44,11 @@ class SweepController(Controller):
                 elif sweep.stage in (Stage.FAILED, Stage.SUCCEEDED):
                     for tensorboard in self.db.get(TensorboardConfig):
                         if tensorboard.sweep_id == id:
-                            tensorboard.desired_state = Stage.STOPPED
+                            tensorboard.desired_stage = Stage.STOPPED
                             self.db.put(tensorboard)
 
-            if id not in self.r and sweep.stage != Stage.SUCCEEDED:
-                self.r[id] = Sweep.from_config(
+            if work_name not in self.r and sweep.stage != Stage.SUCCEEDED:
+                self.r[work_name] = Sweep.from_config(
                     sweep,
                     code={"drive": self.drive, "name": id},
                 )
@@ -53,13 +56,14 @@ class SweepController(Controller):
     def on_reconcile_end(self, updates: List[SweepConfig]):
         for update in updates:
             if update.stage == Stage.SUCCEEDED:
-                for w in self.r[update.sweep_id].works():
+                work_name = urllib.parse.quote_plus(update.sweep_id)
+                for w in self.r[work_name].works():
                     w.stop()
-                self.r.pop(update.sweep_id)
+                self.r.pop(work_name)
 
     def run_sweep(self, config: SweepConfig) -> str:
-        sweep_ids = list(self.r.keys())
-        if config.sweep_id not in sweep_ids:
+        work_name = urllib.parse.quote_plus(config.sweep_id)
+        if work_name not in self.r:
             self.db.post(config)
             return f"Launched a Sweep '{config.sweep_id}'."
         return f"The current Sweep '{config.sweep_id}' is running. It couldn't be updated."
@@ -70,10 +74,10 @@ class SweepController(Controller):
         return []
 
     def stop_sweep(self, config: StopSweepConfig):
-        sweep_ids = list(self.r.keys())
-        if config.sweep_id in sweep_ids:
+        work_name = urllib.parse.quote_plus(config.sweep_id)
+        if work_name in self.r:
             # TODO: Add support for __del__ in lightning
-            sweep: Sweep = self.r[config.sweep_id]
+            sweep: Sweep = self.r[work_name]
             for w in sweep.works():
                 w.stop()
             sweep.stage = Stage.STOPPED
@@ -86,13 +90,13 @@ class SweepController(Controller):
         return f"We didn't find the sweep `{config.sweep_id}`"
 
     def delete_sweep(self, config: DeleteSweepConfig):
-        sweep_ids = list(self.r.keys())
-        if config.sweep_id in sweep_ids:
-            sweep: Sweep = self.r[config.sweep_id]
+        work_name = urllib.parse.quote_plus(config.sweep_id)
+        if work_name in self.r:
+            sweep: Sweep = self.r[work_name]
             for w in sweep.works():
                 w.stop()
             self.db.delete(sweep.collect_model())
-            del self.r[config.sweep_id]
+            del self.r[work_name]
             return f"Deleted the sweep `{config.sweep_id}`"
         return f"We didn't find the sweep `{config.sweep_id}`"
 

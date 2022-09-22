@@ -54,7 +54,7 @@ class RunNotebookCommand(ClientCommand):
         notebook_name = hparams.name or f"{getuser()}-{id}"
 
         config = NotebookConfig(
-            notebook_name=notebook_name.replace(" ", "_"),
+            notebook_name=notebook_name,
             requirements=hparams.requirements,
             cloud_compute=hparams.cloud_compute,
         )
