@@ -1,3 +1,4 @@
+import urllib.parse
 from typing import List
 
 from lightning.app.storage import Drive
@@ -14,13 +15,14 @@ class TensorboardController(Controller):
 
     def on_reconcile_start(self, configs: List[TensorboardConfig]):
         for config in configs:
-            if config.sweep_id not in self.r:
+            work_name = urllib.parse.quote_plus(config.sweep_id)
+            if work_name not in self.r:
                 if config.stage in (Stage.STOPPED, Stage.NOT_STARTED) and config.desired_stage == Stage.RUNNING:
-                    self.r[config.sweep_id] = Tensorboard(
+                    self.r[work_name] = Tensorboard(
                         drive=Drive(f"lit://{config.sweep_id}"),
                         config=config,
                     )
-                    self.r[config.sweep_id].stage = Stage.PENDING
+                    self.r[work_name].stage = Stage.PENDING
 
     def show_tensorboards(self) -> List[TensorboardConfig]:
         if self.db_url:
@@ -45,13 +47,14 @@ class TensorboardController(Controller):
         return f"Launched a Tensorboard `{config.sweep_id}`."
 
     def stop_tensorboard(self, config: StopTensorboardConfig):
-        if config.sweep_id in self.r:
-            self.r[config.sweep_id].stop()
-            self.r[config.sweep_id]._url = ""
-            self.r[config.sweep_id].stage = Stage.STOPPED
-            self.r[config.sweep_id].desired_stage = Stage.STOPPED
-            self.db.put(self.r[config.sweep_id].collect_model())
-            del self.r[config.sweep_id]
+        work_name = urllib.parse.quote_plus(config.sweep_id)
+        if work_name in self.r:
+            self.r[work_name].stop()
+            self.r[work_name]._url = ""
+            self.r[work_name].stage = Stage.STOPPED
+            self.r[work_name].desired_stage = Stage.STOPPED
+            self.db.put(self.r[work_name].collect_model())
+            del self.r[work_name]
             return f"Tensorboard `{config.sweep_id}` was stopped."
         return f"Tensorboard `{config.sweep_id}` doesn't exist."
 

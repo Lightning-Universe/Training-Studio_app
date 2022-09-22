@@ -44,4 +44,4 @@ class JupyterLab(JupyterLab, ControllerResource):
         if self.stage == Stage.RUNNING and self.url:
             model_dict["url"] = self.url
         else:
-            model_dict["url"] = None
+            model_dict.pop("url", None)

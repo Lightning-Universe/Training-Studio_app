@@ -1,4 +1,3 @@
-import os
 from argparse import ArgumentParser
 from getpass import getuser
 from typing import List
@@ -46,15 +45,15 @@ class RunNotebookCommand(ClientCommand):
 
         hparams, _ = parser.parse_known_args()
 
-        if os.path.exists(hparams.requirements):
-            with open(hparams.requirements, "r") as f:
-                hparams.requirements = [line.replace("\n", "") for line in f.readlines()]
+        # if os.path.exists(hparams.requirements):
+        #     with open(hparams.requirements, "r") as f:
+        #         hparams.requirements = [line.replace("\n", "") for line in f.readlines()]
 
         id = str(uuid4()).split("-")[0]
         notebook_name = hparams.name or f"{getuser()}-{id}"
 
         config = NotebookConfig(
-            notebook_name=notebook_name.replace(" ", "_"),
+            notebook_name=notebook_name,
             requirements=hparams.requirements,
             cloud_compute=hparams.cloud_compute,
         )
