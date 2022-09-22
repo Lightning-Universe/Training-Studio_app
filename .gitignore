@@ -145,7 +145,7 @@ net.py
 thomas-*
 boring_train.py
 database.db
-artefacts*
+artifacts/*
 tensorboard_logs
 jupyter_lab_*
 

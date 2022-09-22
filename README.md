@@ -302,10 +302,10 @@ Usage: lightning [OPTIONS] COMMAND [ARGS]...
 
 Lightning App Commands
   delete sweep
-  download artefacts
+  download artifacts
   run notebook
   run sweep
-  show artefacts
+  show artifacts
   show notebooks
   show sweeps
   stop notebook

@@ -7,11 +7,11 @@ from unittest.mock import MagicMock
 
 import requests
 
-from lightning_hpo.commands.artefacts import download
-from lightning_hpo.commands.artefacts.download import DownloadArtefactsCommand
+from lightning_hpo.commands.artifacts import download
+from lightning_hpo.commands.artifacts.download import DownloadArtifactsCommand
 
 
-def test_download_artefacts(monkeypatch, tmpdir):
+def test_download_artifacts(monkeypatch, tmpdir):
 
     original_sys_argv = sys.argv
 
@@ -43,7 +43,7 @@ def test_download_artefacts(monkeypatch, tmpdir):
         output_dir = osp.join(str(tmpdir), ".shared/")
         os.makedirs(output_dir)
         sys.argv = ["", "--output_dir", output_dir, "--include=a/b"]
-        command = DownloadArtefactsCommand(None)
+        command = DownloadArtifactsCommand(None)
         command.command_name = ""
         command.app_url = ""
         command.run()

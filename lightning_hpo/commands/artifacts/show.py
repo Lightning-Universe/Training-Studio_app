@@ -61,12 +61,12 @@ def walk_folder(paths: List[str], tree: Tree) -> None:
     rich.print(tree)
 
 
-class ShowArtefactsConfig(BaseModel):
+class ShowArtifactsConfig(BaseModel):
     include: Optional[str] = None
     exclude: Optional[str] = None
 
 
-class ShowArtefactsCommand(ClientCommand):
+class ShowArtifactsCommand(ClientCommand):
     def run(self) -> None:
         # 1. Parse the user arguments.
         parser = argparse.ArgumentParser()
@@ -74,7 +74,7 @@ class ShowArtefactsCommand(ClientCommand):
         parser.add_argument("--exclude", type=str, default=None, help="Provide a regex to exclude some specific files.")
         hparams = parser.parse_args()
 
-        config = ShowArtefactsConfig(include=hparams.include, exclude=hparams.exclude)
+        config = ShowArtifactsConfig(include=hparams.include, exclude=hparams.exclude)
         response: List[str] = self.invoke_handler(config=config)
 
         tree = Tree(
@@ -106,7 +106,7 @@ def _filter_paths(paths: List[str], include: Optional[str], exclude: Optional[st
     return out
 
 
-def _collect_artefact_paths(config: ShowArtefactsConfig, replace: bool = True) -> List[str]:
+def _collect_artifact_paths(config: ShowArtifactsConfig, replace: bool = True) -> List[str]:
     """This function is responsible to collecting the files from the shared filesystem."""
     fs = filesystem()
     paths = []

@@ -121,7 +121,7 @@ Get Started
    Show Notebooks <workflows/show_notebooks>
    Stop or delete a Sweep <workflows/stop_or_delete_sweep>
    Stop or delete a Notebook <workflows/stop_or_delete_notebook>
-   Show or download Artefacts <workflows/show_or_download_artifacts>
+   Show or download Artifacts <workflows/show_or_download_artifacts>
    Show or download Logs <workflows/show_or_download_logs>
 
 .. toctree::

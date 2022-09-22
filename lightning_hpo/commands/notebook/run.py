@@ -46,7 +46,7 @@ class RunNotebookCommand(ClientCommand):
 
         hparams, _ = parser.parse_known_args()
 
-        if os.path.exists(hparams.requirements):
+        if isinstance(hparams.requirements, str) and os.path.exists(hparams.requirements):
             with open(hparams.requirements, "r") as f:
                 hparams.requirements = [line.replace("\n", "") for line in f.readlines()]
 

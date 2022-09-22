@@ -50,10 +50,10 @@ Once a Lightning App is running locally or in the cloud, your can simply connect
    Storing `show_notebooks` under {HOME}/.lightning/lightning_connection/commands/show_notebooks.py
    You can review all the downloaded commands under {HOME}/.lightning/lightning_connection/commands folder.
 
-   Storing `show_artefacts` under {HOME}/.lightning/lightning_connection/commands/show_artefacts.py
+   Storing `show_artifacts` under {HOME}/.lightning/lightning_connection/commands/show_artifacts.py
    You can review all the downloaded commands under {HOME}/.lightning/lightning_connection/commands folder.
 
-   Storing `download_artefacts` under {HOME}/.lightning/lightning_connection/commands/download_artefacts.py
+   Storing `download_artifacts` under {HOME}/.lightning/lightning_connection/commands/download_artifacts.py
    You can review all the downloaded commands under {HOME}/.lightning/lightning_connection/commands folder.
 
    You are connected to the local Lightning App.
@@ -95,10 +95,10 @@ The Lightning Training Studio App provides a CLI to interact with the App once r
 
     Lightning App Commands
         delete sweep
-        download artefacts
+        download artifacts
         run notebook
         run sweep
-        show artefacts
+        show artifacts
         show notebooks
         show sweeps
         stop notebook
