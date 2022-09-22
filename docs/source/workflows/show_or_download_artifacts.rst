@@ -22,14 +22,14 @@ The Training Studio App CLI provides its own help.
 
 .. code-block::
 
-   lightning show artefacts --help
+   lightning show artifacts --help
 
 Here is the output of the command:
 
 .. code-block::
 
    You are connected to the local Lightning App.
-   usage: artefacts [-h] [--include INCLUDE] [--exclude EXCLUDE]
+   usage: artifacts [-h] [--include INCLUDE] [--exclude EXCLUDE]
 
    optional arguments:
    -h, --help         show this help message and exit
@@ -44,7 +44,7 @@ To show artifacts use the following command:
 
 .. code-block::
 
-   lightning show artefacts
+   lightning show artifacts
 
 .. code-block::
 
@@ -118,13 +118,13 @@ To filter the artifacts shown use the following command:
 
 .. code-block::
 
-   lightning show artefacts --include=<artifact-id> --exclude=<file-type>
+   lightning show artifacts --include=<artifact-id> --exclude=<file-type>
 
 For example:
 
 .. code-block::
 
-   lightning show artefacts --include=thomas-0f615232 --exclude=.yaml
+   lightning show artifacts --include=thomas-0f615232 --exclude=.yaml
 
 Here is the output of the command:
 
@@ -156,19 +156,19 @@ Download artifacts
 
 .. code-block::
 
-   lightning download artefacts --help
+   lightning download artifacts --help
 
 Here is the output of the command:
 
 .. code-block::
 
    You are connected to the local Lightning App.
-   usage: artefacts [-h] [--output_dir OUTPUT_DIR] [--include INCLUDE] [--exclude EXCLUDE]
+   usage: artifacts [-h] [--output_dir OUTPUT_DIR] [--include INCLUDE] [--exclude EXCLUDE]
 
    optional arguments:
    -h, --help            show this help message and exit
    --output_dir OUTPUT_DIR
-                           Provide the output directory for the artefacts..
+                           Provide the output directory for the artifacts..
    --include INCLUDE     Provide a regex to include some specific files.
    --exclude EXCLUDE     Provide a regex to exclude some specific files.
 
@@ -179,8 +179,8 @@ To download artifacts use the following command:
 
 .. code-block::
 
-   mkdir output_artefacts
-   lightning download artefacts --output_dir=./output_artefacts
+   mkdir output_artifacts
+   lightning download artifacts --output_dir=./output_artifacts
 
 ----
 

@@ -307,13 +307,13 @@
         }
       }
     },
-    "/command/show_artefacts": {
+    "/command/show_artifacts": {
       "post": {
         "tags": ["app_client_command"],
-        "summary": "Show Artefacts",
-        "operationId": "show_artefacts_command_show_artefacts_post",
+        "summary": "Show Artifacts",
+        "operationId": "show_artifacts_command_show_artifacts_post",
         "requestBody": {
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ShowArtefactsConfig" } } },
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ShowArtifactsConfig" } } },
           "required": true
         },
         "responses": {
@@ -323,17 +323,17 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "ShowArtefactsCommand",
-        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/artefacts/show.py"
+        "cls_name": "ShowArtifactsCommand",
+        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/artifacts/show.py"
       }
     },
-    "/command/download_artefacts": {
+    "/command/download_artifacts": {
       "post": {
         "tags": ["app_client_command"],
-        "summary": "Download Artefacts",
-        "operationId": "download_artefacts_command_download_artefacts_post",
+        "summary": "Download Artifacts",
+        "operationId": "download_artifacts_command_download_artifacts_post",
         "requestBody": {
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DownloadArtefactsConfig" } } },
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DownloadArtifactsConfig" } } },
           "required": true
         },
         "responses": {
@@ -343,8 +343,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "DownloadArtefactsCommand",
-        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/artefacts/download.py"
+        "cls_name": "DownloadArtifactsCommand",
+        "cls_path": "/Users/ethan/Documents/grid/lightning-hpo/lightning_hpo/commands/artifacts/download.py"
       }
     },
     "/api{full_path}": {
@@ -412,8 +412,8 @@
           }
         }
       },
-      "DownloadArtefactsConfig": {
-        "title": "DownloadArtefactsConfig",
+      "DownloadArtifactsConfig": {
+        "title": "DownloadArtifactsConfig",
         "type": "object",
         "properties": {
           "include": { "title": "Include", "type": "string" },
@@ -441,8 +441,8 @@
           "start_time": { "title": "Start Time", "type": "number", "default": -1 }
         }
       },
-      "ShowArtefactsConfig": {
-        "title": "ShowArtefactsConfig",
+      "ShowArtifactsConfig": {
+        "title": "ShowArtifactsConfig",
         "type": "object",
         "properties": {
           "include": { "title": "Include", "type": "string" },

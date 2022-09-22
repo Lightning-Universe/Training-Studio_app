@@ -4,12 +4,12 @@ from lightning import LightningFlow
 from lightning.app.frontend import StaticWebFrontend
 from lightning.app.storage import Drive
 
-from lightning_hpo.commands.artefacts.download import (
-    _collect_artefact_urls,
-    DownloadArtefactsCommand,
-    DownloadArtefactsConfig,
+from lightning_hpo.commands.artifacts.download import (
+    _collect_artifact_urls,
+    DownloadArtifactsCommand,
+    DownloadArtifactsConfig,
 )
-from lightning_hpo.commands.artefacts.show import _collect_artefact_paths, ShowArtefactsCommand, ShowArtefactsConfig
+from lightning_hpo.commands.artifacts.show import _collect_artifact_paths, ShowArtifactsCommand, ShowArtifactsConfig
 from lightning_hpo.components.servers.db import Database, DatabaseViz, FlowDatabase
 from lightning_hpo.controllers.notebook import NotebookController
 from lightning_hpo.controllers.sweep import SweepController
@@ -62,18 +62,18 @@ class TrainingStudio(LightningFlow):
     def configure_layout(self):
         return StaticWebFrontend(os.path.join(os.path.dirname(__file__), "ui", "build"))
 
-    def show_artefacts(self, config: ShowArtefactsConfig):
-        return _collect_artefact_paths(config)
+    def show_artifacts(self, config: ShowArtifactsConfig):
+        return _collect_artifact_paths(config)
 
-    def download_artefacts(self, config: DownloadArtefactsConfig):
-        return _collect_artefact_urls(config)
+    def download_artifacts(self, config: DownloadArtifactsConfig):
+        return _collect_artifact_urls(config)
 
     def configure_commands(self):
         controller_commands = self.sweep_controller.configure_commands()
         controller_commands += self.notebook_controller.configure_commands()
         controller_commands += self.tensorboard_controller.configure_commands()
         controller_commands += [
-            {"show artefacts": ShowArtefactsCommand(self.show_artefacts)},
-            {"download artefacts": DownloadArtefactsCommand(self.download_artefacts)},
+            {"show artifacts": ShowArtifactsCommand(self.show_artifacts)},
+            {"download artifacts": DownloadArtifactsCommand(self.download_artifacts)},
         ]
         return controller_commands
