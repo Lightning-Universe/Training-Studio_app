@@ -235,9 +235,9 @@ class RunSweepCommand(ClientCommand):
         if not os.path.exists(hparams.script_path):
             raise Exception("The provided script doesn't exists.")
 
-        # if os.path.exists(hparams.requirements):
-        #     with open(hparams.requirements, "r") as f:
-        #         hparams.requirements = [line.replace("\n", "") for line in f.readlines()]
+        if os.path.exists(hparams.requirements):
+            with open(hparams.requirements, "r") as f:
+                hparams.requirements = [line.replace("\n", "") for line in f.readlines()]
 
         repo = CustomLocalSourceCodeDir(path=Path(hparams.script_path).parent.resolve())
         # TODO: Resolve this bug.
