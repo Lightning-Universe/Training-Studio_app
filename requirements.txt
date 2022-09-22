@@ -1,2 +1,16 @@
-'jsonargparse[signatures]'
+pytorch_lightning
+jsonargparse[signatures]
+git+https://github.com/Lightning-AI/lightning.git@master
+git+https://github.com/Lightning-AI/LAI-Jupyter-Component.git@main   # TODO: replace with lightning-notebook once released.
+lightning_cloud
 torchvision
+optuna
+sqlmodel
+wandb
+streamlit
+sqlalchemy
+hiplot
+streamlit_autorefresh
+lightning  # TODO: remove this dependency. (added only for CI)
+sklearn
+sqlite_web
