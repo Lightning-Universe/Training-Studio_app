@@ -7,11 +7,11 @@ from unittest.mock import MagicMock
 
 import requests
 
-from lightning_hpo.commands.artefacts import show
-from lightning_hpo.commands.artefacts.show import ShowArtefactsCommand
+from lightning_hpo.commands.artifacts import show
+from lightning_hpo.commands.artifacts.show import ShowArtifactsCommand
 
 
-def test_show_artefacts(monkeypatch, tmpdir):
+def test_show_artifacts(monkeypatch, tmpdir):
 
     original_sys_argv = sys.argv
 
@@ -46,7 +46,7 @@ def test_show_artefacts(monkeypatch, tmpdir):
         output_dir = osp.join(str(tmpdir), ".shared/")
         os.makedirs(output_dir)
         sys.argv = [""]
-        command = ShowArtefactsCommand(None)
+        command = ShowArtifactsCommand(None)
         command.command_name = ""
         command.app_url = ""
         command.run()

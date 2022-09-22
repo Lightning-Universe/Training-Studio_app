@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type ShowArtefactsConfig = {
+export type ShowArtifactsConfig = {
     include?: string;
     exclude?: string;
 };

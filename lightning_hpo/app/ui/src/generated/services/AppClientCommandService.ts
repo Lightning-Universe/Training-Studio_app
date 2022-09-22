@@ -2,9 +2,9 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { DeleteSweepConfig } from '../models/DeleteSweepConfig';
-import type { DownloadArtefactsConfig } from '../models/DownloadArtefactsConfig';
+import type { DownloadArtifactsConfig } from '../models/DownloadArtifactsConfig';
 import type { NotebookConfig } from '../models/NotebookConfig';
-import type { ShowArtefactsConfig } from '../models/ShowArtefactsConfig';
+import type { ShowArtifactsConfig } from '../models/ShowArtifactsConfig';
 import type { StopNotebookConfig } from '../models/StopNotebookConfig';
 import type { StopSweepConfig } from '../models/StopSweepConfig';
 import type { SweepConfig } from '../models/SweepConfig';
@@ -141,17 +141,17 @@ export class AppClientCommandService {
     }
 
     /**
-     * Show Artefacts
+     * Show Artifacts
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
      */
-    public showArtefactsCommandShowArtefactsPost(
-        requestBody: ShowArtefactsConfig,
+    public showArtifactsCommandShowArtifactsPost(
+        requestBody: ShowArtifactsConfig,
     ): CancelablePromise<any> {
         return this.httpRequest.request({
             method: 'POST',
-            url: '/command/show_artefacts',
+            url: '/command/show_artifacts',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -161,17 +161,17 @@ export class AppClientCommandService {
     }
 
     /**
-     * Download Artefacts
+     * Download Artifacts
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
      */
-    public downloadArtefactsCommandDownloadArtefactsPost(
-        requestBody: DownloadArtefactsConfig,
+    public downloadArtifactsCommandDownloadArtifactsPost(
+        requestBody: DownloadArtifactsConfig,
     ): CancelablePromise<any> {
         return this.httpRequest.request({
             method: 'POST',
-            url: '/command/download_artefacts',
+            url: '/command/download_artifacts',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

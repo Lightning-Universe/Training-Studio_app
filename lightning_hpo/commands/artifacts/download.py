@@ -11,20 +11,20 @@ from lightning.app.utilities.network import LightningClient
 from lightning_app.utilities.cloud import _get_project
 from pydantic import BaseModel
 
-from lightning_hpo.commands.artefacts.show import _collect_artefact_paths, _filter_paths, ShowArtefactsConfig
+from lightning_hpo.commands.artifacts.show import _collect_artifact_paths, _filter_paths, ShowArtifactsConfig
 
 
-class DownloadArtefactsConfig(BaseModel):
+class DownloadArtifactsConfig(BaseModel):
     include: Optional[str] = None
     exclude: Optional[str] = None
 
 
-class DownloadArtefactsCommand(ClientCommand):
+class DownloadArtifactsCommand(ClientCommand):
     def run(self) -> None:
         # 1. Parse the user arguments.
         parser = argparse.ArgumentParser()
         parser.add_argument(
-            "--output_dir", required=True, type=str, help="Provide the output directory for the artefacts.."
+            "--output_dir", required=True, type=str, help="Provide the output directory for the artifacts.."
         )
         parser.add_argument("--include", type=str, default=None, help="Provide a regex to include some specific files.")
         parser.add_argument("--exclude", type=str, default=None, help="Provide a regex to exclude some specific files.")
@@ -35,7 +35,7 @@ class DownloadArtefactsCommand(ClientCommand):
         if not output_dir.exists():
             output_dir.mkdir(exist_ok=True)
 
-        config = DownloadArtefactsConfig(include=hparams.include, exclude=hparams.exclude)
+        config = DownloadArtifactsConfig(include=hparams.include, exclude=hparams.exclude)
         response: List[str] = self.invoke_handler(config=config)
 
         if not response:
@@ -69,14 +69,14 @@ class DownloadArtefactsCommand(ClientCommand):
         print("All the specified artifacts were downloaded.")
 
 
-def _collect_artefact_urls(config: DownloadArtefactsConfig) -> List[Union[str, Tuple[str, str]]]:
+def _collect_artifact_urls(config: DownloadArtifactsConfig) -> List[Union[str, Tuple[str, str]]]:
     """This function is responsible to collect the files from the shared filesystem."""
 
     use_localhost = "LIGHTNING_APP_STATE_URL" not in os.environ
 
     if use_localhost:
-        return _collect_artefact_paths(
-            config=ShowArtefactsConfig(include=config.include, exclude=config.exclude),
+        return _collect_artifact_paths(
+            config=ShowArtifactsConfig(include=config.include, exclude=config.exclude),
             replace=False,
         )
     else:

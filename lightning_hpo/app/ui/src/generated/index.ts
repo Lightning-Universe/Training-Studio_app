@@ -11,10 +11,10 @@ export type { OpenAPIConfig } from './core/OpenAPI';
 
 export type { DeleteSweepConfig } from './models/DeleteSweepConfig';
 export type { Distributions } from './models/Distributions';
-export type { DownloadArtefactsConfig } from './models/DownloadArtefactsConfig';
+export type { DownloadArtifactsConfig } from './models/DownloadArtifactsConfig';
 export type { HTTPValidationError } from './models/HTTPValidationError';
 export type { NotebookConfig } from './models/NotebookConfig';
-export type { ShowArtefactsConfig } from './models/ShowArtefactsConfig';
+export type { ShowArtifactsConfig } from './models/ShowArtifactsConfig';
 export type { StopNotebookConfig } from './models/StopNotebookConfig';
 export type { StopSweepConfig } from './models/StopSweepConfig';
 export type { StopTensorboardConfig } from './models/StopTensorboardConfig';
