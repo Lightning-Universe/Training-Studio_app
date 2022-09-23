@@ -35,7 +35,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         return None
 
     def add_progress_tracking(self, tracer):
-        from pytorch_lightning import Trainer
+        import pytorch_lightning as pl
         from pytorch_lightning.callbacks import Callback
 
         class ProgressCallback(Callback):
@@ -47,14 +47,15 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
                 if progress > 100:
                     self.work.progress = 100
                 else:
-                    self.work.progress = progress
+                    self.work.progress = round(progress, 4)
 
         def trainer_pre_fn(trainer, *args, **kwargs):
             callbacks = kwargs.get("callbacks", [])
             callbacks.append(ProgressCallback(self))
+            kwargs["callbacks"] = callbacks
             return {}, args, kwargs
 
-        tracer.add_traced(Trainer, "__init__", pre_fn=trainer_pre_fn)
+        tracer.add_traced(pl.Trainer, "__init__", pre_fn=trainer_pre_fn)
 
         return tracer
 
