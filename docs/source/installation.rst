@@ -27,15 +27,11 @@ You can use `conda <https://conda.io/projects/conda/en/latest/user-guide/tasks/m
 
 1.  Install the ``lightning-hpo`` package
 
-    .. code:: bash
+   .. code:: bash
 
       git clone https://github.com/Lightning-AI/lightning-hpo && cd lightning-hpo
 
-      pip install -r requirements.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
-
-      cd .. && git clone -b master https://github.com/Lightning-AI/lightning.git && cd lightning && pip install -e .
-
-      cd ../lightning-hpo && pip install -e .
+      pip install -e . -r requirements.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
 
 .. note:: This is only temporary as some changes are being released to PiPy
 
