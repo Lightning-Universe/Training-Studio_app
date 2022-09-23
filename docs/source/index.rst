@@ -33,12 +33,7 @@ Python 3.8.x or later (3.8.x, 3.9.x, 3.10.x)
 
    git clone https://github.com/Lightning-AI/lightning-hpo && cd lightning-hpo
 
-   pip install -r requirements/base.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
-
-   cd .. && git clone -b master https://github.com/Lightning-AI/lightning.git && cd lightning && pip install -e .
-
-   cd ../lightning-hpo && pip install -e .
-
+   pip install -e . -r requirements/base.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
 
 Make sure everything works fine locally:
 
