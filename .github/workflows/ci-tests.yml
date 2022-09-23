@@ -57,7 +57,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip --version
-          pip install -r requirements/base.txt -r requirements/test.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
+          pip install -r requirements.txt -r requirements/test.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
           pip install -e .
           playwright install
           pip list

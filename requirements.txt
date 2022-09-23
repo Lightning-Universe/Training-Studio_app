@@ -1,2 +1,15 @@
-'jsonargparse[signatures]'
+pytorch_lightning
+jsonargparse[signatures]
+lightning>=2022.9.22
+git+https://github.com/Lightning-AI/LAI-Jupyter-Component.git@main   # TODO: replace with lightning-notebook once released.
+lightning_cloud
 torchvision
+optuna
+sqlmodel
+wandb
+streamlit
+sqlalchemy
+hiplot
+streamlit_autorefresh
+sklearn
+sqlite_web

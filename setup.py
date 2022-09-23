@@ -43,5 +43,5 @@ setup(
     python_requires=">=3.6",
     entry_points={},
     setup_requires=["wheel"],
-    install_requires=setup_tools._load_requirements(os.path.join(_PATH_ROOT, "requirements"), file_name="base.txt"),
+    install_requires=setup_tools._load_requirements(_PATH_ROOT),
 )
