@@ -2,9 +2,9 @@ import time
 from subprocess import Popen
 from typing import Optional
 
+from lai_jupyter import JupyterLab
 from lightning import CloudCompute
 from lightning.app.utilities.component import _is_work_context
-from lit_jupyter import JupyterLab
 
 from lightning_hpo.commands.notebook.run import NotebookConfig
 from lightning_hpo.controllers.controller import ControllerResource
