@@ -112,7 +112,7 @@ def check_notebook_status_terminal(context, status):
     values = [value.strip() for value in notebook_row.split("│")[1:-1]]
 
     notebook_details = {key: value for key, value in zip(keys, values)}
-    assert notebook_details["stage"] == status
+    assert notebook_details["status"] == status
 
 
 @then("the notebook status in the terminal is stopped")

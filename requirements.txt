@@ -1,15 +1,2 @@
-pytorch_lightning
-jsonargparse[signatures]
-lightning>=2022.9.22
-lightning-jupyter
-lightning_cloud
+'jsonargparse[signatures]'
 torchvision
-optuna
-sqlmodel
-wandb
-streamlit
-sqlalchemy
-hiplot
-streamlit_autorefresh
-sklearn
-sqlite_web

@@ -10,8 +10,7 @@ from lightning_hpo.commands.notebook.run import NotebookConfig
 def _show_notebooks(notebooks: List[NotebookConfig]):
     table = Table(
         "name",
-        "stage",
-        "desired_stage",
+        "status",
         "cloud_compute",
         "requirements",
         title="Notebooks",
@@ -23,7 +22,6 @@ def _show_notebooks(notebooks: List[NotebookConfig]):
         table.add_row(
             notebook.notebook_name,
             notebook.stage,
-            notebook.desired_stage,
             notebook.cloud_compute,
             str(notebook.requirements),
         )
