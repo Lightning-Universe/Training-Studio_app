@@ -79,7 +79,7 @@ def step_impl(context):
     locator = page.frame_locator("iframe").locator("table tbody tr", has_text=context.sweep_name)
     logger_url = locator.locator("a", has_text="Open").get_attribute("href")
     page.goto(logger_url)
-    expect(page.locator("title")).to_have_text("TensorBoard")
+    expect(page).to_have_title("TensorBoard")
 
 
 def check_sweep_status_ui(context, status):

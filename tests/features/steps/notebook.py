@@ -77,7 +77,7 @@ def step_impl(context):
     locator = page.frame_locator("iframe").locator("table tbody tr", has_text=context.notebook_name)
     notebook_url = locator.locator("a", has_text="Open").get_attribute("href")
     page.goto(notebook_url)
-    expect(page.locator("title")).to_have_text("JupyterLab")
+    expect(page).to_have_title("JupyterLab")
 
 
 def check_notebook_status_ui(context, status):
