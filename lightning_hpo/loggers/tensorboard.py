@@ -6,7 +6,7 @@ import pytorch_lightning
 from lightning import LightningFlow
 from lightning.app.storage import Drive
 from lightning.pytorch.loggers import TensorBoardLogger
-from lightning_utilities.core.rank_zero import rank_zero_only
+from lightning.pytorch.utilities import rank_zero_only
 
 from lightning_hpo.loggers.logger import Logger
 

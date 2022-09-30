@@ -233,7 +233,7 @@ class RunSweepCommand(ClientCommand):
         name = hparams.name or f"{getuser()}-{id}"
 
         if not os.path.exists(hparams.script_path):
-            raise Exception("The provided script doesn't exists.")
+            raise ValueError(f"The provided script doesn't exist: {hparams.script_path}")
 
         if isinstance(hparams.requirements, str) and os.path.exists(hparams.requirements):
             with open(hparams.requirements, "r") as f:

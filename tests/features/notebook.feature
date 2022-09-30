@@ -1,4 +1,4 @@
-Feature: Start Notebook
+Feature: Notebooks
   As an app user,
   I want to start a jupyter interactive session on a instance type of my choice,
   so that I can develop and run my model, or explore my data or artifacts.
