@@ -10,7 +10,16 @@ from lightning_hpo.commands.artifacts.download import (
     DownloadArtifactsConfig,
 )
 from lightning_hpo.commands.artifacts.show import _collect_artifact_paths, ShowArtifactsCommand, ShowArtifactsConfig
-from lightning_hpo.components.servers.db import Database, DatabaseViz, FlowDatabase
+from lightning_hpo.commands.drive.create import CreateDriveCommand, DriveConfig
+from lightning_hpo.commands.drive.delete import DeleteDriveCommand, DeleteDriveConfig
+from lightning_hpo.commands.drive.show import ShowDriveCommand
+from lightning_hpo.components.servers.db import (
+    Database,
+    DatabaseConnector,
+    DatabaseViz,
+    FlowDatabase,
+    FlowDatabaseConnector,
+)
 from lightning_hpo.controllers.notebook import NotebookController
 from lightning_hpo.controllers.sweep import SweepController
 from lightning_hpo.controllers.tensorboard import TensorboardController
@@ -36,6 +45,7 @@ class TrainingStudio(LightningFlow):
                 self.sweep_controller.model,
                 self.notebook_controller.model,
                 self.tensorboard_controller.model,
+                DriveConfig,
             ]
         )
 
@@ -43,6 +53,7 @@ class TrainingStudio(LightningFlow):
             self.db_viz = DatabaseViz()
 
         self.ready = False
+        self._client = None
 
     def run(self):
         self.db.run()
@@ -68,6 +79,25 @@ class TrainingStudio(LightningFlow):
     def download_artifacts(self, config: DownloadArtifactsConfig):
         return _collect_artifact_urls(config)
 
+    def create_drive(self, config: DriveConfig):
+        drives = self.db_client.get(DriveConfig)
+        for drive in drives:
+            if drive.name == config.name:
+                return f"The drive `{config.name}` already exists."
+        self.db_client.post(config)
+        return f"The drive `{config.name}` has been created."
+
+    def delete_drive(self, config: DeleteDriveConfig):
+        drives = self.db_client.get(DriveConfig)
+        for drive in drives:
+            if drive.name == config.name:
+                self.db_client.delete(drive)
+                return f"The drive `{config.name}` has been deleted."
+        return f"The drive `{config.name}` doesn't exist."
+
+    def show_drives(self):
+        return self.db_client.get(DriveConfig)
+
     def configure_commands(self):
         controller_commands = self.sweep_controller.configure_commands()
         controller_commands += self.notebook_controller.configure_commands()
@@ -75,5 +105,18 @@ class TrainingStudio(LightningFlow):
         controller_commands += [
             {"show artifacts": ShowArtifactsCommand(self.show_artifacts)},
             {"download artifacts": DownloadArtifactsCommand(self.download_artifacts)},
+            {"create drive": CreateDriveCommand(self.create_drive)},
+            {"delete drive": DeleteDriveCommand(self.delete_drive)},
+            {"show drives": ShowDriveCommand(self.show_drives)},
         ]
         return controller_commands
+
+    @property
+    def db_client(self):
+        if self._client is None:
+            assert self.db.db_url is not None
+            if self.db.db_url == "flow":
+                self._client = FlowDatabaseConnector(None)
+            else:
+                self._client = DatabaseConnector(db_url=self.db.db_url + "/general/")
+        return self._client
