@@ -37,7 +37,7 @@ class Sweep(LightningFlow, ControllerResource):
         cloud_compute: Optional[HPOCloudCompute] = None,
         script_path: Optional[str] = None,
         algorithm: Optional[Algorithm] = None,
-        logger: str = "tensorboard",
+        logger: Optional[str] = "streamlit",
         sweep_id: Optional[str] = None,
         distributions: Optional[Dict[str, Union[Dict, Distribution]]] = None,
         framework: str = "base",
@@ -95,7 +95,6 @@ class Sweep(LightningFlow, ControllerResource):
             "script_path": script_path,
             "env": env,
             "script_args": script_args,
-            "cloud_compute": CloudCompute(name=cloud_compute.name if cloud_compute else "cpu"),
             "num_nodes": getattr(cloud_compute, "count", 1) if cloud_compute else 1,
             "logger": logger,
             "code": code,
@@ -211,7 +210,8 @@ class Sweep(LightningFlow, ControllerResource):
 
         objective = getattr(self, f"w_{trial_id}", None)
         if objective is None:
-            objective = self._objective_cls(trial_id=trial_id, **self._kwargs)
+            cloud_compute = CloudCompute(name=self.cloud_compute if self.cloud_compute else "cpu")
+            objective = self._objective_cls(trial_id=trial_id, cloud_compute=cloud_compute, **self._kwargs)
             setattr(self, f"w_{trial_id}", objective)
         return objective
 
@@ -236,3 +236,6 @@ class Sweep(LightningFlow, ControllerResource):
             stage=config.stage,
             logger_url=config.logger_url,
         )
+
+    def configure_layout(self):
+        return self._logger.configure_layout()
