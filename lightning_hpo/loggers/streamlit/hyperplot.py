@@ -17,10 +17,8 @@ def render_fn(state: AppState):
 
     import hiplot as hip
     import streamlit as st
-    from streamlit_autorefresh import st_autorefresh
 
     st.set_page_config(layout="wide")
-    st_autorefresh(interval=1000, limit=None, key="refresh")
 
     if not state.data:
         st.write("No data available yet ! Stay tuned")

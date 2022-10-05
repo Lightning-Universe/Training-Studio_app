@@ -10,6 +10,5 @@ wandb
 streamlit
 sqlalchemy
 hiplot
-streamlit_autorefresh
 sklearn
 sqlite_web

@@ -1,7 +1,8 @@
 import logging
-from typing import Any, Dict, List, Literal, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 import optuna
+from lightning_utilities.core.apply_func import apply_to_collection
 from optuna import create_study, Study, Trial
 from optuna.distributions import (
     BaseDistribution,
@@ -13,6 +14,7 @@ from optuna.distributions import (
 
 from lightning_hpo.algorithm.base import Algorithm
 from lightning_hpo.distributions import DistributionDict
+from lightning_hpo.distributions.distributions import Distribution
 
 _logger = logging.getLogger(__name__)
 
@@ -25,9 +27,7 @@ _DISTRIBUTION_TO_OPTUNA = {
 
 
 class OptunaAlgorithm(Algorithm):
-    def __init__(
-        self, study: Optional[Union[Study, Literal["grid_search"]]] = None, direction: Optional[str] = "minimize"
-    ) -> None:
+    def __init__(self, study: Optional[Study] = None, direction: Optional[str] = "minimize") -> None:
         self.study = study or create_study(direction=direction)
         self.trials: Dict[int, Trial] = {}
         self.reports = {}
@@ -91,3 +91,76 @@ class OptunaAlgorithm(Algorithm):
             else:
                 out[k] = v
         return out
+
+
+class GridSearch(Algorithm):
+    def __init__(self, search_space: Dict[str, Any]):
+        sampler = optuna.samplers.GridSampler(search_space)
+        self.trials = {
+            i: {n: v for n, v in zip(sampler._param_names, sampler._all_grids[i])}
+            for i in range(len(sampler._all_grids))
+        }
+
+    def trial_start(self, trial_id: int) -> None:
+        pass
+
+    def register_trials(self, trials_config: List[Dict]) -> None:
+        pass
+
+    def register_distributions(self, distributions):
+        assert not distributions
+
+    def get_params(self, trial_id: int) -> Dict[str, Any]:
+        return self.trials[trial_id]
+
+    def should_prune(self) -> bool:
+        return False
+
+    def trial_end(self, trial_id: int, score: float):
+        pass
+
+
+class RandomSearch(Algorithm):
+    def __init__(self, distributions: Dict[str, Any]):
+        self.study = create_study(sampler=optuna.samplers.RandomSampler())
+        self.distributions = {}
+        distributions = apply_to_collection(distributions, Distribution, lambda x: x.to_dict())
+        self._register_distributions(distributions)
+        self.trials = {}
+
+    def _register_distributions(self, distributions: Dict[str, DistributionDict]):
+        for var_name, distribution in distributions.items():
+            distribution_cls = _DISTRIBUTION_TO_OPTUNA[distribution["distribution"]]
+            distribution = distribution_cls(**distribution["params"])
+            self.distributions[var_name] = distribution
+
+    def trial_start(self, trial_id: int) -> None:
+        self.trials[trial_id] = self.study.ask(self.distributions)
+
+    def register_trials(self, trials_config: List[Dict]) -> None:
+        for trial_config in trials_config:
+            trial = optuna.trial.create_trial(
+                params=trial_config["params"],
+                distributions=self.distributions,
+                value=trial_config["best_model_score"],
+            )
+            self.study.add_trial(trial)
+
+    def register_distributions(self, distributions):
+        assert not distributions
+
+    def get_params(self, trial_id: int) -> Dict[str, Any]:
+        params = self.trials[trial_id].params
+        out = {}
+        for k, v in params.items():
+            if isinstance(v, float) and v == int(v):
+                out[k] = int(v)
+            else:
+                out[k] = v
+        return out
+
+    def should_prune(self) -> bool:
+        return False
+
+    def trial_end(self, trial_id: int, score: float):
+        pass

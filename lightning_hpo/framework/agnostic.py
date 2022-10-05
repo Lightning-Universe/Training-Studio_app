@@ -64,7 +64,7 @@ class Objective(TracerPythonScript, ABC):
         objective_fn = global_scripts.get(self.function_name, None)
         if objective_fn:
             res = objective_fn(**self.params)
-            if isinstance(res, float):
+            if isinstance(res, (int, float)):
                 self.monitor = "score"
                 self.best_model_score = res
             elif isinstance(res, dict):
