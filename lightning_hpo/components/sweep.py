@@ -156,7 +156,7 @@ class Sweep(LightningFlow, ControllerResource):
                         self.stage = Stage.RUNNING
                         self.trials[trial_id]["stage"] = Stage.RUNNING
 
-                if objective.has_succeeded:
+                if objective.best_model_score:
                     if self.trials[trial_id]["stage"] == Stage.SUCCEEDED:
                         pass
                     elif self.trials[trial_id]["stage"] not in (Stage.PRUNED, Stage.STOPPED, Stage.FAILED):
