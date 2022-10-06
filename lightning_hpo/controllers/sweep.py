@@ -5,6 +5,7 @@ from lightning.app.storage import Drive
 from lightning.app.structures import Dict
 
 from lightning_hpo import Sweep
+from lightning_hpo.commands.experiment.stop import StopExperimentCommand, StopExperimentConfig
 from lightning_hpo.commands.sweep.delete import DeleteSweepCommand, DeleteSweepConfig
 from lightning_hpo.commands.sweep.run import RunSweepCommand, SweepConfig
 from lightning_hpo.commands.sweep.show import ShowSweepsCommand
@@ -100,10 +101,23 @@ class SweepController(Controller):
             return f"Deleted the sweep `{config.sweep_id}`"
         return f"We didn't find the sweep `{config.sweep_id}`"
 
+    def stop_experiment(self, config: StopExperimentConfig):
+        sweeps_config: List[SweepConfig] = self.db.get()
+        for sweep in sweeps_config:
+            for trial_id, trial in enumerate(sweep.trials.values()):
+                if config.name == trial.name:
+                    if trial.stage == Stage.SUCCEEDED:
+                        return f"The current trial `{trial.name}` has already succeeded."
+
+                    self.r[sweep.sweep_id].stop_trial(trial_id)
+                    return f"The current trial `{trial.name}` has been stopped."
+        return f"The current trial `{config.name}` doesn't exist."
+
     def configure_commands(self):
         return [
             {"delete sweep": DeleteSweepCommand(self.delete_sweep)},
             {"run sweep": RunSweepCommand(self.run_sweep)},
             {"show sweeps": ShowSweepsCommand(self.show_sweeps)},
             {"stop sweep": StopSweepCommand(self.stop_sweep)},
+            {"stop experiment": StopExperimentCommand(self.stop_experiment)},
         ]

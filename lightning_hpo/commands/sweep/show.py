@@ -83,9 +83,9 @@ def _show_sweep(sweep: SweepConfig):
         header_style="bold green",
     )
 
-    for idx, trial in sweep.trials.items():
+    for trial in sweep.trials.values():
         table.add_row(
-            str(idx),
+            str(trial.name),
             str(trial.stage),
             str(round(trial.best_model_score, 2) if trial.best_model_score else None),
             *[str(round(v, 5)) for v in _parse_params(trial.params).values()],
