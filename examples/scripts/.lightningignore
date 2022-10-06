@@ -5,7 +5,6 @@
 *.shared*
 *.git*
 *MNIST*
-*artifacts*
 *egg-info/*
 *model_weight.pt*
 flagged
