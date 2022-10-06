@@ -1,5 +1,6 @@
 import uuid
 from typing import Any, Dict, List, Optional, Type, Union
+from uuid import uuid4
 
 from lightning import BuildConfig, CloudCompute, LightningFlow
 from lightning.app.components.python.tracer import Code
@@ -190,13 +191,18 @@ class Sweep(LightningFlow, ControllerResource):
     def best_model_path(self) -> Optional[Path]:
         return get_best_model_path(self)
 
-    def configure_layout(self):
-        return self._logger.configure_layout()
+    def stop_experiment(self, trial_id: int):
+        objective = self._get_objective(trial_id)
+        if objective:
+            objective.stop()
+            self.trials[trial_id]["stage"] = Stage.STOPPED
+            self.trials_done += 1
 
     def _get_objective(self, trial_id: int):
         trial_config = self.trials.get(trial_id, None)
         if trial_config is None:
             trial_config = TrialConfig(
+                name=str(uuid4()).split("-")[-1],
                 best_model_score=None,
                 monitor=None,
                 best_model_path=None,

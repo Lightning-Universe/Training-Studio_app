@@ -27,6 +27,7 @@ class Distributions(SQLModel, table=False):
 
 
 class TrialConfig(SQLModel, table=False):
+    name: str
     best_model_score: Optional[float]
     monitor: Optional[str]
     best_model_path: Optional[str]
