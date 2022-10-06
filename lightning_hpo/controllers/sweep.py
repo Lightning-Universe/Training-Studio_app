@@ -108,7 +108,6 @@ class SweepController(Controller):
                 if config.name == trial.name:
                     if trial.stage == Stage.SUCCEEDED:
                         return f"The current trial `{trial.name}` has already succeeded."
-
                     self.r[sweep.sweep_id].stop_experiment(trial_id)
                     return f"The current trial `{trial.name}` has been stopped."
         return f"The current trial `{config.name}` doesn't exist."
