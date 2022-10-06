@@ -191,7 +191,7 @@ class Sweep(LightningFlow, ControllerResource):
     def best_model_path(self) -> Optional[Path]:
         return get_best_model_path(self)
 
-    def stop_trial(self, trial_id: int):
+    def stop_experiment(self, trial_id: int):
         objective = self._get_objective(trial_id)
         if objective:
             objective.stop()
