@@ -11,5 +11,7 @@ export type TrialConfig = {
     params: Record<string, (number | string | Array<number> | Array<string>)>;
     exception?: string;
     progress?: number;
-    total_parameters?: number;
+    total_parameters?: string;
+    start_time?: string;
+    end_time?: string;
 };

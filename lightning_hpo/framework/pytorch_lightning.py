@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Any, Dict, Optional
 
 from lightning.app.components.python import TracerPythonScript
@@ -17,6 +18,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         PyTorchLightningScriptRunner.__init__(self, *args, num_nodes=num_nodes, **kwargs)
         self.progress = None
         self.total_parameters = None
+        self.start_time = None
 
     def configure_tracer(self):
         if self.node_rank == 0:
@@ -43,6 +45,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         class ProgressCallback(Callback):
             def __init__(self, work):
                 self.work = work
+                self.work.start_time = str(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
 
             def on_train_batch_end(self, trainer, pl_module, *_: Any) -> None:
                 progress = 100 * (trainer.fit_loop.total_batch_idx + 1) / float(trainer.estimated_stepping_batches)
@@ -94,6 +97,10 @@ class ObjectiveLightningTrainingComponent(LightningTrainingComponent):
         self.params = params
         self.restart_count = restart_count
         super().run(params=params, restart_count=restart_count)
+
+    @property
+    def start_time(self):
+        return self.ws[0].start_time
 
     @property
     def total_parameters(self):

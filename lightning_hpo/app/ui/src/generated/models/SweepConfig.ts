@@ -18,7 +18,7 @@ export type SweepConfig = {
     logger_url?: string;
     trials: Record<string, TrialConfig>;
     framework: string;
-    cloud_compute: string;
+    cloud_compute?: string;
     num_nodes?: number;
     logger: string;
     direction: string;

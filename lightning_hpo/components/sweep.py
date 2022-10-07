@@ -141,6 +141,7 @@ class Sweep(LightningFlow, ControllerResource):
 
                 self.trials[trial_id]["progress"] = objective.progress
                 self.trials[trial_id]["total_parameters"] = getattr(objective, "total_parameters")
+                self.trials[trial_id]["start_time"] = getattr(objective, "start_time")
 
                 if _check_stage(objective, Stage.FAILED):
                     self.trials[trial_id]["stage"] = Stage.FAILED
@@ -204,7 +205,7 @@ class Sweep(LightningFlow, ControllerResource):
         trial_config = self.trials.get(trial_id, None)
         if trial_config is None:
             trial_config = TrialConfig(
-                name=str(uuid4()).split("-")[-1],
+                name=str(uuid4()).split("-")[-1][:7],
                 best_model_score=None,
                 monitor=None,
                 best_model_path=None,

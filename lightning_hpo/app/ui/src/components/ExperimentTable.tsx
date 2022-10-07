@@ -86,11 +86,19 @@ function toProgress(trial: TrialConfig) {
       <Box sx={{ width: '100%', mr: 1 }}>
         <BorderLinearProgress variant={trial.progress == 0 ? null : 'determinate'} value={trial.progress} />
       </Box>
-      <Box sx={{ minWidth: 35 }}>
-        <Typography variant="caption" display="block">{`${trial.progress}%`}</Typography>
-      </Box>
+      {trial.progress ? (
+        <Box sx={{ minWidth: 35 }}>
+          <Typography variant="caption" display="block">{`${trial.progress}%`}</Typography>
+        </Box>
+      ) : (
+        <Box></Box>
+      )}
     </Box>
   );
+}
+
+function startTime(trial: TrialConfig) {
+  return trial.start_time ? String(trial.start_time) : <Box></Box>;
 }
 
 export function Experiments() {
@@ -111,16 +119,21 @@ export function Experiments() {
         </UserGuideBody>
         <UserGuideComment>Run a sweep</UserGuideComment>
         <UserGuideBody enableClipBoard={enableClipBoard}>
-          lightning run sweep train.py --n_trials=3 --simultaneous_trials=1 --logger="tensorboard" --direction=maximize
-          --cloud_compute=cpu-medium --model.lr="log_uniform(0.001, 0.01)" --model.gamma="uniform(0.5, 0.8)"
-          --data.batch_size="categorical([32, 64])" --framework="pytorch_lightning" --requirements="torchvision, wandb,
-          'jsonargparse[signatures]'"
+          lightning run sweep train.py --model.lr "[0, 1, 2]" --data.batch "[32, 64]" --algorithm="grid_search"
         </UserGuideBody>
       </UserGuide>
     );
   }
 
-  const experimentHeader = ['Progress', 'Name', 'Best Score', 'Compute', 'Total Parameters', 'Logger URL'];
+  const experimentHeader = [
+    'Progress',
+    'Name',
+    'Best Score',
+    'Compute',
+    'Total Parameters',
+    'Logger URL',
+    'Start Time',
+  ];
 
   const tensorboardIdsToStatuses = Object.fromEntries(
     tensorboards.map(e => {
@@ -140,6 +153,7 @@ export function Experiments() {
       toCompute(sweep),
       String(entry[1].total_parameters),
       createLoggerUrl(tensorboardConfig ? tensorboardConfig.url : sweep.logger_url),
+      startTime(entry[1]),
     ]);
   });
 

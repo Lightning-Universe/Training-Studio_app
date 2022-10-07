@@ -38,6 +38,8 @@ class TrialConfig(SQLModel, table=False):
     exception: Optional[str]
     progress: Optional[float]
     total_parameters: Optional[str] = None
+    start_time: Optional[str]
+    end_time: Optional[str]
 
     @property
     def pruned(self) -> bool:
