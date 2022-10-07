@@ -49,7 +49,7 @@ const Tabs = (props: TabsProps) => {
       <Grid container spacing={1}>
         <Grid item xs={12} sm="auto">
           <Box sx={{ marginX: '14px', marginY: '8px' }}>
-            <Typography variant="h6">Training Studio</Typography>
+            <Typography variant="h6">Research Studio</Typography>
           </Box>
         </Grid>
         <Grid item xs={12} sm>

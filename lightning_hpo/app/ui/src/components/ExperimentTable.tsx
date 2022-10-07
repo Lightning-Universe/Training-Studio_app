@@ -1,9 +1,10 @@
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { Box, Button, Link, Stack, Table, Typography } from 'lightning-ui/src/design-system/components';
 import Status, { StatusEnum } from 'lightning-ui/src/shared/components/Status';
-import { AppClient, SweepConfig, TensorboardConfig } from '../generated';
+import { AppClient, SweepConfig, TensorboardConfig, TrialConfig } from '../generated';
 import useClientDataState from '../hooks/useClientDataState';
 import { getAppId } from '../utilities';
+import BorderLinearProgress from './BorderLinearProgress';
 import UserGuide, { UserGuideBody, UserGuideComment } from './UserGuide';
 
 const appClient = new AppClient({
@@ -79,6 +80,19 @@ function toCompute(sweep: SweepConfig) {
   }
 }
 
+function toProgress(trial: TrialConfig) {
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box sx={{ width: '100%', mr: 1 }}>
+        <BorderLinearProgress variant={trial.progress == 0 ? null : 'determinate'} value={trial.progress} />
+      </Box>
+      <Box sx={{ minWidth: 35 }}>
+        <Typography variant="caption" display="block">{`${trial.progress}%`}</Typography>
+      </Box>
+    </Box>
+  );
+}
+
 export function Experiments() {
   const tensorboards = useClientDataState('tensorboards') as TensorboardConfig[];
   const sweeps = useClientDataState('sweeps') as SweepConfig[];
@@ -106,7 +120,7 @@ export function Experiments() {
     );
   }
 
-  const experimentHeader = ['Progress', 'Name', 'Best Score', 'Cloud Compute', 'Total Parameters', 'Logger URL'];
+  const experimentHeader = ['Progress', 'Name', 'Best Score', 'Compute', 'Total Parameters', 'Logger URL'];
 
   const tensorboardIdsToStatuses = Object.fromEntries(
     tensorboards.map(e => {
@@ -120,11 +134,7 @@ export function Experiments() {
       sweep.sweep_id in tensorboardIdsToStatuses ? tensorboardIdsToStatuses[sweep.sweep_id] : null;
 
     return Object.entries(sweep.trials).map(entry => [
-      <Box sx={{ minWidth: 35 }}>
-        <Typography variant="caption" display="block">{`${
-          entry[1].progress == null ? '0' : entry[1].progress
-        }%`}</Typography>
-      </Box>,
+      toProgress(entry[1]),
       entry[1].name,
       String(entry[1].best_model_score),
       toCompute(sweep),

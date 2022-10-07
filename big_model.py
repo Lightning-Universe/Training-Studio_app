@@ -5,8 +5,8 @@ from transformers import AutoTokenizer
 tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path="gpt2")
 
 model = LanguageModelingTransformer(
-    pretrained_model_name_or_path="gpt2",
-    tokenizer=AutoTokenizer.from_pretrained("gpt2"),
+    pretrained_model_name_or_path="EleutherAI/gpt-j-6B",
+    tokenizer=AutoTokenizer.from_pretrained("EleutherAI/gpt-j-6B"),
     deepspeed_sharding=True,  # defer initialization of the model to shard/load pre-train weights
 )
 

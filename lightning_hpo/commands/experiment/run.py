@@ -90,7 +90,7 @@ class RunExperimentCommand(ClientCommand):
             num_nodes=hparams.num_nodes,
             logger=hparams.logger,
             direction="minimize",  # This won't be used
-            trials={0: TrialConfig(name=hparams.name or str(uuid4()).split("-")[-1], params={})},
+            trials={0: TrialConfig(name=hparams.name or str(uuid4()).split("-")[-1][:7], params={})},
             disk_size=hparams.disk_size,
         )
         response = self.invoke_handler(config=config)
