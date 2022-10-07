@@ -155,7 +155,7 @@ lightning connect {APP_ID} -y
 ```
 
 ```bash
-lightning run experiment examples/scripts/big_model.py --requirements="deepspeed,lightning-transformers" --num_nodes=2 --cloud_compute=gpu
+lightning run experiment big_model.py --requirements="deepspeed,lightning-transformers==0.2.2" --num_nodes=2 --cloud_compute=gpu-fast-multi --disk_size=80
 ```
 
 
