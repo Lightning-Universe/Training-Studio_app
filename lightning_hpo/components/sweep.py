@@ -81,6 +81,7 @@ class Sweep(LightningFlow, ControllerResource):
         self.framework = framework
         self.cloud_compute = getattr(cloud_compute, "name", "default")
         self.num_nodes = getattr(cloud_compute, "count", 1) if cloud_compute else 1
+        self.disk_size = getattr(cloud_compute, "disk_size", 1) if cloud_compute else 10
         self.logger = logger
         self.direction = direction
         self.trials = trials or {}
@@ -216,7 +217,9 @@ class Sweep(LightningFlow, ControllerResource):
 
         objective = getattr(self, f"w_{trial_id}", None)
         if objective is None:
-            cloud_compute = CloudCompute(name=self.cloud_compute if self.cloud_compute else "cpu")
+            cloud_compute = CloudCompute(
+                name=self.cloud_compute if self.cloud_compute else "cpu", disk_size=self.disk_size
+            )
             objective = self._objective_cls(trial_id=trial_id, cloud_compute=cloud_compute, **self._kwargs)
             setattr(self, f"w_{trial_id}", objective)
         return objective
@@ -229,6 +232,7 @@ class Sweep(LightningFlow, ControllerResource):
             algorithm = GridSearch(distributions)
             distributions = {}
             config.n_trials = algorithm.total_experiments
+            config.simultaneous_trials = algorithm.total_experiments
 
         elif config.algorithm == "random_search":
             algorithm = RandomSearch({k: v.dict() for k, v in config.distributions.items()})
@@ -246,7 +250,7 @@ class Sweep(LightningFlow, ControllerResource):
             script_args=config.script_args,
             trials_done=config.trials_done,
             distributions=distributions,
-            cloud_compute=HPOCloudCompute(config.cloud_compute, count=config.num_nodes),
+            cloud_compute=HPOCloudCompute(config.cloud_compute, count=config.num_nodes, disk_size=config.disk_size),
             sweep_id=config.sweep_id,
             code=code,
             cloud_build_config=BuildConfig(requirements=config.requirements),

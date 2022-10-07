@@ -66,6 +66,7 @@ class SweepConfig(SQLModel, table=True):
     direction: str
     stage: str = Stage.NOT_STARTED
     desired_stage: str = Stage.RUNNING
+    disk_size: int = 10
 
     @property
     def num_trials(self) -> int:
@@ -247,7 +248,7 @@ class RunSweepCommand(ClientCommand):
         parser.add_argument("script_path", type=str, help="The path to the script to run.")
         parser.add_argument("--algorithm", default="grid_search", type=str, help="The search algorithm to use.")
         parser.add_argument("--total_experiments", default=None, type=int, help="The total number of experiments")
-        parser.add_argument("--parallel_experiments", default=1, type=int, help="Number of trials to run.")
+        parser.add_argument("--parallel_experiments", default=None, type=int, help="Number of trials to run.")
         parser.add_argument(
             "--requirements",
             default=[],
@@ -289,6 +290,8 @@ class RunSweepCommand(ClientCommand):
             distributions = parse_random_search(args)
             if hparams.total_experiments is None:
                 raise Exception("Please, specify the `total_experiments`.")
+            if hparams.parallel_experiments is None:
+                hparams.parallel_experiments = hparams.total_experiments
         else:
             distributions = parse_distributions(script_args, args)
 
@@ -315,7 +318,7 @@ class RunSweepCommand(ClientCommand):
             sweep_id=name,
             script_path=hparams.script_path,
             n_trials=int(total_experiments),
-            simultaneous_trials=hparams.parallel_experiments,
+            simultaneous_trials=hparams.parallel_experiments if isinstance(hparams.parallel_experiments, int) else 1,
             requirements=hparams.requirements,
             script_args=script_args,
             distributions=distributions,
