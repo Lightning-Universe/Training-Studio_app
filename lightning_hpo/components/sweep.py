@@ -246,7 +246,7 @@ class Sweep(LightningFlow, ControllerResource):
             script_args=config.script_args,
             trials_done=config.trials_done,
             distributions=distributions,
-            cloud_compute=HPOCloudCompute(config.cloud_compute, config.num_nodes),
+            cloud_compute=HPOCloudCompute(config.cloud_compute, count=config.num_nodes),
             sweep_id=config.sweep_id,
             code=code,
             cloud_build_config=BuildConfig(requirements=config.requirements),

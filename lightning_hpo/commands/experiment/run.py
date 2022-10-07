@@ -39,6 +39,12 @@ class RunExperimentCommand(ClientCommand):
             type=str,
             help="The logger to use with your sweep.",
         )
+        parser.add_argument(
+            "--num_nodes",
+            default=1,
+            type=int,
+            help="The number of nodes.",
+        )
         hparams, args = parser.parse_known_args()
 
         if any("=" not in arg for arg in args):
@@ -72,9 +78,10 @@ class RunExperimentCommand(ClientCommand):
             requirements=hparams.requirements,
             script_args=script_args,
             distributions={},
+            algorithm="",
             framework="pytorch_lightning",
             cloud_compute=hparams.cloud_compute,
-            num_nodes=1,
+            num_nodes=hparams.num_nodes,
             logger=hparams.logger,
             direction="minimize",  # This won't be used
             trials={0: TrialConfig(name=hparams.name or str(uuid4()).split("-")[-1], params={})},
