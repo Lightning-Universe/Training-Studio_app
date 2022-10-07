@@ -1,8 +1,8 @@
-pytorch_lightning
 jsonargparse[signatures]
-git+https://github.com/Lightning-AI/lightning.git@master
-lightning-jupyter
 lightning_cloud
+lightning
+lightning-jupyter
+pytorch_lightning
 torchvision
 optuna
 sqlmodel
@@ -11,4 +11,3 @@ streamlit
 sqlalchemy
 hiplot
 sklearn
-sqlite_web
