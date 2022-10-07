@@ -53,6 +53,7 @@ class SweepConfig(SQLModel, table=True):
     trials_done: int = 0
     requirements: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
     script_args: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
+    algorithm: str
     distributions: Dict[str, Distributions] = Field(
         ..., sa_column=Column(pydantic_column_type(Dict[str, Distributions]))
     )
@@ -161,6 +162,79 @@ class CustomLocalSourceCodeDir(LocalSourceCodeDir):
         uploader.upload()
 
 
+def parse_distributions(script_args, args):
+    distributions = {}
+    for arg in args:
+        is_distribution = False
+        for p in [UniformDistributionParser, LogUniformDistributionParser, CategoricalDistributionParser]:
+            if p.is_distribution(arg.replace("--", "")):
+                distributions.update(p.parse(arg.replace("--", "")))
+                is_distribution = True
+                break
+        if not is_distribution:
+            script_args.append(arg)
+
+    return {k: Distributions(distribution=x["distribution"], params=x["params"]) for k, x in distributions.items()}
+
+
+def parse_args(args):
+    parsed = {}
+
+    # build a dict where key = arg, value = value of the arg or None if just a flag
+    for i, arg_candidate in enumerate(args):
+        arg = None
+        value = None
+
+        # only look at --keys
+        if "--" not in arg_candidate:
+            continue
+
+        arg = arg_candidate[2:]
+        # pull out the value of the argument if given
+        if i + 1 <= len(args) - 1:
+            if "--" not in args[i + 1]:
+                value = args[i + 1]
+
+            if arg is not None:
+                parsed[arg] = value
+        else:
+            if arg is not None:
+                parsed[arg] = value
+
+    return parsed
+
+
+def parse_grid_search(args):
+    distributions = {}
+    parsed = parse_args(args)
+
+    for key, value in parsed.items():
+        # TODO: Invest on doing a better parsing
+        value = eval(value)
+        if isinstance(value, list):
+            value = {"distribution": "categorical", "params": {"choices": value}}
+        distributions[key] = value
+    return distributions
+
+
+def parse_random_search(args):
+    distributions = {}
+    parsed = parse_args(args)
+
+    for key, value in parsed.items():
+        # TODO: Invest on doing a better parsing
+        value = eval(value)
+        if isinstance(value, list):
+            if len(value) != 2:
+                raise Exception(f"We are expecting low and high values for argument {key}. Found {value}.")
+            low, high = value
+            value = {"distribution": "uniform", "params": {"low": float(low), "high": float(high)}}
+        else:
+            raise Exception(f"The argument {key}: {value} wasn't parsed properly.")
+        distributions[key] = value
+    return distributions
+
+
 class RunSweepCommand(ClientCommand):
 
     DESCRIPTION = "Command to run a Sweep or Trial"
@@ -168,28 +242,17 @@ class RunSweepCommand(ClientCommand):
     SUPPORTED_DISTRIBUTIONS = ("uniform", "log_uniform", "categorical")
 
     def run(self) -> None:
-        parser = ArgumentParser(
-            epilog="""
-                Your Hyper Parameters: \n
-                    They are sampled from a bayesian sampler and passed to your script directly. \n
-                    Currently, we support only 3 distributions: `log_uniform`, `uniform` and `categorical`.  \n
-                    Learn more there: https://lightning-ai.github.io/lightning-hpo/workflows/run_sweep.html#configure-your-hyper-parameters  \n"""
-        )
+        parser = ArgumentParser()
 
         parser.add_argument("script_path", type=str, help="The path to the script to run.")
-        parser.add_argument("--n_trials", type=int, default=1, help="Number of trials to run.")
-        parser.add_argument("--simultaneous_trials", default=1, type=int, help="Number of trials to run.")
+        parser.add_argument("--algorithm", default="grid_search", type=str, help="The search algorithm to use.")
+        parser.add_argument("--total_experiments", default=None, type=int, help="The total number of experiments")
+        parser.add_argument("--parallel_experiments", default=1, type=int, help="Number of trials to run.")
         parser.add_argument(
             "--requirements",
             default=[],
             type=lambda s: [v.replace(" ", "") for v in s.split(",")] if "," in s else s,
             help="List of requirements separated by a comma or requirements.txt filepath.",
-        )
-        parser.add_argument(
-            "--framework",
-            default="pytorch_lightning",
-            type=str,
-            help="The framework you are using. Under the hood, we automate logging, check-pointing, etc..",
         )
         parser.add_argument(
             "--cloud_compute",
@@ -198,7 +261,7 @@ class RunSweepCommand(ClientCommand):
             type=str,
             help="The machine to use in the cloud.",
         )
-        parser.add_argument("--name", default=None, type=str, help="The sweep you want to run upon.")
+        parser.add_argument("--name", default=None, type=str, help="Configure your sweep name.")
         parser.add_argument(
             "--logger",
             default="tensorboard",
@@ -215,20 +278,19 @@ class RunSweepCommand(ClientCommand):
         )
         hparams, args = parser.parse_known_args()
 
-        if any("=" not in arg for arg in args):
-            raise Exception("Please, provide the arguments as follows --x=y")
-
         script_args = []
-        distributions = {}
-        for arg in args:
-            is_distribution = False
-            for p in [UniformDistributionParser, LogUniformDistributionParser, CategoricalDistributionParser]:
-                if p.is_distribution(arg.replace("--", "")):
-                    distributions.update(p.parse(arg.replace("--", "")))
-                    is_distribution = True
-                    break
-            if not is_distribution:
-                script_args.append(arg)
+
+        total_experiments = hparams.total_experiments
+
+        if hparams.algorithm == "grid_search":
+            distributions = parse_grid_search(args)
+            total_experiments = -1
+        elif hparams.algorithm == "random_search":
+            distributions = parse_random_search(args)
+            if hparams.total_experiments is None:
+                raise Exception("Please, specify the `total_experiments`.")
+        else:
+            distributions = parse_distributions(script_args, args)
 
         id = str(uuid4()).split("-")[0]
         name = hparams.name or f"{getuser()}-{id}"
@@ -249,19 +311,16 @@ class RunSweepCommand(ClientCommand):
         repo.package()
         repo.upload(url=f"{URL}/api/v1/upload_file/{name}")
 
-        distributions = {
-            k: Distributions(distribution=x["distribution"], params=x["params"]) for k, x in distributions.items()
-        }
-
         config = SweepConfig(
             sweep_id=name,
             script_path=hparams.script_path,
-            n_trials=int(hparams.n_trials),
-            simultaneous_trials=hparams.simultaneous_trials,
+            n_trials=int(total_experiments),
+            simultaneous_trials=hparams.parallel_experiments,
             requirements=hparams.requirements,
             script_args=script_args,
             distributions=distributions,
-            framework=hparams.framework,
+            algorithm=hparams.algorithm,
+            framework="pytorch_lightning",
             cloud_compute=hparams.cloud_compute,
             num_nodes=1,
             logger=hparams.logger,

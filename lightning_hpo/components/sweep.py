@@ -8,7 +8,7 @@ from lightning.app.storage.path import Path
 from lightning_utilities.core.apply_func import apply_to_collection
 
 from lightning_hpo.algorithm.base import Algorithm
-from lightning_hpo.algorithm.optuna import OptunaAlgorithm
+from lightning_hpo.algorithm.optuna import GridSearch, OptunaAlgorithm, RandomSearch
 from lightning_hpo.commands.sweep.run import SweepConfig, TrialConfig
 from lightning_hpo.controllers.controller import ControllerResource
 from lightning_hpo.distributions.distributions import Distribution
@@ -223,6 +223,21 @@ class Sweep(LightningFlow, ControllerResource):
 
     @classmethod
     def from_config(cls, config: SweepConfig, code: Optional[Code] = None):
+
+        if config.algorithm == "grid_search":
+            distributions = {k: v.dict()["params"]["choices"] for k, v in config.distributions.items()}
+            algorithm = GridSearch(distributions)
+            distributions = {}
+            config.n_trials = algorithm.total_experiments
+
+        elif config.algorithm == "random_search":
+            algorithm = RandomSearch({k: v.dict() for k, v in config.distributions.items()})
+            distributions = {}
+
+        else:
+            algorithm = OptunaAlgorithm(direction=config.direction)
+            distributions = {k: v.dict() for k, v in config.distributions.items()}
+
         return cls(
             script_path=config.script_path,
             n_trials=config.n_trials,
@@ -230,13 +245,13 @@ class Sweep(LightningFlow, ControllerResource):
             framework=config.framework,
             script_args=config.script_args,
             trials_done=config.trials_done,
-            distributions={k: v.dict() for k, v in config.distributions.items()},
+            distributions=distributions,
             cloud_compute=HPOCloudCompute(config.cloud_compute, config.num_nodes),
             sweep_id=config.sweep_id,
             code=code,
             cloud_build_config=BuildConfig(requirements=config.requirements),
             logger=config.logger,
-            algorithm=OptunaAlgorithm(direction=config.direction),
+            algorithm=algorithm,
             trials={k: v.dict() for k, v in config.trials.items()},
             direction=config.direction,
             stage=config.stage,
