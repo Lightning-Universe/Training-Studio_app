@@ -13,6 +13,7 @@ export type SweepConfig = {
     trials_done?: number;
     requirements: Array<string>;
     script_args: Array<string>;
+    algorithm: string;
     distributions: Record<string, Distributions>;
     logger_url?: string;
     trials: Record<string, TrialConfig>;
@@ -23,4 +24,5 @@ export type SweepConfig = {
     direction: string;
     stage?: string;
     desired_stage?: string;
+    disk_size?: number;
 };

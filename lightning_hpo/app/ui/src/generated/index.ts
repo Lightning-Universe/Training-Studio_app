@@ -9,12 +9,16 @@ export { CancelablePromise, CancelError } from './core/CancelablePromise';
 export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
+export type { Body_upload_file_api_v1_upload_file__filename__put } from './models/Body_upload_file_api_v1_upload_file__filename__put';
+export type { DeleteDriveConfig } from './models/DeleteDriveConfig';
 export type { DeleteSweepConfig } from './models/DeleteSweepConfig';
 export type { Distributions } from './models/Distributions';
 export type { DownloadArtifactsConfig } from './models/DownloadArtifactsConfig';
+export type { DriveConfig } from './models/DriveConfig';
 export type { HTTPValidationError } from './models/HTTPValidationError';
 export type { NotebookConfig } from './models/NotebookConfig';
 export type { ShowArtifactsConfig } from './models/ShowArtifactsConfig';
+export type { StopExperimentConfig } from './models/StopExperimentConfig';
 export type { StopNotebookConfig } from './models/StopNotebookConfig';
 export type { StopSweepConfig } from './models/StopSweepConfig';
 export type { StopTensorboardConfig } from './models/StopTensorboardConfig';

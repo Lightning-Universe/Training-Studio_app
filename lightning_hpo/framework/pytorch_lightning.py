@@ -2,6 +2,7 @@ from typing import Any, Dict, Optional
 
 from lightning.app.components.python import TracerPythonScript
 from lightning.app.components.training import LightningTrainingComponent, PyTorchLightningScriptRunner
+from lightning.pytorch.utilities.model_summary import get_human_readable_count
 
 from lightning_hpo.framework.agnostic import Objective
 
@@ -15,11 +16,12 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         Objective.__init__(self, logger=logger, sweep_id=sweep_id, trial_id=trial_id, **kwargs)
         PyTorchLightningScriptRunner.__init__(self, *args, num_nodes=num_nodes, **kwargs)
         self.progress = None
+        self.total_parameters = None
 
     def configure_tracer(self):
         if self.node_rank == 0:
             tracer = Objective.configure_tracer(self)
-            return self.add_progress_tracking(tracer)
+            return self.add_metadata_tracker(tracer)
         return TracerPythonScript.configure_tracer(self)
 
     def run(self, params: Optional[Dict[str, Any]] = None, restart_count: int = 0, **kwargs):
@@ -34,7 +36,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
     def distributions(cls):
         return None
 
-    def add_progress_tracking(self, tracer):
+    def add_metadata_tracker(self, tracer):
         import pytorch_lightning as pl
         from pytorch_lightning.callbacks import Callback
 
@@ -48,6 +50,14 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
                     self.work.progress = 100
                 else:
                     self.work.progress = round(progress, 4)
+
+                if not self.work.total_parameters:
+                    self.work.total_parameters = get_human_readable_count(
+                        sum(p.numel() for p in pl_module.parameters() if p.requires_grad)
+                    )
+
+                if trainer.checkpoint_callback.best_model_score:
+                    self.best_model_score = float(trainer.checkpoint_callback.best_model_score)
 
         def trainer_pre_fn(trainer, *args, **kwargs):
             callbacks = kwargs.get("callbacks", [])
@@ -84,6 +94,10 @@ class ObjectiveLightningTrainingComponent(LightningTrainingComponent):
         self.params = params
         self.restart_count = restart_count
         super().run(params=params, restart_count=restart_count)
+
+    @property
+    def total_parameters(self):
+        return self.ws[0].total_parameters
 
     @property
     def progress(self):

@@ -37,6 +37,7 @@ class TrialConfig(SQLModel, table=False):
     )
     exception: Optional[str]
     progress: Optional[float]
+    total_parameters: Optional[str] = None
 
     @property
     def pruned(self) -> bool:
@@ -60,7 +61,7 @@ class SweepConfig(SQLModel, table=True):
     logger_url: str = ""
     trials: Dict[int, TrialConfig] = Field(..., sa_column=Column(pydantic_column_type(Dict[int, TrialConfig])))
     framework: str
-    cloud_compute: str
+    cloud_compute: str = "cpu"
     num_nodes: int = 1
     logger: str
     direction: str

@@ -6,9 +6,9 @@ import Status, { StatusEnum } from 'lightning-ui/src/shared/components/Status';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter } from 'react-router-dom';
+import { Experiments } from './components/ExperimentTable';
 import MoreMenu from './components/MoreMenu';
 import StartStopMenuItem from './components/StartStopMenuItem';
-import { Sweeps } from './components/SweepTable';
 import Tabs, { TabItem } from './components/Tabs';
 import UserGuide, { UserGuideBody, UserGuideComment } from './components/UserGuide';
 import { NotebookConfig } from './generated';
@@ -106,23 +106,51 @@ function AppTabs() {
           </ClientDataProvider>
         ),
       },
-      { title: 'Sweeps & Trials', content: <></> },
+      { title: 'Experiments', content: <></> },
     ];
   } else if (selectedTab == 1) {
     tabItems = [
       { title: 'Notebooks', content: <></> },
       {
-        title: 'Sweeps & Trials',
+        title: 'Experiments',
         content: (
           <ClientDataProvider endpoint="sweeps">
             <ClientDataProvider endpoint="tensorboards">
-              <Sweeps />
+              <Experiments />
             </ClientDataProvider>
           </ClientDataProvider>
         ),
       },
     ];
   }
+
+  return (
+    <Tabs
+      selectedTab={selectedTab}
+      onChange={setSelectedTab}
+      tabItems={tabItems}
+      sxTabs={{ width: '100%', backgroundColor: 'white', paddingX: 2, top: 0, zIndex: 1000 }}
+    />
+  );
+}
+
+function AppTabsExperiments() {
+  const { selectedTab, setSelectedTab } = useSelectedTabState();
+
+  let tabItems: TabItem[] = [];
+
+  tabItems = [
+    {
+      title: 'Experiments',
+      content: (
+        <ClientDataProvider endpoint="sweeps">
+          <ClientDataProvider endpoint="tensorboards">
+            <Experiments />
+          </ClientDataProvider>
+        </ClientDataProvider>
+      ),
+    },
+  ];
 
   return (
     <Tabs
@@ -141,7 +169,7 @@ function App() {
         <BrowserRouter>
           <SnackbarProvider>
             <SelectedTabProvider>
-              <AppTabs />
+              <AppTabsExperiments />
             </SelectedTabProvider>
           </SnackbarProvider>
         </BrowserRouter>

@@ -140,6 +140,7 @@ class Sweep(LightningFlow, ControllerResource):
                 )
 
                 self.trials[trial_id]["progress"] = objective.progress
+                self.trials[trial_id]["total_parameters"] = getattr(objective, "total_parameters")
 
                 if _check_stage(objective, Stage.FAILED):
                     self.trials[trial_id]["stage"] = Stage.FAILED
