@@ -3,7 +3,6 @@ from typing import Any, Dict, Optional
 
 from lightning.app.components.python import TracerPythonScript
 from lightning.app.components.training import LightningTrainingComponent, PyTorchLightningScriptRunner
-from lightning.pytorch.utilities.model_summary import get_human_readable_count
 
 from lightning_hpo.framework.agnostic import Objective
 
@@ -39,55 +38,32 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         return None
 
     def add_metadata_tracker(self, tracer):
-        import time
-
-        import psutil
         import pytorch_lightning as pl
-        import torch
-        from lightning_utilities.core.rank_zero import rank_zero_info
-        from pytorch_lightning.callbacks import Callback
-
-        class CUDACallback(Callback):
-            def on_train_epoch_start(self, trainer, pl_module):
-                # Reset the memory use counter
-                torch.cuda.reset_peak_memory_stats(trainer.root_gpu)
-                torch.cuda.synchronize(trainer.root_gpu)
-                self.start_time = time.time()
-
-            def on_batch_end(self, trainer, pl_module) -> None:
-                torch.cuda.synchronize(trainer.root_gpu)
-                max_memory = torch.cuda.max_memory_allocated(trainer.root_gpu) / 2**20
-
-                virt_mem = psutil.virtual_memory()
-                virt_mem = round((virt_mem.used / (1024**3)), 2)
-                pl_module.log("Peak CUDA Memory (GiB)", max_memory / 1000, prog_bar=True, on_step=True, sync_dist=True)
-                pl_module.log("Average Virtual memory (GiB)", virt_mem, prog_bar=True, on_step=True, sync_dist=True)
-
-            def on_train_epoch_end(self, trainer, pl_module):
-                torch.cuda.synchronize(trainer.root_gpu)
-                max_memory = torch.cuda.max_memory_allocated(trainer.root_gpu) / 2**20
-                epoch_time = time.time() - self.start_time
-                virt_mem = psutil.virtual_memory()
-                virt_mem = round((virt_mem.used / (1024**3)), 2)
-                swap = psutil.swap_memory()
-                swap = round((swap.used / (1024**3)), 2)
-
-                max_memory = trainer.training_type_plugin.reduce(max_memory)
-                epoch_time = trainer.training_type_plugin.reduce(epoch_time)
-                virt_mem = trainer.training_type_plugin.reduce(virt_mem)
-                swap = trainer.training_type_plugin.reduce(swap)
-
-                rank_zero_info(f"Average Epoch time: {epoch_time:.2f} seconds")
-                rank_zero_info(f"Average Peak CUDA memory {max_memory:.2f} MiB")
-                rank_zero_info(f"Average Peak Virtual memory {virt_mem:.2f} GiB")
-                rank_zero_info(f"Average Peak Swap memory {swap:.2f} Gib")
+        from pytorch_lightning.callbacks import Callback, DeviceStatsMonitor
+        from pytorch_lightning.strategies.deepspeed import DeepSpeedStrategy
+        from pytorch_lightning.utilities import rank_zero_only
+        from pytorch_lightning.utilities.model_summary.model_summary import (
+            _is_lazy_weight_tensor,
+            get_human_readable_count,
+        )
+        from pytorch_lightning.utilities.model_summary.model_summary_deepspeed import deepspeed_param_size
 
         class ProgressCallback(Callback):
             def __init__(self, work):
                 self.work = work
                 self.work.start_time = str(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
+                self.device_stats_callback = DeviceStatsMonitor(cpu_stats=True)
 
-            def on_train_batch_end(self, trainer, pl_module, *_: Any) -> None:
+            def setup(
+                self,
+                trainer,
+                pl_module,
+                stage: Optional[str] = None,
+            ) -> None:
+                self.device_stats_callback.setup(trainer, pl_module, stage)
+
+            @rank_zero_only
+            def on_train_batch_end(self, trainer, pl_module, *args) -> None:
                 progress = 100 * (trainer.fit_loop.total_batch_idx + 1) / float(trainer.estimated_stepping_batches)
                 if progress > 100:
                     self.work.progress = 100
@@ -95,12 +71,21 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
                     self.work.progress = round(progress, 4)
 
                 if not self.work.total_parameters:
-                    total_parameters = sum(p.numel() for p in pl_module.parameters())
+                    if isinstance(trainer.strategy, DeepSpeedStrategy) and trainer.strategy.zero_stage_3:
+                        total_parameters = sum(
+                            deepspeed_param_size(p) if not _is_lazy_weight_tensor(p) else 0
+                            for p in pl_module.parameters()
+                            if p.requires_grad
+                        )
+                    else:
+                        total_parameters = sum(p.numel() for p in pl_module.parameters() if p.requires_grad)
                     human_readable = get_human_readable_count(total_parameters)
-                    self.work.total_parameters = human_readable
+                    self.work.total_parameters = str(human_readable)
 
                 if trainer.checkpoint_callback.best_model_score:
                     self.best_model_score = float(trainer.checkpoint_callback.best_model_score)
+
+                self.device_stats_callback.on_train_batch_end(trainer, pl_module, *args)
 
         def trainer_pre_fn(trainer, *args, **kwargs):
             callbacks = kwargs.get("callbacks", [])

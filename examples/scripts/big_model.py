@@ -2,11 +2,13 @@ import pytorch_lightning as pl
 from lightning_transformers.task.nlp.language_modeling import LanguageModelingDataModule, LanguageModelingTransformer
 from transformers import AutoTokenizer
 
-tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path="gpt2")
+model_name = "gpt2-xl"
+
+tokenizer = AutoTokenizer.from_pretrained(model_name)
 
 model = LanguageModelingTransformer(
-    pretrained_model_name_or_path="EleutherAI/gpt-j-6B",
-    tokenizer=AutoTokenizer.from_pretrained("EleutherAI/gpt-j-6B"),
+    pretrained_model_name_or_path=model_name,
+    tokenizer=tokenizer,
     deepspeed_sharding=True,  # defer initialization of the model to shard/load pre-train weights
 )
 
@@ -17,7 +19,7 @@ dm = LanguageModelingDataModule(
     tokenizer=tokenizer,
 )
 trainer = pl.Trainer(
-    accelerator="auto",
+    accelerator="gpu",
     devices="auto",
     strategy="deepspeed_stage_3",
     precision=16,

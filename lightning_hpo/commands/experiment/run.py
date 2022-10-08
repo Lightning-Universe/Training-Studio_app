@@ -20,7 +20,7 @@ class RunExperimentCommand(ClientCommand):
         parser.add_argument("script_path", type=str, help="The path to the script to run.")
         parser.add_argument(
             "--requirements",
-            default=[],
+            default=",",
             type=lambda s: [v.replace(" ", "") for v in s.split(",")] if "," in s else s,
             help="List of requirements separated by a comma or requirements.txt filepath.",
         )
