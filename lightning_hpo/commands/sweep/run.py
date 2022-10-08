@@ -69,7 +69,7 @@ class SweepConfig(SQLModel, table=True):
     direction: str
     stage: str = Stage.NOT_STARTED
     desired_stage: str = Stage.RUNNING
-    disk_size: int = 10
+    disk_size: int = 80
 
     @property
     def num_trials(self) -> int:
