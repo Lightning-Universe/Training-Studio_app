@@ -1,6 +1,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { Body_upload_file_api_v1_upload_file__filename__put } from '../models/Body_upload_file_api_v1_upload_file__filename__put';
+
 import type { CancelablePromise } from '../core/CancelablePromise';
 import type { BaseHttpRequest } from '../core/BaseHttpRequest';
 
@@ -109,6 +111,31 @@ export class DefaultService {
                 'x-lightning-session-uuid': xLightningSessionUuid,
                 'x-lightning-session-id': xLightningSessionId,
             },
+            errors: {
+                422: `Validation Error`,
+            },
+        });
+    }
+
+    /**
+     * Upload File
+     * @param filename
+     * @param formData
+     * @returns any Successful Response
+     * @throws ApiError
+     */
+    public uploadFileApiV1UploadFileFilenamePut(
+        filename: string,
+        formData: Body_upload_file_api_v1_upload_file__filename__put,
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'PUT',
+            url: '/api/v1/upload_file/{filename}',
+            path: {
+                'filename': filename,
+            },
+            formData: formData,
+            mediaType: 'multipart/form-data',
             errors: {
                 422: `Validation Error`,
             },

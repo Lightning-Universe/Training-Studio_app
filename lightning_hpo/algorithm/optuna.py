@@ -101,6 +101,10 @@ class GridSearch(Algorithm):
             for i in range(len(sampler._all_grids))
         }
 
+    @property
+    def total_experiments(self) -> int:
+        return len(self.trials)
+
     def trial_start(self, trial_id: int) -> None:
         pass
 

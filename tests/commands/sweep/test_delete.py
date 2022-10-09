@@ -4,11 +4,8 @@ from copy import deepcopy
 from unittest.mock import MagicMock
 
 from lightning.app.storage import Drive
-from sqlmodel import create_engine, SQLModel
 
 from lightning_hpo.commands.sweep.delete import DeleteSweepConfig
-from lightning_hpo.components.servers.db import work_db
-from lightning_hpo.components.servers.db.work_db import general_delete, general_get, general_post, GeneralModel
 from lightning_hpo.components.sweep import Sweep, SweepConfig
 from lightning_hpo.controllers.sweep import SweepController
 from lightning_hpo.utilities.enum import Stage
@@ -33,12 +30,3 @@ def test_delete_sweeps_server(monkeypatch, tmpdir):
     result = sweep_controller.delete_sweep(config=DeleteSweepConfig(sweep_id=sweep_config.sweep_id))
     assert result == "Deleted the sweep `thomas-cb8f69f0`"
     assert sweep_controller.r == {}
-
-    general = GeneralModel.from_obj(db.delete._mock_call_args[0][0])
-    engine = create_engine(f"sqlite:///{tmpdir}/database.db", echo=True)
-    SQLModel.metadata.create_all(engine)
-    monkeypatch.setattr(work_db, "engine", engine)
-    general_post(GeneralModel.from_obj(sweep_config))
-    assert len(general_get(GeneralModel.from_cls(SweepConfig))) == 1
-    general_delete(general)
-    assert general_get(GeneralModel.from_cls(SweepConfig)) == []

@@ -8,7 +8,7 @@ from lightning.app.storage.path import Path
 from lightning_utilities.core.apply_func import apply_to_collection
 
 from lightning_hpo.algorithm.base import Algorithm
-from lightning_hpo.algorithm.optuna import OptunaAlgorithm
+from lightning_hpo.algorithm.optuna import GridSearch, OptunaAlgorithm, RandomSearch
 from lightning_hpo.commands.sweep.run import SweepConfig, TrialConfig
 from lightning_hpo.controllers.controller import ControllerResource
 from lightning_hpo.distributions.distributions import Distribution
@@ -81,6 +81,7 @@ class Sweep(LightningFlow, ControllerResource):
         self.framework = framework
         self.cloud_compute = getattr(cloud_compute, "name", "default")
         self.num_nodes = getattr(cloud_compute, "count", 1) if cloud_compute else 1
+        self.disk_size = getattr(cloud_compute, "disk_size", 1) if cloud_compute else 10
         self.logger = logger
         self.direction = direction
         self.trials = trials or {}
@@ -139,6 +140,8 @@ class Sweep(LightningFlow, ControllerResource):
                 )
 
                 self.trials[trial_id]["progress"] = objective.progress
+                self.trials[trial_id]["total_parameters"] = getattr(objective, "total_parameters", None)
+                self.trials[trial_id]["start_time"] = getattr(objective, "start_time", None)
 
                 if _check_stage(objective, Stage.FAILED):
                     self.trials[trial_id]["stage"] = Stage.FAILED
@@ -202,7 +205,7 @@ class Sweep(LightningFlow, ControllerResource):
         trial_config = self.trials.get(trial_id, None)
         if trial_config is None:
             trial_config = TrialConfig(
-                name=str(uuid4()).split("-")[-1],
+                name=str(uuid4()).split("-")[-1][:7],
                 best_model_score=None,
                 monitor=None,
                 best_model_path=None,
@@ -216,13 +219,31 @@ class Sweep(LightningFlow, ControllerResource):
 
         objective = getattr(self, f"w_{trial_id}", None)
         if objective is None:
-            cloud_compute = CloudCompute(name=self.cloud_compute if self.cloud_compute else "cpu")
+            cloud_compute = CloudCompute(
+                name=self.cloud_compute if self.cloud_compute else "cpu", disk_size=self.disk_size
+            )
             objective = self._objective_cls(trial_id=trial_id, cloud_compute=cloud_compute, **self._kwargs)
             setattr(self, f"w_{trial_id}", objective)
         return objective
 
     @classmethod
     def from_config(cls, config: SweepConfig, code: Optional[Code] = None):
+
+        if config.algorithm == "grid_search":
+            distributions = {k: v.dict()["params"]["choices"] for k, v in config.distributions.items()}
+            algorithm = GridSearch(distributions)
+            distributions = {}
+            config.n_trials = algorithm.total_experiments
+            config.simultaneous_trials = algorithm.total_experiments
+
+        elif config.algorithm == "random_search":
+            algorithm = RandomSearch({k: v.dict() for k, v in config.distributions.items()})
+            distributions = {}
+
+        else:
+            algorithm = OptunaAlgorithm(direction=config.direction)
+            distributions = {k: v.dict() for k, v in config.distributions.items()}
+
         return cls(
             script_path=config.script_path,
             n_trials=config.n_trials,
@@ -230,13 +251,13 @@ class Sweep(LightningFlow, ControllerResource):
             framework=config.framework,
             script_args=config.script_args,
             trials_done=config.trials_done,
-            distributions={k: v.dict() for k, v in config.distributions.items()},
-            cloud_compute=HPOCloudCompute(config.cloud_compute, config.num_nodes),
+            distributions=distributions,
+            cloud_compute=HPOCloudCompute(config.cloud_compute, count=config.num_nodes, disk_size=config.disk_size),
             sweep_id=config.sweep_id,
             code=code,
             cloud_build_config=BuildConfig(requirements=config.requirements),
             logger=config.logger,
-            algorithm=OptunaAlgorithm(direction=config.direction),
+            algorithm=algorithm,
             trials={k: v.dict() for k, v in config.trials.items()},
             direction=config.direction,
             stage=config.stage,

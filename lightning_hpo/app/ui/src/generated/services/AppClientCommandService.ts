@@ -1,10 +1,13 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { DeleteDriveConfig } from '../models/DeleteDriveConfig';
 import type { DeleteSweepConfig } from '../models/DeleteSweepConfig';
 import type { DownloadArtifactsConfig } from '../models/DownloadArtifactsConfig';
+import type { DriveConfig } from '../models/DriveConfig';
 import type { NotebookConfig } from '../models/NotebookConfig';
 import type { ShowArtifactsConfig } from '../models/ShowArtifactsConfig';
+import type { StopExperimentConfig } from '../models/StopExperimentConfig';
 import type { StopNotebookConfig } from '../models/StopNotebookConfig';
 import type { StopSweepConfig } from '../models/StopSweepConfig';
 import type { SweepConfig } from '../models/SweepConfig';
@@ -85,6 +88,58 @@ export class AppClientCommandService {
             errors: {
                 422: `Validation Error`,
             },
+        });
+    }
+
+    /**
+     * Run Experiment
+     * @param requestBody
+     * @returns any Successful Response
+     * @throws ApiError
+     */
+    public runExperimentCommandRunExperimentPost(
+        requestBody: SweepConfig,
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'POST',
+            url: '/command/run_experiment',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: `Validation Error`,
+            },
+        });
+    }
+
+    /**
+     * Stop Experiment
+     * @param requestBody
+     * @returns any Successful Response
+     * @throws ApiError
+     */
+    public stopExperimentCommandStopExperimentPost(
+        requestBody: StopExperimentConfig,
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'POST',
+            url: '/command/stop_experiment',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: `Validation Error`,
+            },
+        });
+    }
+
+    /**
+     * Show Experiments
+     * @returns any Successful Response
+     * @throws ApiError
+     */
+    public showExperimentsCommandShowExperimentsPost(): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'POST',
+            url: '/command/show_experiments',
         });
     }
 
@@ -177,6 +232,58 @@ export class AppClientCommandService {
             errors: {
                 422: `Validation Error`,
             },
+        });
+    }
+
+    /**
+     * Create Drive
+     * @param requestBody
+     * @returns any Successful Response
+     * @throws ApiError
+     */
+    public createDriveCommandCreateDrivePost(
+        requestBody: DriveConfig,
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'POST',
+            url: '/command/create_drive',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: `Validation Error`,
+            },
+        });
+    }
+
+    /**
+     * Delete Drive
+     * @param requestBody
+     * @returns any Successful Response
+     * @throws ApiError
+     */
+    public deleteDriveCommandDeleteDrivePost(
+        requestBody: DeleteDriveConfig,
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'POST',
+            url: '/command/delete_drive',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: `Validation Error`,
+            },
+        });
+    }
+
+    /**
+     * Show Drives
+     * @returns any Successful Response
+     * @throws ApiError
+     */
+    public showDrivesCommandShowDrivesPost(): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'POST',
+            url: '/command/show_drives',
         });
     }
 

@@ -6,7 +6,6 @@ import { Box, IconButton, Stack, SxProps, Theme } from 'lightning-ui/src/design-
 import TabContent from 'lightning-ui/src/design-system/components/tabs/TabContent';
 import TabPanel from 'lightning-ui/src/design-system/components/tabs/TabPanel';
 import React, { ReactNode } from 'react';
-import NewMenu from './NewMenu';
 
 export type TabItem = {
   title: string;
@@ -29,7 +28,6 @@ const Tabs = (props: TabsProps) => {
         direction="row"
         spacing={1}
         sx={{ paddingX: '14px', paddingY: '9px', position: 'absolute', top: 0, right: 0, zIndex: 1000 }}>
-        <NewMenu />
         <IconButton
           sx={{
             'backgroundColor': 'grey.20',
@@ -49,7 +47,7 @@ const Tabs = (props: TabsProps) => {
       <Grid container spacing={1}>
         <Grid item xs={12} sm="auto">
           <Box sx={{ marginX: '14px', marginY: '8px' }}>
-            <Typography variant="h6">Training Studio</Typography>
+            <Typography variant="h6">Research Studio</Typography>
           </Box>
         </Grid>
         <Grid item xs={12} sm>

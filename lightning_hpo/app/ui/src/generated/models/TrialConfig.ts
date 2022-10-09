@@ -3,6 +3,7 @@
 /* eslint-disable */
 
 export type TrialConfig = {
+    name: string;
     best_model_score?: number;
     monitor?: string;
     best_model_path?: string;
@@ -10,4 +11,7 @@ export type TrialConfig = {
     params: Record<string, (number | string | Array<number> | Array<string>)>;
     exception?: string;
     progress?: number;
+    total_parameters?: string;
+    start_time?: string;
+    end_time?: string;
 };

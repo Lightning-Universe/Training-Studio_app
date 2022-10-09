@@ -20,7 +20,7 @@ class RunExperimentCommand(ClientCommand):
         parser.add_argument("script_path", type=str, help="The path to the script to run.")
         parser.add_argument(
             "--requirements",
-            default=[],
+            default=",",
             type=lambda s: [v.replace(" ", "") for v in s.split(",")] if "," in s else s,
             help="List of requirements separated by a comma or requirements.txt filepath.",
         )
@@ -38,6 +38,18 @@ class RunExperimentCommand(ClientCommand):
             choices=["tensorboard", "wandb"],
             type=str,
             help="The logger to use with your sweep.",
+        )
+        parser.add_argument(
+            "--num_nodes",
+            default=1,
+            type=int,
+            help="The number of nodes.",
+        )
+        parser.add_argument(
+            "--disk_size",
+            default=10,
+            type=int,
+            help="The disk size in Gigabytes.",
         )
         hparams, args = parser.parse_known_args()
 
@@ -72,12 +84,14 @@ class RunExperimentCommand(ClientCommand):
             requirements=hparams.requirements,
             script_args=script_args,
             distributions={},
+            algorithm="",
             framework="pytorch_lightning",
             cloud_compute=hparams.cloud_compute,
-            num_nodes=1,
+            num_nodes=hparams.num_nodes,
             logger=hparams.logger,
             direction="minimize",  # This won't be used
-            trials={0: TrialConfig(name=hparams.name or str(uuid4()).split("-")[-1], params={})},
+            trials={0: TrialConfig(name=hparams.name or str(uuid4()).split("-")[-1][:7], params={})},
+            disk_size=hparams.disk_size,
         )
         response = self.invoke_handler(config=config)
         print(response)

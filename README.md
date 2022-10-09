@@ -144,6 +144,63 @@ Find the example [here](./examples/2_app_pytorch_lightning.py)
 
 ______________________________________________________________________
 
+## Train a 6B LLM with Multi Node Training
+
+Run the App in the cloud
+
+```bash
+lightning run app app.py --cloud
+```
+
+Connect to the App once ready.
+
+```
+lightning connect {APP_NAME} -y
+```
+
+Below is an example of how you can train a 1.6B parameter GPT2 transformer model using Lightning Transformers and DeepSpeed using the [Lightning Transformers](https://github.com/Lightning-AI/lightning-transformers) library.
+
+```python
+import pytorch_lightning as pl
+from lightning_transformers.task.nlp.language_modeling import LanguageModelingDataModule, LanguageModelingTransformer
+from transformers import AutoTokenizer
+
+model_name = "gpt2-xl"
+
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+model = LanguageModelingTransformer(
+    pretrained_model_name_or_path=model_name,
+    tokenizer=tokenizer,
+    deepspeed_sharding=True,  # defer initialization of the model to shard/load pre-train weights
+)
+
+dm = LanguageModelingDataModule(
+    batch_size=1,
+    dataset_name="wikitext",
+    dataset_config_name="wikitext-2-raw-v1",
+    tokenizer=tokenizer,
+)
+trainer = pl.Trainer(
+    accelerator="gpu",
+    devices="auto",
+    strategy="deepspeed_stage_3",
+    precision=16,
+    max_epochs=1,
+)
+
+trainer.fit(model, dm)
+```
+
+Run the following command to run a multi node training (2 nodes of 4 V100 GPUS each).
+
+```bash
+lightning run experiment big_model.py --requirements="deepspeed,lightning-transformers==0.2.3" --num_nodes=2 --cloud_compute=gpu-fast-multi --disk_size=80
+```
+
+
+______________________________________________________________________
+
 ## Convert raw Optuna to Lightning HPO
 
 Below, we are going to convert [Optuna Efficient Optimization Algorithms](https://optuna.readthedocs.io/en/stable/tutorial/10_key_features/003_efficient_optimization_algorithms.html#sphx-glr-tutorial-10-key-features-003-efficient-optimization-algorithms-py>) into a Lightning App.
