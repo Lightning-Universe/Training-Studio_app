@@ -144,7 +144,7 @@ Find the example [here](./examples/2_app_pytorch_lightning.py)
 
 ______________________________________________________________________
 
-## Train a 6B LLM with Multi Node Training
+## Train a 1B+ Large Language Modeling Model with Multi Node Training
 
 Run the App in the cloud
 
