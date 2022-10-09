@@ -158,22 +158,20 @@ Connect to the App once ready.
 lightning connect {APP_NAME} -y
 ```
 
-Below is an example of how you can train a 6B parameter transformer model using Lightning Transformers and DeepSpeed using the [Lightning Transformers](https://github.com/Lightning-AI/lightning-transformers) library.
+Below is an example of how you can train a 1.6B parameter GPT2 transformer model using Lightning Transformers and DeepSpeed using the [Lightning Transformers](https://github.com/Lightning-AI/lightning-transformers) library.
 
 ```python
 import pytorch_lightning as pl
+from lightning_transformers.task.nlp.language_modeling import LanguageModelingDataModule, LanguageModelingTransformer
 from transformers import AutoTokenizer
 
-from lightning_transformers.task.nlp.language_modeling import (
-    LanguageModelingDataModule,
-    LanguageModelingTransformer,
-)
+model_name = "gpt2-xl"
 
-tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path="gpt2")
+tokenizer = AutoTokenizer.from_pretrained(model_name)
 
 model = LanguageModelingTransformer(
-    pretrained_model_name_or_path="EleutherAI/gpt-j-6B",
-    tokenizer=AutoTokenizer.from_pretrained("EleutherAI/gpt-j-6B"),
+    pretrained_model_name_or_path=model_name,
+    tokenizer=tokenizer,
     deepspeed_sharding=True,  # defer initialization of the model to shard/load pre-train weights
 )
 
@@ -197,7 +195,7 @@ trainer.fit(model, dm)
 Run the following command to run a multi node training (2 nodes of 4 V100 GPUS each).
 
 ```bash
-lightning run experiment big_model.py --requirements="deepspeed,lightning-transformers==0.2.2" --num_nodes=2 --cloud_compute=gpu-fast-multi --disk_size=80
+lightning run experiment big_model.py --requirements="deepspeed,lightning-transformers==0.2.3" --num_nodes=2 --cloud_compute=gpu-fast-multi --disk_size=80
 ```
 
 

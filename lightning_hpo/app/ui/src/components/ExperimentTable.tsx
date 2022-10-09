@@ -130,7 +130,7 @@ export function Experiments() {
     'Name',
     'Best Score',
     'Compute',
-    'Total Parameters',
+    'Trainable Parameters',
     'Logger URL',
     'Start Time',
   ];
