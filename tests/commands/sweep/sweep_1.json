@@ -3,7 +3,7 @@
       "requirements": "[]",
       "script_args": "[]",
       "distributions": {"model.lr": {"distribution": "uniform", "params": {"low": 0.001, "high": 0.1}}},
-      "trials": {"0": {"name": "a", "best_model_score": 0.125, "monitor": "val_acc", "best_model_path": null, "status": "succeeded", "params": {"model.lr": 0.04490742315966646}, "exception": null}, "1": {"name": "b", "best_model_score": 0.125, "monitor": "val_acc", "best_model_path": null, "status": "succeeded", "params": {"model.lr": 0.0860064559763192}, "exception": null}, "2": {"name": "c", "best_model_score": 0.125, "monitor": "val_acc", "best_model_path": null, "status": "succeeded", "params": {"model.lr": 0.08511019485430553}, "exception": null}},
+      "trials": {"0": {"name": "a", "best_model_score": 0.125, "monitor": "val_acc", "best_model_path": null, "status": "succeeded", "params": {"model.lr": 0.04490742315966646}, "exception": null, "start_time": null, "end_time": null, "total_parameters": null}, "1": {"name": "b", "best_model_score": 0.125, "monitor": "val_acc", "best_model_path": null, "status": "succeeded", "params": {"model.lr": 0.0860064559763192}, "exception": null, "start_time": null, "end_time": null, "total_parameters": null}, "2": {"name": "c", "best_model_score": 0.125, "monitor": "val_acc", "best_model_path": null, "status": "succeeded", "params": {"model.lr": 0.08511019485430553}, "exception": null, "start_time": null, "end_time": null, "total_parameters": null}},
       "id": 1,
       "sweep_id": "thomas-cb8f69f0",
       "script_path": "train.py",
@@ -16,6 +16,7 @@
       "num_nodes": 1,
       "logger": "wandb",
       "direction": "maximize",
-      "status": "succeeded"
+      "status": "succeeded",
+      "disk_size": 80
     }
   ]
