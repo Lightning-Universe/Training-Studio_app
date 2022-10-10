@@ -24,8 +24,6 @@ trainer = pl.Trainer(
     strategy="deepspeed_stage_3",
     precision=16,
     max_epochs=20,
-    limit_train_batches=5,
-    limit_val_batches=5,
 )
 
 trainer.fit(model, dm)
