@@ -1,0 +1,193 @@
+import sys
+from unittest.mock import MagicMock
+
+import pytest
+
+from lightning_hpo.commands.sweep import run
+from lightning_hpo.commands.sweep.run import Distributions, RunSweepCommand
+from tests.helpers import _create_client_command_mock
+
+
+def run_sweep_command(monkeypatch, argv, check):
+    monkeypatch.setattr(sys, "argv", argv)
+    command = _create_client_command_mock(RunSweepCommand, None, MagicMock(), check)
+    command.run()
+
+
+def test_sweep_run_parsing_file_absent(monkeypatch):
+
+    monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
+
+    with pytest.raises(ValueError, match="The provided script doesn't exist: train2.py"):
+        monkeypatch.setattr(sys, "argv", ["python", "train2.py"])
+        command = _create_client_command_mock(RunSweepCommand, None, MagicMock(), None)
+        command.run()
+
+
+def test_sweep_run_parsing_file_no_arguments(monkeypatch):
+
+    monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
+
+    def check_0(config):
+        assert config.distributions == {}
+        assert config.algorithm == "grid_search"
+
+    run_sweep_command(monkeypatch, ["python", __file__], check_0)
+
+    def check_1(config):
+        assert config.distributions == {}
+        assert config.algorithm == "random_search"
+
+    run_sweep_command(monkeypatch, ["python", __file__, "--algorithm=random_search"], check_1)
+
+
+def test_sweep_run_parsing_file_single_list(monkeypatch):
+
+    monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
+
+    def check_0(config):
+        assert config.distributions == {
+            "lr": Distributions(distribution="categorical", params={"choices": [0.0, 1.0, 2.0]})
+        }
+        assert config.algorithm == "grid_search"
+
+    argv = ["python", __file__, "--lr", "[0, 1, 2]"]
+    run_sweep_command(monkeypatch, argv, check_0)
+
+
+def test_sweep_run_parsing_file_two_lists(monkeypatch):
+
+    monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
+
+    def check_0(config):
+        assert config.distributions == {
+            "lr": Distributions(distribution="categorical", params={"choices": [0.0, 1.0, 2.0]}),
+            "gamma": Distributions(distribution="categorical", params={"choices": [0.0, 1.0, 2.0]}),
+        }
+        assert config.algorithm == "grid_search"
+
+    argv = ["python", __file__, "--lr", "[0, 1, 2]", "--gamma", "[0.0, 1.0, 2.0]"]
+    run_sweep_command(monkeypatch, argv, check_0)
+
+    with pytest.raises(ValueError, match="We are expecting low and high values for argument"):
+        argv = ["python", __file__, "--lr", "[0, 1, 2]", "--algorithm", "random_search"]
+        run_sweep_command(monkeypatch, argv, None)
+
+
+def test_sweep_run_parsing_file_list_and_script_arguments(monkeypatch):
+
+    monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
+
+    def check_0(config):
+        assert config.distributions == {
+            "lr": Distributions(distribution="categorical", params={"choices": [0.0, 1.0, 2.0]}),
+        }
+        assert config.script_args == ["data=something"]
+
+    argv = ["python", __file__, "--lr", "[0, 1, 2]", "--data", "something"]
+    run_sweep_command(monkeypatch, argv, check_0)
+
+
+def test_sweep_run_parsing_range(monkeypatch):
+
+    monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
+
+    def check_0(config):
+        assert config.distributions == {
+            "lr": Distributions(
+                distribution="categorical", params={"choices": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]}
+            ),
+        }
+        assert config.script_args == ["data=something"]
+
+    argv = ["python", __file__, "--lr", "range(0, 10)", "--data", "something"]
+    run_sweep_command(monkeypatch, argv, check_0)
+
+
+def test_sweep_run_parsing_random_search(monkeypatch):
+
+    monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
+
+    def check_0(config):
+        assert config.distributions == {
+            "lr": Distributions(
+                distribution="categorical", params={"choices": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]}
+            ),
+        }
+        assert config.script_args == ["data=something"]
+
+    argv = [
+        "python",
+        __file__,
+        "--lr",
+        "range(0, 10)",
+        "--data",
+        "something",
+        "--algorithm",
+        "random_search",
+        "--total_experiments",
+        "10",
+    ]
+    run_sweep_command(monkeypatch, argv, check_0)
+
+    with pytest.raises(ValueError, match="[0, 1, 2]"):
+        argv = ["python", __file__, "--lr", "[0, 1, 2]", "--data", "something", "--algorithm", "random_search"]
+        run_sweep_command(monkeypatch, argv, None)
+
+    def check_1(config):
+        assert config.distributions == {
+            "lr": Distributions(distribution="uniform", params={"low": 0.0, "high": 2.0}),
+            "batch_size": Distributions(
+                distribution="categorical", params={"choices": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]}
+            ),
+        }
+        assert config.script_args == ["data=something"]
+
+    argv = [
+        "python",
+        __file__,
+        "--lr",
+        "[0, 2]",
+        "--batch_size",
+        "range(0, 10)",
+        "--data",
+        "something",
+        "--algorithm",
+        "random_search",
+        "--total_experiments",
+        "10",
+    ]
+    run_sweep_command(monkeypatch, argv, check_1)
+
+
+def test_sweep_run_parsing_random_search_further_distributions(monkeypatch):
+
+    monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
+
+    def check_1(config):
+        assert config.distributions == {
+            "lr": Distributions(distribution="uniform", params={"low": 0.0, "high": 2.0}),
+            "batch_size": Distributions(
+                distribution="categorical", params={"choices": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]}
+            ),
+            "gamma": Distributions(distribution="log_uniform", params={"low": 32.0, "high": 64.0}),
+        }
+        assert config.script_args == ["data=something"]
+
+    argv = [
+        "python",
+        __file__,
+        "--lr",
+        "[0, 2]",
+        "--batch_size",
+        "range(0, 10)",
+        "--gamma",
+        "log_uniform(32, 64)",
+        "--data",
+        "something",
+        "--algorithm",
+        "random_search",
+        "--total_experiments",
+        "10",
+    ]
+    run_sweep_command(monkeypatch, argv, check_1)

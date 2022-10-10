@@ -1,7 +1,8 @@
-from typing import Any, Dict
+from typing import Any, Callable, Dict, Optional, Type
 from unittest.mock import MagicMock
 from uuid import uuid4
 
+from lightning.app.utilities.commands import ClientCommand
 from lightning.app.utilities.enum import make_status, WorkStageStatus
 
 from lightning_hpo import Objective
@@ -85,3 +86,22 @@ class FailedMockObjective(Objective):
     def on_after_run(self):
         self._calls["latest_call_hash"] = "test"
         self._calls["test"] = {"statuses": [make_status(WorkStageStatus.FAILED, message="Error")]}
+
+
+def _create_client_command_mock(
+    cls: Type[ClientCommand], method: Optional[Callable], state: Dict, config_verification: Callable
+):
+    class MockClientCommand(cls):
+        def __init__(self, method, state, payload):
+            super().__init__(method)
+            self._state = state
+            self.config_verification = config_verification
+
+        @property
+        def state(self):
+            return self._state
+
+        def invoke_handler(self, config):
+            self.config_verification(config)
+
+    return MockClientCommand(method, state, config_verification)
