@@ -339,9 +339,21 @@ class RunSweepCommand(ClientCommand):
         parser.add_argument(
             "--framework",
             default="pytorch_lightning",
-            choices=["pytorch_lightning", "agnostic"],
+            choices=["pytorch_lightning", "base"],
             type=str,
             help="Which framework you are using.",
+        )
+        parser.add_argument(
+            "--num_nodes",
+            default=1,
+            type=int,
+            help="The number of nodes.",
+        )
+        parser.add_argument(
+            "--disk_size",
+            default=10,
+            type=int,
+            help="The disk size in Gigabytes.",
         )
         hparams, args = parser.parse_known_args()
 
@@ -357,10 +369,12 @@ class RunSweepCommand(ClientCommand):
             total_experiments = -1
         elif hparams.algorithm == "random_search":
             distributions = parse_random_search(script_args, args)
-            if distributions and hparams.total_experiments is None:
+            if not distributions:
+                total_experiments = 1
+            elif distributions and hparams.total_experiments is None:
                 raise Exception("Please, specify the `total_experiments`.")
             else:
-                total_experiments = 1
+                total_experiments = hparams.total_experiments
             if hparams.parallel_experiments is None:
                 hparams.parallel_experiments = total_experiments
         else:
@@ -396,10 +410,11 @@ class RunSweepCommand(ClientCommand):
             algorithm=hparams.algorithm,
             framework=hparams.framework,
             cloud_compute=hparams.cloud_compute,
-            num_nodes=1,
+            num_nodes=hparams.num_nodes,
             logger=hparams.logger,
             direction=hparams.direction,
             trials={},
+            disk_size=hparams.disk_size,
         )
         response = self.invoke_handler(config=config)
         print(response)

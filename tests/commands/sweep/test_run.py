@@ -69,7 +69,7 @@ def test_sweep_run_parsing_file_two_lists(monkeypatch):
     argv = ["python", __file__, "--lr", "[0, 1, 2]", "--gamma", "[0.0, 1.0, 2.0]"]
     run_sweep_command(monkeypatch, argv, check_0)
 
-    with pytest.raises(ValueError, match="We are expecting low and high values for argument"):
+    with pytest.raises(ValueError, match="We are expecting `low` and `high` values for argument"):
         argv = ["python", __file__, "--lr", "[0, 1, 2]", "--algorithm", "random_search"]
         run_sweep_command(monkeypatch, argv, None)
 
