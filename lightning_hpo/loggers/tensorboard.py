@@ -46,7 +46,8 @@ class DriveTensorBoardLogger(TensorBoardLogger):
                 if str(to_path).endswith(".ckpt") or str(to_path).endswith(".yaml"):
                     if fs.exists(str(to_path)):
                         # Delete the files once uploaded
-                        os.remove(str(to_path))
+                        if os.path.exists(from_path):
+                            os.remove(str(from_path))
                         return
 
                 # NOTE: S3 does not have a concept of directories, so we do not need to create one.
