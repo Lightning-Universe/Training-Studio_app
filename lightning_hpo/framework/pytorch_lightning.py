@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import Any, Dict, Optional
 
-from lightning.app.components.python import TracerPythonScript
 from lightning.app.components.training import LightningTrainingComponent, PyTorchLightningScriptRunner
 
 from lightning_hpo.framework.agnostic import Objective
@@ -20,10 +19,10 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         self.start_time = None
 
     def configure_tracer(self):
+        tracer = Objective.configure_tracer(self)
         if self.node_rank == 0:
-            tracer = Objective.configure_tracer(self)
             return self.add_metadata_tracker(tracer)
-        return TracerPythonScript.configure_tracer(self)
+        return tracer
 
     def run(self, params: Optional[Dict[str, Any]] = None, restart_count: int = 0, **kwargs):
         self.params = params

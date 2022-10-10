@@ -246,14 +246,14 @@ def parse_grid_search(script_args, args):
 
     for key, value in parsed.items():
         expected_value = None
-        if RANGE_REGEX.match(value):
+        if RANGE_REGEX.match(str(value)):
             expected_value = parse_range_to_categorical(value)
         else:
             expected_value = parse_list_to_categorical(value)
         if expected_value:
             distributions[key] = expected_value
         else:
-            script_args.append(f"{key}={value}")
+            script_args.append(f"--{key}={value}")
     return distributions
 
 
@@ -285,7 +285,7 @@ def parse_random_search(script_args, args):
         if expected_value:
             distributions[key] = expected_value
         else:
-            script_args.append(f"{key}={value}")
+            script_args.append(f"--{key}={value}")
     return distributions
 
 
