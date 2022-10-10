@@ -1,6 +1,7 @@
 import os
 import re
 from argparse import ArgumentParser
+from ast import literal_eval
 from getpass import getuser
 from pathlib import Path
 from typing import Dict, List, Optional, Union
@@ -17,6 +18,8 @@ from sqlmodel import Field, SQLModel
 from lightning_hpo.loggers import LoggerType
 from lightning_hpo.utilities.enum import Stage
 from lightning_hpo.utilities.utils import pydantic_column_type
+
+RANGE_REGEX: re.Pattern = re.compile(r"^range\(([0-9]+,( ){0,1}){0,2}[0-9]+\)$")
 
 
 class Distributions(SQLModel, table=False):
@@ -118,7 +121,7 @@ class LogUniformDistributionParser(DistributionParser):
     @staticmethod
     def parse(argument: str):
         name, value = argument.split("=")
-        regex = "[0-9]*\.[0-9]*"  # noqa W605
+        regex = "[0-9]+\.[0-9]+|[0-9]+"  # noqa W605
         low, high = re.findall(regex, value)
         return {name: {"distribution": "log_uniform", "params": {"low": float(low), "high": float(high)}}}
 
@@ -208,34 +211,81 @@ def parse_args(args):
     return parsed
 
 
-def parse_grid_search(args):
+def parse_range_to_categorical(value: str):
+    range_args = [literal_eval(val.strip()) for val in value.replace("range(", "").replace(")", "").split(",")]
+    # Evaluates range expression to a list.
+    value = list(range(*range_args))
+    return {"distribution": "categorical", "params": {"choices": value}}
+
+
+def _parse_list(value: str):
+    try:
+        value = literal_eval(value)
+        if not isinstance(value, list):
+            return None
+
+        return value
+    except Exception:
+        pass
+
+
+def parse_list_to_categorical(value: str):
+    try:
+        value = literal_eval(value)
+        if not isinstance(value, list):
+            return None
+
+        return {"distribution": "categorical", "params": {"choices": value}}
+    except Exception:
+        pass
+
+
+def parse_grid_search(script_args, args):
     distributions = {}
     parsed = parse_args(args)
 
     for key, value in parsed.items():
-        # TODO: Invest on doing a better parsing
-        value = eval(value)
-        if isinstance(value, list):
-            value = {"distribution": "categorical", "params": {"choices": value}}
-        distributions[key] = value
+        expected_value = None
+        if RANGE_REGEX.match(value):
+            expected_value = parse_range_to_categorical(value)
+        else:
+            expected_value = parse_list_to_categorical(value)
+        if expected_value:
+            distributions[key] = expected_value
+        else:
+            script_args.append(f"{key}={value}")
     return distributions
 
 
-def parse_random_search(args):
+def parse_random_search(script_args, args):
     distributions = {}
     parsed = parse_args(args)
 
     for key, value in parsed.items():
-        # TODO: Invest on doing a better parsing
-        value = eval(value)
-        if isinstance(value, list):
-            if len(value) != 2:
-                raise Exception(f"We are expecting low and high values for argument {key}. Found {value}.")
-            low, high = value
-            value = {"distribution": "uniform", "params": {"low": float(low), "high": float(high)}}
+        expected_value = None
+
+        if RANGE_REGEX.match(value):
+            expected_value = parse_range_to_categorical(value)
         else:
-            raise Exception(f"The argument {key}: {value} wasn't parsed properly.")
-        distributions[key] = value
+            expected_value = _parse_list(value)
+            if expected_value:
+                if len(expected_value) != 2:
+                    raise ValueError(f"We are expecting `low` and `high` values for argument {key}. Found {value}.")
+                low, high = expected_value
+                expected_value = {"distribution": "uniform", "params": {"low": float(low), "high": float(high)}}
+            else:
+                for p in [UniformDistributionParser, LogUniformDistributionParser, CategoricalDistributionParser]:
+                    if p.is_distribution(value):
+                        try:
+                            expected_value = p.parse(f"{key}={value}")[key]
+                            break
+                        except Exception:
+                            pass
+
+        if expected_value:
+            distributions[key] = expected_value
+        else:
+            script_args.append(f"{key}={value}")
     return distributions
 
 
@@ -249,7 +299,13 @@ class RunSweepCommand(ClientCommand):
         parser = ArgumentParser()
 
         parser.add_argument("script_path", type=str, help="The path to the script to run.")
-        parser.add_argument("--algorithm", default="grid_search", type=str, help="The search algorithm to use.")
+        parser.add_argument(
+            "--algorithm",
+            default="grid_search",
+            type=str,
+            help="The search algorithm to use.",
+            choices=["grid_search", "random_search", "bayesian"],
+        )
         parser.add_argument("--total_experiments", default=None, type=int, help="The total number of experiments")
         parser.add_argument("--parallel_experiments", default=None, type=int, help="Number of trials to run.")
         parser.add_argument(
@@ -280,21 +336,47 @@ class RunSweepCommand(ClientCommand):
             type=str,
             help="In which direction to optimize.",
         )
+        parser.add_argument(
+            "--framework",
+            default="pytorch_lightning",
+            choices=["pytorch_lightning", "base"],
+            type=str,
+            help="Which framework you are using.",
+        )
+        parser.add_argument(
+            "--num_nodes",
+            default=1,
+            type=int,
+            help="The number of nodes.",
+        )
+        parser.add_argument(
+            "--disk_size",
+            default=10,
+            type=int,
+            help="The disk size in Gigabytes.",
+        )
         hparams, args = parser.parse_known_args()
+
+        if hparams.framework != "pytorch_lightning" and hparams.num_nodes > 1:
+            raise ValueError("Multi Node is support only for PyTorch Lightning.")
 
         script_args = []
 
         total_experiments = hparams.total_experiments
 
         if hparams.algorithm == "grid_search":
-            distributions = parse_grid_search(args)
+            distributions = parse_grid_search(script_args, args)
             total_experiments = -1
         elif hparams.algorithm == "random_search":
-            distributions = parse_random_search(args)
-            if hparams.total_experiments is None:
+            distributions = parse_random_search(script_args, args)
+            if not distributions:
+                total_experiments = 1
+            elif distributions and hparams.total_experiments is None:
                 raise Exception("Please, specify the `total_experiments`.")
+            else:
+                total_experiments = hparams.total_experiments
             if hparams.parallel_experiments is None:
-                hparams.parallel_experiments = hparams.total_experiments
+                hparams.parallel_experiments = total_experiments
         else:
             distributions = parse_distributions(script_args, args)
 
@@ -326,12 +408,13 @@ class RunSweepCommand(ClientCommand):
             script_args=script_args,
             distributions=distributions,
             algorithm=hparams.algorithm,
-            framework="pytorch_lightning",
+            framework=hparams.framework,
             cloud_compute=hparams.cloud_compute,
-            num_nodes=1,
+            num_nodes=hparams.num_nodes,
             logger=hparams.logger,
             direction=hparams.direction,
             trials={},
+            disk_size=hparams.disk_size,
         )
         response = self.invoke_handler(config=config)
         print(response)
