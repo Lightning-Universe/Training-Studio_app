@@ -7,8 +7,7 @@ from unittest.mock import MagicMock
 
 import requests
 
-from lightning_hpo.commands.artifacts import download
-from lightning_hpo.commands.artifacts.download import DownloadArtifactsCommand
+from lightning_hpo.commands.artifacts.download import DownloadArtifactsCommand, DownloadArtifactsConfigResponse
 
 
 def test_download_artifacts(monkeypatch, tmpdir):
@@ -17,12 +16,12 @@ def test_download_artifacts(monkeypatch, tmpdir):
 
     with tempfile.TemporaryDirectory() as tmp:
 
-        path = Path(osp.join(tmp, "a/b/c/d/example.txt"))
+        path = Path(osp.join(tmp, "a/something/drive/c/example.txt"))
         os.makedirs(path.parent, exist_ok=True)
         with open(path, "w") as f:
             f.write("example.txt")
 
-        path = Path(osp.join(tmp, "d/a/b/c/example.txt"))
+        path = Path(osp.join(tmp, "e/d/drive/f/example.txt"))
         os.makedirs(path.parent, exist_ok=True)
         with open(path, "w") as f:
             f.write("example.txt")
@@ -33,22 +32,22 @@ def test_download_artifacts(monkeypatch, tmpdir):
                 paths.append(osp.join(d, f))
 
         resp = MagicMock()
-        resp.json.return_value = paths
+        resp.json.return_value = DownloadArtifactsConfigResponse(
+            paths=paths, sweep_names=[], experiment_names=["something"], urls=None
+        ).dict()
         resp.status_code = 200
         post = MagicMock(return_value=resp)
         monkeypatch.setattr(requests, "post", post)
 
-        monkeypatch.setattr(download, "shared_storage_path", lambda: tmp)
-
         output_dir = osp.join(str(tmpdir), ".shared/")
         os.makedirs(output_dir)
-        sys.argv = ["", "--output_dir", output_dir, "--include=a/b"]
+        sys.argv = ["", "--output_dir", output_dir, "--names", "something"]
         command = DownloadArtifactsCommand(None)
         command.command_name = ""
         command.app_url = ""
         command.run()
 
-        assert osp.exists(osp.join(output_dir, "a/b/c/d/example.txt"))
-        assert osp.exists(osp.join(output_dir, "d/a/b/c/example.txt"))
+        assert osp.exists(osp.join(output_dir, "c/example.txt"))
+        assert not osp.exists(osp.join(output_dir, "f/example.txt"))
 
     sys.argv = original_sys_argv

@@ -8,7 +8,7 @@ from unittest.mock import MagicMock
 import requests
 
 from lightning_hpo.commands.artifacts import show
-from lightning_hpo.commands.artifacts.show import ShowArtifactsCommand
+from lightning_hpo.commands.artifacts.show import ShowArtifactsCommand, ShowArtifactsConfigResponse
 
 
 def test_show_artifacts(monkeypatch, tmpdir):
@@ -34,7 +34,7 @@ def test_show_artifacts(monkeypatch, tmpdir):
                 paths.append(osp.join(d, f))
 
         resp = MagicMock()
-        resp.json.return_value = paths
+        resp.json.return_value = ShowArtifactsConfigResponse(sweep_names=[], experiment_names=["b"], paths=paths).dict()
         resp.status_code = 200
         post = MagicMock(return_value=resp)
         monkeypatch.setattr(requests, "post", post)
@@ -45,7 +45,7 @@ def test_show_artifacts(monkeypatch, tmpdir):
 
         output_dir = osp.join(str(tmpdir), ".shared/")
         os.makedirs(output_dir)
-        sys.argv = [""]
+        sys.argv = ["", "--display_mode", "tree", "--names", "b"]
         command = ShowArtifactsCommand(None)
         command.command_name = ""
         command.app_url = ""
