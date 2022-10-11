@@ -43,18 +43,16 @@ class DriveTensorBoardLogger(TensorBoardLogger):
         def _copy(from_path: Path, to_path: Path) -> Optional[Exception]:
 
             try:
-                if str(to_path).endswith(".ckpt") or str(to_path).endswith(".yaml"):
-                    if fs.exists(str(to_path)):
-                        # Delete the files once uploaded
-                        if os.path.exists(from_path):
-                            os.remove(str(from_path))
-                        return
-
                 # NOTE: S3 does not have a concept of directories, so we do not need to create one.
                 if isinstance(fs, LocalFileSystem):
                     fs.makedirs(str(to_path.parent), exist_ok=True)
 
                 fs.put(str(from_path), str(to_path), recursive=False)
+
+                # Don't delete tensorboard logs.
+                if "events.out.tfevents" not in str(from_path):
+                    os.remove(str(from_path))
+
             except Exception as e:
                 # Return the exception so that it can be handled in the main thread
                 return e
