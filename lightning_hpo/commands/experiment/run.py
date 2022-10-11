@@ -51,12 +51,10 @@ class RunExperimentCommand(ClientCommand):
             type=int,
             help="The disk size in Gigabytes.",
         )
+        parser.add_argument(
+            "--drives", nargs="+", default=[], help="Provide a list of drives to add to yhe experiments."
+        )
         hparams, args = parser.parse_known_args()
-
-        if any("=" not in arg for arg in args):
-            raise Exception("Please, provide the arguments as follows --x=y")
-
-        script_args = []
 
         id = str(uuid4()).split("-")[0]
         sweep_id = f"{getuser()}-{id}"
@@ -82,7 +80,7 @@ class RunExperimentCommand(ClientCommand):
             total_experiments=1,
             parallel_experiments=1,
             requirements=hparams.requirements,
-            script_args=script_args,
+            script_args=args,
             distributions={},
             algorithm="",
             framework="pytorch_lightning",
@@ -92,6 +90,7 @@ class RunExperimentCommand(ClientCommand):
             direction="minimize",  # This won't be used
             experiments={0: ExperimentConfig(name=hparams.name or str(uuid4()).split("-")[-1][:7], params={})},
             disk_size=hparams.disk_size,
+            drive_names=hparams.drives,
         )
         response = self.invoke_handler(config=config)
         print(response)

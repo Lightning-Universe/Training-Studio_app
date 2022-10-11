@@ -75,6 +75,7 @@ class SweepConfig(SQLModel, table=True):
     stage: str = Stage.NOT_STARTED
     desired_stage: str = Stage.RUNNING
     disk_size: int = 80
+    drive_names: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
 
     @property
     def num_trials(self) -> int:
@@ -357,6 +358,9 @@ class RunSweepCommand(ClientCommand):
             type=int,
             help="The disk size in Gigabytes.",
         )
+        parser.add_argument(
+            "--drives", nargs="+", default=[], help="Provide a list of drives to add to yhe experiments."
+        )
         hparams, args = parser.parse_known_args()
 
         if hparams.framework != "pytorch_lightning" and hparams.num_nodes > 1:
@@ -417,6 +421,7 @@ class RunSweepCommand(ClientCommand):
             direction=hparams.direction,
             experiments={},
             disk_size=hparams.disk_size,
+            drive_names=hparams.drive,
         )
         response = self.invoke_handler(config=config)
         print(response)
