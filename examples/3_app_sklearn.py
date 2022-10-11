@@ -39,7 +39,8 @@ class MyObjective(Objective):
 app = LightningApp(
     Sweep(
         objective_cls=MyObjective,
-        n_trials=20,
+        total_experiments=20,
+        parallel_experiments=1,
         algorithm=OptunaAlgorithm(
             optuna.create_study(
                 pruner=optuna.pruners.MedianPruner(),

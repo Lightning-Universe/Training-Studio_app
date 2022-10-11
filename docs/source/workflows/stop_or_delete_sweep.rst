@@ -11,6 +11,32 @@ Stop or delete a Sweep
 
 ----
 
+*****************
+Stop a Experiment
+*****************
+
+To stop a experiment use the following commnand:
+
+.. code-block::
+
+   lightning stop experiment --name=<experiment-name>
+
+For example:
+
+.. code-block::
+
+   lightning stop sweep --name=29f40d6
+
+Here is the output of the command:
+
+.. code-block::
+
+   You are connected to the local Lightning App.
+   Stopped the experiment `29f40d6`
+   Your command execution was successful
+
+----
+
 ************
 Stop a Sweep
 ************
@@ -74,14 +100,14 @@ Next Steps
 
 .. displayitem::
    :header: Show or Download Artifacts
-   :description: Learn how to interact with your Training Studio App artifacts
+   :description: Learn how to interact with your Research Studio App artifacts
    :col_css: col-md-4
    :button_link: show_or_download_artifacts.html
    :height: 180
 
 .. displayitem::
    :header: Show or Download Logs
-   :description: Learn how to interact with your Training Studio App logs
+   :description: Learn how to interact with your Research Studio App logs
    :col_css: col-md-4
    :button_link: show_or_download_logs.html
    :height: 180

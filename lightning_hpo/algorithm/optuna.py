@@ -29,7 +29,7 @@ _DISTRIBUTION_TO_OPTUNA = {
 class OptunaAlgorithm(Algorithm):
     def __init__(self, study: Optional[Study] = None, direction: Optional[str] = "minimize") -> None:
         self.study = study or create_study(direction=direction)
-        self.trials: Dict[int, Trial] = {}
+        self.experiments: Dict[int, Trial] = {}
         self.reports = {}
         self.distributions: Dict[str, BaseDistribution] = {}
 
@@ -39,51 +39,51 @@ class OptunaAlgorithm(Algorithm):
             distribution = distribution_cls(**distribution["params"])
             self.distributions[var_name] = distribution
 
-    def register_trials(self, trials_config: List[Dict]) -> None:
-        for trial_config in trials_config:
+    def register_experiments(self, experiments_config: List[Dict]) -> None:
+        for experiment_config in experiments_config:
             trial = optuna.trial.create_trial(
-                params=trial_config["params"],
+                params=experiment_config["params"],
                 distributions=self.distributions,
-                value=trial_config["best_model_score"],
+                value=experiment_config["best_model_score"],
             )
             self.study.add_trial(trial)
 
-    def trial_start(self, trial_id: int) -> None:
-        if trial_id not in self.trials:
-            self.trials[trial_id] = self.study.ask(self.distributions)
+    def experiment_start(self, experiment_id: int) -> None:
+        if experiment_id not in self.experiments:
+            self.experiments[experiment_id] = self.study.ask(self.distributions)
 
-    def trial_end(self, trial_id: int, score: float):
+    def experiment_end(self, experiment_id: int, score: float):
         try:
-            self.study.tell(trial_id, score)
+            self.study.tell(experiment_id, score)
         except RuntimeError as e:
             # The trial has already been added to the study.
             print(e)
             pass
 
         _logger.info(
-            f"Trial {trial_id} finished with value: {score} and parameters: {self.trials[trial_id].params}. "  # noqa: E501
-            f"Best is trial {self.study.best_trial.number} with value: {self.study.best_trial.value}."
+            f"Experiment {experiment_id} finished with value: {score} and parameters: {self.experiments[experiment_id].params}. "  # noqa: E501
+            f"Best is experiment {self.study.best_trial.number} with value: {self.study.best_trial.value}."
         )
 
-    def should_prune(self, trial_id: int, reports: List[Tuple[float, int]]) -> bool:
-        trial = self.trials[trial_id]
-        if trial_id not in self.reports:
-            self.reports[trial_id] = []
+    def should_prune(self, experiment_id: int, reports: List[Tuple[float, int]]) -> bool:
+        trial = self.experiments[experiment_id]
+        if experiment_id not in self.reports:
+            self.reports[experiment_id] = []
 
         for report in reports:
-            if report in self.reports[trial_id]:
+            if report in self.reports[experiment_id]:
                 continue
             trial.report(*report)
-            self.reports[trial_id].append(report)
+            self.reports[experiment_id].append(report)
 
             if trial.should_prune():
-                _logger.info(f"Trial {trial_id} pruned.")
+                _logger.info(f"Trial {experiment_id} pruned.")
                 return True
 
         return False
 
-    def get_params(self, trial_id: int) -> Dict[str, Any]:
-        params = self.trials[trial_id].params
+    def get_params(self, experiment_id: int) -> Dict[str, Any]:
+        params = self.experiments[experiment_id].params
         out = {}
         for k, v in params.items():
             if isinstance(v, float) and v == int(v):
@@ -96,31 +96,31 @@ class OptunaAlgorithm(Algorithm):
 class GridSearch(Algorithm):
     def __init__(self, search_space: Dict[str, Any]):
         sampler = optuna.samplers.GridSampler(search_space)
-        self.trials = {
+        self.experiments = {
             i: {n: v for n, v in zip(sampler._param_names, sampler._all_grids[i])}
             for i in range(len(sampler._all_grids))
         }
 
     @property
     def total_experiments(self) -> int:
-        return len(self.trials)
+        return len(self.experiments)
 
-    def trial_start(self, trial_id: int) -> None:
+    def experiment_start(self, experiment_id: int) -> None:
         pass
 
-    def register_trials(self, trials_config: List[Dict]) -> None:
+    def register_experiments(self, experiments_config: List[Dict]) -> None:
         pass
 
     def register_distributions(self, distributions):
         assert not distributions
 
-    def get_params(self, trial_id: int) -> Dict[str, Any]:
-        return self.trials[trial_id]
+    def get_params(self, experiment_id: int) -> Dict[str, Any]:
+        return self.experiments[experiment_id]
 
     def should_prune(self) -> bool:
         return False
 
-    def trial_end(self, trial_id: int, score: float):
+    def experiment_end(self, experiment_id: int, score: float):
         pass
 
 
@@ -130,7 +130,7 @@ class RandomSearch(Algorithm):
         self.distributions = {}
         distributions = apply_to_collection(distributions, Distribution, lambda x: x.to_dict())
         self._register_distributions(distributions)
-        self.trials = {}
+        self.experiments = {}
 
     def _register_distributions(self, distributions: Dict[str, DistributionDict]):
         for var_name, distribution in distributions.items():
@@ -138,23 +138,23 @@ class RandomSearch(Algorithm):
             distribution = distribution_cls(**distribution["params"])
             self.distributions[var_name] = distribution
 
-    def trial_start(self, trial_id: int) -> None:
-        self.trials[trial_id] = self.study.ask(self.distributions)
+    def experiment_start(self, experiment_id: int) -> None:
+        self.experiments[experiment_id] = self.study.ask(self.distributions)
 
-    def register_trials(self, trials_config: List[Dict]) -> None:
-        for trial_config in trials_config:
+    def register_experiments(self, experiments_config: List[Dict]) -> None:
+        for experiment_config in experiments_config:
             trial = optuna.trial.create_trial(
-                params=trial_config["params"],
+                params=experiment_config["params"],
                 distributions=self.distributions,
-                value=trial_config["best_model_score"],
+                value=experiment_config["best_model_score"],
             )
             self.study.add_trial(trial)
 
     def register_distributions(self, distributions):
         assert not distributions
 
-    def get_params(self, trial_id: int) -> Dict[str, Any]:
-        params = self.trials[trial_id].params
+    def get_params(self, experiment_id: int) -> Dict[str, Any]:
+        params = self.experiments[experiment_id].params
         out = {}
         for k, v in params.items():
             if isinstance(v, float) and v == int(v):
@@ -166,5 +166,5 @@ class RandomSearch(Algorithm):
     def should_prune(self) -> bool:
         return False
 
-    def trial_end(self, trial_id: int, score: float):
+    def experiment_end(self, experiment_id: int, score: float):
         pass

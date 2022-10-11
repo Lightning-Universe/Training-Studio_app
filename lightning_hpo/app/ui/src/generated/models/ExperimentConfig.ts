@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type TrialConfig = {
+export type ExperimentConfig = {
     name: string;
     best_model_score?: number;
     monitor?: string;

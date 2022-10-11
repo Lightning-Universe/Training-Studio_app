@@ -11,8 +11,17 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
     """This component executes a PyTorch Lightning script
     and injects a callback in the Trainer at runtime in order to start tensorboard server."""
 
-    def __init__(self, *args, logger: str, sweep_id: str, trial_id: int, trial_name: str, num_nodes: int, **kwargs):
-        Objective.__init__(self, logger=logger, sweep_id=sweep_id, trial_id=trial_id, trial_name=trial_name, **kwargs)
+    def __init__(
+        self, *args, logger: str, sweep_id: str, experiment_id: int, experiment_name: str, num_nodes: int, **kwargs
+    ):
+        Objective.__init__(
+            self,
+            logger=logger,
+            sweep_id=sweep_id,
+            experiment_id=experiment_id,
+            experiment_name=experiment_name,
+            **kwargs,
+        )
         PyTorchLightningScriptRunner.__init__(self, *args, num_nodes=num_nodes, **kwargs)
         self.progress = None
         self.total_parameters = None
@@ -98,19 +107,21 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
 
 
 class ObjectiveLightningTrainingComponent(LightningTrainingComponent):
-    def __init__(self, *args, trial_id: int, trial_name: str, logger: str, sweep_id: str, num_nodes: int = 1, **kwargs):
+    def __init__(
+        self, *args, experiment_id: int, experiment_name: str, logger: str, sweep_id: str, num_nodes: int = 1, **kwargs
+    ):
         super().__init__(
             *args,
             script_runner=PyTorchLightningObjective,
             logger=logger,
             sweep_id=sweep_id,
-            trial_id=trial_id,
-            trial_name=trial_name,
+            experiment_id=experiment_id,
+            experiment_name=experiment_name,
             num_nodes=num_nodes,
             **kwargs,
         )
-        self.trial_id = trial_id
-        self.trial_name = trial_name
+        self.experiment_id = experiment_id
+        self.experiment_name = experiment_name
         self.has_stopped = False
         self.pruned = False
         self.params = None

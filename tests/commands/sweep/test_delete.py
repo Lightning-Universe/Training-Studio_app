@@ -17,9 +17,9 @@ def test_delete_sweeps_server(monkeypatch, tmpdir):
         data = json.load(f)
 
     sweep_config = SweepConfig(**data[0])
-    trial = deepcopy(sweep_config.trials[0])
+    trial = deepcopy(sweep_config.experiments[0])
     trial.stage = Stage.RUNNING
-    sweep_config.trials[1] = trial
+    sweep_config.experiments[1] = trial
     sweep_config.logger = "streamlit"
     sweep = Sweep.from_config(config=sweep_config)
 

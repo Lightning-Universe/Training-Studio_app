@@ -24,13 +24,13 @@ def test_wandb_logger(monkeypatch):
 
     monkeypatch.setattr(os, "environ", {"WANDB_API_KEY": "a", "WANDB_ENTITY": "b"})
     logger = wandb_logger.WandbLogger()
-    logger.on_after_trial_start("a")
+    logger.on_after_experiment_start("a")
     assert report.title == "A Report"
     assert logger.report_url == "https://wandb.ai/b/a/reports/a--c"
 
     report.save.assert_called()
     logger.report.blocks = None
-    logger.on_after_trial_end("a", 0, "val_acc", 1, {"x": 1})
+    logger.on_after_experiment_end("a", 0, "val_acc", 1, {"x": 1})
     assert logger.report.blocks
 
     assert logger.configure_layout() == [

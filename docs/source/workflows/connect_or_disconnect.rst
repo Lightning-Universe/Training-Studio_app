@@ -79,10 +79,10 @@ If you are already connected to a Lightning App, disconnect from the App using t
 ----
 
 *******************
-Training Studio CLI
+Research Studio CLI
 *******************
 
-The Lightning Training Studio App provides a CLI to interact with the App once running.
+The Lightning Research Studio App provides a CLI to interact with the App once running.
 
 .. code-block::
 
@@ -117,57 +117,58 @@ Next Steps
       <div class="row">
 
 .. displayitem::
-   :header: Run a Sweep
+   :header: Run a Sweep or Experiment
    :description: Learn how to run a Sweep with your own python script
    :col_css: col-md-4
    :button_link: run_sweep.html
    :height: 180
 
 .. displayitem::
-   :header: Show Sweeps
+   :header: Show Sweeps & Experiments
    :description: Learn how to view the existing sweeps
    :col_css: col-md-4
    :button_link: show_sweeps.html
    :height: 180
 
 .. displayitem::
-   :header: Stop or delete a Sweep
+   :header: Stop or delete a Sweep & Experiment
    :description: Learn how to stop or delete an existing sweep
    :col_css: col-md-4
    :button_link: stop_or_delete_sweep.html
    :height: 180
 
-.. displayitem::
-   :header: Run a Notebook
-   :description: Learn how to run a notebook locally or in the cloud
-   :col_css: col-md-4
-   :button_link: run_notebook.html
-   :height: 180
+..
+   .. displayitem::
+      :header: Run a Notebook
+      :description: Learn how to run a notebook locally or in the cloud
+      :col_css: col-md-4
+      :button_link: run_notebook.html
+      :height: 180
 
-.. displayitem::
-   :header: Show Notebooks
-   :description: Learn how to view the existing notebooks
-   :col_css: col-md-4
-   :button_link: show_notebooks.html
-   :height: 180
+   .. displayitem::
+      :header: Show Notebooks
+      :description: Learn how to view the existing notebooks
+      :col_css: col-md-4
+      :button_link: show_notebooks.html
+      :height: 180
 
-.. displayitem::
-   :header: Stop or delete a Notebook
-   :description: Learn how to stop or delete an existing notebook
-   :col_css: col-md-4
-   :button_link: stop_or_delete_notebook.html
-   :height: 180
+   .. displayitem::
+      :header: Stop or delete a Notebook
+      :description: Learn how to stop or delete an existing notebook
+      :col_css: col-md-4
+      :button_link: stop_or_delete_notebook.html
+      :height: 180
 
 .. displayitem::
    :header: Show or Download Artifacts
-   :description: Learn how to interact with your Training Studio App artifacts
+   :description: Learn how to interact with your Research Studio App artifacts
    :col_css: col-md-6
    :button_link: show_or_download_artifacts.html
    :height: 180
 
 .. displayitem::
    :header: Show or Download Logs
-   :description: Learn how to interact with your Training Studio App logs
+   :description: Learn how to interact with your Research Studio App logs
    :col_css: col-md-6
    :button_link: show_or_download_logs.html
    :height: 180

@@ -3,9 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-###########################
-Welcome to ⚡ Lightning HPO
-###########################
+#################################
+Welcome to ⚡ Research Studio App
+#################################
 
 .. twocolumns::
    :left:
@@ -21,9 +21,9 @@ Welcome to ⚡ Lightning HPO
 
 ----
 
-*****************************************************
-Install Lightning HPO and Run the Training Studio App
-*****************************************************
+***************************
+Run the Research Studio App
+***************************
 
 .. note:: This is only temporary as some changes are being released to PiPy
 
@@ -45,15 +45,7 @@ Make sure everything works fine in the cloud:
 
 .. code-block:: bash
 
-   PACKAGE_LIGHTNING=1 python -m lightning run app app.py --cloud
-
-Here is how the Training Studio App looks like:
-
-.. raw:: html
-
-   <video id="background-video" autoplay loop muted controls poster="https://pl-flash-data.s3.amazonaws.com/assets_lightning/training_studio_example.PNG" width="100%">
-      <source src="https://pl-flash-data.s3.amazonaws.com/assets_lightning/training_studio.mp4" type="video/mp4" width="100%">
-   </video>
+   PACKAGE_LIGHTNINGpython -m lightning run app app.py --cloud
 
 .. note:: On MacOS, if you face OSError: [Errno 24] Too many open files, you can increase the process limit with: **ulimit -Sn 50000**
 
@@ -70,17 +62,10 @@ Get Started
       <div class="row">
 
 .. displayitem::
-   :header: The Training Studio App
-   :description: Manage Sweeps and Tools to accelerate Training.
-   :col_css: col-md-6
+   :header: The Research Studio App
+   :description: Manage Sweeps and Experiments to accelerate Training.
+   :col_css: col-md-12
    :button_link: training_studio.html
-   :height: 180
-
-.. displayitem::
-   :header: Run a Sweep with PyTorch Lightning
-   :description: Discover PyTorch Lightning and train your first Model.
-   :col_css: col-md-6
-   :button_link: workflows/optimize_with_pytorch_lightning.html
    :height: 180
 
 .. raw:: html
@@ -106,11 +91,17 @@ Get Started
 
 .. toctree::
    :maxdepth: 1
-   :caption: Training Studio: How to...
+   :caption: Use Research Studio to...
 
-   Run the Training Studio App <workflows/run_training_studio_app>
+   Run the Research Studio App <workflows/run_training_studio_app>
    Connect or Disconnect to a Lightning App <workflows/connect_or_disconnect>
-   Run a Sweep <workflows/run_sweep>
+   Run a Sweep or Experiment <workflows/run_sweep>
+   Show Sweeps or Experiments <workflows/show_sweeps>
+   Stop or delete a Sweep or Experiment <workflows/stop_or_delete_sweep>
+   Show or download Artifacts <workflows/show_or_download_artifacts>
+   Show or download Logs <workflows/show_or_download_logs>
+
+..
    Run a Notebook <workflows/run_notebook>
    Show Sweeps <workflows/show_sweeps>
    Show Notebooks <workflows/show_notebooks>
@@ -119,10 +110,11 @@ Get Started
    Show or download Artifacts <workflows/show_or_download_artifacts>
    Show or download Logs <workflows/show_or_download_logs>
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Lightning HPO: How to...
+..
+   .. toctree::
+      :maxdepth: 1
+      :caption: Use Lightning HPO to...
 
-   Convert from raw Optuna <workflows/convert_from_raw_optuna>
-   Optimize with PyTorch Lightning <workflows/optimize_with_pytorch_lightning>
-   Configure your loggers <workflows/loggers>
+      Convert from raw Optuna <workflows/convert_from_raw_optuna>
+      Optimize with PyTorch Lightning <workflows/optimize_with_pytorch_lightning>
+      Configure your loggers <workflows/loggers>

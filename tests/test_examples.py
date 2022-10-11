@@ -6,12 +6,12 @@ from lightning.app.testing import application_testing, LightningTestApp
 
 
 class LightningHPOTestApp(LightningTestApp):
-    def __init__(self, root, n_trials=4, **kwargs):
-        root.n_trials = n_trials
+    def __init__(self, root, total_experiments=2, **kwargs):
+        root.total_experiments = total_experiments
         super().__init__(root, **kwargs)
 
     def on_before_run_once(self):
-        if self.root.trials_done == self.root.n_trials:
+        if self.root.total_experiments_done == self.root.total_experiments:
             return True
 
 
@@ -37,7 +37,7 @@ def test_pytorch_lightning_objective_sweep_wandb():
         "--open-ui",
         "False",
     ]
-    result = application_testing(partial(LightningHPOTestApp, n_trials=1), command_line)
+    result = application_testing(partial(LightningHPOTestApp, total_experiments=1), command_line)
     assert result.exit_code == 0, result.__dict__
 
 
@@ -48,5 +48,5 @@ def test_pytorch_lightning_custom_objective_sweep():
         "--open-ui",
         "False",
     ]
-    result = application_testing(partial(LightningHPOTestApp, n_trials=1), command_line)
+    result = application_testing(partial(LightningHPOTestApp, total_experiments=1), command_line)
     assert result.exit_code == 0, result.__dict__

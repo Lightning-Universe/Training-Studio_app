@@ -3,20 +3,20 @@
 /* eslint-disable */
 
 import type { Distributions } from './Distributions';
-import type { TrialConfig } from './TrialConfig';
+import type { ExperimentConfig } from './ExperimentConfig';
 
 export type SweepConfig = {
     sweep_id: string;
     script_path: string;
-    n_trials: number;
-    simultaneous_trials: number;
-    trials_done?: number;
+    total_experiments: number;
+    parallel_experiments: number;
+    total_experiments_done?: number;
     requirements: Array<string>;
     script_args: Array<string>;
     algorithm: string;
     distributions: Record<string, Distributions>;
     logger_url?: string;
-    trials: Record<string, TrialConfig>;
+    experiments: Record<string, ExperimentConfig>;
     framework: string;
     cloud_compute?: string;
     num_nodes?: number;

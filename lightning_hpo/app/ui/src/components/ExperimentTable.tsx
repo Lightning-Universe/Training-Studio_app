@@ -1,7 +1,7 @@
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { Box, Button, Link, Stack, Table, Typography } from 'lightning-ui/src/design-system/components';
 import Status, { StatusEnum } from 'lightning-ui/src/shared/components/Status';
-import { AppClient, SweepConfig, TensorboardConfig, TrialConfig } from '../generated';
+import { AppClient, ExperimentConfig, SweepConfig, TensorboardConfig } from '../generated';
 import useClientDataState from '../hooks/useClientDataState';
 import { getAppId } from '../utilities';
 import BorderLinearProgress from './BorderLinearProgress';
@@ -26,6 +26,7 @@ const statusToEnum = {
 
 const ComputeToMachines = {
   'cpu': '1 CPU',
+  'cpu-medium': '2 CPU',
   'gpu': '1 T4',
   'gpu-fast': '1 V100',
   'gpu-fast-multi': '4 V100',
@@ -80,15 +81,15 @@ function toCompute(sweep: SweepConfig) {
   }
 }
 
-function toProgress(trial: TrialConfig) {
+function toProgress(experiment: ExperimentConfig) {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
       <Box sx={{ width: '100%', mr: 1 }}>
-        <BorderLinearProgress variant={trial.progress == 0 ? null : 'determinate'} value={trial.progress} />
+        <BorderLinearProgress variant={experiment.progress == 0 ? null : 'determinate'} value={experiment.progress} />
       </Box>
-      {trial.progress ? (
+      {experiment.progress ? (
         <Box sx={{ minWidth: 35 }}>
-          <Typography variant="caption" display="block">{`${trial.progress}%`}</Typography>
+          <Typography variant="caption" display="block">{`${experiment.progress}%`}</Typography>
         </Box>
       ) : (
         <Box></Box>
@@ -97,8 +98,8 @@ function toProgress(trial: TrialConfig) {
   );
 }
 
-function startTime(trial: TrialConfig) {
-  return trial.start_time ? String(trial.start_time) : <Box></Box>;
+function startTime(experiment: ExperimentConfig) {
+  return experiment.start_time ? String(experiment.start_time) : <Box></Box>;
 }
 
 export function Experiments() {
@@ -119,7 +120,7 @@ export function Experiments() {
         </UserGuideBody>
         <UserGuideComment>Run a sweep</UserGuideComment>
         <UserGuideBody enableClipBoard={enableClipBoard}>
-          lightning run sweep train.py --model.lr "[0.01, 0.02, 0.03]" --data.batch "[32, 64]"
+          lightning run sweep train.py --model.lr "[0.001, 0.01, 0.1]" --data.batch "[32, 64]"
           --algorithm="grid_search"
         </UserGuideBody>
       </UserGuide>
@@ -142,12 +143,11 @@ export function Experiments() {
     }),
   );
 
-  /* TODO: Merge the Specs */
   var rows = sweeps.map(sweep => {
     const tensorboardConfig =
       sweep.sweep_id in tensorboardIdsToStatuses ? tensorboardIdsToStatuses[sweep.sweep_id] : null;
 
-    return Object.entries(sweep.trials).map(entry => [
+    return Object.entries(sweep.experiments).map(entry => [
       toProgress(entry[1]),
       entry[1].name,
       String(entry[1].best_model_score),

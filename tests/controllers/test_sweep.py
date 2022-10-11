@@ -13,9 +13,9 @@ def test_sweep_controller(monkeypatch):
     sweep = Sweep(
         sweep_id="a",
         script_path=__file__,
-        n_trials=5,
+        total_experiments=5,
         requirements=[],
-        simultaneous_trials=1,
+        parallel_experiments=1,
         logger="tensorboard",
         distributions={"best_model_score": Uniform(1, 10)},
         framework="pytorch_lightning",

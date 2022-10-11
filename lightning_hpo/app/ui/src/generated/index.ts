@@ -15,6 +15,7 @@ export type { DeleteSweepConfig } from './models/DeleteSweepConfig';
 export type { Distributions } from './models/Distributions';
 export type { DownloadArtifactsConfig } from './models/DownloadArtifactsConfig';
 export type { DriveConfig } from './models/DriveConfig';
+export type { ExperimentConfig } from './models/ExperimentConfig';
 export type { HTTPValidationError } from './models/HTTPValidationError';
 export type { NotebookConfig } from './models/NotebookConfig';
 export type { ShowArtifactsConfig } from './models/ShowArtifactsConfig';
@@ -24,7 +25,6 @@ export type { StopSweepConfig } from './models/StopSweepConfig';
 export type { StopTensorboardConfig } from './models/StopTensorboardConfig';
 export type { SweepConfig } from './models/SweepConfig';
 export type { TensorboardConfig } from './models/TensorboardConfig';
-export type { TrialConfig } from './models/TrialConfig';
 export type { ValidationError } from './models/ValidationError';
 
 export { AppClientCommandService } from './services/AppClientCommandService';
