@@ -9,7 +9,6 @@ tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = LanguageModelingTransformer(
     pretrained_model_name_or_path=model_name,
     tokenizer=tokenizer,
-    deepspeed_sharding=True,  # defer initialization of the model to shard/load pre-train weights
 )
 
 dm = LanguageModelingDataModule(
@@ -21,7 +20,7 @@ dm = LanguageModelingDataModule(
 trainer = pl.Trainer(
     accelerator="auto",
     devices="auto",
-    strategy="deepspeed_stage_3",
+    strategy="ddp",
     precision=16,
     max_epochs=20,
 )
