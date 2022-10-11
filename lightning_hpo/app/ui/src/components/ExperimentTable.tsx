@@ -119,7 +119,7 @@ export function Experiments() {
         </UserGuideBody>
         <UserGuideComment>Run a sweep</UserGuideComment>
         <UserGuideBody enableClipBoard={enableClipBoard}>
-          lightning run sweep train.py --model.lr "[0.01, 0.02, 0.03]" --data.batch "[32, 64]"
+          lightning run sweep train.py --model.lr "[0.001, 0.01, 0.1]" --data.batch "[32, 64]"
           --algorithm="grid_search"
         </UserGuideBody>
       </UserGuide>
@@ -142,12 +142,11 @@ export function Experiments() {
     }),
   );
 
-  /* TODO: Merge the Specs */
   var rows = sweeps.map(sweep => {
     const tensorboardConfig =
       sweep.sweep_id in tensorboardIdsToStatuses ? tensorboardIdsToStatuses[sweep.sweep_id] : null;
 
-    return Object.entries(sweep.trials).map(entry => [
+    return Object.entries(sweep.experiments).map(entry => [
       toProgress(entry[1]),
       entry[1].name,
       String(entry[1].best_model_score),

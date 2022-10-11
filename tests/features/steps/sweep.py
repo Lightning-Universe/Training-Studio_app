@@ -21,7 +21,7 @@ def step_impl(context):
         "sweep",
         os.path.abspath(os.path.join(_PROJECT_ROOT, "examples", "scripts", "train.py")),
         f"--name={context.sweep_name}",
-        "--n_trials=5",
+        "--total_experiments=5",
         "--logger=tensorboard",
         "--direction=maximize",
         "--model.lr='log_uniform(0.001, 0.01)'",

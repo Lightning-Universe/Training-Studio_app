@@ -49,7 +49,7 @@ def run_app(context):
                 try:
                     time.sleep(5)
                     context.page.goto(get_app_url(RuntimeType.MULTIPROCESS))
-                    locator = context.page.frame_locator("iframe").locator("text=Training Studio")
+                    locator = context.page.frame_locator("iframe").locator("text=Research Studio")
                     expect(locator).to_be_visible(timeout=30 * 1000)
                     break
                 except:  # noqa: E722

@@ -10,22 +10,22 @@ from lightning_hpo.commands.sweep.run import SweepConfig
 def _show_experiments(sweeps: List[SweepConfig]):
     table = Table(
         "name",
-        "status",
+        "progress",
         "best_model_score",
-        "sweep_id",
+        "sweep_name",
         title="Experiments",
         show_header=True,
         header_style="bold green",
     )
 
     for sweep in sweeps:
-        trials = sweep.trials.values()
-        for trial in trials:
+        experiments = sweep.experiments.values()
+        for trial in experiments:
             table.add_row(
                 str(trial.name),
                 str(trial.stage),
                 str(round(trial.best_model_score, 2) if trial.best_model_score else None),
-                None if len(trials) == 1 else sweep.sweep_id,
+                None if len(experiments) == 1 else sweep.sweep_id,
             )
     console = Console()
     console.print(table)

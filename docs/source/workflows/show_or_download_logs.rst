@@ -15,7 +15,7 @@ Show or download logs
 1. Check available options
 **************************
 
-The Training Studio App CLI provides its own help.
+The Research Studio App CLI provides its own help.
 
 .. code-block::
 
@@ -85,7 +85,7 @@ Next Steps
 
 .. displayitem::
    :header: Show or Download Artifacts
-   :description: Learn how to interact with your Training Studio App artifacts
+   :description: Learn how to interact with your Research Studio App artifacts
    :col_css: col-md-4
    :button_link: show_or_download_artifacts.html
    :height: 180

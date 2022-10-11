@@ -103,7 +103,7 @@ Next Steps
       <div class="row">
 
 .. displayitem::
-   :header: The Training Studio App
+   :header: The Research Studio App
    :description: Manage Sweeps and Tools to accelerate Training.
    :col_css: col-md-6
    :button_link: ../training_studio.html

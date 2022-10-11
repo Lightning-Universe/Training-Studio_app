@@ -15,53 +15,23 @@ Run a Sweep
 1. Check available options
 **************************
 
-The Training Studio App CLI provides its own help.
+The Research Studio App CLI provides its own help.
+
+You can run the following command to learn more:
+
+.. code-block::
+
+   lightning run experiment --help
 
 .. code-block::
 
    lightning run sweep --help
 
-   Here is the output of the command:
-
-.. code-block::
-
-   You are connected to the local Lightning App.
-   usage: sweep [-h] [--n_trials N_TRIALS] [--simultaneous_trials SIMULTANEOUS_TRIALS]
-               [--requirements REQUIREMENTS] [--framework FRAMEWORK]
-               [--cloud_compute {cpu,cpu-small,cpu-medium,gpu,gpu-fast,gpu-fast-multi}] [--name NAME]
-               [--logger {tensorboard,wandb}] [--direction {minimize,maximize}]
-               script_path
-
-   positional arguments:
-   script_path           The path to the script to run.
-
-   optional arguments:
-   -h, --help            show this help message and exit
-   --n_trials N_TRIALS   Number of trials to run.
-   --simultaneous_trials SIMULTANEOUS_TRIALS
-                           Number of trials to run.
-   --requirements REQUIREMENTS
-                           List of requirements separated by a comma or requirements.txt filepath.
-   --framework FRAMEWORK
-                           The framework you are using. Under the hood, we automate logging, check-pointing,
-                           etc..
-   --cloud_compute {cpu,cpu-small,cpu-medium,gpu,gpu-fast,gpu-fast-multi}
-                           The machine to use in the cloud.
-   --name NAME           The sweep you want to run upon.
-   --logger {tensorboard,wandb}
-                           The logger to use with your sweep.
-   --direction {minimize,maximize}
-                           In which direction to optimize.
-
-   Your Hyper Parameters: They are sampled from a bayesian sampler and passed to your script directly.
-   Currently, we support only 3 distributions: `log_uniform`, `uniform` and `categorical`. Learn more there:
-   https://lightning-ai.github.io/lightning-hpo/workflows/run_sweep.html#configure-your-hyper-parameters
-
 ----
 
-**************
-2. Run a Sweep
-**************
+********************
+2. Run an Experiment
+********************
 
 In this example, we are going to run a Sweep from this `train.py <https://github.com/Lightning-AI/lightning-hpo/blob/master/examples/scripts/train.py>`_ file.
 
@@ -71,23 +41,21 @@ Download the training script as follows. Alternatively, you can use ``curl``.
 
    wget https://raw.githubusercontent.com/Lightning-AI/lightning-hpo/master/examples/scripts/train.py
 
+.. code-block::
 
-Here is the command line with the hyper-parameters.
+   lightning run experiment train.py
+
+**************
+3. Run a Sweep
+**************
+
+In order to run a Sweep, you can pass arguments as follow to perform ``grid_search``.
 
 .. code-block::
 
-   lightning run sweep train.py \
-         --n_trials=100 \
-         --simultaneous_trials=5 \
-         --logger="tensorboard" \
-         --direction=maximize \
-         --cloud_compute=cpu-medium \
-         --model.lr="log_uniform(0.001, 0.01)" \
-         --model.gamma="uniform(0.5, 0.8)" \
-         --requirements="torchvision, wandb, 'jsonargparse[signatures]'" \
-         --data.batch_size="categorical([32, 64])"
+   lightning run sweep train.py --model.lr "[0.001, 0.01, 0.1]" --data.batch "[32, 64]" --algorithm="grid_search"
 
-Finally, your code is uploaded to the App and the Training Studio App responds that the Sweep ``1dbfed8a`` was launched.
+Finally, your code is uploaded to the App and the Research Studio App responds that the Sweep ``1dbfed8a`` was launched.
 
 .. code-block::
 
@@ -100,7 +68,25 @@ Finally, your code is uploaded to the App and the Training Studio App responds t
 3. Configure your hyper-parameters
 **********************************
 
-In order to randomize your sweep arguments, we currently only support ``categorical``, ``log_uniform``, and ``uniform`` distributions. Please open a feature request to add more!
+In order to randomize your sweeps, you can decide upon which strategy to run upon.
+
+We support ``grid_search``, ``random_search`` and ``bayesian`` algorithms.
+
+When using ``grid_search`` algorithm, you would need to pass list of elements to be selected as follows:
+
+.. code-block::
+
+   lightning run sweep train.py --model.lr "[0.001, 0.01, 0.1]" --data.batch "[32, 64]" --algorithm="grid_search"
+
+Alternatively, you can create a range
+
+.. code-block::
+
+   lightning run sweep train.py --model.lr "[0.001, 0.01, 0.1]" --data.batch "range(16, 128, 16)" --algorithm="grid_search"
+
+When using ``random_search`` or ``bayesian`` algorithm, you can select from distribution as follows:
+
+We currently only support ``categorical``, ``log_uniform``, and ``uniform`` distributions. Please open a feature request to add more!
 
 Under the hood, it uses `Optuna <https://optuna.org/>`_ and a `bayesian sampling strategy <https://optuna.readthedocs.io/en/stable/_modules/optuna/samplers/_tpe/sampler.html>`_.
 
@@ -145,25 +131,26 @@ Next Steps
       <div class="row">
 
 .. displayitem::
-   :header: Show Sweeps
+   :header: Show Sweeps & Experiments
    :description: Learn how to view the existing sweeps
-   :col_css: col-md-4
+   :col_css: col-md-6
    :button_link: show_sweeps.html
    :height: 180
 
 .. displayitem::
-   :header: Stop or delete a Sweep
+   :header: Stop or delete a Sweep & Experiments
    :description: Learn how to stop or delete an existing sweep
-   :col_css: col-md-4
+   :col_css: col-md-6
    :button_link: stop_or_delete_sweep.html
    :height: 180
 
-.. displayitem::
-   :header: Run a Notebook
-   :description: Learn how to run a notebook locally or in the cloud
-   :col_css: col-md-4
-   :button_link: run_notebook.html
-   :height: 180
+..
+   .. displayitem::
+      :header: Run a Notebook
+      :description: Learn how to run a notebook locally or in the cloud
+      :col_css: col-md-4
+      :button_link: run_notebook.html
+      :height: 180
 
 .. raw:: html
 

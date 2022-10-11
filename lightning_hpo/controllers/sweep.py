@@ -84,10 +84,10 @@ class SweepController(Controller):
             for w in sweep.works():
                 w.stop()
             sweep.stage = Stage.STOPPED
-            sweep_config = sweep.collect_model()
-            for trial in sweep_config.trials.values():
-                if trial.stage == Stage.RUNNING:
-                    trial.stage = Stage.STOPPED
+            sweep_config: SweepConfig = sweep.collect_model()
+            for experiment in sweep_config.experiments.values():
+                if experiment.stage == Stage.RUNNING:
+                    experiment.stage = Stage.STOPPED
             self.db.put(sweep_config)
             return f"Stopped the sweep `{config.sweep_id}`"
         return f"We didn't find the sweep `{config.sweep_id}`"
@@ -113,13 +113,13 @@ class SweepController(Controller):
     def stop_experiment(self, config: StopExperimentConfig):
         sweeps_config: List[SweepConfig] = self.db.get()
         for sweep in sweeps_config:
-            for trial_id, trial in enumerate(sweep.trials.values()):
-                if config.name == trial.name:
-                    if trial.stage == Stage.SUCCEEDED:
-                        return f"The current trial `{trial.name}` has already succeeded."
-                    self.r[sweep.sweep_id].stop_experiment(trial_id)
-                    return f"The current trial `{trial.name}` has been stopped."
-        return f"The current trial `{config.name}` doesn't exist."
+            for experiment_id, experiment in enumerate(sweep.experiments.values()):
+                if config.name == experiment.name:
+                    if experiment.stage == Stage.SUCCEEDED:
+                        return f"The current experiment `{experiment.name}` has already succeeded."
+                    self.r[sweep.sweep_id].stop_experiment(experiment_id)
+                    return f"The current experiment `{experiment.name}` has been stopped."
+        return f"The current experiment `{config.name}` doesn't exist."
 
     def configure_commands(self):
         return [

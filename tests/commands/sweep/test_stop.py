@@ -18,9 +18,9 @@ def test_stop_sweeps_server(monkeypatch):
         data = json.load(f)
 
     sweep_config = SweepConfig(**data[0])
-    trial = deepcopy(sweep_config.trials[0])
+    trial = deepcopy(sweep_config.experiments[0])
     trial.stage = Stage.RUNNING
-    sweep_config.trials[1] = trial
+    sweep_config.experiments[1] = trial
     sweep_config.logger = "streamlit"
     sweep = Sweep.from_config(config=sweep_config)
 
@@ -37,5 +37,5 @@ def test_stop_sweeps_server(monkeypatch):
     result = sweep_controller.stop_sweep(config=StopSweepConfig(sweep_id=sweep_config.sweep_id))
     assert result == "Stopped the sweep `thomas-cb8f69f0`"
     assert sweep_mock.stage == Stage.STOPPED
-    assert sweep_config.trials[0].stage == Stage.NOT_STARTED
-    assert sweep_config.trials[1].stage == Stage.STOPPED
+    assert sweep_config.experiments[0].stage == Stage.NOT_STARTED
+    assert sweep_config.experiments[1].stage == Stage.STOPPED

@@ -1,6 +1,6 @@
 <div align="center">
     <h1>
-        Lightning HPO & Training Studio App
+        Lightning HPO & Research Studio App
     </h1>
     <img src="https://pl-flash-data.s3.amazonaws.com/assets_lightning/lightning_hpo_logo.png">
 
@@ -23,7 +23,7 @@ This library relies on [Optuna](https://optuna.readthedocs.io/en/stable/) for pr
 
 This is built upon the highly scalable and distributed [Lightning App](https://lightning.ai/lightning-docs/get_started/what_app_can_do.html) framework from [lightning.ai](https://lightning.ai/).
 
-The [Training Studio App](https://lightning-ai.github.io/lightning-hpo/training_studio.html) relies on Lightning HPO to provide abilities to run, show, stop, delete Sweeps, Notebooks, Tensorboard, etc.
+The [Research Studio App](https://lightning-ai.github.io/lightning-hpo/training_studio.html) relies on Lightning HPO to provide abilities to run, show, stop, delete Sweeps, Notebooks, Tensorboard, etc.
 
 Learn more [here](https://github.com/Lightning-AI/lightning-hpo#the-training-studio-app).
 
@@ -76,8 +76,8 @@ from lightning_hpo.distributions import Uniform
 app = LightningApp(
     Sweep(
         script_path="objective.py",
-        n_trials=50,
-        simultaneous_trials=10,
+        total_experiments=50,
+        parallel_experiments=10,
         direction="maximize",
         distributions={"x": Uniform(-10, 10)},
     )
@@ -117,8 +117,8 @@ from lightning_hpo.distributions import Uniform, IntUniform, Categorical, LogUni
 app = LightningApp(
     Sweep(
         script_path="train.py",
-        n_trials=100,
-        simultaneous_trials=10,
+        total_experiments=100,
+        parallel_experiments=10,
         distributions={
             "model.lr": LogUniform(0.001, 0.1),
             "model.gamma": Uniform(0.5, 0.8),
@@ -246,7 +246,7 @@ class MyObjective(Objective):
 app = LightningApp(
     Sweep(
         objective_cls=MyObjective,
-        n_trials=20,
+        total_experiments=20,
         algorithm=OptunaAlgorithm(
             optuna.create_study(pruner=optuna.pruners.MedianPruner()),
             direction="maximize",
@@ -331,7 +331,7 @@ Sweep(
 Learn more [here](https://optuna.readthedocs.io/en/stable/tutorial/10_key_features/003_efficient_optimization_algorithms.html?highlight=hyperband#activating-pruners)
 
 ______________________________________________________________________
-## The Training Studio App
+## The Research Studio App
 
 In terminal 1, run the Lightning App.
 
@@ -371,8 +371,8 @@ cd examples/scripts
 
 ```bash
 lightning run sweep train.py \
-      --n_trials=100 \
-      --simultaneous_trials=5 \
+      --total_experiments=100 \
+      --parallel_experiments=5 \
       --logger="tensorboard" \
       --direction=maximize \
       --cloud_compute=cpu-medium \

@@ -39,7 +39,7 @@ class OptunaAlgorithm(Algorithm):
             distribution = distribution_cls(**distribution["params"])
             self.distributions[var_name] = distribution
 
-    def register_trials(self, trials_config: List[Dict]) -> None:
+    def register_experiments(self, trials_config: List[Dict]) -> None:
         for trial_config in trials_config:
             trial = optuna.trial.create_trial(
                 params=trial_config["params"],
@@ -108,7 +108,7 @@ class GridSearch(Algorithm):
     def trial_start(self, trial_id: int) -> None:
         pass
 
-    def register_trials(self, trials_config: List[Dict]) -> None:
+    def register_experiments(self, trials_config: List[Dict]) -> None:
         pass
 
     def register_distributions(self, distributions):
@@ -141,7 +141,7 @@ class RandomSearch(Algorithm):
     def trial_start(self, trial_id: int) -> None:
         self.trials[trial_id] = self.study.ask(self.distributions)
 
-    def register_trials(self, trials_config: List[Dict]) -> None:
+    def register_experiments(self, trials_config: List[Dict]) -> None:
         for trial_config in trials_config:
             trial = optuna.trial.create_trial(
                 params=trial_config["params"],

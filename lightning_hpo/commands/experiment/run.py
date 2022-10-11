@@ -7,7 +7,7 @@ from uuid import uuid4
 from lightning.app.core.constants import APP_SERVER_HOST, APP_SERVER_PORT
 from lightning.app.utilities.commands import ClientCommand
 
-from lightning_hpo.commands.sweep.run import CustomLocalSourceCodeDir, SweepConfig, TrialConfig
+from lightning_hpo.commands.sweep.run import CustomLocalSourceCodeDir, ExperimentConfig, SweepConfig
 
 
 class RunExperimentCommand(ClientCommand):
@@ -79,8 +79,8 @@ class RunExperimentCommand(ClientCommand):
         config = SweepConfig(
             sweep_id=sweep_id,
             script_path=hparams.script_path,
-            n_trials=1,
-            simultaneous_trials=1,
+            total_experiments=1,
+            parallel_experiments=1,
             requirements=hparams.requirements,
             script_args=script_args,
             distributions={},
@@ -90,7 +90,7 @@ class RunExperimentCommand(ClientCommand):
             num_nodes=hparams.num_nodes,
             logger=hparams.logger,
             direction="minimize",  # This won't be used
-            trials={0: TrialConfig(name=hparams.name or str(uuid4()).split("-")[-1][:7], params={})},
+            experiments={0: ExperimentConfig(name=hparams.name or str(uuid4()).split("-")[-1][:7], params={})},
             disk_size=hparams.disk_size,
         )
         response = self.invoke_handler(config=config)

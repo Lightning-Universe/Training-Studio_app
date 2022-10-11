@@ -570,6 +570,36 @@
           "mount_path": { "title": "Mount Path", "type": "string" }
         }
       },
+      "ExperimentConfig": {
+        "title": "ExperimentConfig",
+        "required": ["name", "params"],
+        "type": "object",
+        "properties": {
+          "name": { "title": "Name", "type": "string" },
+          "best_model_score": { "title": "Best Model Score", "type": "number" },
+          "monitor": { "title": "Monitor", "type": "string" },
+          "best_model_path": { "title": "Best Model Path", "type": "string" },
+          "stage": { "title": "Stage", "type": "string", "default": "not_started" },
+          "params": {
+            "title": "Params",
+            "type": "object",
+            "additionalProperties": {
+              "anyOf": [
+                { "type": "number" },
+                { "type": "integer" },
+                { "type": "string" },
+                { "type": "array", "items": { "type": "number" } },
+                { "type": "array", "items": { "type": "string" } }
+              ]
+            }
+          },
+          "exception": { "title": "Exception", "type": "string" },
+          "progress": { "title": "Progress", "type": "number" },
+          "total_parameters": { "title": "Total Parameters", "type": "string" },
+          "start_time": { "title": "Start Time", "type": "string" },
+          "end_time": { "title": "End Time", "type": "string" }
+        }
+      },
       "HTTPValidationError": {
         "title": "HTTPValidationError",
         "type": "object",
@@ -628,13 +658,13 @@
         "required": [
           "sweep_id",
           "script_path",
-          "n_trials",
-          "simultaneous_trials",
+          "total_experiments",
+          "parallel_experiments",
           "requirements",
           "script_args",
           "algorithm",
           "distributions",
-          "trials",
+          "experiments",
           "framework",
           "logger",
           "direction"
@@ -643,9 +673,9 @@
         "properties": {
           "sweep_id": { "title": "Sweep Id", "type": "string" },
           "script_path": { "title": "Script Path", "type": "string" },
-          "n_trials": { "title": "N Trials", "type": "integer" },
-          "simultaneous_trials": { "title": "Simultaneous Trials", "type": "integer" },
-          "trials_done": { "title": "Trials Done", "type": "integer", "default": 0 },
+          "total_experiments": { "title": "Total Experiments", "type": "integer" },
+          "parallel_experiments": { "title": "Parallel Experiments", "type": "integer" },
+          "total_experiments_done": { "title": "Total Experiments Done", "type": "integer", "default": 0 },
           "requirements": { "title": "Requirements", "type": "array", "items": { "type": "string" } },
           "script_args": { "title": "Script Args", "type": "array", "items": { "type": "string" } },
           "algorithm": { "title": "Algorithm", "type": "string" },
@@ -655,10 +685,10 @@
             "additionalProperties": { "$ref": "#/components/schemas/Distributions" }
           },
           "logger_url": { "title": "Logger Url", "type": "string", "default": "" },
-          "trials": {
-            "title": "Trials",
+          "experiments": {
+            "title": "Experiments",
             "type": "object",
-            "additionalProperties": { "$ref": "#/components/schemas/TrialConfig" }
+            "additionalProperties": { "$ref": "#/components/schemas/ExperimentConfig" }
           },
           "framework": { "title": "Framework", "type": "string" },
           "cloud_compute": { "title": "Cloud Compute", "type": "string", "default": "cpu" },
@@ -667,7 +697,7 @@
           "direction": { "title": "Direction", "type": "string" },
           "stage": { "title": "Stage", "type": "string", "default": "not_started" },
           "desired_stage": { "title": "Desired Stage", "type": "string", "default": "running" },
-          "disk_size": { "title": "Disk Size", "type": "integer", "default": 10 }
+          "disk_size": { "title": "Disk Size", "type": "integer", "default": 80 }
         }
       },
       "TensorboardConfig": {
@@ -681,36 +711,6 @@
           "stage": { "title": "Stage", "type": "string", "default": "not_started" },
           "desired_stage": { "title": "Desired Stage", "type": "string", "default": "running" },
           "url": { "title": "Url", "type": "string", "default": "" }
-        }
-      },
-      "TrialConfig": {
-        "title": "TrialConfig",
-        "required": ["name", "params"],
-        "type": "object",
-        "properties": {
-          "name": { "title": "Name", "type": "string" },
-          "best_model_score": { "title": "Best Model Score", "type": "number" },
-          "monitor": { "title": "Monitor", "type": "string" },
-          "best_model_path": { "title": "Best Model Path", "type": "string" },
-          "stage": { "title": "Stage", "type": "string", "default": "not_started" },
-          "params": {
-            "title": "Params",
-            "type": "object",
-            "additionalProperties": {
-              "anyOf": [
-                { "type": "number" },
-                { "type": "integer" },
-                { "type": "string" },
-                { "type": "array", "items": { "type": "number" } },
-                { "type": "array", "items": { "type": "string" } }
-              ]
-            }
-          },
-          "exception": { "title": "Exception", "type": "string" },
-          "progress": { "title": "Progress", "type": "number" },
-          "total_parameters": { "title": "Total Parameters", "type": "string" },
-          "start_time": { "title": "Start Time", "type": "string" },
-          "end_time": { "title": "End Time", "type": "string" }
         }
       },
       "ValidationError": {

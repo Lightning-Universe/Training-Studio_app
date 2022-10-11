@@ -48,7 +48,7 @@ You can use `conda <https://conda.io/projects/conda/en/latest/user-guide/tasks/m
 
    PACKAGE_LIGHTNING=1 python -m lightning run app app.py --cloud
 
-Here is how the Training Studio App looks like:
+Here is how the Research Studio App looks like:
 
 .. raw:: html
 
@@ -78,7 +78,7 @@ Next Steps
    :height: 180
 
 .. displayitem::
-   :header: The Training Studio App
+   :header: The Research Studio App
    :description: Manage Sweeps and Tools to accelerate Training.
    :col_css: col-md-6
    :button_link: training_studio.html

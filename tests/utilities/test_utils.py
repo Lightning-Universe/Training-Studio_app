@@ -13,7 +13,7 @@ def test_score_and_path():
 
     sweep = Sweep(
         5,
-        simultaneous_trials=3,
+        parallel_experiments=3,
         objective_cls=MockObjective,
         distributions={
             "best_model_score": Uniform(0, 100),
@@ -27,8 +27,8 @@ def test_score_and_path():
 
     sweep.run()
     assert sweep.stage == Stage.RUNNING
-    assert len(sweep.trials) == 3
-    assert sweep.trials[0]["stage"] == Stage.SUCCEEDED
+    assert len(sweep.experiments) == 3
+    assert sweep.experiments[0]["stage"] == Stage.SUCCEEDED
     assert sweep.w_0.status.stage == Stage.STOPPED
 
     best_model_score = get_best_model_score(sweep)
@@ -37,8 +37,8 @@ def test_score_and_path():
     assert sweep.best_model_path == best_model_path
 
     sweep.run()
-    assert len(sweep.trials) == 5
-    assert sweep.trials[4]["stage"] == Stage.SUCCEEDED
+    assert len(sweep.experiments) == 5
+    assert sweep.experiments[4]["stage"] == Stage.SUCCEEDED
     assert sweep.w_4.status.stage == Stage.STOPPED
     assert sweep.stage == Stage.RUNNING
 

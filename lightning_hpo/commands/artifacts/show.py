@@ -248,7 +248,7 @@ def _collect_artifact_paths(config: ShowArtifactsConfig, replace: bool = True) -
     shared_storage = shared_storage_path()
     for root_dir, _, files in fs.walk(shared_storage):
         if replace:
-            root_dir = str(root_dir).replace(str(shared_storage), "").replace("/artifacts/root.", "root/")
+            root_dir = str(root_dir).replace(str(shared_storage), "").replace("/artifacts/drive", "")
         for f in files:
             paths.append(os.path.join(str(root_dir), f))
 

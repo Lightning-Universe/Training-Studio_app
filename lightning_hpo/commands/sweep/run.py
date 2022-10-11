@@ -29,7 +29,7 @@ class Distributions(SQLModel, table=False):
     )
 
 
-class TrialConfig(SQLModel, table=False):
+class ExperimentConfig(SQLModel, table=False):
     name: str
     best_model_score: Optional[float]
     monitor: Optional[str]
@@ -54,9 +54,9 @@ class SweepConfig(SQLModel, table=True):
 
     sweep_id: str = Field(primary_key=True)
     script_path: str
-    n_trials: int
-    simultaneous_trials: int
-    trials_done: int = 0
+    total_experiments: int
+    parallel_experiments: int
+    total_experiments_done: int = 0
     requirements: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
     script_args: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
     algorithm: str
@@ -64,7 +64,9 @@ class SweepConfig(SQLModel, table=True):
         ..., sa_column=Column(pydantic_column_type(Dict[str, Distributions]))
     )
     logger_url: str = ""
-    trials: Dict[int, TrialConfig] = Field(..., sa_column=Column(pydantic_column_type(Dict[int, TrialConfig])))
+    experiments: Dict[int, ExperimentConfig] = Field(
+        ..., sa_column=Column(pydantic_column_type(Dict[int, ExperimentConfig]))
+    )
     framework: str
     cloud_compute: str = "cpu"
     num_nodes: int = 1
@@ -76,7 +78,7 @@ class SweepConfig(SQLModel, table=True):
 
     @property
     def num_trials(self) -> int:
-        return min(self.trials_done + self.simultaneous_trials, self.n_trials)
+        return min(self.total_experiments_done + self.parallel_experiments, self.total_experiments)
 
     @property
     def username(self) -> str:
@@ -402,8 +404,8 @@ class RunSweepCommand(ClientCommand):
         config = SweepConfig(
             sweep_id=name,
             script_path=hparams.script_path,
-            n_trials=int(total_experiments),
-            simultaneous_trials=hparams.parallel_experiments if isinstance(hparams.parallel_experiments, int) else 1,
+            total_experiments=int(total_experiments),
+            parallel_experiments=hparams.parallel_experiments if isinstance(hparams.parallel_experiments, int) else 1,
             requirements=hparams.requirements,
             script_args=script_args,
             distributions=distributions,
@@ -413,7 +415,7 @@ class RunSweepCommand(ClientCommand):
             num_nodes=hparams.num_nodes,
             logger=hparams.logger,
             direction=hparams.direction,
-            trials={},
+            experiments={},
             disk_size=hparams.disk_size,
         )
         response = self.invoke_handler(config=config)

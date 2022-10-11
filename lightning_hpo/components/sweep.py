@@ -9,7 +9,7 @@ from lightning_utilities.core.apply_func import apply_to_collection
 
 from lightning_hpo.algorithm.base import Algorithm
 from lightning_hpo.algorithm.optuna import GridSearch, OptunaAlgorithm, RandomSearch
-from lightning_hpo.commands.sweep.run import SweepConfig, TrialConfig
+from lightning_hpo.commands.sweep.run import ExperimentConfig, SweepConfig
 from lightning_hpo.controllers.controller import ControllerResource
 from lightning_hpo.distributions.distributions import Distribution
 from lightning_hpo.framework.agnostic import Objective
@@ -30,9 +30,9 @@ class Sweep(LightningFlow, ControllerResource):
 
     def __init__(
         self,
-        n_trials: int,
+        total_experiments: int,
         objective_cls: Optional[Type[Objective]] = None,
-        simultaneous_trials: int = 1,
+        parallel_experiments: int = 1,
         script_args: Optional[Union[list, str]] = None,
         env: Optional[Dict] = None,
         cloud_compute: Optional[HPOCloudCompute] = None,
@@ -44,9 +44,9 @@ class Sweep(LightningFlow, ControllerResource):
         framework: str = "base",
         code: Optional[Code] = None,
         direction: Optional[str] = None,
-        trials_done: Optional[int] = 0,
+        total_experiments_done: Optional[int] = 0,
         requirements: Optional[List[str]] = None,
-        trials: Optional[Dict[int, Dict]] = None,
+        experiments: Optional[Dict[int, Dict]] = None,
         stage: Optional[str] = Stage.NOT_STARTED,
         logger_url: str = "",
         **objective_kwargs: Any,
@@ -54,9 +54,9 @@ class Sweep(LightningFlow, ControllerResource):
         """The Sweep class enables to easily run a Python Script with Lightning
         :class:`~lightning.utilities.tracer.Tracer` with state-of-the-art distributed.
         Arguments:
-            n_trials: Number of HPO trials to run.
+            total_experiments: Number of HPO experiments to run.
             objective_cls: Your custom base objective work.
-            simultaneous_trials: Number of parallel trials to run.
+            parallel_experiments: Number of parallel experiments to run.
             script_args: Optional script arguments.
             env: Environment variables to be passed to the script.
             cloud_compute: The cloud compute on which the Work should run on.
@@ -72,9 +72,9 @@ class Sweep(LightningFlow, ControllerResource):
         # SweepConfig
         self.sweep_id = sweep_id or str(uuid.uuid4()).split("-")[0]
         self.script_path = script_path
-        self.n_trials = n_trials
-        self.simultaneous_trials = simultaneous_trials
-        self.trials_done = trials_done or 0
+        self.total_experiments = total_experiments
+        self.parallel_experiments = parallel_experiments
+        self.total_experiments_done = total_experiments_done or 0
         self.requirements = requirements or []
         self.script_args = script_args
         self.distributions = distributions or {}
@@ -84,7 +84,7 @@ class Sweep(LightningFlow, ControllerResource):
         self.disk_size = getattr(cloud_compute, "disk_size", 1) if cloud_compute else 10
         self.logger = logger
         self.direction = direction
-        self.trials = trials or {}
+        self.experiments = experiments or {}
         self.stage = stage
         self.logger_url = logger_url
 
@@ -105,14 +105,16 @@ class Sweep(LightningFlow, ControllerResource):
             **objective_kwargs,
         }
         self._algorithm.register_distributions(self.distributions)
-        self._algorithm.register_trials([t for t in trials.values() if t["stage"] == Stage.SUCCEEDED] if trials else [])
+        self._algorithm.register_experiments(
+            [t for t in experiments.values() if t["stage"] == Stage.SUCCEEDED] if experiments else []
+        )
         self.restart_count = 0
 
     def run(self):
         if self.stage in (Stage.SUCCEEDED, Stage.STOPPED):
             return
 
-        if self.trials_done == self.n_trials:
+        if self.total_experiments_done == self.total_experiments:
             self.stage = Stage.SUCCEEDED
             return
 
@@ -126,9 +128,9 @@ class Sweep(LightningFlow, ControllerResource):
                     self._algorithm.trial_start(trial_id)
                     self._logger.on_after_trial_start(self.sweep_id)
 
-                if not self.trials[trial_id]["params"]:
+                if not self.experiments[trial_id]["params"]:
                     self.stage = Stage.RUNNING
-                    self.trials[trial_id]["params"] = self._algorithm.get_params(trial_id)
+                    self.experiments[trial_id]["params"] = self._algorithm.get_params(trial_id)
 
                 logger_url = self._logger.get_url(trial_id)
                 if logger_url is not None and self.logger_url != logger_url:
@@ -139,31 +141,31 @@ class Sweep(LightningFlow, ControllerResource):
                     restart_count=self.restart_count,
                 )
 
-                self.trials[trial_id]["progress"] = objective.progress
-                self.trials[trial_id]["total_parameters"] = getattr(objective, "total_parameters", None)
-                self.trials[trial_id]["start_time"] = getattr(objective, "start_time", None)
+                self.experiments[trial_id]["progress"] = objective.progress
+                self.experiments[trial_id]["total_parameters"] = getattr(objective, "total_parameters", None)
+                self.experiments[trial_id]["start_time"] = getattr(objective, "start_time", None)
 
                 if _check_stage(objective, Stage.FAILED):
-                    self.trials[trial_id]["stage"] = Stage.FAILED
-                    self.trials[trial_id]["exception"] = objective.status.message
+                    self.experiments[trial_id]["stage"] = Stage.FAILED
+                    self.experiments[trial_id]["exception"] = objective.status.message
                     objective.stop()
 
-                if objective.reports and not self.trials[trial_id]["stage"] == "pruned":
+                if objective.reports and not self.experiments[trial_id]["stage"] == "pruned":
                     if self._algorithm.should_prune(trial_id, objective.reports):
-                        self.trials[trial_id]["stage"] = Stage.PRUNED
+                        self.experiments[trial_id]["stage"] = Stage.PRUNED
                         objective.stop()
-                        self.trials_done += 1
+                        self.total_experiments_done += 1
                         continue
 
-                if self.stage != Stage.FAILED and self.trials[trial_id]["stage"] == Stage.PENDING:
-                    if self.trials[trial_id]["stage"] != objective.status:
+                if self.stage != Stage.FAILED and self.experiments[trial_id]["stage"] == Stage.PENDING:
+                    if self.experiments[trial_id]["stage"] != objective.status:
                         self.stage = Stage.RUNNING
-                        self.trials[trial_id]["stage"] = Stage.RUNNING
+                        self.experiments[trial_id]["stage"] = Stage.RUNNING
 
                 if objective.best_model_score:
-                    if self.trials[trial_id]["stage"] == Stage.SUCCEEDED:
+                    if self.experiments[trial_id]["stage"] == Stage.SUCCEEDED:
                         pass
-                    elif self.trials[trial_id]["stage"] not in (Stage.PRUNED, Stage.STOPPED, Stage.FAILED):
+                    elif self.experiments[trial_id]["stage"] not in (Stage.PRUNED, Stage.STOPPED, Stage.FAILED):
                         self._algorithm.trial_end(trial_id, objective.best_model_score)
                         self._logger.on_after_trial_end(
                             sweep_id=self.sweep_id,
@@ -172,19 +174,19 @@ class Sweep(LightningFlow, ControllerResource):
                             score=objective.best_model_score,
                             params=self._algorithm.get_params(trial_id),
                         )
-                        self.trials[trial_id]["best_model_score"] = objective.best_model_score
-                        self.trials[trial_id]["best_model_path"] = str(objective.best_model_path)
-                        self.trials[trial_id]["monitor"] = objective.monitor
-                        self.trials[trial_id]["stage"] = Stage.SUCCEEDED
-                        self.trials_done += 1
+                        self.experiments[trial_id]["best_model_score"] = objective.best_model_score
+                        self.experiments[trial_id]["best_model_path"] = str(objective.best_model_path)
+                        self.experiments[trial_id]["monitor"] = objective.monitor
+                        self.experiments[trial_id]["stage"] = Stage.SUCCEEDED
+                        self.total_experiments_done += 1
                         objective.stop()
 
-        if all(self.trials[trial_id]["stage"] == Stage.FAILED for trial_id in range(self.num_trials)):
+        if all(self.experiments[trial_id]["stage"] == Stage.FAILED for trial_id in range(self.num_trials)):
             self.stage = Stage.FAILED
 
     @property
     def num_trials(self) -> int:
-        return min(self.trials_done + self.simultaneous_trials, self.n_trials)
+        return min(self.total_experiments_done + self.parallel_experiments, self.total_experiments)
 
     @property
     def best_model_score(self) -> Optional[float]:
@@ -198,13 +200,13 @@ class Sweep(LightningFlow, ControllerResource):
         objective = self._get_objective(trial_id)
         if objective:
             objective.stop()
-            self.trials[trial_id]["stage"] = Stage.STOPPED
-            self.trials_done += 1
+            self.experiments[trial_id]["stage"] = Stage.STOPPED
+            self.total_experiments_done += 1
 
     def _get_objective(self, trial_id: int):
-        trial_config = self.trials.get(trial_id, None)
+        trial_config = self.experiments.get(trial_id, None)
         if trial_config is None:
-            trial_config = TrialConfig(
+            trial_config = ExperimentConfig(
                 name=str(uuid4()).split("-")[-1][:7],
                 best_model_score=None,
                 monitor=None,
@@ -212,7 +214,7 @@ class Sweep(LightningFlow, ControllerResource):
                 stage=Stage.PENDING,
                 params={},
             ).dict()
-            self.trials[trial_id] = trial_config
+            self.experiments[trial_id] = trial_config
 
         if trial_config["stage"] == Stage.SUCCEEDED:
             return
@@ -235,8 +237,8 @@ class Sweep(LightningFlow, ControllerResource):
             distributions = {k: v.dict()["params"]["choices"] for k, v in config.distributions.items()}
             algorithm = GridSearch(distributions)
             distributions = {}
-            config.n_trials = algorithm.total_experiments
-            config.simultaneous_trials = algorithm.total_experiments
+            config.total_experiments = algorithm.total_experiments
+            config.parallel_experiments = algorithm.total_experiments
 
         elif config.algorithm == "random_search":
             algorithm = RandomSearch({k: v.dict() for k, v in config.distributions.items()})
@@ -248,11 +250,11 @@ class Sweep(LightningFlow, ControllerResource):
 
         return cls(
             script_path=config.script_path,
-            n_trials=config.n_trials,
-            simultaneous_trials=config.simultaneous_trials,
+            total_experiments=config.total_experiments,
+            parallel_experiments=config.parallel_experiments,
             framework=config.framework,
             script_args=config.script_args,
-            trials_done=config.trials_done,
+            total_experiments_done=config.total_experiments_done,
             distributions=distributions,
             cloud_compute=HPOCloudCompute(config.cloud_compute, count=config.num_nodes, disk_size=config.disk_size),
             sweep_id=config.sweep_id,
@@ -260,7 +262,7 @@ class Sweep(LightningFlow, ControllerResource):
             cloud_build_config=BuildConfig(requirements=config.requirements),
             logger=config.logger,
             algorithm=algorithm,
-            trials={k: v.dict() for k, v in config.trials.items()},
+            experiments={k: v.dict() for k, v in config.experiments.items()},
             direction=config.direction,
             stage=config.stage,
             logger_url=config.logger_url,

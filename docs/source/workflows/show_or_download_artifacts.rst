@@ -18,29 +18,20 @@ Show the artifacts
 1. Check available options for show
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The Training Studio App CLI provides its own help.
+The Research Studio App CLI provides its own help.
+
+Here is the command to learn more:
 
 .. code-block::
 
    lightning show artifacts --help
 
-Here is the output of the command:
-
-.. code-block::
-
-   You are connected to the local Lightning App.
-   usage: artifacts [-h] [--include INCLUDE] [--exclude EXCLUDE]
-
-   optional arguments:
-   -h, --help         show this help message and exit
-   --include INCLUDE  Provide a regex to include some specific files.
-   --exclude EXCLUDE  Provide a regex to exclude some specific files.
-
+----
 
 2. Show artifacts
 ^^^^^^^^^^^^^^^^^
 
-To show artifacts use the following command:
+To show all artifacts use the following command:
 
 .. code-block::
 
@@ -48,68 +39,43 @@ To show artifacts use the following command:
 
 .. code-block::
 
-   📂 root
-   ┣━━ 📂 artifacts
-   ┃   ┗━━ 📂 drive
-   ┃       ┣━━ 📂 code
-   ┃       ┃   ┗━━ 📂 root.file_server
-   ┃       ┃       ┣━━ 📄 thomas-0f615232
-   ┃       ┃       ┣━━ 📄 thomas-0f615232.meta
-   ┃       ┃       ┣━━ 📄 thomas-1dbfed8a
-   ┃       ┃       ┣━━ 📄 thomas-1dbfed8a.meta
-   ┃       ┃       ┣━━ 📄 thomas-253b59ae
-   ┃       ┃       ┣━━ 📄 thomas-253b59ae.meta
-   ┃       ┃       ┣━━ 📄 thomas-32be6709
-   ┃       ┃       ┣━━ 📄 thomas-32be6709.meta
-   ┃       ┃       ┣━━ 📄 thomas-3623090a
-   ┃       ┃       ┣━━ 📄 thomas-3623090a.meta
-   ┃       ┃       ┣━━ 📄 thomas-3c60d734
-   ┃       ┃       ┣━━ 📄 thomas-3c60d734.meta
-   ┃       ┃       ┣━━ 📄 thomas-5bad4fb7
-   ┃       ┃       ┣━━ 📄 thomas-5bad4fb7.meta
-   ┃       ┃       ┣━━ 📄 thomas-85982a9b
-   ┃       ┃       ┣━━ 📄 thomas-85982a9b.meta
-   ┃       ┃       ┣━━ 📄 thomas-b4a4b274
-   ┃       ┃       ┣━━ 📄 thomas-b4a4b274.meta
-   ┃       ┃       ┣━━ 📄 thomas-b5c15503
-   ┃       ┃       ┣━━ 📄 thomas-b5c15503.meta
-   ┃       ┃       ┣━━ 📄 thomas-f5fee22a
-   ┃       ┃       ┗━━ 📄 thomas-f5fee22a.meta
-   ┃       ┣━━ 📂 logs
-   ┃       ┃   ┣━━ 📂 thomas-0f615232
-   ┃       ┃   ┃   ┣━━ 📂 0
-   ┃       ┃   ┃   ┃   ┗━━ 📂 lightning_logs
-   ┃       ┃   ┃   ┃       ┗━━ 📂 version_0
-   ┃       ┃   ┃   ┃           ┣━━ 📄 config.yaml
-   ┃       ┃   ┃   ┃           ┣━━ 📄 events.out.tfevents.1662468622.thomass-mbp.home.97536.0
-   ┃       ┃   ┃   ┃           ┣━━ 📄 hparams.yaml
-   ┃       ┃   ┃   ┃           ┗━━ 📂 checkpoints
-   ┃       ┃   ┃   ┃               ┗━━ 📄 epoch=0-step=20.ckpt
-   ┃       ┃   ┃   ┣━━ 📂 1
-   ┃       ┃   ┃   ┃   ┗━━ 📂 lightning_logs
-   ┃       ┃   ┃   ┃       ┗━━ 📂 version_0
-   ┃       ┃   ┃   ┃           ┣━━ 📄 config.yaml
-   ┃       ┃   ┃   ┃           ┣━━ 📄 events.out.tfevents.1662468638.thomass-mbp.home.97640.0
-   ┃       ┃   ┃   ┃           ┣━━ 📄 hparams.yaml
-   ┃       ┃   ┃   ┃           ┗━━ 📂 checkpoints
-   ┃       ┃   ┃   ┃               ┗━━ 📄 epoch=0-step=20.ckpt
-   ┃       ┃   ┃   ┣━━ 📂 2
-   ┃       ┃   ┃   ┃   ┗━━ 📂 lightning_logs
-   ┃       ┃   ┃   ┃       ┗━━ 📂 version_0
-   ┃       ┃   ┃   ┃           ┣━━ 📄 config.yaml
-   ┃       ┃   ┃   ┃           ┣━━ 📄 events.out.tfevents.1662468655.thomass-mbp.home.97763.0
-   ┃       ┃   ┃   ┃           ┣━━ 📄 hparams.yaml
-   ┃       ┃   ┃   ┃           ┗━━ 📂 checkpoints
-   ┃       ┃   ┃   ┃               ┗━━ 📄 epoch=1-step=40.ckpt
-   ┃       ┃   ┃   ┣━━ 📂 3
-   ┃       ┃   ┃   ┃   ┗━━ 📂 lightning_logs
-   ┃       ┃   ┃   ┃       ┗━━ 📂 version_0
-   ┃       ┃   ┃   ┃           ┣━━ 📄 config.yaml
-   ┃       ┃   ┃   ┃           ┣━━ 📄 events.out.tfevents.1662468670.thomass-mbp.home.97814.0
-   ┃       ┃   ┃   ┃           ┣━━ 📄 hparams.yaml
-   ┃       ┃   ┃   ┃           ┗━━ 📂 checkpoints
-   ┃       ┃   ┃   ┃               ┗━━ 📄 epoch=0-step=20.ckpt
-   ...
+   📂 /thomas-d4fd7d7c/
+   📂 /thomas-d4fd7d7c/29f40d6/
+      /thomas-d4fd7d7c/29f40d6/config.yaml
+      /thomas-d4fd7d7c/29f40d6/events.out.tfevents.1665501311.thomass-MacBook-Pro.local.52388.0
+      /thomas-d4fd7d7c/29f40d6/hparams.yaml
+   📂 /thomas-d4fd7d7c/29f40d6/checkpoints/
+      /thomas-d4fd7d7c/29f40d6/checkpoints/epoch=0-step=20.ckpt
+   📂 /thomas-d4fd7d7c/379c91d/
+      /thomas-d4fd7d7c/379c91d/config.yaml
+      /thomas-d4fd7d7c/379c91d/events.out.tfevents.1665501311.thomass-MacBook-Pro.local.52392.0
+      /thomas-d4fd7d7c/379c91d/hparams.yaml
+   📂 /thomas-d4fd7d7c/379c91d/checkpoints/
+      /thomas-d4fd7d7c/379c91d/checkpoints/epoch=0-step=20.ckpt
+   📂 /thomas-d4fd7d7c/4de6450/
+      /thomas-d4fd7d7c/4de6450/events.out.tfevents.1665501312.thomass-MacBook-Pro.local.52389.0
+   📂 /thomas-d4fd7d7c/740910d/
+      /thomas-d4fd7d7c/740910d/config.yaml
+      /thomas-d4fd7d7c/740910d/events.out.tfevents.1665501312.thomass-MacBook-Pro.local.52390.0
+      /thomas-d4fd7d7c/740910d/hparams.yaml
+   📂 /thomas-d4fd7d7c/740910d/checkpoints/
+      /thomas-d4fd7d7c/740910d/checkpoints/epoch=0-step=20.ckpt
+   📂 /thomas-d4fd7d7c/d0293aa/
+      /thomas-d4fd7d7c/d0293aa/config.yaml
+      /thomas-d4fd7d7c/d0293aa/events.out.tfevents.1665501312.thomass-MacBook-Pro.local.52393.0
+      /thomas-d4fd7d7c/d0293aa/hparams.yaml
+   📂 /thomas-d4fd7d7c/d0293aa/checkpoints/
+      /thomas-d4fd7d7c/d0293aa/checkpoints/epoch=0-step=20.ckpt
+   📂 /thomas-d4fd7d7c/f1a0cb6/
+      /thomas-d4fd7d7c/f1a0cb6/config.yaml
+      /thomas-d4fd7d7c/f1a0cb6/events.out.tfevents.1665501312.thomass-MacBook-Pro.local.52391.0
+      /thomas-d4fd7d7c/f1a0cb6/hparams.yaml
+   📂 /thomas-d4fd7d7c/f1a0cb6/checkpoints/
+      /thomas-d4fd7d7c/f1a0cb6/checkpoints/epoch=0-step=20.ckpt
+   📂 /uploaded_files/
+   📂 /uploaded_files/file_server/
+      /uploaded_files/file_server/thomas-d4fd7d7c
+
 
 2. Show artifacts with filtering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -118,34 +84,18 @@ To filter the artifacts shown use the following command:
 
 .. code-block::
 
-   lightning show artifacts --include=<artifact-id> --exclude=<file-type>
-
-For example:
+   lightning show artifacts --names 29f40d6
 
 .. code-block::
 
-   lightning show artifacts --include=thomas-0f615232 --exclude=.yaml
-
-Here is the output of the command:
-
-.. code-block::
-
-   📂 root
-   ┣━━ 📂 artifacts
-   ┃   ┗━━ 📂 drive
-   ┃       ┣━━ 📂 code
-   ┃       ┃   ┗━━ 📂 root.file_server
-   ┃       ┃       ┣━━ 📄 thomas-0f615232
-   ┃       ┃       ┗━━ 📄 thomas-0f615232.meta
-   ┃       ┗━━ 📂 logs
-   ┃           ┗━━ 📂 thomas-0f615232
-   ┃               ┣━━ 📂 0
-   ┃               ┃   ┗━━ 📂 lightning_logs
-   ┃               ┃       ┗━━ 📂 version_0
-   ┃               ┃           ┣━━ 📄 events.out.tfevents.1662468622.thomass-mbp.home.97536.0
-   ┃               ┃           ┗━━ 📂 checkpoints
-   ┃               ┃               ┗━━ 📄 epoch=0-step=20.ckpt
-   ...
+   📂 /thomas-d4fd7d7c/
+   📂 /thomas-d4fd7d7c/29f40d6/
+      /thomas-d4fd7d7c/29f40d6/config.yaml
+      /thomas-d4fd7d7c/29f40d6/events.out.tfevents.1665501311.thomass-MacBook-Pro.local.52388.0
+      /thomas-d4fd7d7c/29f40d6/hparams.yaml
+   📂 /thomas-d4fd7d7c/29f40d6/checkpoints/
+      /thomas-d4fd7d7c/29f40d6/checkpoints/epoch=0-step=20.ckpt
+   Your command execution was successful.
 
 ******************
 Download artifacts
@@ -158,29 +108,14 @@ Download artifacts
 
    lightning download artifacts --help
 
-Here is the output of the command:
-
-.. code-block::
-
-   You are connected to the local Lightning App.
-   usage: artifacts [-h] [--output_dir OUTPUT_DIR] [--include INCLUDE] [--exclude EXCLUDE]
-
-   optional arguments:
-   -h, --help            show this help message and exit
-   --output_dir OUTPUT_DIR
-                           Provide the output directory for the artifacts..
-   --include INCLUDE     Provide a regex to include some specific files.
-   --exclude EXCLUDE     Provide a regex to exclude some specific files.
-
 2. Download artifacts
 ^^^^^^^^^^^^^^^^^^^^^
 
-To download artifacts use the following command:
+To download artifacts for experiment ``29f40d6``, use the following command:
 
 .. code-block::
 
-   mkdir output_artifacts
-   lightning download artifacts --output_dir=./output_artifacts
+   lightning download artifacts --names 29f40d6 --output_dir=./output_artifacts
 
 ----
 
@@ -196,24 +131,25 @@ Next Steps
 
 .. displayitem::
    :header: Show or Download Logs
-   :description: Learn how to interact with your Training Studio App logs
-   :col_css: col-md-4
+   :description: Learn how to interact with your Research Studio App logs
+   :col_css: col-md-6
    :button_link: show_or_download_logs.html
    :height: 180
 
 .. displayitem::
    :header: Run a Sweep
    :description: Learn how to run a Sweep with your own python script
-   :col_css: col-md-4
+   :col_css: col-md-6
    :button_link: run_sweep.html
    :height: 180
 
-.. displayitem::
-   :header: Run a Notebook
-   :description: Learn how to run a notebook locally or in the cloud
-   :col_css: col-md-4
-   :button_link: run_notebook.html
-   :height: 180
+..
+   .. displayitem::
+      :header: Run a Notebook
+      :description: Learn how to run a notebook locally or in the cloud
+      :col_css: col-md-4
+      :button_link: run_notebook.html
+      :height: 180
 
 .. raw:: html
 

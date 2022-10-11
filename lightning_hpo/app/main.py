@@ -68,7 +68,7 @@ class TrainingStudio(LightningFlow):
             self.db_viz.run()
 
         if not self.ready:
-            print("The Training Studio App is ready !")
+            print("The Research Studio App is ready !")
             self.ready = True
 
         # 3: Run the controllers
@@ -83,7 +83,7 @@ class TrainingStudio(LightningFlow):
         sweeps = self.db_client.get(self.sweep_controller.model)
         return ShowArtifactsConfigResponse(
             sweep_names=[sweep.sweep_id for sweep in sweeps],
-            experiment_names=[trial.name for sweep in sweeps for trial in sweep.trials.values()],
+            experiment_names=[exp.name for sweep in sweeps for exp in sweep.experiments.values()],
             paths=_collect_artifact_paths(config),
         )
 
@@ -92,7 +92,7 @@ class TrainingStudio(LightningFlow):
         paths, urls = _collect_artifact_urls(config)
         return DownloadArtifactsConfigResponse(
             sweep_names=[sweep.sweep_id for sweep in sweeps],
-            experiment_names=[trial.name for sweep in sweeps for trial in sweep.trials.values()],
+            experiment_names=[exp.name for sweep in sweeps for exp in sweep.experiments.values()],
             paths=paths,
             urls=urls,
         )

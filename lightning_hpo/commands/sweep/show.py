@@ -14,10 +14,9 @@ def _show_sweeps(sweeps: List[SweepConfig]):
     table = Table(
         "name",
         "status",
-        "framework",
         "cloud_compute",
-        "n_trials",
-        "n_trials_done",
+        "total_experiments",
+        "total_experiments_done",
         title="Sweeps",
         show_header=True,
         header_style="bold green",
@@ -27,10 +26,9 @@ def _show_sweeps(sweeps: List[SweepConfig]):
         table.add_row(
             sweep.sweep_id,
             sweep.stage,
-            sweep.framework,
             sweep.cloud_compute,
-            str(sweep.n_trials),
-            str(sweep.trials_done),
+            str(sweep.total_experiments),
+            str(sweep.total_experiments_done),
         )
     console = Console()
     console.print(table)
@@ -50,10 +48,9 @@ def _show_sweep(sweep: SweepConfig):
     table = Table(
         "id",
         "status",
-        "framework",
         "cloud_compute",
-        "n_trials",
-        "n_trials_done",
+        "total_experiments",
+        "total_experiments_done",
         title="Sweep",
         show_header=True,
         header_style="bold green",
@@ -62,31 +59,30 @@ def _show_sweep(sweep: SweepConfig):
     table.add_row(
         sweep.sweep_id,
         sweep.stage,
-        sweep.framework,
         sweep.cloud_compute,
-        str(sweep.n_trials),
-        str(sweep.trials_done),
+        str(sweep.total_experiments),
+        str(sweep.total_experiments_done),
     )
     console = Console()
     console.print(table)
 
-    params = list(sweep.trials[0].params)
-    monitor = sweep.trials[0].monitor
+    params = list(sweep.experiments[0].params)
+    monitor = sweep.experiments[0].monitor
 
     table = Table(
         "name",
-        "status",
+        "progress",
         "best_model_score",
         *params,
-        title=f"Trials monitor=({monitor})",
+        title=f"Experiments monitor=({monitor})",
         show_header=True,
         header_style="bold green",
     )
 
-    for trial in sweep.trials.values():
+    for trial in sweep.experiments.values():
         table.add_row(
             str(trial.name),
-            str(trial.stage),
+            str(trial.progress),
             str(round(trial.best_model_score, 2) if trial.best_model_score else None),
             *[str(round(v, 5)) for v in _parse_params(trial.params).values()],
         )
