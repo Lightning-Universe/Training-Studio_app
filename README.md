@@ -19,7 +19,7 @@
 
 Lightning HPO provides a pythonic implementation for Scalable Hyperparameter Tuning.
 
-This library relies on [Optuna](https://optuna.readthedocs.io/en/stable/) for providing state-of-the-art sampling hyper-parameters algorithms and efficient trial pruning strategies.
+This library relies on [Optuna](https://optuna.readthedocs.io/en/stable/) for providing state-of-the-art sampling hyper-parameters algorithms and efficient experiment pruning strategies.
 
 This is built upon the highly scalable and distributed [Lightning App](https://lightning.ai/lightning-docs/get_started/what_app_can_do.html) framework from [lightning.ai](https://lightning.ai/).
 
@@ -96,7 +96,7 @@ or with ``--cloud`` to run it in the cloud.
 python -m lightning run app examples/1_app_agnostic.py --cloud
 ```
 
-> Note: Locally, each trial runs into its own process, so there is an overhead if your objective is quick to run.
+> Note: Locally, each experiment runs into its own process, so there is an overhead if your objective is quick to run.
 
 Find the example [here](./examples/1_app_agnostic.py)
 
@@ -104,7 +104,7 @@ ______________________________________________________________________
 
 ## PyTorch Lightning Users
 
-Here is how to launch 100 trials 10 at a times with 2 nodes of 4 GPUs for each in the cloud.
+Here is how to launch 100 experiments 10 at a times with 2 nodes of 4 GPUs for each in the cloud.
 
 ```python
 import os.path as ops
@@ -262,28 +262,28 @@ app = LightningApp(
 python -m lightning run app examples/3_app_sklearn.py
 ```
 
-As you can see, several trials were pruned (stopped) before they finished all of the iterations. Same as when using pure optuna.
+As you can see, several experimentss were pruned (stopped) before they finished all of the iterations. Same as when using pure optuna.
 
 ```py
 A new study created in memory with name: no-name-a93d848e-a225-4df3-a9c3-5f86680e295d
-Trial 0 finished with value: 0.23684210526315785 and parameters: {'alpha': 0.006779437004523296}. Best is trial 0 with value: 0.23684210526315785.
-Trial 1 finished with value: 0.07894736842105265 and parameters: {'alpha': 0.008936151407006062}. Best is trial 1 with value: 0.07894736842105265.
-Trial 2 finished with value: 0.052631578947368474 and parameters: {'alpha': 0.0035836511240528008}. Best is trial 2 with value: 0.052631578947368474.
-Trial 3 finished with value: 0.052631578947368474 and parameters: {'alpha': 0.0005393218926409795}. Best is trial 2 with value: 0.052631578947368474.
-Trial 4 finished with value: 0.1578947368421053 and parameters: {'alpha': 6.572557493358585e-05}. Best is trial 2 with value: 0.052631578947368474.
-Trial 5 finished with value: 0.02631578947368418 and parameters: {'alpha': 0.0013953760106345603}. Best is trial 5 with value: 0.02631578947368418.
+Experiment 0 finished with value: 0.23684210526315785 and parameters: {'alpha': 0.006779437004523296}. Best is experiment 0 with value: 0.23684210526315785.
+Experiment 1 finished with value: 0.07894736842105265 and parameters: {'alpha': 0.008936151407006062}. Best is experiment 1 with value: 0.07894736842105265.
+Experiment 2 finished with value: 0.052631578947368474 and parameters: {'alpha': 0.0035836511240528008}. Best is experiment 2 with value: 0.052631578947368474.
+Experiment 3 finished with value: 0.052631578947368474 and parameters: {'alpha': 0.0005393218926409795}. Best is experiment 2 with value: 0.052631578947368474.
+Experiment 4 finished with value: 0.1578947368421053 and parameters: {'alpha': 6.572557493358585e-05}. Best is experiment 2 with value: 0.052631578947368474.
+Experiment 5 finished with value: 0.02631578947368418 and parameters: {'alpha': 0.0013953760106345603}. Best is experiment 5 with value: 0.02631578947368418.
 Trail 6 pruned.
 Trail 7 pruned.
 Trail 8 pruned.
 Trail 9 pruned.
-Trial 10 finished with value: 0.07894736842105265 and parameters: {'alpha': 0.00555435554783454}. Best is trial 5 with value: 0.02631578947368418.
+Experiment 10 finished with value: 0.07894736842105265 and parameters: {'alpha': 0.00555435554783454}. Best is experiment 5 with value: 0.02631578947368418.
 Trail 11 pruned.
-Trial 12 finished with value: 0.052631578947368474 and parameters: {'alpha': 0.025624276147153992}. Best is trial 5 with value: 0.02631578947368418.
-Trial 13 finished with value: 0.07894736842105265 and parameters: {'alpha': 0.014613957457075546}. Best is trial 5 with value: 0.02631578947368418.
+Experiment 12 finished with value: 0.052631578947368474 and parameters: {'alpha': 0.025624276147153992}. Best is experiment 5 with value: 0.02631578947368418.
+Experiment 13 finished with value: 0.07894736842105265 and parameters: {'alpha': 0.014613957457075546}. Best is experiment 5 with value: 0.02631578947368418.
 Trail 14 pruned.
 Trail 15 pruned.
 Trail 16 pruned.
-Trial 17 finished with value: 0.052631578947368474 and parameters: {'alpha': 0.01028208215647372}. Best is trial 5 with value: 0.02631578947368418.
+Experiment 17 finished with value: 0.052631578947368474 and parameters: {'alpha': 0.01028208215647372}. Best is experiment 5 with value: 0.02631578947368418.
 Trail 18 pruned.
 Trail 19 pruned.
 ```

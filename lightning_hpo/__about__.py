@@ -7,7 +7,7 @@ __homepage__ = "https://github.com/PyTorchLightning/lightning"
 __docs__ = "Lightning HPO"
 __long_doc__ = """
 Lightning HPO provides a pythonic implementation for Scalable Hyperparameter Tuning.
-This library relies on Optuna for providing state-of-the-art sampling hyper-parameters algorithms and efficient trial pruning strategies.
+This library relies on Optuna for providing state-of-the-art sampling hyper-parameters algorithms and efficient experiment pruning strategies.
 """
 
 __all__ = [

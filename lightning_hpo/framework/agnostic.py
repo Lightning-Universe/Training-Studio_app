@@ -22,16 +22,16 @@ class Objective(TracerPythonScript, ABC):
         *args,
         logger: str,
         sweep_id: str,
-        trial_id,
-        trial_name: str,
+        experiment_id,
+        experiment_name: str,
         raise_exception: bool = False,
         function_name: str = "objective",
         num_nodes: int = 1,  # TODO # Add support for multi node
         **kwargs
     ):
         super().__init__(*args, raise_exception=raise_exception, **kwargs)
-        self.trial_id = trial_id
-        self.trial_name = trial_name
+        self.experiment_id = experiment_id
+        self.experiment_name = experiment_name
         self.best_model_score = None
         self.best_model_path = None
         self.params = None
@@ -54,8 +54,8 @@ class Objective(TracerPythonScript, ABC):
             tracer,
             params=self.params,
             sweep_id=self.sweep_id,
-            trial_id=self.trial_id,
-            trial_name=self.trial_name,
+            experiment_id=self.experiment_id,
+            experiment_name=self.experiment_name,
         )
         return tracer
 

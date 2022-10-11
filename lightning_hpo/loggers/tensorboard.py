@@ -70,10 +70,12 @@ class DriveTensorBoardLogger(TensorBoardLogger):
 
 
 class TensorboardLogger(Logger):
-    def on_after_trial_start(self, sweep_id: str, title: Optional[str] = None, desc: Optional[str] = None):
+    def on_after_experiment_start(self, sweep_id: str, title: Optional[str] = None, desc: Optional[str] = None):
         pass
 
-    def on_after_trial_end(self, sweep_id: str, trial_id: int, monitor: str, score: float, params: Dict[str, Any]):
+    def on_after_experiment_end(
+        self, sweep_id: str, experiment_id: int, monitor: str, score: float, params: Dict[str, Any]
+    ):
         pass
 
     def connect(self, flow: LightningFlow):
@@ -82,9 +84,9 @@ class TensorboardLogger(Logger):
     def configure_layout(self):
         return []
 
-    def configure_tracer(self, tracer, sweep_id: str, trial_id: int, trial_name: str, params: Dict[str, Any]):
+    def configure_tracer(self, tracer, sweep_id: str, experiment_id: int, experiment_name: str, params: Dict[str, Any]):
         # Create a space logs under the sweep_id folder
-        drive = Drive(f"lit://{sweep_id}", component_name=trial_name, allow_duplicates=True)
+        drive = Drive(f"lit://{sweep_id}", component_name=experiment_name, allow_duplicates=True)
         use_localhost = "LIGHTNING_APP_STATE_URL" not in os.environ
 
         if use_localhost:
@@ -101,5 +103,5 @@ class TensorboardLogger(Logger):
 
         tracer.add_traced(pytorch_lightning.Trainer, "__init__", pre_fn=trainer_pre_fn)
 
-    def get_url(self, trial_id: int) -> None:
+    def get_url(self, experiment_id: int) -> None:
         pass

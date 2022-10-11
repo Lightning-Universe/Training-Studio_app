@@ -118,70 +118,70 @@ class Sweep(LightningFlow, ControllerResource):
             self.stage = Stage.SUCCEEDED
             return
 
-        for trial_id in range(self.num_trials):
+        for experiment_id in range(self.num_trials):
 
-            objective = self._get_objective(trial_id)
+            objective = self._get_objective(experiment_id)
 
             if objective:
 
                 if _check_stage(objective, Stage.NOT_STARTED):
-                    self._algorithm.trial_start(trial_id)
-                    self._logger.on_after_trial_start(self.sweep_id)
+                    self._algorithm.experiment_start(experiment_id)
+                    self._logger.on_after_experiment_start(self.sweep_id)
 
-                if not self.experiments[trial_id]["params"]:
+                if not self.experiments[experiment_id]["params"]:
                     self.stage = Stage.RUNNING
-                    self.experiments[trial_id]["params"] = self._algorithm.get_params(trial_id)
+                    self.experiments[experiment_id]["params"] = self._algorithm.get_params(experiment_id)
 
-                logger_url = self._logger.get_url(trial_id)
+                logger_url = self._logger.get_url(experiment_id)
                 if logger_url is not None and self.logger_url != logger_url:
                     self.logger_url = logger_url
 
                 objective.run(
-                    params=self._algorithm.get_params(trial_id),
+                    params=self._algorithm.get_params(experiment_id),
                     restart_count=self.restart_count,
                 )
 
-                self.experiments[trial_id]["progress"] = objective.progress
-                self.experiments[trial_id]["total_parameters"] = getattr(objective, "total_parameters", None)
-                self.experiments[trial_id]["start_time"] = getattr(objective, "start_time", None)
+                self.experiments[experiment_id]["progress"] = objective.progress
+                self.experiments[experiment_id]["total_parameters"] = getattr(objective, "total_parameters", None)
+                self.experiments[experiment_id]["start_time"] = getattr(objective, "start_time", None)
 
                 if _check_stage(objective, Stage.FAILED):
-                    self.experiments[trial_id]["stage"] = Stage.FAILED
-                    self.experiments[trial_id]["exception"] = objective.status.message
+                    self.experiments[experiment_id]["stage"] = Stage.FAILED
+                    self.experiments[experiment_id]["exception"] = objective.status.message
                     objective.stop()
 
-                if objective.reports and not self.experiments[trial_id]["stage"] == "pruned":
-                    if self._algorithm.should_prune(trial_id, objective.reports):
-                        self.experiments[trial_id]["stage"] = Stage.PRUNED
+                if objective.reports and not self.experiments[experiment_id]["stage"] == "pruned":
+                    if self._algorithm.should_prune(experiment_id, objective.reports):
+                        self.experiments[experiment_id]["stage"] = Stage.PRUNED
                         objective.stop()
                         self.total_experiments_done += 1
                         continue
 
-                if self.stage != Stage.FAILED and self.experiments[trial_id]["stage"] == Stage.PENDING:
-                    if self.experiments[trial_id]["stage"] != objective.status:
+                if self.stage != Stage.FAILED and self.experiments[experiment_id]["stage"] == Stage.PENDING:
+                    if self.experiments[experiment_id]["stage"] != objective.status:
                         self.stage = Stage.RUNNING
-                        self.experiments[trial_id]["stage"] = Stage.RUNNING
+                        self.experiments[experiment_id]["stage"] = Stage.RUNNING
 
                 if objective.best_model_score:
-                    if self.experiments[trial_id]["stage"] == Stage.SUCCEEDED:
+                    if self.experiments[experiment_id]["stage"] == Stage.SUCCEEDED:
                         pass
-                    elif self.experiments[trial_id]["stage"] not in (Stage.PRUNED, Stage.STOPPED, Stage.FAILED):
-                        self._algorithm.trial_end(trial_id, objective.best_model_score)
-                        self._logger.on_after_trial_end(
+                    elif self.experiments[experiment_id]["stage"] not in (Stage.PRUNED, Stage.STOPPED, Stage.FAILED):
+                        self._algorithm.experiment_end(experiment_id, objective.best_model_score)
+                        self._logger.on_after_experiment_end(
                             sweep_id=self.sweep_id,
-                            trial_id=objective.trial_id,
+                            experiment_id=objective.experiment_id,
                             monitor=objective.monitor,
                             score=objective.best_model_score,
-                            params=self._algorithm.get_params(trial_id),
+                            params=self._algorithm.get_params(experiment_id),
                         )
-                        self.experiments[trial_id]["best_model_score"] = objective.best_model_score
-                        self.experiments[trial_id]["best_model_path"] = str(objective.best_model_path)
-                        self.experiments[trial_id]["monitor"] = objective.monitor
-                        self.experiments[trial_id]["stage"] = Stage.SUCCEEDED
+                        self.experiments[experiment_id]["best_model_score"] = objective.best_model_score
+                        self.experiments[experiment_id]["best_model_path"] = str(objective.best_model_path)
+                        self.experiments[experiment_id]["monitor"] = objective.monitor
+                        self.experiments[experiment_id]["stage"] = Stage.SUCCEEDED
                         self.total_experiments_done += 1
                         objective.stop()
 
-        if all(self.experiments[trial_id]["stage"] == Stage.FAILED for trial_id in range(self.num_trials)):
+        if all(self.experiments[experiment_id]["stage"] == Stage.FAILED for experiment_id in range(self.num_trials)):
             self.stage = Stage.FAILED
 
     @property
@@ -196,15 +196,15 @@ class Sweep(LightningFlow, ControllerResource):
     def best_model_path(self) -> Optional[Path]:
         return get_best_model_path(self)
 
-    def stop_experiment(self, trial_id: int):
-        objective = self._get_objective(trial_id)
+    def stop_experiment(self, experiment_id: int):
+        objective = self._get_objective(experiment_id)
         if objective:
             objective.stop()
-            self.experiments[trial_id]["stage"] = Stage.STOPPED
+            self.experiments[experiment_id]["stage"] = Stage.STOPPED
             self.total_experiments_done += 1
 
-    def _get_objective(self, trial_id: int):
-        trial_config = self.experiments.get(trial_id, None)
+    def _get_objective(self, experiment_id: int):
+        trial_config = self.experiments.get(experiment_id, None)
         if trial_config is None:
             trial_config = ExperimentConfig(
                 name=str(uuid4()).split("-")[-1][:7],
@@ -214,20 +214,23 @@ class Sweep(LightningFlow, ControllerResource):
                 stage=Stage.PENDING,
                 params={},
             ).dict()
-            self.experiments[trial_id] = trial_config
+            self.experiments[experiment_id] = trial_config
 
         if trial_config["stage"] == Stage.SUCCEEDED:
             return
 
-        objective = getattr(self, f"w_{trial_id}", None)
+        objective = getattr(self, f"w_{experiment_id}", None)
         if objective is None:
             cloud_compute = CloudCompute(
                 name=self.cloud_compute if self.cloud_compute else "cpu", disk_size=self.disk_size
             )
             objective = self._objective_cls(
-                trial_id=trial_id, trial_name=trial_config["name"], cloud_compute=cloud_compute, **self._kwargs
+                experiment_id=experiment_id,
+                experiment_name=trial_config["name"],
+                cloud_compute=cloud_compute,
+                **self._kwargs,
             )
-            setattr(self, f"w_{trial_id}", objective)
+            setattr(self, f"w_{experiment_id}", objective)
         return objective
 
     @classmethod

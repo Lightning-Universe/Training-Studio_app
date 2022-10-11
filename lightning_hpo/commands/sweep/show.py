@@ -79,12 +79,12 @@ def _show_sweep(sweep: SweepConfig):
         header_style="bold green",
     )
 
-    for trial in sweep.experiments.values():
+    for experiment in sweep.experiments.values():
         table.add_row(
-            str(trial.name),
-            str(trial.progress),
-            str(round(trial.best_model_score, 2) if trial.best_model_score else None),
-            *[str(round(v, 5)) for v in _parse_params(trial.params).values()],
+            str(experiment.name),
+            str(experiment.progress),
+            str(round(experiment.best_model_score, 2) if experiment.best_model_score else None),
+            *[str(round(v, 5)) for v in _parse_params(experiment.params).values()],
         )
     console = Console()
     console.print(table)
@@ -92,7 +92,7 @@ def _show_sweep(sweep: SweepConfig):
 
 class ShowSweepsCommand(ClientCommand):
 
-    DESCRIPTION = "Command to show a Sweep or its Trials"
+    DESCRIPTION = "Command to show a Sweep or its experiments"
 
     # TODO: (tchaton) Upstream to Lightning
     def invoke_handler(self, config: Optional[BaseModel] = None) -> Dict[str, Any]:

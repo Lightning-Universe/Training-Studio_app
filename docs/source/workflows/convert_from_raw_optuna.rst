@@ -45,7 +45,7 @@ To customize an ``Objective``, you need to override the ``objective`` and pass a
 The core difference from the previous scripts are:
 
 - ``self.monitor``: This is used to automatically populate metrics with your selected logger
-- ``self.reports``: Lightning HPO automatically takes care of pruning the trials, simply register the step based reports.
+- ``self.reports``: Lightning HPO automatically takes care of pruning the experiments, simply register the step based reports.
 - ``self.best_model_score``: Lightning HPO expects you to register the best mode score of your model in the ``Objective`` state.
 
 .. literalinclude:: ../../../examples/3_app_sklearn.py
@@ -77,4 +77,4 @@ or with ``--cloud`` to run it in the cloud.
 
    python -m lightning run app examples/1_app_agnostic.py --cloud
 
-.. note:: Locally, each trial runs in its own process, so there is overhead if your objective is quick to run.
+.. note:: Locally, each experiment runs in its own process, so there is overhead if your objective is quick to run.

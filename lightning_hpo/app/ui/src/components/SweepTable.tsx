@@ -1,7 +1,7 @@
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { Box, Button, Link, Stack, Table, Typography } from 'lightning-ui/src/design-system/components';
 import Status, { StatusEnum } from 'lightning-ui/src/shared/components/Status';
-import { AppClient, SweepConfig, TensorboardConfig, TrialConfig } from '../generated';
+import { AppClient, ExperimentConfig, SweepConfig, TensorboardConfig } from '../generated';
 import useClientDataState from '../hooks/useClientDataState';
 import { getAppId } from '../utilities';
 import BorderLinearProgress from './BorderLinearProgress';
@@ -24,7 +24,7 @@ const statusToEnum = {
   stopped: StatusEnum.STOPPED,
 } as { [k: string]: StatusEnum };
 
-function trialToRows(trials: Record<string, TrialConfig>) {
+function trialToRows(trials: Record<string, ExperimentConfig>) {
   return Object.entries(trials).map(entry => [
     <Status status={entry[1].stage ? statusToEnum[entry[1].stage] : StatusEnum.NOT_STARTED} />,
     entry[0],

@@ -27,7 +27,7 @@ class WandbLogger(Logger):
         self.report_url: Optional[str] = None
         self.report = None
 
-    def on_after_trial_start(
+    def on_after_experiment_start(
         self,
         sweep_id: str,
         title: Optional[str] = None,
@@ -50,7 +50,9 @@ class WandbLogger(Logger):
         self.storage_id = self.report.id
         self.report_url = f"https://wandb.ai/{self.entity}/{self.sweep_id}/reports/{self.sweep_id}--{self.report.id}"
 
-    def on_after_trial_end(self, sweep_id: str, trial_id: int, monitor: str, score: float, params: Dict[str, Any]):
+    def on_after_experiment_end(
+        self, sweep_id: str, experiment_id: int, monitor: str, score: float, params: Dict[str, Any]
+    ):
         if getattr(self.report, "blocks"):
             return
 
@@ -79,11 +81,11 @@ class WandbLogger(Logger):
             report = f"https://wandb.ai/{self.entity}/{self.sweep_id}/reports/{self.sweep_id}--{self.storage_id}"  # noqa: E501
         return [{"name": "Project", "content": reports}, {"name": "Report", "content": report}]
 
-    def configure_tracer(self, tracer, sweep_id: str, trial_id: int, trial_name: str, params: Dict[str, Any]):
+    def configure_tracer(self, tracer, sweep_id: str, experiment_id: int, experiment_name: str, params: Dict[str, Any]):
         wandb.init(
             project=sweep_id,
             entity=self.entity,
-            name=f"trial_{trial_id}",
+            name=f"experiment_{experiment_id}",
             config=params,
         )
 
@@ -95,14 +97,14 @@ class WandbLogger(Logger):
                 save_dir=os.path.join(os.getcwd(), "wandb/lightning_logs"),
                 project=sweep_id,
                 entity=self.entity,
-                name=f"trial_{trial_id}",
+                name=f"experiment_{experiment_id}",
             )
             kwargs["logger"] = [logger]
             return {}, args, kwargs
 
         tracer.add_traced(pytorch_lightning.Trainer, "__init__", pre_fn=trainer_pre_fn)
 
-    def get_url(self, trial_id: int) -> None:
+    def get_url(self, experiment_id: int) -> None:
         if self.storage_id is not None:
             return f"https://wandb.ai/{self.entity}/{self.sweep_id}/reports/{self.sweep_id}--{self.storage_id}"
         return f"https://wandb.ai/{self.entity}/{self.sweep_id}/reports/{self.sweep_id}"

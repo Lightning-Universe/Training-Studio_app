@@ -1,7 +1,7 @@
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { Box, Button, Link, Stack, Table, Typography } from 'lightning-ui/src/design-system/components';
 import Status, { StatusEnum } from 'lightning-ui/src/shared/components/Status';
-import { AppClient, SweepConfig, TensorboardConfig, TrialConfig } from '../generated';
+import { AppClient, ExperimentConfig, SweepConfig, TensorboardConfig } from '../generated';
 import useClientDataState from '../hooks/useClientDataState';
 import { getAppId } from '../utilities';
 import BorderLinearProgress from './BorderLinearProgress';
@@ -80,15 +80,15 @@ function toCompute(sweep: SweepConfig) {
   }
 }
 
-function toProgress(trial: TrialConfig) {
+function toProgress(experiment: ExperimentConfig) {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
       <Box sx={{ width: '100%', mr: 1 }}>
-        <BorderLinearProgress variant={trial.progress == 0 ? null : 'determinate'} value={trial.progress} />
+        <BorderLinearProgress variant={experiment.progress == 0 ? null : 'determinate'} value={experiment.progress} />
       </Box>
-      {trial.progress ? (
+      {experiment.progress ? (
         <Box sx={{ minWidth: 35 }}>
-          <Typography variant="caption" display="block">{`${trial.progress}%`}</Typography>
+          <Typography variant="caption" display="block">{`${experiment.progress}%`}</Typography>
         </Box>
       ) : (
         <Box></Box>
@@ -97,8 +97,8 @@ function toProgress(trial: TrialConfig) {
   );
 }
 
-function startTime(trial: TrialConfig) {
-  return trial.start_time ? String(trial.start_time) : <Box></Box>;
+function startTime(experiment: ExperimentConfig) {
+  return experiment.start_time ? String(experiment.start_time) : <Box></Box>;
 }
 
 export function Experiments() {

@@ -6,12 +6,12 @@ from lightning.app.utilities.tracer import Tracer
 
 
 class Logger(ABC):
-    def on_after_trial_start(self, sweep_id: str):
+    def on_after_experiment_start(self, sweep_id: str):
         ...
 
     @abstractmethod
-    def on_after_trial_end(
-        self, sweep_id: str, trial_id: int, monitor: Optional[str], score: Optional[float], params: Dict[str, Any]
+    def on_after_experiment_end(
+        self, sweep_id: str, experiment_id: int, monitor: Optional[str], score: Optional[float], params: Dict[str, Any]
     ):
         ...
 
@@ -24,19 +24,19 @@ class Logger(ABC):
         ...
 
     @abstractmethod
-    def configure_tracer(self, tracer, sweep_id: str, trial_id: int, trial_name: str, params: Dict[str, Any]):
+    def configure_tracer(self, tracer, sweep_id: str, experiment_id: int, experiment_name: str, params: Dict[str, Any]):
         ...
 
     @abstractmethod
-    def get_url(self, trial_id: int) -> Optional[str]:
+    def get_url(self, experiment_id: int) -> Optional[str]:
         ...
 
 
 class NoneLogger(Logger):
-    def on_after_trial_start(self, sweep_id: str):
+    def on_after_experiment_start(self, sweep_id: str):
         pass
 
-    def on_after_trial_end(self, *args, **kwargs):
+    def on_after_experiment_end(self, *args, **kwargs):
         pass
 
     def connect(self, flow: LightningFlow):

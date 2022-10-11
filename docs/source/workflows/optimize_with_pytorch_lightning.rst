@@ -41,11 +41,11 @@ For this example, download ``train.py`` and ``app.py`` files with the following 
 
    wget -O app.py https://raw.githubusercontent.com/Lightning-AI/lightning-hpo/master/examples/2_app_pytorch_lightning.py
 
-In the ``app.py`` file, we configure a :class:`~lightning_hpo.components.sweep.Sweep` object to run 4 sequential trials where the ``model.lr``, ``model.gamma``, ``data.batch_size`` and ``trainer.max_epochs`` are hyper-parameters sampled from several distributions.
+In the ``app.py`` file, we configure a :class:`~lightning_hpo.components.sweep.Sweep` object to run 4 sequential experiments where the ``model.lr``, ``model.gamma``, ``data.batch_size`` and ``trainer.max_epochs`` are hyper-parameters sampled from several distributions.
 
 .. literalinclude:: ../../../examples/2_app_pytorch_lightning.py
 
-Under the hood, the :class:`~lightning_hpo.components.sweep.Sweep` launches one process per trial and passed the sampled parameters to your script
+Under the hood, the :class:`~lightning_hpo.components.sweep.Sweep` launches one process per experiment and passed the sampled parameters to your script
 e.g this would work with any argument parser such as `hydra <https://github.com/facebookresearch/hydra>`_ or `jsonargparse <https://github.com/omni-us/jsonargparse>`_.
 
 .. code-block::
@@ -81,13 +81,13 @@ You can find similar lines within the logs.
 
 .. code-block::
 
-   INFO: Trial 0 finished with value: 0.2874999940395355 and parameters: {'model.lr': 0.01889036668053488, 'model.gamma': 0.7965239180957129, 'data.batch_size': 32, 'trainer.max_epochs': 4}. Best is trial 0 with value: 0.2874999940395355.
+   INFO: Experiment 0 finished with value: 0.2874999940395355 and parameters: {'model.lr': 0.01889036668053488, 'model.gamma': 0.7965239180957129, 'data.batch_size': 32, 'trainer.max_epochs': 4}. Best is experiment 0 with value: 0.2874999940395355.
 
-   INFO: Trial 1 finished with value: 0.08124999701976776 and parameters: {'model.lr': 0.01715209192907918, 'model.gamma': 0.6520463886841567, 'data.batch_size': 32, 'trainer.max_epochs': 5}. Best is trial 0 with value: 0.2874999940395355.
+   INFO: Experiment 1 finished with value: 0.08124999701976776 and parameters: {'model.lr': 0.01715209192907918, 'model.gamma': 0.6520463886841567, 'data.batch_size': 32, 'trainer.max_epochs': 5}. Best is experiment 0 with value: 0.2874999940395355.
 
-   INFO: Trial 2 finished with value: 0.11249999701976776 and parameters: {'model.lr': 0.018730095755230075, 'model.gamma': 0.5170345255250421, 'data.batch_size': 64, 'trainer.max_epochs': 5}. Best is trial 0 with value: 0.2874999940395355
+   INFO: Experiment 2 finished with value: 0.11249999701976776 and parameters: {'model.lr': 0.018730095755230075, 'model.gamma': 0.5170345255250421, 'data.batch_size': 64, 'trainer.max_epochs': 5}. Best is experiment 0 with value: 0.2874999940395355
 
-.. note:: Locally, each trial runs in its own process, so there is overhead if your objective is quick to run.
+.. note:: Locally, each experiment runs in its own process, so there is overhead if your objective is quick to run.
 
 
 ----
