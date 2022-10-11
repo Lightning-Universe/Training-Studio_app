@@ -371,13 +371,14 @@ cd examples/scripts
 
 ```bash
 lightning run sweep train.py \
-      --total_experiments=100 \
-      --parallel_experiments=5 \
-      --logger="tensorboard" \
-      --direction=maximize \
-      --cloud_compute=cpu-medium \
-      --model.lr="log_uniform(0.001, 0.01)" \
-      --model.gamma="uniform(0.5, 0.8)" \
-      --requirements="torchvision, wandb, 'jsonargparse[signatures]'" \
-      --data.batch_size="categorical([32, 64])"
+    --total_experiments=100 \
+    --parallel_experiments=5 \
+    --logger="tensorboard" \
+    --direction=maximize \
+    --cloud_compute=cpu-medium \
+    --model.lr="log_uniform(0.001, 0.01)" \
+    --model.gamma="uniform(0.5, 0.8)" \
+    --requirements="torchvision, wandb, 'jsonargparse[signatures]'" \
+    --data.batch_size="categorical([32, 64])" \
+    --algorithm="bayesian"
 ```

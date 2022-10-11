@@ -26,6 +26,7 @@ const statusToEnum = {
 
 const ComputeToMachines = {
   'cpu': '1 CPU',
+  'cpu-medium': '2 CPU',
   'gpu': '1 T4',
   'gpu-fast': '1 V100',
   'gpu-fast-multi': '4 V100',

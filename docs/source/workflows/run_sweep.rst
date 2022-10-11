@@ -118,6 +118,21 @@ Here is an example to sample the data batch size taken from the command above.
 
    lightning run sweep ... --data.batch_size="categorical([32, 64])"
 
+
+Here is an example Sweep doing ``baysian`` optimization.
+
+.. code-block::
+
+   lightning run sweep train.py \
+      --total_experiments=100 \
+      --parallel_experiments=5 \
+      --logger="tensorboard" \
+      --direction=maximize \
+      --model.lr="log_uniform(0.001, 0.01)" \
+      --model.gamma="uniform(0.5, 0.8)" \
+      --data.batch_size="categorical([32, 64])" \
+      --algorithm="bayesian"
+
 ----
 
 **********
