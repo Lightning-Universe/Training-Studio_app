@@ -119,7 +119,8 @@ export function Experiments() {
         </UserGuideBody>
         <UserGuideComment>Run a sweep</UserGuideComment>
         <UserGuideBody enableClipBoard={enableClipBoard}>
-          lightning run sweep train.py --model.lr "[0, 1, 2]" --data.batch "[32, 64]" --algorithm="grid_search"
+          lightning run sweep train.py --model.lr "[0.01, 0.02, 0.03]" --data.batch "[32, 64]"
+          --algorithm="grid_search"
         </UserGuideBody>
       </UserGuide>
     );

@@ -82,9 +82,9 @@ class TensorboardLogger(Logger):
     def configure_layout(self):
         return []
 
-    def configure_tracer(self, tracer, sweep_id: str, trial_id: int, params: Dict[str, Any]):
+    def configure_tracer(self, tracer, sweep_id: str, trial_id: int, trial_name: str, params: Dict[str, Any]):
         # Create a space logs under the sweep_id folder
-        drive = Drive(f"lit://{sweep_id}", component_name=str(trial_id), allow_duplicates=True)
+        drive = Drive(f"lit://{sweep_id}", component_name=trial_name, allow_duplicates=True)
         use_localhost = "LIGHTNING_APP_STATE_URL" not in os.environ
 
         if use_localhost:

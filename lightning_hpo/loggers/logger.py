@@ -24,7 +24,7 @@ class Logger(ABC):
         ...
 
     @abstractmethod
-    def configure_tracer(self, tracer, sweep_id: str, trial_id: int, params: Dict[str, Any]):
+    def configure_tracer(self, tracer, sweep_id: str, trial_id: int, trial_name: str, params: Dict[str, Any]):
         ...
 
     @abstractmethod

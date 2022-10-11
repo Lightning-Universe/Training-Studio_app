@@ -23,6 +23,7 @@ class Objective(TracerPythonScript, ABC):
         logger: str,
         sweep_id: str,
         trial_id,
+        trial_name: str,
         raise_exception: bool = False,
         function_name: str = "objective",
         num_nodes: int = 1,  # TODO # Add support for multi node
@@ -30,6 +31,7 @@ class Objective(TracerPythonScript, ABC):
     ):
         super().__init__(*args, raise_exception=raise_exception, **kwargs)
         self.trial_id = trial_id
+        self.trial_name = trial_name
         self.best_model_score = None
         self.best_model_path = None
         self.params = None
@@ -49,7 +51,11 @@ class Objective(TracerPythonScript, ABC):
         assert self.params is not None
         tracer = super().configure_tracer()
         LoggerType(self.logger).get_logger().configure_tracer(
-            tracer, params=self.params, sweep_id=self.sweep_id, trial_id=self.trial_id
+            tracer,
+            params=self.params,
+            sweep_id=self.sweep_id,
+            trial_id=self.trial_id,
+            trial_name=self.trial_name,
         )
         return tracer
 

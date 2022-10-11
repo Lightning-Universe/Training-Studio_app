@@ -1,11 +1,10 @@
 import argparse
 import os
 from pathlib import Path
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple
 
 import requests
 from lightning.app.storage.copier import copy_files
-from lightning.app.storage.path import shared_storage_path
 from lightning.app.utilities.commands import ClientCommand
 from lightning.app.utilities.network import LightningClient
 from lightning_app.utilities.cloud import _get_project
@@ -19,15 +18,21 @@ class DownloadArtifactsConfig(BaseModel):
     exclude: Optional[str] = None
 
 
+class DownloadArtifactsConfigResponse(BaseModel):
+    sweep_names: List[str]
+    experiment_names: List[str]
+    paths: List[str]
+    urls: Optional[List[str]]
+
+
 class DownloadArtifactsCommand(ClientCommand):
     def run(self) -> None:
         # 1. Parse the user arguments.
         parser = argparse.ArgumentParser()
+        parser.add_argument("--names", nargs="+", default=[], help="Provide a list of experiments or sweep names.")
         parser.add_argument(
             "--output_dir", required=True, type=str, help="Provide the output directory for the artifacts.."
         )
-        parser.add_argument("--include", type=str, default=None, help="Provide a regex to include some specific files.")
-        parser.add_argument("--exclude", type=str, default=None, help="Provide a regex to exclude some specific files.")
         hparams = parser.parse_args()
 
         output_dir = Path(hparams.output_dir).resolve()
@@ -35,33 +40,40 @@ class DownloadArtifactsCommand(ClientCommand):
         if not output_dir.exists():
             output_dir.mkdir(exist_ok=True)
 
-        config = DownloadArtifactsConfig(include=hparams.include, exclude=hparams.exclude)
-        response: List[str] = self.invoke_handler(config=config)
+        config = DownloadArtifactsConfig(include=None, exclude=None)
+        response = DownloadArtifactsConfigResponse(**self.invoke_handler(config=config))
 
-        if not response:
-            return
+        for name in hparams.names:
+            has_found = False
+            if name in response.sweep_names:
+                has_found = True
+            elif name in response.experiment_names:
+                has_found = True
 
-        if len(response[0]) == 2:
-            for path, url in response:
+            if not has_found:
+                raise ValueError(
+                    f"The provided name `{name}` doesn't exists. "
+                    f" Here are the available Sweeps {response.sweep_names} and "
+                    f"available Experiments {response.experiment_names}."
+                )
+
+        if response.urls:
+            for path, url in zip(response.paths, response.urls):
+                if not any(name in path for name in hparams.names):
+                    continue
                 if path.startswith("/"):
                     path = path[1:]
                 resp = requests.get(url, allow_redirects=True)
-                target_file = Path(os.path.join(output_dir, path))
+                target_file = Path(os.path.join(output_dir, str(path).split("drive/")[1])).resolve()
                 target_file.parent.mkdir(exist_ok=True, parents=True)
                 with open(target_file, "wb") as f:
                     f.write(resp.content)
         else:
-            for path in response:
+            for path in response.paths:
+                if not any(name in path for name in hparams.names):
+                    continue
                 source_path = Path(path).resolve()
-                shared_storage = shared_storage_path()
-                cleaned_path = (
-                    str(path)
-                    .replace(str(shared_storage) + "/", "")
-                    .replace("/artifacts/", "")
-                    .replace(os.getcwd() + "/", "")
-                )
-
-                target_file = Path(os.path.join(output_dir, cleaned_path))
+                target_file = Path(os.path.join(output_dir, str(source_path).split("drive/")[1])).resolve()
                 if not target_file.parent.exists():
                     os.makedirs(str(target_file.parent), exist_ok=True)
                 copy_files(source_path, target_file)
@@ -69,16 +81,17 @@ class DownloadArtifactsCommand(ClientCommand):
         print("All the specified artifacts were downloaded.")
 
 
-def _collect_artifact_urls(config: DownloadArtifactsConfig) -> List[Union[str, Tuple[str, str]]]:
+def _collect_artifact_urls(config: DownloadArtifactsConfig) -> Tuple[List[str], Optional[List[str]]]:
     """This function is responsible to collect the files from the shared filesystem."""
 
     use_localhost = "LIGHTNING_APP_STATE_URL" not in os.environ
 
     if use_localhost:
-        return _collect_artifact_paths(
+        paths = _collect_artifact_paths(
             config=ShowArtifactsConfig(include=config.include, exclude=config.exclude),
             replace=False,
         )
+        return paths, None
     else:
         client = LightningClient()
         project_id = _get_project(client).project_id
@@ -87,4 +100,4 @@ def _collect_artifact_urls(config: DownloadArtifactsConfig) -> List[Union[str, T
         paths = [artifact.filename for artifact in response.artifacts]
         maps = {artifact.filename: artifact.url for artifact in response.artifacts}
         filtered_paths = _filter_paths(paths, include=config.include, exclude=config.exclude)
-        return [(path, maps[path]) for path in filtered_paths]
+        return filtered_paths, [maps[path] for path in filtered_paths]

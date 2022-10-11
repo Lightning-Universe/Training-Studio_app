@@ -45,5 +45,5 @@ def test_wandb_logger(monkeypatch):
 
     tracer = MagicMock()
     tracer.add_traced = add_traced
-    logger.configure_tracer(tracer, "a", 0, {"x": 1})
+    logger.configure_tracer(tracer, "a", 0, "a", {"x": 1})
     assert pytorch_lightning.Trainer.v__init__.__name__ == "trainer_pre_fn"

@@ -8,8 +8,14 @@ from lightning_hpo.commands.artifacts.download import (
     _collect_artifact_urls,
     DownloadArtifactsCommand,
     DownloadArtifactsConfig,
+    DownloadArtifactsConfigResponse,
 )
-from lightning_hpo.commands.artifacts.show import _collect_artifact_paths, ShowArtifactsCommand, ShowArtifactsConfig
+from lightning_hpo.commands.artifacts.show import (
+    _collect_artifact_paths,
+    ShowArtifactsCommand,
+    ShowArtifactsConfig,
+    ShowArtifactsConfigResponse,
+)
 from lightning_hpo.commands.drive.create import CreateDriveCommand, DriveConfig
 from lightning_hpo.commands.drive.delete import DeleteDriveCommand, DeleteDriveConfig
 from lightning_hpo.commands.drive.show import ShowDriveCommand
@@ -73,11 +79,23 @@ class TrainingStudio(LightningFlow):
     def configure_layout(self):
         return StaticWebFrontend(os.path.join(os.path.dirname(__file__), "ui", "build"))
 
-    def show_artifacts(self, config: ShowArtifactsConfig):
-        return _collect_artifact_paths(config)
+    def show_artifacts(self, config: ShowArtifactsConfig) -> ShowArtifactsConfigResponse:
+        sweeps = self.db_client.get(self.sweep_controller.model)
+        return ShowArtifactsConfigResponse(
+            sweep_names=[sweep.sweep_id for sweep in sweeps],
+            experiment_names=[trial.name for sweep in sweeps for trial in sweep.trials.values()],
+            paths=_collect_artifact_paths(config),
+        )
 
-    def download_artifacts(self, config: DownloadArtifactsConfig):
-        return _collect_artifact_urls(config)
+    def download_artifacts(self, config: DownloadArtifactsConfig) -> DownloadArtifactsConfigResponse:
+        sweeps = self.db_client.get(self.sweep_controller.model)
+        paths, urls = _collect_artifact_urls(config)
+        return DownloadArtifactsConfigResponse(
+            sweep_names=[sweep.sweep_id for sweep in sweeps],
+            experiment_names=[trial.name for sweep in sweeps for trial in sweep.trials.values()],
+            paths=paths,
+            urls=urls,
+        )
 
     def create_drive(self, config: DriveConfig):
         drives = self.db_client.get(DriveConfig)

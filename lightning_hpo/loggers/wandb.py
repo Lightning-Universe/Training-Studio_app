@@ -79,7 +79,7 @@ class WandbLogger(Logger):
             report = f"https://wandb.ai/{self.entity}/{self.sweep_id}/reports/{self.sweep_id}--{self.storage_id}"  # noqa: E501
         return [{"name": "Project", "content": reports}, {"name": "Report", "content": report}]
 
-    def configure_tracer(self, tracer, sweep_id: str, trial_id: int, params: Dict[str, Any]):
+    def configure_tracer(self, tracer, sweep_id: str, trial_id: int, trial_name: str, params: Dict[str, Any]):
         wandb.init(
             project=sweep_id,
             entity=self.entity,

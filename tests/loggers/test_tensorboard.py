@@ -14,6 +14,6 @@ def test_tensorboard_logger(monkeypatch):
 
     tracer = MagicMock()
     tracer.add_traced = add_traced
-    logger.configure_tracer(tracer, "a", 0, {"x": 1})
+    logger.configure_tracer(tracer, "a", 0, "a", {"x": 1})
     _, _, kwargs = pytorch_lightning.Trainer.v__init__(MagicMock, (), {})
     assert kwargs["logger"].__class__.__name__ == "TensorBoardLogger"
