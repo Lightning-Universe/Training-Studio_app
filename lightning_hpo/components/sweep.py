@@ -231,18 +231,9 @@ class Sweep(LightningFlow, ControllerResource):
                 experiment_id=experiment_id,
                 experiment_name=trial_config["name"],
                 cloud_compute=cloud_compute,
+                drives=self._drives,
                 **self._kwargs,
             )
-            setattr(self, f"w_{experiment_id}", objective)
-            if isinstance(objective, LightningFlow):
-                works = objective.works()
-            else:
-                works = [objective]
-
-            # Attach the mount drives to the works.
-            for work in works:
-                for drive_idx, drive in enumerate(self._drives):
-                    setattr(work, f"drive_{drive_idx}", drive)
         return objective
 
     @classmethod
