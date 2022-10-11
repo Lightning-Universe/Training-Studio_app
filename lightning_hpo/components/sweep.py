@@ -222,7 +222,9 @@ class Sweep(LightningFlow, ControllerResource):
             cloud_compute = CloudCompute(
                 name=self.cloud_compute if self.cloud_compute else "cpu", disk_size=self.disk_size
             )
-            objective = self._objective_cls(trial_id=trial_id, cloud_compute=cloud_compute, **self._kwargs)
+            objective = self._objective_cls(
+                trial_id=trial_id, trial_name=trial_config["name"], cloud_compute=cloud_compute, **self._kwargs
+            )
             setattr(self, f"w_{trial_id}", objective)
         return objective
 

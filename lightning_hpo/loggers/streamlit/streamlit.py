@@ -20,7 +20,7 @@ class StreamLitLogger(Logger):
     def configure_layout(self):
         return [{"name": "Experiment", "content": self.hi_plot}]
 
-    def configure_tracer(self, tracer, sweep_id: str, trial_id: int, params: Dict[str, Any]):
+    def configure_tracer(self, tracer, sweep_id: str, trial_id: int, trial_name: str, params: Dict[str, Any]):
         pass
 
     def get_url(self, trial_id: int) -> None:
