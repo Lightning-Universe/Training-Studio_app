@@ -135,6 +135,64 @@ Here is an example Sweep doing ``baysian`` optimization.
 
 ----
 
+***********************************
+4. Attach Mount Drives in the Cloud
+***********************************
+
+The Lightning framework enables to mount s3 buckets to your works in the cloud.
+
+In order to create a new Drive, you need to provide its name, s3 Source URL (public only for now) and where the data should be mounted within the works.
+
+.. code-block::
+
+   python -m lightning create drive --name example --source s3://pl-flash-data/wiki-test/ --mount_path /data/wiki-test/
+
+Then, you can pass those drives to your experiment as follows:
+
+.. code-block::
+
+   lightning run experiment example.py --drives example
+
+In this ``example.py``, we are listing all the files to ensure they are properly mounted.
+
+.. code-block::
+
+   import glob
+
+   for filename in glob.iglob("/data/wiki-test/**/**", recursive=True):
+      print(filename)
+
+
+.. code-block::
+
+   import glob
+
+   for filename in glob.iglob("/data/wiki-test/**/**", recursive=True):
+      print(filename)
+
+Here are the logs produced by the ``example.py`` listing the ``/data/wiki-test`` folder.
+
+.. code-block::
+
+   INFO: /content/wiki-test/
+   INFO: /content/wiki-test/downloads
+   INFO:
+   /content/wiki-test/downloads/30cb21e192e211952c02572882251280460fb5247fe18b6c0fb69224e769f1e1.6a998136b3179c543
+   fac19963253d25970e7fe6d053f2818edc7075627f64bad.py
+   INFO:
+   /content/wiki-test/downloads/30cb21e192e211952c02572882251280460fb5247fe18b6c0fb69224e769f1e1.6a998136b3179c543
+   fac19963253d25970e7fe6d053f2818edc7075627f64bad.py.json
+   INFO:
+   /content/wiki-test/downloads/30cb21e192e211952c02572882251280460fb5247fe18b6c0fb69224e769f1e1.6a998136b3179c543
+   fac19963253d25970e7fe6d053f2818edc7075627f64bad.py.lock
+   INFO:
+   /content/wiki-test/downloads/87ea4775c52b60feb08a5087c68f4453d4533a02491172390b4d6a3f97ae44d1.d3aa47a864d0b5cf3
+   b7ebcf51e45c9d8f96356ff8527fff02d3a4cae4c9f5b1e
+   ...
+
+
+----
+
 **********
 Next Steps
 **********

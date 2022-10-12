@@ -90,6 +90,7 @@ class Sweep(LightningFlow, ControllerResource):
         self.stage = stage
         self.logger_url = logger_url
         self._drives = drives or []
+        self.drive_names = [drive.id for drive in self._drives]
 
         self._objective_cls = _resolve_objective_cls(objective_cls, framework)
         self._algorithm = algorithm or OptunaAlgorithm(direction=direction)

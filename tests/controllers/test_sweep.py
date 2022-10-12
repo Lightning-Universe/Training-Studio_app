@@ -19,6 +19,7 @@ def test_sweep_controller(monkeypatch):
         logger="tensorboard",
         distributions={"best_model_score": Uniform(1, 10)},
         framework="pytorch_lightning",
+        drives=[],
     )
     sweep_controller = SweepController()
     sweep_controller.db_url = "a"

@@ -421,7 +421,7 @@ class RunSweepCommand(ClientCommand):
             direction=hparams.direction,
             experiments={},
             disk_size=hparams.disk_size,
-            drive_names=hparams.drive,
+            drive_names=hparams.drives,
         )
         response = self.invoke_handler(config=config)
         print(response)
