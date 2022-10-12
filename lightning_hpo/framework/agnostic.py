@@ -50,7 +50,7 @@ class Objective(TracerPythonScript, ABC):
         self.num_nodes = num_nodes
         self.progress = None
         for drive_idx, drive in enumerate(drives):
-            setattr(self, f"drive_{drive_idx}", drive)
+            setattr(self, f"drive__{drive_idx}", drive)
 
     def configure_tracer(self):
         assert self.params is not None

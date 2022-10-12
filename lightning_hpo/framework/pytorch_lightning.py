@@ -36,6 +36,8 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         self.progress = None
         self.total_parameters = None
         self.start_time = None
+        for drive_idx, drive in enumerate(drives):
+            setattr(self, f"drive__{drive_idx}", drive)
 
     def configure_tracer(self):
         tracer = Objective.configure_tracer(self)
