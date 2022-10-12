@@ -162,14 +162,6 @@ In this ``example.py``, we are listing all the files to ensure they are properly
    for filename in glob.iglob("/data/wiki-test/**/**", recursive=True):
       print(filename)
 
-
-.. code-block::
-
-   import glob
-
-   for filename in glob.iglob("/data/wiki-test/**/**", recursive=True):
-      print(filename)
-
 Here are the logs produced by the ``example.py`` listing the ``/data/wiki-test`` folder.
 
 .. code-block::
