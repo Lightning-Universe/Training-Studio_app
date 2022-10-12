@@ -234,6 +234,7 @@ class Sweep(LightningFlow, ControllerResource):
                 drives=self._drives,
                 **self._kwargs,
             )
+            setattr(self, f"w_{experiment_id}", objective)
         return objective
 
     @classmethod

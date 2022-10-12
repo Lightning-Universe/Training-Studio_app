@@ -25,10 +25,10 @@ class Objective(TracerPythonScript, ABC):
         sweep_id: str,
         experiment_id,
         experiment_name: str,
+        drives: List[Drive],
         raise_exception: bool = False,
         function_name: str = "objective",
         num_nodes: int = 1,  # TODO # Add support for multi node
-        drives: List[Drive],
         **kwargs,
     ):
         super().__init__(*args, raise_exception=raise_exception, **kwargs)
@@ -47,6 +47,7 @@ class Objective(TracerPythonScript, ABC):
         self.monitor = None
         self.function_name = function_name
         self.has_stored = False
+        self.num_nodes = num_nodes
         self.progress = None
         for drive_idx, drive in enumerate(drives):
             setattr(self, f"drive_{drive_idx}", drive)
