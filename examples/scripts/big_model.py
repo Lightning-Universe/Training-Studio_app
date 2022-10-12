@@ -19,7 +19,7 @@ dm = LanguageModelingDataModule(
     tokenizer=tokenizer,
 )
 trainer = pl.Trainer(
-    accelerator="gpu",
+    accelerator="auto",
     devices="auto",
     strategy="deepspeed_stage_3",
     precision=16,

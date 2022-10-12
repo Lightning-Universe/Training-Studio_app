@@ -5,6 +5,7 @@ from lightning.app.storage import Drive
 from lightning.app.structures import Dict
 
 from lightning_hpo import Sweep
+from lightning_hpo.commands.drive.create import DriveConfig
 from lightning_hpo.commands.experiment.run import RunExperimentCommand
 from lightning_hpo.commands.experiment.show import ShowExperimentsCommand
 from lightning_hpo.commands.experiment.stop import StopExperimentCommand, StopExperimentConfig
@@ -51,9 +52,15 @@ class SweepController(Controller):
                             self.db.put(tensorboard)
 
             if work_name not in self.r and sweep.stage != Stage.SUCCEEDED:
+                drives: List[DriveConfig] = self.db.get(DriveConfig)
                 self.r[work_name] = Sweep.from_config(
                     sweep,
                     code={"drive": self.drive, "name": id},
+                    drives=[
+                        Drive(drive.source, root_folder=drive.mount_path)
+                        for drive in drives
+                        if drive.name in sweep.drive_names
+                    ],
                 )
 
     def on_reconcile_end(self, updates: List[SweepConfig]):
@@ -66,6 +73,12 @@ class SweepController(Controller):
 
     def run_sweep(self, config: SweepConfig) -> str:
         work_name = urllib.parse.quote_plus(config.sweep_id)
+        drive_names = [drive.name for drive in self.db.get(DriveConfig)]
+
+        for drive in config.drive_names:
+            if drive not in drive_names:
+                return f"The provided drive '{drive}' doesn't exists."
+
         if work_name not in self.r:
             self.db.post(config)
             return f"Launched a Sweep '{config.sweep_id}'."

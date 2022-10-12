@@ -27,11 +27,11 @@ You can use `conda <https://conda.io/projects/conda/en/latest/user-guide/tasks/m
 
 1.  Install the ``lightning-hpo`` package
 
-   .. code:: bash
+.. code:: bash
 
-      git clone https://github.com/Lightning-AI/lightning-hpo && cd lightning-hpo
+   git clone https://github.com/Lightning-AI/lightning-hpo && cd lightning-hpo
 
-      pip install -e . -r requirements.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
+   pip install -e . -r requirements.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
 
 .. note:: This is only temporary as some changes are being released to PiPy
 
@@ -47,16 +47,6 @@ You can use `conda <https://conda.io/projects/conda/en/latest/user-guide/tasks/m
 .. code-block:: bash
 
    PACKAGE_LIGHTNING=1 python -m lightning run app app.py --cloud
-
-Here is how the Research Studio App looks like:
-
-.. raw:: html
-
-   <video id="background-video" autoplay loop muted controls poster="https://pl-flash-data.s3.amazonaws.com/assets_lightning/training_studio_example.PNG" width="100%">
-      <source src="https://pl-flash-data.s3.amazonaws.com/assets_lightning/training_studio.mp4" type="video/mp4" width="100%">
-   </video>
-
-.. note:: On MacOS, if you face an OSError: Too many open files, you can increase your Mac process limit with: **ulimit -Sn 50000**
 
 ----
 
@@ -91,3 +81,11 @@ Next Steps
 .. raw:: html
 
    <div style="display:none">
+
+----
+
+***************
+Troubleshooting
+***************
+
+.. note:: On MacOS, if you face an OSError: Too many open files, you can increase your Mac process limit with: **ulimit -Sn 50000**

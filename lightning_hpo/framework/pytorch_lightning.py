@@ -1,7 +1,8 @@
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from lightning.app.components.training import LightningTrainingComponent, PyTorchLightningScriptRunner
+from lightning.app.storage.drive import Drive
 
 from lightning_hpo.framework.agnostic import Objective
 
@@ -12,7 +13,15 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
     and injects a callback in the Trainer at runtime in order to start tensorboard server."""
 
     def __init__(
-        self, *args, logger: str, sweep_id: str, experiment_id: int, experiment_name: str, num_nodes: int, **kwargs
+        self,
+        *args,
+        logger: str,
+        sweep_id: str,
+        experiment_id: int,
+        experiment_name: str,
+        num_nodes: int,
+        drives: List[Drive],
+        **kwargs,
     ):
         Objective.__init__(
             self,
@@ -20,12 +29,15 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
             sweep_id=sweep_id,
             experiment_id=experiment_id,
             experiment_name=experiment_name,
+            drives=drives,
             **kwargs,
         )
         PyTorchLightningScriptRunner.__init__(self, *args, num_nodes=num_nodes, **kwargs)
         self.progress = None
         self.total_parameters = None
         self.start_time = None
+        for drive_idx, drive in enumerate(drives):
+            setattr(self, f"drive__{drive_idx}", drive)
 
     def configure_tracer(self):
         tracer = Objective.configure_tracer(self)
@@ -108,7 +120,15 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
 
 class ObjectiveLightningTrainingComponent(LightningTrainingComponent):
     def __init__(
-        self, *args, experiment_id: int, experiment_name: str, logger: str, sweep_id: str, num_nodes: int = 1, **kwargs
+        self,
+        *args,
+        experiment_id: int,
+        experiment_name: str,
+        logger: str,
+        sweep_id: str,
+        num_nodes: int = 1,
+        drives: List[Drive],
+        **kwargs,
     ):
         super().__init__(
             *args,
@@ -118,6 +138,7 @@ class ObjectiveLightningTrainingComponent(LightningTrainingComponent):
             experiment_id=experiment_id,
             experiment_name=experiment_name,
             num_nodes=num_nodes,
+            drives=drives,
             **kwargs,
         )
         self.experiment_id = experiment_id
