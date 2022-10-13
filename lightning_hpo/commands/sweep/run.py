@@ -270,13 +270,8 @@ def parse_random_search(script_args, args):
         if RANGE_REGEX.match(value):
             expected_value = parse_range_to_categorical(value)
         else:
-            expected_value = _parse_list(value)
-            if expected_value:
-                if len(expected_value) != 2:
-                    raise ValueError(f"We are expecting `low` and `high` values for argument {key}. Found {value}.")
-                low, high = expected_value
-                expected_value = {"distribution": "uniform", "params": {"low": float(low), "high": float(high)}}
-            else:
+            expected_value = parse_list_to_categorical(value)
+            if not expected_value:
                 for p in [UniformDistributionParser, LogUniformDistributionParser, CategoricalDistributionParser]:
                     if p.is_distribution(value):
                         try:
