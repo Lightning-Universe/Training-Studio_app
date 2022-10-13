@@ -1,4 +1,11 @@
+import os
+import shutil
+
 import psutil
+import pytest
+from lightning_app.storage.path import storage_root_dir
+from lightning_app.utilities.component import _set_context
+from lightning_app.utilities.packaging.app_config import _APP_CONFIG_FILENAME
 
 
 def pytest_sessionfinish(session, exitstatus):
@@ -18,3 +25,17 @@ def pytest_sessionfinish(session, exitstatus):
             child.kill()
         except Exception:
             pass
+
+
+@pytest.fixture(scope="function", autouse=True)
+def cleanup():
+    from lightning_app.utilities.app_helpers import _LightningAppRef
+
+    yield
+    _LightningAppRef._app_instance = None
+    shutil.rmtree("./storage", ignore_errors=True)
+    shutil.rmtree(storage_root_dir(), ignore_errors=True)
+    shutil.rmtree("./.shared", ignore_errors=True)
+    if os.path.isfile(_APP_CONFIG_FILENAME):
+        os.remove(_APP_CONFIG_FILENAME)
+    _set_context(None)
