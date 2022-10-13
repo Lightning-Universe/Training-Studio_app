@@ -4,7 +4,7 @@ from typing import List, Optional, Type
 
 from fastapi import FastAPI
 from lightning import BuildConfig, LightningWork
-from lightning.app.storage import Path
+from lightning.app.storage import Drive, Path
 from lightning_app.utilities.app_helpers import Logger
 from sqlmodel import select, Session, SQLModel
 from uvicorn import run
@@ -88,8 +88,12 @@ class Database(LightningWork):
         self.db_file_name = Path(db_file_name)
         self.debug = debug
         self._models = models
+        self.drive = Drive("lit://database", component_name="database")
 
     def run(self):
+        if self.drive.list(component_name="database"):
+            self.drive.get("self.db_file_name")
+
         app = FastAPI()
 
         create_engine(self.db_file_name, self._models, self.debug)
@@ -112,3 +116,6 @@ class Database(LightningWork):
         if self.internal_ip != "":
             return f"http://{self.internal_ip}:{self.port}"
         return self.internal_ip
+
+    def on_exit(self):
+        self.drive.get(self.db_file_name)
