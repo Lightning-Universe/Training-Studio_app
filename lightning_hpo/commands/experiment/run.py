@@ -56,8 +56,7 @@ class RunExperimentCommand(ClientCommand):
         )
         hparams, args = parser.parse_known_args()
 
-        id = str(uuid4()).split("-")[0]
-        sweep_id = f"{getuser()}-{id}"
+        name = hparams.name or str(uuid4()).split("-")[-1][:7]
 
         if not os.path.exists(hparams.script_path):
             raise FileNotFoundError(f"The provided script doesn't exist: {hparams.script_path}")
@@ -73,10 +72,10 @@ class RunExperimentCommand(ClientCommand):
         if "localhost" in URL:
             URL = f"{APP_SERVER_HOST}:{APP_SERVER_PORT}"
         repo.package()
-        repo.upload(url=f"{URL}/api/v1/upload_file/{sweep_id}")
+        repo.upload(url=f"{URL}/api/v1/upload_file/{name}")
 
         config = SweepConfig(
-            sweep_id=sweep_id,
+            sweep_id=name,
             script_path=hparams.script_path,
             total_experiments=1,
             parallel_experiments=1,
@@ -89,9 +88,10 @@ class RunExperimentCommand(ClientCommand):
             num_nodes=hparams.num_nodes,
             logger=hparams.logger,
             direction="minimize",  # This won't be used
-            experiments={0: ExperimentConfig(name=hparams.name or str(uuid4()).split("-")[-1][:7], params={})},
+            experiments={0: ExperimentConfig(name=name, params={})},
             disk_size=hparams.disk_size,
             drive_names=hparams.drives,
+            username=str(getuser()),
         )
         response = self.invoke_handler(config=config)
         print(response)

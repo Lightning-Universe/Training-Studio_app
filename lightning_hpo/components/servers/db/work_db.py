@@ -119,8 +119,7 @@ class Database(LightningWork):
         app.put("/general/")(general_put)
         app.delete("/general/")(general_delete)
 
-        print(f"Database is ready PID: {os.getpid()}")
-
+        # Used to properly propagate Lightning App signal handlers.
         sys.modules["uvicorn.main"].Server = DatabaseUvicornServer
 
         uvicorn.run(app, host=self.host, port=self.port, log_level="error")
