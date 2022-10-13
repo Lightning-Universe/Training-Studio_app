@@ -41,7 +41,7 @@ def test_experiment_run_parsing_no_arguments(monkeypatch):
         exp.name = config.experiments[0].name
         expected = SweepConfig(
             sweep_id="",
-            script_path="/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/tests/commands/experiment/test_run.py",
+            script_path=__file__,
             total_experiments=1,
             parallel_experiments=1,
             total_experiments_done=0,
@@ -105,7 +105,7 @@ def test_experiment_run_parsing_arguments(monkeypatch):
         exp.name = config.experiments[0].name
         expected = SweepConfig(
             sweep_id="",
-            script_path="/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/tests/commands/experiment/test_run.py",
+            script_path=__file__,
             total_experiments=1,
             parallel_experiments=1,
             total_experiments_done=0,
@@ -179,7 +179,7 @@ def test_experiment_run_parsing_requirements(monkeypatch):
         exp.name = config.experiments[0].name
         expected = SweepConfig(
             sweep_id="",
-            script_path="/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/tests/commands/experiment/test_run.py",
+            script_path=__file__,
             total_experiments=1,
             parallel_experiments=1,
             total_experiments_done=0,

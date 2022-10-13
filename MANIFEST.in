@@ -6,6 +6,7 @@ exclude *.coveragerc
 exclude *.lightning
 exclude *.lightningignore
 exclude *.json
+exclude tests/commands/experiment/test_requirements
 
 recursive-include examples *
 recursive-include lightning_hpo *
