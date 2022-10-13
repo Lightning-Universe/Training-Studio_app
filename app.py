@@ -2,4 +2,4 @@ from lightning import LightningApp
 
 from lightning_hpo.app.main import TrainingStudio
 
-app = LightningApp(TrainingStudio(work_db=False))
+app = LightningApp(TrainingStudio())
