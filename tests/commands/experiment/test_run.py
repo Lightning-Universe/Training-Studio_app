@@ -81,7 +81,6 @@ def test_experiment_run_parsing_arguments(monkeypatch):
             "--drive",
             "example",
             "--requirements",
-            "deepspeed",
             "'jsonargparse[signatures]'",
             "--model.lr=0.1",
             "--cloud_compute",
@@ -110,7 +109,7 @@ def test_experiment_run_parsing_arguments(monkeypatch):
             total_experiments=1,
             parallel_experiments=1,
             total_experiments_done=0,
-            requirements=["deepspeed", "'jsonargparse[signatures]'"],
+            requirements=["'jsonargparse[signatures]'"],
             script_args=["--model.lr=0.1"],
             algorithm="",
             distributions={},
@@ -128,6 +127,29 @@ def test_experiment_run_parsing_arguments(monkeypatch):
         )
         expected.sweep_id = config.sweep_id
         assert config == expected
+
+    command = _create_client_command_mock(run.RunExperimentCommand, None, MagicMock(), check)
+    command.run()
+
+
+def test_experiment_run_multiple_requirements(monkeypatch):
+
+    monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "",
+            __file__,
+            "--requirements",
+            "'jsonargparse[signatures]'",
+            "deepspeed",
+        ],
+    )
+
+    def check(config: SweepConfig):
+        assert config.requirements == ["'jsonargparse[signatures]'", "deepspeed"]
 
     command = _create_client_command_mock(run.RunExperimentCommand, None, MagicMock(), check)
     command.run()
