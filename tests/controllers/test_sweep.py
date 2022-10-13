@@ -33,7 +33,7 @@ def test_sweep_controller(monkeypatch):
     assert "best_model_score" in config.distributions
     response = sweep_controller.run_sweep(config)
     assert response == "The provided drive 'a/' doesn't exists."
-    drive_config = DriveConfig(name="a/", source="s3://a/", mount_path=".")
+    drive_config = DriveConfig(name="a/", source="s3://a/", mount_path=os.path.dirname(__file__) + "/")
     sweep_controller.db.post(drive_config)
     response = sweep_controller.run_sweep(config)
     assert response == "Launched a Sweep 'a'."
