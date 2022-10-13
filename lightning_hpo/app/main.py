@@ -26,7 +26,8 @@ from lightning_hpo.components.servers.db import (
     FlowDatabase,
     FlowDatabaseConnector,
 )
-from lightning_hpo.controllers.notebook import NotebookController
+
+# from lightning_hpo.controllers.notebook import NotebookController
 from lightning_hpo.controllers.sweep import SweepController
 from lightning_hpo.controllers.tensorboard import TensorboardController
 
@@ -41,7 +42,7 @@ class TrainingStudio(LightningFlow):
 
         # 2: Controllers
         self.sweep_controller = SweepController(self.drive)
-        self.notebook_controller = NotebookController()
+        # self.notebook_controller = NotebookController()
         self.tensorboard_controller = TensorboardController()
 
         # 4: Create the database.
@@ -49,7 +50,7 @@ class TrainingStudio(LightningFlow):
         self.db = db_cls(
             models=[
                 self.sweep_controller.model,
-                self.notebook_controller.model,
+                # self.notebook_controller.model,
                 self.tensorboard_controller.model,
                 DriveConfig,
             ]
@@ -76,7 +77,7 @@ class TrainingStudio(LightningFlow):
 
         # 3: Run the controllers
         self.sweep_controller.run(self.db.db_url)
-        self.notebook_controller.run(self.db.db_url)
+        # self.notebook_controller.run(self.db.db_url)
         self.tensorboard_controller.run(self.db.db_url)
 
     def configure_layout(self):
@@ -121,7 +122,7 @@ class TrainingStudio(LightningFlow):
 
     def configure_commands(self):
         controller_commands = self.sweep_controller.configure_commands()
-        controller_commands += self.notebook_controller.configure_commands()
+        # controller_commands += self.notebook_controller.configure_commands()
         controller_commands += self.tensorboard_controller.configure_commands()
         controller_commands += [
             {"show artifacts": ShowArtifactsCommand(self.show_artifacts)},
