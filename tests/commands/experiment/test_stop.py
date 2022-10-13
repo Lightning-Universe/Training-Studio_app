@@ -18,9 +18,9 @@ def test_stop_sweeps_experiment(monkeypatch):
         data = json.load(f)
 
     sweep_config = SweepConfig(**data[0])
-    trial = deepcopy(sweep_config.trials[0])
+    trial = deepcopy(sweep_config.experiments[0])
     trial.stage = Stage.RUNNING
-    sweep_config.trials[1] = trial
+    sweep_config.experiments[1] = trial
     sweep_config.logger = "streamlit"
     sweep = Sweep.from_config(config=sweep_config)
 
@@ -36,7 +36,7 @@ def test_stop_sweeps_experiment(monkeypatch):
     sweep_controller.r[sweep_config.sweep_id] = sweep_mock
     sweep_controller._database.get.return_value = [sweep_config]
     result = sweep_controller.stop_experiment(config=StopExperimentConfig(name="a"))
-    assert result == "The current trial `a` has been stopped."
+    assert result == "The current experiment `a` has been stopped."
     sweep_controller.r[sweep_config.sweep_id].stop_experiment.assert_called()
     result = sweep_controller.stop_experiment(config=StopExperimentConfig(name="aa"))
-    assert result == "The current trial `aa` doesn't exist."
+    assert result == "The current experiment `aa` doesn't exist."

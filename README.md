@@ -378,7 +378,7 @@ lightning run sweep train.py \
     --cloud_compute=cpu-medium \
     --model.lr="log_uniform(0.001, 0.01)" \
     --model.gamma="uniform(0.5, 0.8)" \
-    --requirements="torchvision, wandb, 'jsonargparse[signatures]'" \
+    --requirements torchvision wandb 'jsonargparse[signatures]' \
     --data.batch_size="categorical([32, 64])" \
     --algorithm="bayesian"
 ```
