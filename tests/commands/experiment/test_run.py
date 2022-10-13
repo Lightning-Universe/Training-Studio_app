@@ -62,6 +62,7 @@ def test_experiment_run_parsing_no_arguments(monkeypatch):
             drive_names=[],
         )
         expected.sweep_id = config.sweep_id
+        expected.username = config.username
         assert config == expected
 
     command = _create_client_command_mock(run.RunExperimentCommand, None, MagicMock(), check)
@@ -126,6 +127,7 @@ def test_experiment_run_parsing_arguments(monkeypatch):
             drive_names=["example"],
         )
         expected.sweep_id = config.sweep_id
+        expected.username = config.username
         assert config == expected
 
     command = _create_client_command_mock(run.RunExperimentCommand, None, MagicMock(), check)
@@ -200,6 +202,7 @@ def test_experiment_run_parsing_requirements(monkeypatch):
             drive_names=[],
         )
         expected.sweep_id = config.sweep_id
+        expected.username = config.username
         assert config == expected
 
     command = _create_client_command_mock(run.RunExperimentCommand, None, MagicMock(), check)
