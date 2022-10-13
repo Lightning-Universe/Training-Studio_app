@@ -159,7 +159,7 @@ def test_experiment_run_parsing_requirements(monkeypatch):
 
     monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
 
-    requirements_file = os.path.join(os.path.dirname(__file__), "test_requirements.txt")
+    requirements_file = os.path.join(os.path.dirname(__file__), "test_requirements")
     monkeypatch.setattr(sys, "argv", ["", __file__, "--requirements", requirements_file])
 
     def check(config: SweepConfig):
