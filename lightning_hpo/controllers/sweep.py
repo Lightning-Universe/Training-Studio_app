@@ -6,6 +6,7 @@ from lightning.app.structures import Dict
 
 from lightning_hpo import Sweep
 from lightning_hpo.commands.drive.create import DriveConfig
+from lightning_hpo.commands.experiment.delete import DeleteExperimentCommand, DeleteExperimentConfig
 from lightning_hpo.commands.experiment.run import RunExperimentCommand
 from lightning_hpo.commands.experiment.show import ShowExperimentsCommand
 from lightning_hpo.commands.experiment.stop import StopExperimentCommand, StopExperimentConfig
@@ -106,15 +107,36 @@ class SweepController(Controller):
         return f"We didn't find the sweep `{config.sweep_id}`"
 
     def delete_sweep(self, config: DeleteSweepConfig):
-        work_name = urllib.parse.quote_plus(config.sweep_id)
-        if work_name in self.r:
-            sweep: Sweep = self.r[work_name]
-            for w in sweep.works():
-                w.stop()
-            self.db.delete(sweep.collect_model())
-            del self.r[work_name]
-            return f"Deleted the sweep `{config.sweep_id}`"
-        return f"We didn't find the sweep `{config.sweep_id}`"
+        sweeps: List[SweepConfig] = self.db.get()
+        for sweep in sweeps:
+            if config.name != sweep.sweep_id:
+                continue
+            else:
+                if config.name in self.r:
+                    sweep: Sweep = self.r[config.name]
+                    for w in sweep.works():
+                        w.stop()
+                    sweep = sweep.collect_model()
+                    del self.r[config.name]
+                self.db.delete(sweep)
+                return f"Deleted the sweep `{config.name}`"
+        return f"We didn't find the sweep `{config.name}`"
+
+    def delete_experiment(self, config: DeleteExperimentConfig):
+        sweeps: List[SweepConfig] = self.db.get()
+        for sweep in sweeps:
+            if config.name != sweep.sweep_id:
+                continue
+            else:
+                if config.name in self.r:
+                    sweep: Sweep = self.r[config.name]
+                    for w in sweep.works():
+                        w.stop()
+                    sweep = sweep.collect_model()
+                    del self.r[config.name]
+                self.db.delete(sweep)
+                return f"Deleted the experiment `{config.name}`"
+        return f"We didn't find the experiment `{config.name}`"
 
     def run_experiment(self, config: SweepConfig) -> str:
         work_name = urllib.parse.quote_plus(config.sweep_id)
@@ -143,4 +165,5 @@ class SweepController(Controller):
             {"run experiment": RunExperimentCommand(self.run_experiment)},
             {"stop experiment": StopExperimentCommand(self.stop_experiment)},
             {"show experiments": ShowExperimentsCommand(self.show_sweeps)},
+            {"delete experiment": DeleteExperimentCommand(self.delete_experiment)},
         ]

@@ -76,14 +76,11 @@ class SweepConfig(SQLModel, table=True):
     desired_stage: str = Stage.RUNNING
     disk_size: int = 80
     drive_names: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
+    username: str = ""
 
     @property
     def num_trials(self) -> int:
         return min(self.total_experiments_done + self.parallel_experiments, self.total_experiments)
-
-    @property
-    def username(self) -> str:
-        return self.sweep_id.split("-")[0]
 
     @property
     def hash(self) -> str:
@@ -381,8 +378,7 @@ class RunSweepCommand(ClientCommand):
         else:
             distributions = parse_distributions(script_args, args)
 
-        id = str(uuid4()).split("-")[0]
-        name = hparams.name or f"{getuser()}-{id}"
+        name = hparams.name or str(uuid4()).split("-")[-1][:7]
 
         if not os.path.exists(hparams.script_path):
             raise ValueError(f"The provided script doesn't exist: {hparams.script_path}")
@@ -420,6 +416,7 @@ class RunSweepCommand(ClientCommand):
             experiments={},
             disk_size=hparams.disk_size,
             drive_names=hparams.drives,
+            username=getuser(),
         )
         response = self.invoke_handler(config=config)
         print(response)
