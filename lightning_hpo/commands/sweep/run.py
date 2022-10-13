@@ -76,7 +76,7 @@ class SweepConfig(SQLModel, table=True):
     desired_stage: str = Stage.RUNNING
     disk_size: int = 80
     drive_names: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
-    username: str = ""
+    username: Optional[str] = None
 
     @property
     def num_trials(self) -> int:
