@@ -67,6 +67,9 @@ class TrainingStudio(LightningFlow):
         if self.debug:
             self.db_viz.run()
 
+        if not self.db.alive():
+            return
+
         if not self.ready:
             print("The Research Studio App is ready !")
             self.ready = True

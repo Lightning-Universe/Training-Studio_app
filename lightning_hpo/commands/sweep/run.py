@@ -313,8 +313,8 @@ class RunSweepCommand(ClientCommand):
         parser.add_argument("--parallel_experiments", default=None, type=int, help="Number of trials to run.")
         parser.add_argument(
             "--requirements",
+            nargs="+",
             default=[],
-            type=lambda s: [v.replace(" ", "") for v in s.split(",")] if "," in s else s,
             help="List of requirements separated by a comma or requirements.txt filepath.",
         )
         parser.add_argument(
@@ -392,7 +392,10 @@ class RunSweepCommand(ClientCommand):
         if not os.path.exists(hparams.script_path):
             raise ValueError(f"The provided script doesn't exist: {hparams.script_path}")
 
-        if isinstance(hparams.requirements, str) and os.path.exists(hparams.requirements):
+        if not os.path.exists(hparams.script_path):
+            raise FileNotFoundError(f"The provided script doesn't exist: {hparams.script_path}")
+
+        if len(hparams.requirements) == 1 and os.path.isfile(hparams.requirements[0]):
             with open(hparams.requirements, "r") as f:
                 hparams.requirements = [line.replace("\n", "") for line in f.readlines()]
 
