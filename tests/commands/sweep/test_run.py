@@ -69,10 +69,6 @@ def test_sweep_run_parsing_file_two_lists(monkeypatch):
     argv = ["python", __file__, "--lr", "[0, 1, 2]", "--gamma", "[0.0, 1.0, 2.0]"]
     run_sweep_command(monkeypatch, argv, check_0)
 
-    with pytest.raises(ValueError, match="We are expecting `low` and `high` values for argument"):
-        argv = ["python", __file__, "--lr", "[0, 1, 2]", "--algorithm", "random_search"]
-        run_sweep_command(monkeypatch, argv, None)
-
 
 def test_sweep_run_parsing_file_list_and_script_arguments(monkeypatch):
 
@@ -130,13 +126,28 @@ def test_sweep_run_parsing_random_search(monkeypatch):
     ]
     run_sweep_command(monkeypatch, argv, check_0)
 
-    with pytest.raises(ValueError, match="[0, 1, 2]"):
-        argv = ["python", __file__, "--lr", "[0, 1, 2]", "--data", "something", "--algorithm", "random_search"]
-        run_sweep_command(monkeypatch, argv, None)
-
     def check_1(config):
         assert config.distributions == {
-            "lr": Distributions(distribution="uniform", params={"low": 0.0, "high": 2.0}),
+            "lr": Distributions(distribution="categorical", params={"choices": [0.0, 1.0, 2.0]}),
+        }
+
+    argv = [
+        "python",
+        __file__,
+        "--lr",
+        "[0, 1, 2]",
+        "--data",
+        "something",
+        "--algorithm",
+        "random_search",
+        "--total_experiments",
+        "3",
+    ]
+    run_sweep_command(monkeypatch, argv, check_1)
+
+    def check_2(config):
+        assert {
+            "lr": Distributions(distribution="categorical", params={"choices": [0.0, 2.0]}),
             "batch_size": Distributions(
                 distribution="categorical", params={"choices": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]}
             ),
@@ -157,7 +168,7 @@ def test_sweep_run_parsing_random_search(monkeypatch):
         "--total_experiments",
         "10",
     ]
-    run_sweep_command(monkeypatch, argv, check_1)
+    run_sweep_command(monkeypatch, argv, check_2)
 
 
 def test_sweep_run_parsing_random_search_further_distributions(monkeypatch):
@@ -166,7 +177,7 @@ def test_sweep_run_parsing_random_search_further_distributions(monkeypatch):
 
     def check_1(config):
         assert config.distributions == {
-            "lr": Distributions(distribution="uniform", params={"low": 0.0, "high": 2.0}),
+            "lr": Distributions(distribution="categorical", params={"choices": [0.0, 2.0]}),
             "batch_size": Distributions(
                 distribution="categorical", params={"choices": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]}
             ),
