@@ -71,7 +71,7 @@ class TrainingStudio(LightningFlow):
             return
 
         if not self.ready:
-            print("The Research Studio App is ready !")
+            print(f"The Research Studio App is ready ! PID: {os.getpid()}")
             self.ready = True
 
         # 3: Run the controllers
