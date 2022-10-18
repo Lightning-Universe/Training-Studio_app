@@ -2,13 +2,12 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { DeleteDriveConfig } from '../models/DeleteDriveConfig';
+import type { DeleteExperimentConfig } from '../models/DeleteExperimentConfig';
 import type { DeleteSweepConfig } from '../models/DeleteSweepConfig';
 import type { DownloadArtifactsConfig } from '../models/DownloadArtifactsConfig';
 import type { DriveConfig } from '../models/DriveConfig';
-import type { NotebookConfig } from '../models/NotebookConfig';
 import type { ShowArtifactsConfig } from '../models/ShowArtifactsConfig';
 import type { StopExperimentConfig } from '../models/StopExperimentConfig';
-import type { StopNotebookConfig } from '../models/StopNotebookConfig';
 import type { StopSweepConfig } from '../models/StopSweepConfig';
 import type { SweepConfig } from '../models/SweepConfig';
 
@@ -144,54 +143,22 @@ export class AppClientCommandService {
     }
 
     /**
-     * Run Notebook
+     * Delete Experiment
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
      */
-    public runNotebookCommandRunNotebookPost(
-        requestBody: NotebookConfig,
+    public deleteExperimentCommandDeleteExperimentPost(
+        requestBody: DeleteExperimentConfig,
     ): CancelablePromise<any> {
         return this.httpRequest.request({
             method: 'POST',
-            url: '/command/run_notebook',
+            url: '/command/delete_experiment',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
                 422: `Validation Error`,
             },
-        });
-    }
-
-    /**
-     * Stop Notebook
-     * @param requestBody
-     * @returns any Successful Response
-     * @throws ApiError
-     */
-    public stopNotebookCommandStopNotebookPost(
-        requestBody: StopNotebookConfig,
-    ): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'POST',
-            url: '/command/stop_notebook',
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                422: `Validation Error`,
-            },
-        });
-    }
-
-    /**
-     * Show Notebooks
-     * @returns any Successful Response
-     * @throws ApiError
-     */
-    public showNotebooksCommandShowNotebooksPost(): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'POST',
-            url: '/command/show_notebooks',
         });
     }
 

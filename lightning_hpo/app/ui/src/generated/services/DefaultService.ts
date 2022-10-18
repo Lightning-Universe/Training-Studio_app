@@ -144,10 +144,7 @@ export class DefaultService {
 
     /**
      * Healthz
-     * Health check endpoint used in the cloud FastAPI servers to check the status periodically. This requires
-     * Redis to be installed for it to work.
-     *
-     * # TODO - Once the state store abstraction is in, check that too
+     * Health check endpoint used in the cloud FastAPI servers to check the status periodically.
      * @returns any Successful Response
      * @throws ApiError
      */

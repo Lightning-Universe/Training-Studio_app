@@ -25,4 +25,6 @@ export type SweepConfig = {
     stage?: string;
     desired_stage?: string;
     disk_size?: number;
+    drive_names: Array<string>;
+    username?: string;
 };

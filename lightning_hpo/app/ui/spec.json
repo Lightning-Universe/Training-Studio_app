@@ -154,7 +154,7 @@
     "/healthz": {
       "get": {
         "summary": "Healthz",
-        "description": "Health check endpoint used in the cloud FastAPI servers to check the status periodically. This requires\nRedis to be installed for it to work.\n\n# TODO - Once the state store abstraction is in, check that too",
+        "description": "Health check endpoint used in the cloud FastAPI servers to check the status periodically.",
         "operationId": "healthz_healthz_get",
         "responses": {
           "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
@@ -177,8 +177,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "DeleteSweepCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/delete.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/delete.py",
+        "cls_name": "DeleteSweepCommand"
       }
     },
     "/command/run_sweep": {
@@ -197,8 +197,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "RunSweepCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/run.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/run.py",
+        "cls_name": "RunSweepCommand"
       }
     },
     "/command/show_sweeps": {
@@ -229,8 +229,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "StopSweepCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/stop.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/stop.py",
+        "cls_name": "StopSweepCommand"
       }
     },
     "/command/run_experiment": {
@@ -249,8 +249,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "RunExperimentCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/experiment/run.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/experiment/run.py",
+        "cls_name": "RunExperimentCommand"
       }
     },
     "/command/stop_experiment": {
@@ -269,8 +269,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "StopExperimentCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/experiment/stop.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/experiment/stop.py",
+        "cls_name": "StopExperimentCommand"
       }
     },
     "/command/show_experiments": {
@@ -285,13 +285,13 @@
         "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/experiment/show.py"
       }
     },
-    "/command/run_notebook": {
+    "/command/delete_experiment": {
       "post": {
         "tags": ["app_client_command"],
-        "summary": "Run Notebook",
-        "operationId": "run_notebook_command_run_notebook_post",
+        "summary": "Delete Experiment",
+        "operationId": "delete_experiment_command_delete_experiment_post",
         "requestBody": {
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/NotebookConfig" } } },
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DeleteExperimentConfig" } } },
           "required": true
         },
         "responses": {
@@ -301,40 +301,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "RunNotebookCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/notebook/run.py"
-      }
-    },
-    "/command/stop_notebook": {
-      "post": {
-        "tags": ["app_client_command"],
-        "summary": "Stop Notebook",
-        "operationId": "stop_notebook_command_stop_notebook_post",
-        "requestBody": {
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StopNotebookConfig" } } },
-          "required": true
-        },
-        "responses": {
-          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } },
-          "422": {
-            "description": "Validation Error",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
-          }
-        },
-        "cls_name": "StopNotebookCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/notebook/stop.py"
-      }
-    },
-    "/command/show_notebooks": {
-      "post": {
-        "tags": ["app_client_command"],
-        "summary": "Show Notebooks",
-        "operationId": "show_notebooks_command_show_notebooks_post",
-        "responses": {
-          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
-        },
-        "cls_name": "ShowNotebookCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/notebook/show.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/experiment/delete.py",
+        "cls_name": "DeleteExperimentCommand"
       }
     },
     "/command/run_tensorboard": {
@@ -399,8 +367,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "ShowArtifactsCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/artifacts/show.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/artifacts/show.py",
+        "cls_name": "ShowArtifactsCommand"
       }
     },
     "/command/download_artifacts": {
@@ -419,8 +387,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "DownloadArtifactsCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/artifacts/download.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/artifacts/download.py",
+        "cls_name": "DownloadArtifactsCommand"
       }
     },
     "/command/create_drive": {
@@ -439,8 +407,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "CreateDriveCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/drive/create.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/drive/create.py",
+        "cls_name": "CreateDriveCommand"
       }
     },
     "/command/delete_drive": {
@@ -459,8 +427,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "DeleteDriveCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/drive/delete.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/drive/delete.py",
+        "cls_name": "DeleteDriveCommand"
       }
     },
     "/command/show_drives": {
@@ -525,11 +493,17 @@
         "type": "object",
         "properties": { "name": { "title": "Name", "type": "string" } }
       },
+      "DeleteExperimentConfig": {
+        "title": "DeleteExperimentConfig",
+        "required": ["name"],
+        "type": "object",
+        "properties": { "name": { "title": "Name", "type": "string" } }
+      },
       "DeleteSweepConfig": {
         "title": "DeleteSweepConfig",
-        "required": ["sweep_id"],
+        "required": ["name"],
         "type": "object",
-        "properties": { "sweep_id": { "title": "Sweep Id", "type": "string" } }
+        "properties": { "name": { "title": "Name", "type": "string" } }
       },
       "Distributions": {
         "title": "Distributions",
@@ -607,20 +581,6 @@
           "detail": { "title": "Detail", "type": "array", "items": { "$ref": "#/components/schemas/ValidationError" } }
         }
       },
-      "NotebookConfig": {
-        "title": "NotebookConfig",
-        "required": ["notebook_name", "requirements", "cloud_compute"],
-        "type": "object",
-        "properties": {
-          "notebook_name": { "title": "Notebook Name", "type": "string" },
-          "requirements": { "title": "Requirements", "type": "array", "items": { "type": "string" } },
-          "cloud_compute": { "title": "Cloud Compute", "type": "string" },
-          "stage": { "title": "Stage", "type": "string", "default": "not_started" },
-          "desired_stage": { "title": "Desired Stage", "type": "string", "default": "running" },
-          "url": { "title": "Url", "type": "string", "default": "" },
-          "start_time": { "title": "Start Time", "type": "number", "default": -1 }
-        }
-      },
       "ShowArtifactsConfig": {
         "title": "ShowArtifactsConfig",
         "type": "object",
@@ -634,12 +594,6 @@
         "required": ["name"],
         "type": "object",
         "properties": { "name": { "title": "Name", "type": "string" } }
-      },
-      "StopNotebookConfig": {
-        "title": "StopNotebookConfig",
-        "required": ["notebook_name"],
-        "type": "object",
-        "properties": { "notebook_name": { "title": "Notebook Name", "type": "string" } }
       },
       "StopSweepConfig": {
         "title": "StopSweepConfig",
@@ -667,7 +621,8 @@
           "experiments",
           "framework",
           "logger",
-          "direction"
+          "direction",
+          "drive_names"
         ],
         "type": "object",
         "properties": {
@@ -697,7 +652,9 @@
           "direction": { "title": "Direction", "type": "string" },
           "stage": { "title": "Stage", "type": "string", "default": "not_started" },
           "desired_stage": { "title": "Desired Stage", "type": "string", "default": "running" },
-          "disk_size": { "title": "Disk Size", "type": "integer", "default": 80 }
+          "disk_size": { "title": "Disk Size", "type": "integer", "default": 80 },
+          "drive_names": { "title": "Drive Names", "type": "array", "items": { "type": "string" } },
+          "username": { "title": "Username", "type": "string" }
         }
       },
       "TensorboardConfig": {

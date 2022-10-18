@@ -1,4 +1,4 @@
-from datetime import datetime
+import time
 from typing import Any, Dict, List, Optional
 
 from lightning.app.components.training import LightningTrainingComponent, PyTorchLightningScriptRunner
@@ -36,6 +36,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         self.progress = None
         self.total_parameters = None
         self.start_time = None
+        self.end_time = None
         for drive_idx, drive in enumerate(drives):
             setattr(self, f"drive__{drive_idx}", drive)
 
@@ -50,6 +51,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         return PyTorchLightningScriptRunner.run(self, params=params, **kwargs)
 
     def on_after_run(self, script_globals):
+        self.end_time = time.time()
         PyTorchLightningScriptRunner.on_after_run(self, script_globals)
         self.best_model_path = str(self.best_model_path)
 
@@ -71,7 +73,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         class ProgressCallback(Callback):
             def __init__(self, work):
                 self.work = work
-                self.work.start_time = str(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
+                self.work.start_time = time.time()
                 self.device_stats_callback = DeviceStatsMonitor(cpu_stats=True)
 
             def setup(
@@ -159,6 +161,10 @@ class ObjectiveLightningTrainingComponent(LightningTrainingComponent):
     @property
     def start_time(self):
         return self.ws[0].start_time
+
+    @property
+    def end_time(self):
+        return self.ws[0].end_time
 
     @property
     def total_parameters(self):
