@@ -1,9 +1,7 @@
 import inspect
 import sys
-from typing import Optional
 
 from pydantic import BaseModel
-from sqlmodel import Field, SQLModel
 
 
 class GeneralModel(BaseModel):
@@ -39,16 +37,3 @@ class GeneralModel(BaseModel):
                 "data": "",
             }
         )
-
-
-class Trial(SQLModel, table=False):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    sweep_id: str = Field(index=True)
-    trial_id: int
-    best_model_score: Optional[float]
-    monitor: Optional[str]
-    best_model_path: Optional[str]
-    name: str
-    has_succeeded: bool
-    url: Optional[str]
-    params: Optional[str]

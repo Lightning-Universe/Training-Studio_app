@@ -45,8 +45,8 @@ class NoneLogger(Logger):
     def configure_layout(self) -> List:
         return []
 
-    def configure_tracer(self, tracer, sweep_id: str, trial_id: int, params: Dict[str, Any]):
+    def configure_tracer(self, tracer, sweep_id: str, experiment_id: int, params: Dict[str, Any]):
         return Tracer()
 
-    def get_url(self, trial_id: int) -> Optional[str]:
+    def get_url(self, experiment_id: int) -> Optional[str]:
         pass

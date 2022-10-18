@@ -66,7 +66,7 @@ def step_impl(context):
 @then("I can see a sweep in the UI")
 def step_impl(context):
     page: Page = context.page
-    page.frame_locator("iframe").locator("text=Sweeps & Trials").click()
+    page.frame_locator("iframe").locator("text=Sweeps & Experiments").click()
 
     locator = page.frame_locator("iframe").locator(f"text={context.sweep_name}")
     expect(locator).to_be_visible(timeout=60 * 1000)
@@ -84,7 +84,7 @@ def step_impl(context):
 
 def check_sweep_status_ui(context, status):
     page: Page = context.page
-    page.frame_locator("iframe").locator("text=Sweeps & Trials").click()
+    page.frame_locator("iframe").locator("text=Sweeps & Experiments").click()
 
     locator = page.frame_locator("iframe").locator("table tbody tr", has_text=context.sweep_name)
     locator = locator.locator(f"text={status}")
