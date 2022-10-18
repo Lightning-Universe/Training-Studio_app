@@ -186,29 +186,26 @@ def parse_distributions(script_args, args):
 
 def parse_args(args):
     parsed = {}
+    last_arg = None
 
     # build a dict where key = arg, value = value of the arg or None if just a flag
-    for i, arg_candidate in enumerate(args):
-        arg = None
-        value = None
+    new_args = []
+    for a in args:
+        if "=" in a:
+            new_args.extend(a.split("="))
+        else:
+            new_args.append(a)
+
+    for arg_candidate in new_args:
 
         # only look at --keys
         if "--" not in arg_candidate:
-            continue
-
-        arg = arg_candidate[2:]
-        # pull out the value of the argument if given
-        if i + 1 <= len(args) - 1:
-            if "--" not in args[i + 1]:
-                value = args[i + 1]
-
-            if arg is not None:
-                parsed[arg] = value
+            parsed[last_arg].append(arg_candidate)
         else:
-            if arg is not None:
-                parsed[arg] = value
+            parsed[arg_candidate] = []
+            last_arg = arg_candidate
 
-    return parsed
+    return {k.replace("--", ""): " ".join(v) for k, v in parsed.items()}
 
 
 def parse_range_to_categorical(value: str):

@@ -3,7 +3,7 @@ import { Box, Button, Link, Stack, Table, Typography } from 'lightning-ui/src/de
 import Status, { StatusEnum } from 'lightning-ui/src/shared/components/Status';
 import { AppClient, ExperimentConfig, SweepConfig, TensorboardConfig } from '../generated';
 import useClientDataState from '../hooks/useClientDataState';
-import { getAppId } from '../utilities';
+import { formatDurationFrom, formatDurationStartEnd, getAppId } from '../utilities';
 import BorderLinearProgress from './BorderLinearProgress';
 import UserGuide, { UserGuideBody, UserGuideComment } from './UserGuide';
 
@@ -30,6 +30,13 @@ const ComputeToMachines = {
   'gpu': '1 T4',
   'gpu-fast': '1 V100',
   'gpu-fast-multi': '4 V100',
+} as { [k: string]: string };
+
+const StageToColors = {
+  succeeded: 'success',
+  failed: 'error',
+  pending: 'primary',
+  running: 'primary',
 } as { [k: string]: string };
 
 function createLoggerUrl(url?: string) {
@@ -82,24 +89,55 @@ function toCompute(sweep: SweepConfig) {
 }
 
 function toProgress(experiment: ExperimentConfig) {
-  return (
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <Box sx={{ width: '100%', mr: 1 }}>
-        <BorderLinearProgress variant={experiment.progress == 0 ? null : 'determinate'} value={experiment.progress} />
+  if (experiment.stage == 'failed') {
+    return (
+      <Box sx={{ minWidth: 35 }}>
+        <Typography variant="caption" display="block">{`Failed`}</Typography>
       </Box>
-      {experiment.progress ? (
-        <Box sx={{ minWidth: 35 }}>
-          <Typography variant="caption" display="block">{`${experiment.progress}%`}</Typography>
+    );
+  } else {
+    return (
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ width: '100%', mr: 1 }}>
+          <BorderLinearProgress
+            variant={experiment.progress == 0 ? null : 'determinate'}
+            color={StageToColors[experiment.stage]}
+            value={experiment.progress}
+          />
         </Box>
-      ) : (
-        <Box></Box>
-      )}
-    </Box>
-  );
+        {experiment.progress ? (
+          <Box sx={{ minWidth: 35 }}>
+            <Typography variant="caption" display="block">{`${experiment.progress}%`}</Typography>
+          </Box>
+        ) : (
+          <Box></Box>
+        )}
+      </Box>
+    );
+  }
 }
 
-function startTime(experiment: ExperimentConfig) {
-  return experiment.start_time ? String(experiment.start_time) : <Box></Box>;
+function runtimeTime(experiment: ExperimentConfig) {
+  if (experiment.end_time) {
+    return formatDurationStartEnd(experiment.end_time, experiment.start_time);
+  }
+  return experiment.start_time ? String(formatDurationFrom(experiment.start_time)) : <Box></Box>;
+}
+
+function toArgs(
+  script_args?: Array<string>,
+  params?: Record<string, number | string | Array<number> | Array<string>>,
+) {
+  var arg = '';
+  if (script_args) {
+    arg = arg + script_args.join(' ') + ' ';
+  }
+  if (params) {
+    for (var p in params) {
+      arg = arg + `--${p}=${params[p]} `;
+    }
+  }
+  return arg;
 }
 
 export function Experiments() {
@@ -129,12 +167,13 @@ export function Experiments() {
 
   const experimentHeader = [
     'Progress',
+    'Runtime',
     'Name',
     'Best Score',
-    'Compute',
+    'Script Arguments',
     'Trainable Parameters',
+    'Compute',
     'Logger URL',
-    'Start Time',
   ];
 
   const tensorboardIdsToStatuses = Object.fromEntries(
@@ -149,12 +188,13 @@ export function Experiments() {
 
     return Object.entries(sweep.experiments).map(entry => [
       toProgress(entry[1]),
+      runtimeTime(entry[1]),
       entry[1].name,
       String(entry[1].best_model_score),
-      toCompute(sweep),
+      toArgs(sweep.script_args, entry[1].params),
       String(entry[1].total_parameters),
+      toCompute(sweep),
       createLoggerUrl(tensorboardConfig ? tensorboardConfig.url : sweep.logger_url),
-      startTime(entry[1]),
     ]);
   });
 

@@ -202,3 +202,18 @@ def test_sweep_run_parsing_random_search_further_distributions(monkeypatch):
         "10",
     ]
     run_sweep_command(monkeypatch, argv, check_1)
+
+
+def test_parsing(monkeypatch):
+
+    monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
+
+    def check(config):
+        assert config.distributions == {
+            "model.lr": Distributions(distribution="categorical", params={"choices": [0.001]}),
+            "data.batch": Distributions(distribution="categorical", params={"choices": [32.0, 64.0]}),
+        }
+        assert config.script_args == ["--something=else"]
+
+    argv = f"python {__file__} --model.lr [0.001] --data.batch [32, 64] --something=else".split(" ")
+    run_sweep_command(monkeypatch, argv, check)

@@ -18,8 +18,11 @@ function zeroPad(num: number, places: number) {
 }
 
 export function formatDurationFrom(start_time: number) {
-  const current_time = new Date().getTime() / 1000;
-  let duration = current_time - start_time;
+  return formatDurationStartEnd(new Date().getTime() / 1000, start_time);
+}
+
+export function formatDurationStartEnd(end_time: number, start_time: number) {
+  let duration = end_time - start_time;
   const hours = Math.floor(duration / 1440);
   duration = duration - hours * 1440;
   const minutes = Math.floor(duration / 60);
