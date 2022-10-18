@@ -20,11 +20,11 @@ def _show_experiments(sweeps: List[SweepConfig]):
 
     for sweep in sweeps:
         experiments = sweep.experiments.values()
-        for trial in experiments:
+        for experiment in experiments:
             table.add_row(
-                str(trial.name),
-                str(trial.stage),
-                str(round(trial.best_model_score, 2) if trial.best_model_score else None),
+                str(experiment.name),
+                str(experiment.progress) if experiment.stage != "failed" else "failed",
+                str(round(experiment.best_model_score, 2) if experiment.best_model_score else None),
                 None if len(experiments) == 1 else sweep.sweep_id,
             )
     console = Console()

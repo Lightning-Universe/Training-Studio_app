@@ -11,27 +11,8 @@ from lightning_hpo.commands.sweep.run import SweepConfig
 
 
 def _show_sweeps(sweeps: List[SweepConfig]):
-    table = Table(
-        "name",
-        "status",
-        "cloud_compute",
-        "total_experiments",
-        "total_experiments_done",
-        title="Sweeps",
-        show_header=True,
-        header_style="bold green",
-    )
-
     for sweep in sweeps:
-        table.add_row(
-            sweep.sweep_id,
-            sweep.stage,
-            sweep.cloud_compute,
-            str(sweep.total_experiments),
-            str(sweep.total_experiments_done),
-        )
-    console = Console()
-    console.print(table)
+        _show_sweep(sweep)
 
 
 def _parse_params(params):
@@ -47,7 +28,6 @@ def _parse_params(params):
 def _show_sweep(sweep: SweepConfig):
     table = Table(
         "id",
-        "status",
         "cloud_compute",
         "total_experiments",
         "total_experiments_done",
@@ -58,7 +38,6 @@ def _show_sweep(sweep: SweepConfig):
 
     table.add_row(
         sweep.sweep_id,
-        sweep.stage,
         sweep.cloud_compute,
         str(sweep.total_experiments),
         str(sweep.total_experiments_done),
@@ -82,7 +61,7 @@ def _show_sweep(sweep: SweepConfig):
     for experiment in sweep.experiments.values():
         table.add_row(
             str(experiment.name),
-            str(experiment.progress),
+            str(experiment.progress) if experiment.stage != "failed" else "failed",
             str(round(experiment.best_model_score, 2) if experiment.best_model_score else None),
             *[str(round(v, 5)) for v in _parse_params(experiment.params).values()],
         )

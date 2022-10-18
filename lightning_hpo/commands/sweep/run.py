@@ -79,7 +79,7 @@ class SweepConfig(SQLModel, table=True):
     username: Optional[str] = None
 
     @property
-    def num_trials(self) -> int:
+    def num_experiments(self) -> int:
         return min(self.total_experiments_done + self.parallel_experiments, self.total_experiments)
 
     @property
@@ -283,7 +283,7 @@ def parse_random_search(script_args, args):
 
 class RunSweepCommand(ClientCommand):
 
-    DESCRIPTION = "Command to run a Sweep or Trial"
+    DESCRIPTION = "Command to run a Sweep or an Experiment"
 
     SUPPORTED_DISTRIBUTIONS = ("uniform", "log_uniform", "categorical")
 
@@ -299,7 +299,7 @@ class RunSweepCommand(ClientCommand):
             choices=["grid_search", "random_search", "bayesian"],
         )
         parser.add_argument("--total_experiments", default=None, type=int, help="The total number of experiments")
-        parser.add_argument("--parallel_experiments", default=None, type=int, help="Number of trials to run.")
+        parser.add_argument("--parallel_experiments", default=None, type=int, help="Number of experiments to run.")
         parser.add_argument(
             "--requirements",
             nargs="+",

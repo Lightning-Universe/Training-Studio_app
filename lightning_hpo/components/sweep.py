@@ -122,7 +122,7 @@ class Sweep(LightningFlow, ControllerResource):
             self.stage = Stage.SUCCEEDED
             return
 
-        for experiment_id in range(self.num_trials):
+        for experiment_id in range(self.num_experiments):
 
             objective = self._get_objective(experiment_id)
 
@@ -187,11 +187,13 @@ class Sweep(LightningFlow, ControllerResource):
                         self.total_experiments_done += 1
                         objective.stop()
 
-        if all(self.experiments[experiment_id]["stage"] == Stage.FAILED for experiment_id in range(self.num_trials)):
+        if all(
+            self.experiments[experiment_id]["stage"] == Stage.FAILED for experiment_id in range(self.num_experiments)
+        ):
             self.stage = Stage.FAILED
 
     @property
-    def num_trials(self) -> int:
+    def num_experiments(self) -> int:
         return min(self.total_experiments_done + self.parallel_experiments, self.total_experiments)
 
     @property
@@ -210,9 +212,9 @@ class Sweep(LightningFlow, ControllerResource):
             self.total_experiments_done += 1
 
     def _get_objective(self, experiment_id: int):
-        trial_config = self.experiments.get(experiment_id, None)
-        if trial_config is None:
-            trial_config = ExperimentConfig(
+        experiment_config = self.experiments.get(experiment_id, None)
+        if experiment_config is None:
+            experiment_config = ExperimentConfig(
                 name=str(uuid4()).split("-")[-1][:7],
                 best_model_score=None,
                 monitor=None,
@@ -220,9 +222,9 @@ class Sweep(LightningFlow, ControllerResource):
                 stage=Stage.PENDING,
                 params={},
             ).dict()
-            self.experiments[experiment_id] = trial_config
+            self.experiments[experiment_id] = experiment_config
 
-        if trial_config["stage"] == Stage.SUCCEEDED:
+        if experiment_config["stage"] == Stage.SUCCEEDED:
             return
 
         objective = getattr(self, f"w_{experiment_id}", None)
@@ -232,7 +234,7 @@ class Sweep(LightningFlow, ControllerResource):
             )
             objective = self._objective_cls(
                 experiment_id=experiment_id,
-                experiment_name=trial_config["name"],
+                experiment_name=experiment_config["name"],
                 cloud_compute=cloud_compute,
                 drives=self._drives,
                 **self._kwargs,

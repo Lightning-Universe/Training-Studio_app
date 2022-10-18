@@ -18,9 +18,9 @@ def test_stop_sweeps_experiment(monkeypatch):
         data = json.load(f)
 
     sweep_config = SweepConfig(**data[0])
-    trial = deepcopy(sweep_config.experiments[0])
-    trial.stage = Stage.RUNNING
-    sweep_config.experiments[1] = trial
+    experiment = deepcopy(sweep_config.experiments[0])
+    experiment.stage = Stage.RUNNING
+    sweep_config.experiments[1] = experiment
     sweep_config.logger = "streamlit"
     sweep = Sweep.from_config(config=sweep_config)
 
