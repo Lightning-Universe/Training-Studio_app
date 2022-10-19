@@ -33,7 +33,7 @@ def _show_experiments(sweeps: List[SweepConfig]):
 
 class ShowExperimentsCommand(ClientCommand):
 
-    DESCRIPTION = "Command to show experiments"
+    DESCRIPTION = "Show Experiments."
 
     def run(self) -> None:
         # 1: Collect the SweepConfig

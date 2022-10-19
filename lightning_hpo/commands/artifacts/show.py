@@ -173,6 +173,9 @@ class ShowArtifactsConfigResponse(BaseModel):
 
 
 class ShowArtifactsCommand(ClientCommand):
+
+    DESCRIPTION = "Show artifacts."
+
     def run(self) -> None:
         # 1. Parse the user arguments.
         parser = argparse.ArgumentParser()

@@ -26,6 +26,9 @@ class DownloadArtifactsConfigResponse(BaseModel):
 
 
 class DownloadArtifactsCommand(ClientCommand):
+
+    DESCRIPTION = "Download an artifact."
+
     def run(self) -> None:
         # 1. Parse the user arguments.
         parser = argparse.ArgumentParser()
