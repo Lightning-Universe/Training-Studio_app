@@ -181,7 +181,6 @@ export function Experiments() {
   const enableClipBoard = appId == 'localhost' ? false : true;
 
   if (sweeps.length == 0) {
-    console.log(showHelpPage);
     setShowHelpPage(HelpPageState.forced);
   } else if (showHelpPage == HelpPageState.forced) {
     setShowHelpPage(HelpPageState.notShown);
