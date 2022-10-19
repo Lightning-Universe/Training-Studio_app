@@ -1,10 +1,13 @@
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { Box, Button, Link, Stack, Table, Typography } from 'lightning-ui/src/design-system/components';
-import Status, { StatusEnum } from 'lightning-ui/src/shared/components/Status';
+import PlayCircleIcon from '@mui/icons-material/PlayCircle';
+import StopCircle from '@mui/icons-material/StopCircle';
+import { Box, Link, Stack, Table, Typography } from 'lightning-ui/src/design-system/components';
+import { StatusEnum } from 'lightning-ui/src/shared/components/Status';
 import { AppClient, ExperimentConfig, SweepConfig, TensorboardConfig } from '../generated';
 import useClientDataState from '../hooks/useClientDataState';
 import { formatDurationFrom, formatDurationStartEnd, getAppId } from '../utilities';
 import BorderLinearProgress from './BorderLinearProgress';
+import MoreMenu from './MoreMenu';
 import UserGuide, { UserGuideBody, UserGuideComment } from './UserGuide';
 
 const appClient = new AppClient({
@@ -69,17 +72,6 @@ function runTensorboard(tensorboardConfig?: TensorboardConfig) {
   });
 }
 
-function createLoggerControl(tensorboardConfig?: TensorboardConfig) {
-  const status = tensorboardConfig?.stage ? statusToEnum[tensorboardConfig.stage] : StatusEnum.NOT_STARTED;
-  if (status == StatusEnum.RUNNING) {
-    return tensorboardConfig.url ? <Button onClick={_ => stopTensorboard(tensorboardConfig)} text="Stop" /> : null;
-  } else if (status == StatusEnum.STOPPED) {
-    return <Button onClick={_ => runTensorboard(tensorboardConfig)} text="Run" />;
-  } else {
-    return <Status status={status} />;
-  }
-}
-
 function toCompute(sweep: SweepConfig) {
   if (sweep.num_nodes > 1) {
     return `${sweep.num_nodes} nodes x ${ComputeToMachines[sweep.cloud_compute]}`;
@@ -140,6 +132,45 @@ function toArgs(
   return arg;
 }
 
+const handleClick = (url?: string) => {
+  if (url) {
+    window.open(url, '_blank').focus();
+  }
+};
+
+function createMenuItems(logger_url: string, tensorboardConfig?: TensorboardConfig) {
+  var items = [];
+  var url = tensorboardConfig ? tensorboardConfig.url : logger_url;
+
+  if (url) {
+    items.push({
+      label: 'Open Logger',
+      icon: <OpenInNewIcon sx={{ fontSize: 20 }} />,
+      onClick: () => handleClick(tensorboardConfig ? tensorboardConfig.url : logger_url),
+    });
+  }
+
+  if (tensorboardConfig) {
+    const status = tensorboardConfig?.stage ? statusToEnum[tensorboardConfig.stage] : StatusEnum.NOT_STARTED;
+
+    if (status == StatusEnum.RUNNING || status == StatusEnum.PENDING) {
+      items.push({
+        label: 'Stop Logger',
+        icon: <StopCircle sx={{ fontSize: 20 }} />,
+        onClick: () => stopTensorboard(tensorboardConfig),
+      });
+    } else {
+      items.push({
+        label: 'Run Logger',
+        icon: <PlayCircleIcon sx={{ fontSize: 20 }} />,
+        onClick: () => runTensorboard(tensorboardConfig),
+      });
+    }
+  }
+
+  return items;
+}
+
 export function Experiments() {
   const tensorboards = useClientDataState('tensorboards') as TensorboardConfig[];
   const sweeps = useClientDataState('sweeps') as SweepConfig[];
@@ -173,7 +204,7 @@ export function Experiments() {
     'Script Arguments',
     'Trainable Parameters',
     'Compute',
-    'Logger URL',
+    'More',
   ];
 
   const tensorboardIdsToStatuses = Object.fromEntries(
@@ -194,7 +225,7 @@ export function Experiments() {
       toArgs(sweep.script_args, entry[1].params),
       String(entry[1].total_parameters),
       toCompute(sweep),
-      createLoggerUrl(tensorboardConfig ? tensorboardConfig.url : sweep.logger_url),
+      <MoreMenu id={entry[1].name} items={createMenuItems(sweep.logger_url, tensorboardConfig)} />,
     ]);
   });
 

@@ -1,6 +1,5 @@
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
-import React from 'react';
 
 const StartStopMenuItem = (status: string, onStart: () => void, onStop: () => void) => {
   if (['stopped', 'not_started'].indexOf(status) >= 0) {
