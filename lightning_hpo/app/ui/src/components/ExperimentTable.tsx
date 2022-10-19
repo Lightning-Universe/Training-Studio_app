@@ -1,6 +1,7 @@
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import StopCircle from '@mui/icons-material/StopCircle';
+import useShowHelpPageState, { HelpPageState } from 'hooks/useShowHelpPageState';
 import { Box, Link, Stack, Table, Typography } from 'lightning-ui/src/design-system/components';
 import { StatusEnum } from 'lightning-ui/src/shared/components/Status';
 import { AppClient, ExperimentConfig, SweepConfig, TensorboardConfig } from '../generated';
@@ -172,6 +173,7 @@ function createMenuItems(logger_url: string, tensorboardConfig?: TensorboardConf
 }
 
 export function Experiments() {
+  const { showHelpPage, setShowHelpPage } = useShowHelpPageState();
   const tensorboards = useClientDataState('tensorboards') as TensorboardConfig[];
   const sweeps = useClientDataState('sweeps') as SweepConfig[];
 
@@ -179,6 +181,13 @@ export function Experiments() {
   const enableClipBoard = appId == 'localhost' ? false : true;
 
   if (sweeps.length == 0) {
+    console.log(showHelpPage);
+    setShowHelpPage(HelpPageState.forced);
+  } else if (showHelpPage == HelpPageState.forced) {
+    setShowHelpPage(HelpPageState.notShown);
+  }
+
+  if (showHelpPage == HelpPageState.forced || showHelpPage == HelpPageState.shown) {
     return (
       <UserGuide title="Want to start a hyper-parameter sweep?" subtitle="Use the commands below in your terminal">
         <UserGuideComment>Connect to the app</UserGuideComment>
