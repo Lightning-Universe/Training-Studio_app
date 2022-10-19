@@ -77,7 +77,7 @@ class Objective(TracerPythonScript, ABC):
             res = objective_fn(**self.params)
             if isinstance(res, (int, float)):
                 self.monitor = "score"
-                self.best_model_score = res
+                self.best_model_score = round(res, 4)
             elif isinstance(res, dict):
                 assert isinstance(res, ObjectiveResult)
         super().on_after_run(global_scripts)

@@ -1,16 +1,20 @@
+import os
 import uuid
 from typing import Any, Dict, List, Optional, Type, Union
 from uuid import uuid4
 
 from lightning import BuildConfig, CloudCompute, LightningFlow
 from lightning.app.components.python.tracer import Code
+from lightning.app.frontend import StaticWebFrontend
 from lightning.app.storage.drive import Drive
 from lightning.app.storage.path import Path
+from lightning.app.utilities.app_helpers import _LightningAppRef
 from lightning_utilities.core.apply_func import apply_to_collection
 
 from lightning_hpo.algorithm.base import Algorithm
 from lightning_hpo.algorithm.optuna import GridSearch, OptunaAlgorithm, RandomSearch
 from lightning_hpo.commands.sweep.run import ExperimentConfig, SweepConfig
+from lightning_hpo.commands.sweep.show import ShowSweepsCommand
 from lightning_hpo.controllers.controller import ControllerResource
 from lightning_hpo.distributions.distributions import Distribution
 from lightning_hpo.framework.agnostic import Objective
@@ -282,4 +286,19 @@ class Sweep(LightningFlow, ControllerResource):
         )
 
     def configure_layout(self):
+        app = _LightningAppRef().get_current()
+        if app and app.root == self:
+            return StaticWebFrontend(os.path.join(os.path.dirname(os.path.dirname(__file__)), "app", "ui", "build"))
         return self._logger.configure_layout()
+
+    def show_sweeps(self):
+        return [self.collect_model()]
+
+    def show_tensorboards(self):
+        return []
+
+    def configure_commands(self):
+        return [
+            {"show sweeps": ShowSweepsCommand(self.show_sweeps)},
+            {"show tensorboards": self.show_tensorboards},
+        ]
