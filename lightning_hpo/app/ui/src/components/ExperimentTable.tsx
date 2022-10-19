@@ -237,7 +237,14 @@ export function Experiments() {
     ]);
   });
 
-  let flatArray = [].concat.apply([], rows);
+  const flatArray = [].concat.apply([], rows).map((row: any[]) =>
+    row.map((entry: any) => {
+      if (entry == 'null') {
+        return '-';
+      }
+      return entry;
+    }),
+  );
 
   return <Table header={experimentHeader} rows={flatArray} />;
 }
