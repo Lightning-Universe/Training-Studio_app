@@ -25,11 +25,13 @@ class TensorboardController(Controller):
                     self.r[work_name].stage = Stage.PENDING
 
     def show_tensorboards(self) -> List[TensorboardConfig]:
+        """Show TensorBoards."""
         if self.db_url:
             return self.db.get()
         return []
 
     def run_tensorboard(self, config: TensorboardConfig):
+        """Run TensorBoard for a given Sweep or Experiment."""
         tensorboards = self.db.get()
         matched_tensorboard = None
 
@@ -47,6 +49,7 @@ class TensorboardController(Controller):
         return f"Launched a Tensorboard `{config.sweep_id}`."
 
     def stop_tensorboard(self, config: StopTensorboardConfig):
+        """Stop TensorBoard for a given Sweep or Experiment."""
         work_name = urllib.parse.quote_plus(config.sweep_id)
         if work_name in self.r:
             self.r[work_name].stop()

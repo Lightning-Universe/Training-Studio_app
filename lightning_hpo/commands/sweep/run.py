@@ -283,7 +283,7 @@ def parse_random_search(script_args, args):
 
 class RunSweepCommand(ClientCommand):
 
-    DESCRIPTION = "Command to run a Sweep or an Experiment"
+    DESCRIPTION = "Run a Sweep."
 
     SUPPORTED_DISTRIBUTIONS = ("uniform", "log_uniform", "categorical")
 
@@ -348,7 +348,7 @@ class RunSweepCommand(ClientCommand):
             help="The disk size in Gigabytes.",
         )
         parser.add_argument(
-            "--drives", nargs="+", default=[], help="Provide a list of drives to add to yhe experiments."
+            "--drives", nargs="+", default=[], help="Provide a list of drives to add to the experiments."
         )
         hparams, args = parser.parse_known_args()
 

@@ -10,7 +10,7 @@ class DeleteDriveConfig(SQLModel):
 
 class DeleteDriveCommand(ClientCommand):
 
-    DESCRIPTION = "Command to delete a Drive"
+    DESCRIPTION = "Delete a Drive."
 
     def run(self) -> None:
         parser = ArgumentParser()

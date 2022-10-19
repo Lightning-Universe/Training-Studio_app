@@ -33,7 +33,7 @@ class DriveConfig(SQLModel, table=True):
 
 class CreateDriveCommand(ClientCommand):
 
-    DESCRIPTION = "Command to create a Drive"
+    DESCRIPTION = "Create a Drive."
 
     def run(self) -> None:
         parser = ArgumentParser()

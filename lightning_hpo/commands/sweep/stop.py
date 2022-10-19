@@ -10,7 +10,7 @@ class StopSweepConfig(BaseModel):
 
 class StopSweepCommand(ClientCommand):
 
-    DESCRIPTION = "Command to stop a Sweep"
+    DESCRIPTION = "Stop a Sweep."
 
     def run(self) -> None:
         parser = ArgumentParser()

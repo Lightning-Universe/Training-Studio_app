@@ -5,7 +5,7 @@ from rich.table import Table
 
 class ShowDriveCommand(ClientCommand):
 
-    DESCRIPTION = "Command to show the drives"
+    DESCRIPTION = "Show Drives."
 
     def run(self) -> None:
         response = self.invoke_handler()

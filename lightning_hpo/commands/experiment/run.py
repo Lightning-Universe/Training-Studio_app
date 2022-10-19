@@ -12,7 +12,7 @@ from lightning_hpo.commands.sweep.run import CustomLocalSourceCodeDir, Experimen
 
 class RunExperimentCommand(ClientCommand):
 
-    DESCRIPTION = "Command to run an experiment."
+    DESCRIPTION = "Run an Experiment."
 
     def run(self) -> None:
         parser = ArgumentParser()
@@ -52,7 +52,7 @@ class RunExperimentCommand(ClientCommand):
             help="The disk size in Gigabytes.",
         )
         parser.add_argument(
-            "--drives", nargs="+", default=[], help="Provide a list of drives to add to yhe experiments."
+            "--drives", nargs="+", default=[], help="Provide a list of drives to add to the experiments."
         )
         hparams, args = parser.parse_known_args()
 
