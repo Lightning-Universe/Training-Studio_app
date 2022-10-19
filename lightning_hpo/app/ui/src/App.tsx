@@ -1,5 +1,6 @@
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { Typography } from '@mui/material';
+import { ShowHelpPageProvider } from 'hooks/useShowHelpPageState';
 import { Link, SnackbarProvider, Stack, Table } from 'lightning-ui/src/design-system/components';
 import ThemeProvider from 'lightning-ui/src/design-system/theme';
 import Status, { StatusEnum } from 'lightning-ui/src/shared/components/Status';
@@ -168,9 +169,11 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <SnackbarProvider>
-            <SelectedTabProvider>
-              <AppTabsExperiments />
-            </SelectedTabProvider>
+            <ShowHelpPageProvider>
+              <SelectedTabProvider>
+                <AppTabsExperiments />
+              </SelectedTabProvider>
+            </ShowHelpPageProvider>
           </SnackbarProvider>
         </BrowserRouter>
       </QueryClientProvider>

@@ -1,7 +1,9 @@
+import CancelIcon from '@mui/icons-material/Cancel';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { Divider, Grid, Typography } from '@mui/material';
 import MuiTab from '@mui/material/Tab';
 import MuiTabs from '@mui/material/Tabs';
+import useShowHelpPageState, { HelpPageState } from 'hooks/useShowHelpPageState';
 import { Box, IconButton, Stack, SxProps, Theme } from 'lightning-ui/src/design-system/components';
 import TabContent from 'lightning-ui/src/design-system/components/tabs/TabContent';
 import TabPanel from 'lightning-ui/src/design-system/components/tabs/TabPanel';
@@ -22,27 +24,37 @@ export type TabsProps = {
 };
 
 const Tabs = (props: TabsProps) => {
+  const { showHelpPage, setShowHelpPage } = useShowHelpPageState();
+
   return (
     <Box sx={{ overflowX: 'hidden' }}>
       <Stack
         direction="row"
         spacing={1}
         sx={{ paddingX: '14px', paddingY: '9px', position: 'absolute', top: 0, right: 0, zIndex: 1000 }}>
-        <IconButton
-          sx={{
-            'backgroundColor': 'grey.20',
-            '&:hover': {
-              backgroundColor: 'grey.20',
-            },
-            'height': '28px',
-            'width': '28px',
-          }}
-          aria-label="docs"
-          onClick={() => {
-            window.open('https://lightning-ai.github.io/lightning-hpo/training_studio.html', '_blank')?.focus();
-          }}>
-          <HelpOutlineIcon sx={{ color: 'grey.70', fontSize: 16 }} />
-        </IconButton>
+        {showHelpPage != HelpPageState.forced ? (
+          <IconButton
+            sx={{
+              'backgroundColor': 'grey.20',
+              '&:hover': {
+                backgroundColor: 'grey.20',
+              },
+              'height': '28px',
+              'width': '28px',
+            }}
+            aria-label="docs"
+            onClick={() => {
+              setShowHelpPage(showHelpPage == HelpPageState.shown ? HelpPageState.notShown : HelpPageState.shown);
+            }}>
+            {showHelpPage == HelpPageState.shown ? (
+              <CancelIcon sx={{ color: 'grey.70', fontSize: 16 }} />
+            ) : (
+              <HelpOutlineIcon sx={{ color: 'grey.70', fontSize: 16 }} />
+            )}
+          </IconButton>
+        ) : (
+          <></>
+        )}
       </Stack>
       <Grid container spacing={1}>
         <Grid item xs={12} sm="auto">
