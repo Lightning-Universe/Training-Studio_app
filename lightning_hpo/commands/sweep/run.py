@@ -75,7 +75,7 @@ class SweepConfig(SQLModel, table=True):
     stage: str = Stage.NOT_STARTED
     desired_stage: str = Stage.RUNNING
     disk_size: int = 80
-    drive_names: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
+    mount_names: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
     username: Optional[str] = None
 
     @property
@@ -348,7 +348,7 @@ class RunSweepCommand(ClientCommand):
             help="The disk size in Gigabytes.",
         )
         parser.add_argument(
-            "--drives", nargs="+", default=[], help="Provide a list of drives to add to the experiments."
+            "--mounts", nargs="+", default=[], help="Provide a list of Mounts to add to the experiments."
         )
         hparams, args = parser.parse_known_args()
 
@@ -412,7 +412,7 @@ class RunSweepCommand(ClientCommand):
             direction=hparams.direction,
             experiments={},
             disk_size=hparams.disk_size,
-            drive_names=hparams.drives,
+            mount_names=hparams.mounts,
             username=getuser(),
         )
         response = self.invoke_handler(config=config)

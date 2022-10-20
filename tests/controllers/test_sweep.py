@@ -1,8 +1,9 @@
 import os
 
-from lightning.app.storage import Drive
+from lightning import CloudCompute
+from lightning.app.storage import Mount
 
-from lightning_hpo.commands.drive.create import DriveConfig
+from lightning_hpo.commands.mount.create import MountConfig
 from lightning_hpo.commands.sweep.run import SweepConfig
 from lightning_hpo.commands.tensorboard.stop import TensorboardConfig
 from lightning_hpo.components.sweep import Sweep
@@ -24,7 +25,7 @@ def test_sweep_controller(monkeypatch):
         logger="tensorboard",
         distributions={"best_model_score": Uniform(1, 10)},
         framework="pytorch_lightning",
-        drives=[Drive("s3://a/", root_folder=os.path.dirname(__file__))],
+        cloud_compute=CloudCompute(mounts=[Mount("s3://a/", root_folder=os.path.dirname(__file__))]),
     )
     sweep_controller = SweepController()
     sweep_controller.db_url = "a"
@@ -32,9 +33,9 @@ def test_sweep_controller(monkeypatch):
     config: SweepConfig = sweep.collect_model()
     assert "best_model_score" in config.distributions
     response = sweep_controller.run_sweep(config)
-    assert response == "The provided drive 'a/' doesn't exists."
-    drive_config = DriveConfig(name="a/", source="s3://a/", mount_path=os.path.dirname(__file__) + "/")
-    sweep_controller.db.post(drive_config)
+    assert response == "The provided mount 'a/' doesn't exist."
+    mount_config = MountConfig(name="a/", source="s3://a/", mount_path=os.path.dirname(__file__) + "/")
+    sweep_controller.db.post(mount_config)
     response = sweep_controller.run_sweep(config)
     assert response == "Launched a Sweep 'a'."
     assert sweep_controller.db.data["SweepConfig:a"] == config

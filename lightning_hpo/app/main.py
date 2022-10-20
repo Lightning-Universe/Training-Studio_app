@@ -16,9 +16,9 @@ from lightning_hpo.commands.artifacts.show import (
     ShowArtifactsConfig,
     ShowArtifactsConfigResponse,
 )
-from lightning_hpo.commands.drive.create import CreateDriveCommand, DriveConfig
-from lightning_hpo.commands.drive.delete import DeleteDriveCommand, DeleteDriveConfig
-from lightning_hpo.commands.drive.show import ShowDriveCommand
+from lightning_hpo.commands.mount.create import CreateMountCommand, MountConfig
+from lightning_hpo.commands.mount.delete import DeleteMountCommand, DeleteMountConfig
+from lightning_hpo.commands.mount.show import ShowMountCommand
 from lightning_hpo.components.servers.db import (
     Database,
     DatabaseConnector,
@@ -52,7 +52,7 @@ class TrainingStudio(LightningFlow):
                 self.sweep_controller.model,
                 # self.notebook_controller.model,
                 self.tensorboard_controller.model,
-                DriveConfig,
+                MountConfig,
             ]
         )
 
@@ -101,24 +101,24 @@ class TrainingStudio(LightningFlow):
             urls=urls,
         )
 
-    def create_drive(self, config: DriveConfig):
-        drives = self.db_client.get(DriveConfig)
-        for drive in drives:
-            if drive.name == config.name:
-                return f"The drive `{config.name}` already exists."
+    def create_mount(self, config: MountConfig):
+        mounts = self.db_client.get(MountConfig)
+        for mount in mounts:
+            if mount.name == config.name:
+                return f"The mount `{config.name}` already exists."
         self.db_client.post(config)
-        return f"The drive `{config.name}` has been created."
+        return f"The mount `{config.name}` has been created."
 
-    def delete_drive(self, config: DeleteDriveConfig):
-        drives = self.db_client.get(DriveConfig)
-        for drive in drives:
-            if drive.name == config.name:
-                self.db_client.delete(drive)
-                return f"The drive `{config.name}` has been deleted."
-        return f"The drive `{config.name}` doesn't exist."
+    def delete_mount(self, config: DeleteMountConfig):
+        mounts = self.db_client.get(MountConfig)
+        for mount in mounts:
+            if mount.name == config.name:
+                self.db_client.delete(mount)
+                return f"The mount `{config.name}` has been deleted."
+        return f"The mount `{config.name}` doesn't exist."
 
-    def show_drives(self):
-        return self.db_client.get(DriveConfig)
+    def show_mounts(self):
+        return self.db_client.get(MountConfig)
 
     def configure_commands(self):
         controller_commands = self.sweep_controller.configure_commands()
@@ -127,9 +127,9 @@ class TrainingStudio(LightningFlow):
         controller_commands += [
             {"show artifacts": ShowArtifactsCommand(self.show_artifacts)},
             {"download artifacts": DownloadArtifactsCommand(self.download_artifacts)},
-            {"create drive": CreateDriveCommand(self.create_drive)},
-            {"delete drive": DeleteDriveCommand(self.delete_drive)},
-            {"show drives": ShowDriveCommand(self.show_drives)},
+            {"create mount": CreateMountCommand(self.create_mount)},
+            {"delete mount": DeleteMountCommand(self.delete_mount)},
+            {"show mounts": ShowMountCommand(self.show_mounts)},
         ]
         return controller_commands
 

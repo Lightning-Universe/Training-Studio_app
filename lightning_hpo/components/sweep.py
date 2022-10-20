@@ -6,7 +6,7 @@ from uuid import uuid4
 from lightning import BuildConfig, CloudCompute, LightningFlow
 from lightning.app.components.python.tracer import Code
 from lightning.app.frontend import StaticWebFrontend
-from lightning.app.storage.drive import Drive
+from lightning.app.storage.mount import Mount
 from lightning.app.storage.path import Path
 from lightning.app.utilities.app_helpers import _LightningAppRef
 from lightning_utilities.core.apply_func import apply_to_collection
@@ -54,7 +54,6 @@ class Sweep(LightningFlow, ControllerResource):
         experiments: Optional[Dict[int, Dict]] = None,
         stage: Optional[str] = Stage.NOT_STARTED,
         logger_url: str = "",
-        drives: Optional[List[Drive]] = None,
         **objective_kwargs: Any,
     ):
         """The Sweep class enables to easily run a Python Script with Lightning
@@ -93,8 +92,13 @@ class Sweep(LightningFlow, ControllerResource):
         self.experiments = experiments or {}
         self.stage = stage
         self.logger_url = logger_url
-        self._drives = drives or []
-        self.drive_names = [drive.id for drive in self._drives]
+
+        # TODO: Resolve mount names with forcing s3 protocol
+        cloud_compute = objective_kwargs.get("cloud_compute", None)
+        if cloud_compute is not None:
+            self.mount_names = [mount.source.replace("s3://", "") for mount in cloud_compute.mounts]
+        else:
+            self.mount_names = None
 
         self._objective_cls = _resolve_objective_cls(objective_cls, framework)
         self._algorithm = algorithm or OptunaAlgorithm(direction=direction)
@@ -240,14 +244,13 @@ class Sweep(LightningFlow, ControllerResource):
                 experiment_id=experiment_id,
                 experiment_name=experiment_config["name"],
                 cloud_compute=cloud_compute,
-                drives=self._drives,
                 **self._kwargs,
             )
             setattr(self, f"w_{experiment_id}", objective)
         return objective
 
     @classmethod
-    def from_config(cls, config: SweepConfig, code: Optional[Code] = None, drives: Optional[List[Drive]] = None):
+    def from_config(cls, config: SweepConfig, code: Optional[Code] = None, mounts: Optional[List[Mount]] = None):
 
         if config.algorithm == "grid_search":
             distributions = {k: v.dict()["params"]["choices"] for k, v in config.distributions.items()}
@@ -272,7 +275,12 @@ class Sweep(LightningFlow, ControllerResource):
             script_args=config.script_args,
             total_experiments_done=config.total_experiments_done,
             distributions=distributions,
-            cloud_compute=HPOCloudCompute(config.cloud_compute, count=config.num_nodes, disk_size=config.disk_size),
+            cloud_compute=HPOCloudCompute(
+                config.cloud_compute,
+                count=config.num_nodes,
+                disk_size=config.disk_size,
+                mounts=mounts,
+            ),
             sweep_id=config.sweep_id,
             code=code,
             cloud_build_config=BuildConfig(requirements=config.requirements),
@@ -282,7 +290,6 @@ class Sweep(LightningFlow, ControllerResource):
             direction=config.direction,
             stage=config.stage,
             logger_url=config.logger_url,
-            drives=drives,
         )
 
     def configure_layout(self):

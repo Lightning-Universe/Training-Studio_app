@@ -59,7 +59,7 @@ def test_experiment_run_parsing_no_arguments(monkeypatch):
             stage="not_started",
             desired_stage="running",
             disk_size=80,
-            drive_names=[],
+            mount_names=[],
         )
         expected.sweep_id = config.sweep_id
         expected.username = config.username
@@ -79,7 +79,7 @@ def test_experiment_run_parsing_arguments(monkeypatch):
         [
             "",
             __file__,
-            "--drive",
+            "--mounts",
             "example",
             "--requirements",
             "'jsonargparse[signatures]'",
@@ -124,7 +124,7 @@ def test_experiment_run_parsing_arguments(monkeypatch):
             stage="not_started",
             desired_stage="running",
             disk_size=80,
-            drive_names=["example"],
+            mount_names=["example"],
         )
         expected.sweep_id = config.sweep_id
         expected.username = config.username
@@ -199,7 +199,7 @@ def test_experiment_run_parsing_requirements(monkeypatch):
             stage="not_started",
             desired_stage="running",
             disk_size=80,
-            drive_names=[],
+            mount_names=[],
         )
         expected.sweep_id = config.sweep_id
         expected.username = config.username

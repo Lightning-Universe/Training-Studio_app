@@ -52,7 +52,7 @@ class RunExperimentCommand(ClientCommand):
             help="The disk size in Gigabytes.",
         )
         parser.add_argument(
-            "--drives", nargs="+", default=[], help="Provide a list of drives to add to the experiments."
+            "--mounts", nargs="+", default=[], help="Provide a list of Mounts to add to the experiments."
         )
         hparams, args = parser.parse_known_args()
 
@@ -90,7 +90,7 @@ class RunExperimentCommand(ClientCommand):
             direction="minimize",  # This won't be used
             experiments={0: ExperimentConfig(name=name, params={})},
             disk_size=hparams.disk_size,
-            drive_names=hparams.drives,
+            mount_names=hparams.mounts,
             username=str(getuser()),
         )
         response = self.invoke_handler(config=config)

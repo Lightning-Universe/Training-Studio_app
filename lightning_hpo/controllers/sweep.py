@@ -1,15 +1,15 @@
 import urllib.parse
 from typing import List
 
-from lightning.app.storage import Drive
+from lightning.app.storage import Drive, Mount
 from lightning.app.structures import Dict
 
 from lightning_hpo import Sweep
-from lightning_hpo.commands.drive.create import DriveConfig
 from lightning_hpo.commands.experiment.delete import DeleteExperimentCommand, DeleteExperimentConfig
 from lightning_hpo.commands.experiment.run import RunExperimentCommand
 from lightning_hpo.commands.experiment.show import ShowExperimentsCommand
 from lightning_hpo.commands.experiment.stop import StopExperimentCommand, StopExperimentConfig
+from lightning_hpo.commands.mount.create import MountConfig
 from lightning_hpo.commands.sweep.delete import DeleteSweepCommand, DeleteSweepConfig
 from lightning_hpo.commands.sweep.run import RunSweepCommand, SweepConfig
 from lightning_hpo.commands.sweep.show import ShowSweepsCommand
@@ -53,14 +53,14 @@ class SweepController(Controller):
                             self.db.put(tensorboard)
 
             if work_name not in self.r and sweep.stage != Stage.SUCCEEDED:
-                drives: List[DriveConfig] = self.db.get(DriveConfig)
+                mounts: List[MountConfig] = self.db.get(MountConfig)
                 self.r[work_name] = Sweep.from_config(
                     sweep,
                     code={"drive": self.drive, "name": id},
-                    drives=[
-                        Drive(drive.source, root_folder=drive.mount_path)
-                        for drive in drives
-                        if drive.name in sweep.drive_names
+                    mounts=[
+                        Mount(mount.source, root_folder=mount.mount_path)
+                        for mount in mounts
+                        if mount.name in sweep.mount_names
                     ],
                 )
 
@@ -74,11 +74,11 @@ class SweepController(Controller):
 
     def run_sweep(self, config: SweepConfig) -> str:
         work_name = urllib.parse.quote_plus(config.sweep_id)
-        drive_names = [drive.name for drive in self.db.get(DriveConfig)]
+        mount_names = [mount.name for mount in self.db.get(MountConfig)]
 
-        for drive in config.drive_names:
-            if drive not in drive_names:
-                return f"The provided drive '{drive}' doesn't exists."
+        for mount in config.mount_names:
+            if mount not in mount_names:
+                return f"The provided Mount '{mount}' doesn't exist."
 
         if work_name not in self.r:
             self.db.post(config)
