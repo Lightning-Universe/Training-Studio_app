@@ -71,7 +71,7 @@ def _show_sweep(sweep: SweepConfig):
 
 class ShowSweepsCommand(ClientCommand):
 
-    DESCRIPTION = "Show all Sweeps or the Experiments from a given Sweep."
+    description = "Show all Sweeps or the Experiments from a given Sweep."
 
     # TODO: (tchaton) Upstream to Lightning
     def invoke_handler(self, config: Optional[BaseModel] = None) -> Dict[str, Any]:

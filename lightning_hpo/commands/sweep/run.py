@@ -283,8 +283,8 @@ def parse_random_search(script_args, args):
 
 class RunSweepCommand(ClientCommand):
 
-    DESCRIPTION = "Run a Sweep."
-
+    description = "Run a Sweep."
+    requirements = ["sqlmodel"]
     SUPPORTED_DISTRIBUTIONS = ("uniform", "log_uniform", "categorical")
 
     def run(self) -> None:

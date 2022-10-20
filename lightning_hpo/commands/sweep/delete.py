@@ -10,7 +10,7 @@ class DeleteSweepConfig(BaseModel):
 
 class DeleteSweepCommand(ClientCommand):
 
-    DESCRIPTION = "Delete a Sweep."
+    description = "Delete a Sweep."
 
     def run(self) -> None:
         parser = ArgumentParser()
