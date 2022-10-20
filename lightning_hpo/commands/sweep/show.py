@@ -10,7 +10,25 @@ from rich.table import Table
 from lightning_hpo.commands.sweep.run import SweepConfig
 
 
+def _show_empty_sweep():
+    table = Table(
+        "id",
+        "cloud_compute",
+        "total_experiments",
+        "total_experiments_done",
+        title="Sweep",
+        show_header=True,
+        header_style="bold green",
+    )
+
+    console = Console()
+    console.print(table)
+
+
 def _show_sweeps(sweeps: List[SweepConfig]):
+    if not sweeps:
+        _show_empty_sweep()
+
     for sweep in sweeps:
         _show_sweep(sweep)
 
@@ -71,7 +89,7 @@ def _show_sweep(sweep: SweepConfig):
 
 class ShowSweepsCommand(ClientCommand):
 
-    DESCRIPTION = "Show all Sweeps or the Experiments from a given Sweep."
+    description = "Show all Sweeps or the Experiments from a given Sweep."
 
     # TODO: (tchaton) Upstream to Lightning
     def invoke_handler(self, config: Optional[BaseModel] = None) -> Dict[str, Any]:

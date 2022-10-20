@@ -140,5 +140,5 @@ class TrainingStudio(LightningFlow):
             if self.db.db_url == "flow":
                 self._client = FlowDatabaseConnector(None)
             else:
-                self._client = DatabaseConnector(db_url=self.db.db_url + "/general/")
+                self._client = DatabaseConnector(DriveConfig, db_url=self.db.db_url + "/general/")
         return self._client
