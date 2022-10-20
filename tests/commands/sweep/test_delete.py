@@ -25,12 +25,12 @@ def test_delete_sweeps_server(monkeypatch, tmpdir):
 
     sweep_controller = SweepController(Drive("lit://code"))
     db = MagicMock()
-    db.get.return_value = [sweep_config]
-    sweep_controller._database = db
+    db.select_all.return_value = [sweep_config]
+    sweep_controller._db_client = db
     sweep_controller.r[sweep_config.sweep_id] = sweep
     result = sweep_controller.delete_sweep(config=DeleteSweepConfig(name=sweep_config.sweep_id))
     assert result == "Deleted the sweep `thomas-cb8f69f0`"
     assert sweep_controller.r == {}
-    db.get.return_value = []
+    db.select_all.return_value = []
     result = sweep_controller.delete_sweep(config=DeleteSweepConfig(name=sweep_config.sweep_id))
     assert result == "We didn't find the sweep `thomas-cb8f69f0`"
