@@ -284,7 +284,7 @@ def parse_random_search(script_args, args):
 class RunSweepCommand(ClientCommand):
 
     description = "Run a Sweep."
-    requirements = ["lightning-hpo"]
+    requirements = ["traitlets", "lightning-hpo"]
     SUPPORTED_DISTRIBUTIONS = ("uniform", "log_uniform", "categorical")
 
     def run(self) -> None:
