@@ -10,7 +10,7 @@ class DeleteExperimentConfig(BaseModel):
 
 class DeleteExperimentCommand(ClientCommand):
 
-    DESCRIPTION = "Delete an Experiment."
+    description = "Delete an Experiment."
 
     def run(self) -> None:
         parser = ArgumentParser()

@@ -1,3 +1,4 @@
+import sys
 from typing import List
 
 from lightning.app.utilities.commands import ClientCommand
@@ -33,9 +34,14 @@ def _show_experiments(sweeps: List[SweepConfig]):
 
 class ShowExperimentsCommand(ClientCommand):
 
-    DESCRIPTION = "Show Experiments."
+    description = "Show Experiments."
 
     def run(self) -> None:
+        if sys.argv[-1] == "--help":
+            print("optional arguments:")
+            print("  -h, --help   show this help message and exit")
+            return
+
         # 1: Collect the SweepConfig
         resp = self.invoke_handler()
 
