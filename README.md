@@ -195,7 +195,7 @@ trainer.fit(model, dm)
 Run the following command to run a multi node training (2 nodes of 4 V100 GPUS each).
 
 ```bash
-lightning run experiment big_model.py --requirements=deepspeed lightning-transformers==0.2.3 --num_nodes=2 --cloud_compute=gpu-fast-multi --disk_size=80
+lightning run experiment big_model.py --requirements deepspeed lightning-transformers==0.2.3 --num_nodes=2 --cloud_compute=gpu-fast-multi --disk_size=80
 ```
 
 
