@@ -38,7 +38,7 @@ class NotebookController(Controller):
 
     def run_notebook(self, config: NotebookConfig) -> str:
         matched_notebook: Optional[NotebookConfig] = None
-        for existing_config in self.db.get():
+        for existing_config in self.db.select_all():
             if existing_config.notebook_name == config.notebook_name:
                 matched_notebook = existing_config
 
@@ -48,10 +48,10 @@ class NotebookController(Controller):
 
             config.desired_stage = Stage.RUNNING
             # Update config in the database
-            self.db.put(config)
+            self.db.update(config)
             return f"The notebook `{config.notebook_name}` has been updated."
 
-        self.db.post(config)
+        self.db.insert(config)
         return f"The notebook `{config.notebook_name}` has been created."
 
     def stop_notebook(self, config: StopNotebookConfig) -> str:
@@ -63,7 +63,7 @@ class NotebookController(Controller):
         if matched_notebook:
             if matched_notebook.desired_stage != Stage.STOPPED:
                 matched_notebook.desired_stage = Stage.STOPPED
-                self.db.put(matched_notebook.collect_model())
+                self.db.update(matched_notebook.collect_model())
                 return f"The notebook `{config.notebook_name}` has been stopped."
             return f"The notebook `{config.notebook_name}` is already stopped."
         names = [notebook.notebook_name for notebook in self.r.values()]
@@ -73,7 +73,7 @@ class NotebookController(Controller):
 
     def show_notebook(self):
         if self.db_url:
-            return self.db.get()
+            return self.db.select_all()
         return []
 
     def configure_commands(self) -> List:

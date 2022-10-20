@@ -1,12 +1,12 @@
 from abc import abstractmethod
-from typing import List, Optional, Type, Union
+from typing import List, Optional, Type
 
 from lightning import LightningFlow
+from lightning.app.components.database import DatabaseClient
 from lightning.app.storage import Drive
 from lightning.app.structures import Dict
 from sqlmodel import SQLModel
 
-from lightning_hpo.components.servers.db import DatabaseConnector, FlowDatabaseConnector
 from lightning_hpo.utilities.enum import Stage
 from lightning_hpo.utilities.utils import get_primary_key
 
@@ -32,23 +32,25 @@ class Controller(LightningFlow):
     def __init__(self, drive: Optional[Drive] = None):
         super().__init__()
         self.db_url = None
+        self._token = None
         self.r = Dict()
         self.drive = drive
-        self._database = None
+        self._db_client = None
         self.ready = False
 
-    def run(self, db_url: str, configs: Optional[List[Type[SQLModel]]] = None):
+    def run(self, db_url: str, token: str, configs: Optional[List[Type[SQLModel]]] = None):
         self.db_url = db_url
+        self._token = token
 
         # TODO: Resolve scheduling. It seems only the last one is activated somehow in the cloud.
         # TODO: Improve the schedule API.
         # 1: Read from the database and generate the works accordingly.
         # if self.schedule("* * * * * 0,5,10,15,20,25,30,35,40,45,50,55"):
-        db_configs = self.db.get()
+        db_configs = self.db.select_all()
         if not self.ready:
             for config in db_configs:
                 config.stage = Stage.NOT_STARTED
-                self.db.put(config)
+                self.db.update(config)
             self.ready = True
 
         if configs:
@@ -71,19 +73,16 @@ class Controller(LightningFlow):
         for config in configs:
             db_config = db_configs[getattr(config, primary_key)]
             if config.dict() != db_config.dict():
-                self.db.put(config)
+                self.db.update(config)
 
         self.on_reconcile_end(configs)
 
     @property
-    def db(self) -> Union[DatabaseConnector, FlowDatabaseConnector]:
-        if self._database is None:
+    def db(self) -> DatabaseClient:
+        if self._db_client is None:
             assert self.db_url is not None
-            if self.db_url == "flow":
-                self._database = FlowDatabaseConnector(self.model)
-            else:
-                self._database = DatabaseConnector(self.model, self.db_url + "/general/")
-        return self._database
+            self._db_client = DatabaseClient(self.db_url, self._token, model=self.model)
+        return self._db_client
 
     @abstractmethod
     def on_reconcile_start(self, configs):
