@@ -25,11 +25,11 @@ def test_stop_sweeps_server(monkeypatch):
     sweep = Sweep.from_config(config=sweep_config)
 
     sweep_controller = SweepController(Drive("lit://code"))
-    sweep_controller._database = MagicMock()
+    sweep_controller._db_client = MagicMock()
     sweep_controller.r[sweep_config.sweep_id] = sweep
     resp = MagicMock()
     resp.status_code = 200
-    monkeypatch.setattr(requests, "put", MagicMock(return_value=resp))
+    monkeypatch.setattr(requests, "post", MagicMock(return_value=resp))
 
     sweep_mock = MagicMock()
     sweep_mock.collect_model.return_value = sweep_config

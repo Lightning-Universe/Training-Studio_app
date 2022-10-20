@@ -1,9 +1,9 @@
 from lightning.app.runners import MultiProcessRuntime
 from lightning.app.testing import LightningTestApp
 
-from lightning_hpo.app.main import TrainingStudio
+from lightning_hpo.app.main import ResearchStudio
 from lightning_hpo.controllers import controller
-from tests.helpers import MockDatabaseConnector
+from tests.helpers import MockDatabaseClient
 
 
 class MainLightningTestApp(LightningTestApp):
@@ -15,8 +15,8 @@ class MainLightningTestApp(LightningTestApp):
 
 
 def test_main(monkeypatch):
-    monkeypatch.setattr(controller, "DatabaseConnector", MockDatabaseConnector)
+    monkeypatch.setattr(controller, "DatabaseClient", MockDatabaseClient)
 
-    flow = TrainingStudio()
+    flow = ResearchStudio()
     app = MainLightningTestApp(flow)
     MultiProcessRuntime(app).dispatch()

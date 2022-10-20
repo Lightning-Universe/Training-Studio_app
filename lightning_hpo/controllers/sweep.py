@@ -30,9 +30,9 @@ class SweepController(Controller):
     def on_reconcile_start(self, sweeps: List[SweepConfig]):
         # 1: Retrieve the tensorboard configs from the database
         if self.tensorboard_sweep_id is None:
-            self.tensorboard_sweep_id = [c.sweep_id for c in self.db.get(TensorboardConfig)]
+            self.tensorboard_sweep_id = [c.sweep_id for c in self.db.select_all(TensorboardConfig)]
 
-        for tensorboard in self.db.get(TensorboardConfig):
+        for tensorboard in self.db.select_all(TensorboardConfig):
             work_name = urllib.parse.quote_plus(tensorboard.sweep_id)
             if work_name in self.r:
                 self.r[work_name].logger_url = tensorboard.url
@@ -45,15 +45,15 @@ class SweepController(Controller):
                 drive = Drive(f"lit://{id}")
                 if id not in self.tensorboard_sweep_id:
                     self.tensorboard_sweep_id.append(id)
-                    self.db.post(TensorboardConfig(sweep_id=id, shared_folder=str(drive.drive_root)))
+                    self.db.insert(TensorboardConfig(sweep_id=id, shared_folder=str(drive.drive_root)))
                 elif sweep.stage in (Stage.FAILED, Stage.SUCCEEDED):
-                    for tensorboard in self.db.get(TensorboardConfig):
+                    for tensorboard in self.db.select_all(TensorboardConfig):
                         if tensorboard.sweep_id == id:
                             tensorboard.desired_stage = Stage.STOPPED
-                            self.db.put(tensorboard)
+                            self.db.update(tensorboard)
 
             if work_name not in self.r and sweep.stage != Stage.SUCCEEDED:
-                drives: List[DriveConfig] = self.db.get(DriveConfig)
+                drives: List[DriveConfig] = self.db.select_all(DriveConfig)
                 self.r[work_name] = Sweep.from_config(
                     sweep,
                     code={"drive": self.drive, "name": id},
@@ -74,20 +74,20 @@ class SweepController(Controller):
 
     def run_sweep(self, config: SweepConfig) -> str:
         work_name = urllib.parse.quote_plus(config.sweep_id)
-        drive_names = [drive.name for drive in self.db.get(DriveConfig)]
+        drive_names = [drive.name for drive in self.db.select_all(DriveConfig)]
 
         for drive in config.drive_names:
             if drive not in drive_names:
                 return f"The provided drive '{drive}' doesn't exists."
 
         if work_name not in self.r:
-            self.db.post(config)
+            self.db.insert(config)
             return f"Launched a Sweep '{config.sweep_id}'."
         return f"The current Sweep '{config.sweep_id}' is running. It couldn't be updated."
 
     def show_sweeps(self) -> List[Dict]:
         if self.db_url:
-            return [sweep.dict() for sweep in self.db.get()]
+            return [sweep.dict() for sweep in self.db.select_all()]
         return []
 
     def stop_sweep(self, config: StopSweepConfig):
@@ -102,12 +102,12 @@ class SweepController(Controller):
             for experiment in sweep_config.experiments.values():
                 if experiment.stage == Stage.RUNNING:
                     experiment.stage = Stage.STOPPED
-            self.db.put(sweep_config)
+            self.db.update(sweep_config)
             return f"Stopped the sweep `{config.sweep_id}`"
         return f"We didn't find the sweep `{config.sweep_id}`"
 
     def delete_sweep(self, config: DeleteSweepConfig):
-        sweeps: List[SweepConfig] = self.db.get()
+        sweeps: List[SweepConfig] = self.db.select_all()
         for sweep in sweeps:
             if config.name != sweep.sweep_id:
                 continue
@@ -123,7 +123,7 @@ class SweepController(Controller):
         return f"We didn't find the sweep `{config.name}`"
 
     def delete_experiment(self, config: DeleteExperimentConfig):
-        sweeps: List[SweepConfig] = self.db.get()
+        sweeps: List[SweepConfig] = self.db.select_all()
         for sweep in sweeps:
             if config.name != sweep.sweep_id:
                 continue
@@ -141,12 +141,12 @@ class SweepController(Controller):
     def run_experiment(self, config: SweepConfig) -> str:
         work_name = urllib.parse.quote_plus(config.sweep_id)
         if work_name not in self.r:
-            self.db.post(config)
+            self.db.insert(config)
             return f"Launched an experiment '{config.sweep_id}'."
         return f"The experiment '{config.sweep_id}' is running. It can't be updated."
 
     def stop_experiment(self, config: StopExperimentConfig):
-        sweeps_config: List[SweepConfig] = self.db.get()
+        sweeps_config: List[SweepConfig] = self.db.select_all()
         for sweep in sweeps_config:
             for experiment_id, experiment in enumerate(sweep.experiments.values()):
                 if config.name == experiment.name:

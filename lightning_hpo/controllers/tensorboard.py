@@ -27,12 +27,12 @@ class TensorboardController(Controller):
     def show_tensorboards(self) -> List[TensorboardConfig]:
         """Show TensorBoards."""
         if self.db_url:
-            return self.db.get()
+            return self.db.select_all()
         return []
 
     def run_tensorboard(self, config: TensorboardConfig):
         """Run TensorBoard for a given Sweep or Experiment."""
-        tensorboards = self.db.get()
+        tensorboards = self.db.select_all()
         matched_tensorboard = None
 
         for tensorboard in tensorboards:
@@ -42,10 +42,10 @@ class TensorboardController(Controller):
         if matched_tensorboard:
             matched_tensorboard.stage = Stage.STOPPED
             matched_tensorboard.desired_stage = Stage.RUNNING
-            self.db.put(matched_tensorboard)
+            self.db.update(matched_tensorboard)
             return f"Re-Launched a Tensorboard `{config.sweep_id}`."
 
-        self.db.post(config)
+        self.db.insert(config)
         return f"Launched a Tensorboard `{config.sweep_id}`."
 
     def stop_tensorboard(self, config: StopTensorboardConfig):
@@ -56,7 +56,7 @@ class TensorboardController(Controller):
             self.r[work_name]._url = ""
             self.r[work_name].stage = Stage.STOPPED
             self.r[work_name].desired_stage = Stage.STOPPED
-            self.db.put(self.r[work_name].collect_model())
+            self.db.update(self.r[work_name].collect_model())
             del self.r[work_name]
             return f"Tensorboard `{config.sweep_id}` was stopped."
         return f"Tensorboard `{config.sweep_id}` doesn't exist."
