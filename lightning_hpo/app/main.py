@@ -18,9 +18,9 @@ from lightning_hpo.commands.artifacts.show import (
     ShowArtifactsConfig,
     ShowArtifactsConfigResponse,
 )
-from lightning_hpo.commands.drive.create import CreateDriveCommand, DriveConfig
-from lightning_hpo.commands.drive.delete import DeleteDriveCommand, DeleteDriveConfig
-from lightning_hpo.commands.drive.show import ShowDriveCommand
+from lightning_hpo.commands.data.create import CreateDataCommand, DataConfig
+from lightning_hpo.commands.data.delete import DeleteDataCommand, DeleteDataConfig
+from lightning_hpo.commands.data.show import ShowDataCommand
 
 # from lightning_hpo.controllers.notebook import NotebookController
 from lightning_hpo.controllers.sweep import SweepController
@@ -44,7 +44,7 @@ class ResearchStudio(LightningFlow):
                 self.sweep_controller.model,
                 # self.notebook_controller.model,
                 self.tensorboard_controller.model,
-                DriveConfig,
+                DataConfig,
             ]
         )
 
@@ -88,24 +88,24 @@ class ResearchStudio(LightningFlow):
             urls=urls,
         )
 
-    def create_drive(self, config: DriveConfig):
-        drives = self.db_client.select_all(DriveConfig)
+    def create_data(self, config: DataConfig):
+        drives = self.db_client.select_all(DataConfig)
         for drive in drives:
             if drive.name == config.name:
-                return f"The drive `{config.name}` already exists."
+                return f"The data `{config.name}` already exists."
         self.db_client.insert(config)
-        return f"The drive `{config.name}` has been created."
+        return f"The data `{config.name}` has been created."
 
-    def delete_drive(self, config: DeleteDriveConfig):
-        drives = self.db_client.select_all(DriveConfig)
+    def delete_data(self, config: DeleteDataConfig):
+        drives = self.db_client.select_all(DataConfig)
         for drive in drives:
             if drive.name == config.name:
                 self.db_client.delete(drive)
-                return f"The drive `{config.name}` has been deleted."
-        return f"The drive `{config.name}` doesn't exist."
+                return f"The data `{config.name}` has been deleted."
+        return f"The data `{config.name}` doesn't exist."
 
-    def show_drives(self):
-        return self.db_client.select_all(DriveConfig)
+    def show_data(self):
+        return self.db_client.select_all(DataConfig)
 
     def configure_commands(self):
         controller_commands = self.sweep_controller.configure_commands()
@@ -114,15 +114,15 @@ class ResearchStudio(LightningFlow):
         controller_commands += [
             {"show artifacts": ShowArtifactsCommand(self.show_artifacts)},
             {"download artifacts": DownloadArtifactsCommand(self.download_artifacts)},
-            {"create drive": CreateDriveCommand(self.create_drive)},
-            {"delete drive": DeleteDriveCommand(self.delete_drive)},
-            {"show drives": ShowDriveCommand(self.show_drives)},
+            {"create data": CreateDataCommand(self.create_data)},
+            {"delete data": DeleteDataCommand(self.delete_data)},
+            {"show data": ShowDataCommand(self.show_data)},
         ]
         return controller_commands
 
     @property
     def db_client(self) -> DatabaseClient:
         if self._db_client is None:
-            assert self.db_url is not None
-            self._db_client = DatabaseClient(self.db.db_url, token=self._token, model=self.model)
+            assert self.db.db_url is not None
+            self._db_client = DatabaseClient(self.db.db_url, token=self._token)
         return self._db_client

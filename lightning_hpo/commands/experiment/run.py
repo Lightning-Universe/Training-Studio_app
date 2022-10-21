@@ -52,7 +52,10 @@ class RunExperimentCommand(ClientCommand):
             help="The disk size in Gigabytes.",
         )
         parser.add_argument(
-            "--drives", nargs="+", default=[], help="Provide a list of drives to add to the experiments."
+            "--data",
+            nargs="+",
+            default=[],
+            help="Provide a list of Data (and optionally the mount_path in the format `<name>:<mount_path>`) to mount to the experiment.",
         )
         hparams, args = parser.parse_known_args()
 
@@ -74,6 +77,9 @@ class RunExperimentCommand(ClientCommand):
         repo.package()
         repo.upload(url=f"{URL}/api/v1/upload_file/{name}")
 
+        data_split = [data.split(":") if ":" in data else (data, None) for data in hparams.data]
+        data = {data[0]: data[1] for data in data_split}
+
         config = SweepConfig(
             sweep_id=name,
             script_path=hparams.script_path,
@@ -90,7 +96,7 @@ class RunExperimentCommand(ClientCommand):
             direction="minimize",  # This won't be used
             experiments={0: ExperimentConfig(name=name, params={})},
             disk_size=hparams.disk_size,
-            drive_names=hparams.drives,
+            data=data,
             username=str(getuser()),
         )
         response = self.invoke_handler(config=config)

@@ -1,11 +1,11 @@
 import urllib.parse
 from typing import List
 
-from lightning.app.storage import Drive
+from lightning.app.storage import Drive, Mount
 from lightning.app.structures import Dict
 
 from lightning_hpo import Sweep
-from lightning_hpo.commands.drive.create import DriveConfig
+from lightning_hpo.commands.data.create import DataConfig
 from lightning_hpo.commands.experiment.delete import DeleteExperimentCommand, DeleteExperimentConfig
 from lightning_hpo.commands.experiment.run import RunExperimentCommand
 from lightning_hpo.commands.experiment.show import ShowExperimentsCommand
@@ -53,14 +53,14 @@ class SweepController(Controller):
                             self.db.update(tensorboard)
 
             if work_name not in self.r and sweep.stage != Stage.SUCCEEDED:
-                drives: List[DriveConfig] = self.db.select_all(DriveConfig)
+                all_data: List[DataConfig] = self.db.select_all(DataConfig)
                 self.r[work_name] = Sweep.from_config(
                     sweep,
                     code={"drive": self.drive, "name": id},
-                    drives=[
-                        Drive(drive.source, root_folder=drive.mount_path)
-                        for drive in drives
-                        if drive.name in sweep.drive_names
+                    mounts=[
+                        Mount(data.source, mount_path=sweep.data[data.name] or data.mount_path)
+                        for data in all_data
+                        if data.name in sweep.data
                     ],
                 )
 
@@ -74,11 +74,11 @@ class SweepController(Controller):
 
     def run_sweep(self, config: SweepConfig) -> str:
         work_name = urllib.parse.quote_plus(config.sweep_id)
-        drive_names = [drive.name for drive in self.db.select_all(DriveConfig)]
+        data_names = [data.name for data in self.db.select_all(DataConfig)]
 
-        for drive in config.drive_names:
-            if drive not in drive_names:
-                return f"The provided drive '{drive}' doesn't exists."
+        for data in config.data:
+            if data not in data_names:
+                return f"The provided Data '{data}' doesn't exist."
 
         if work_name not in self.r:
             self.db.insert(config)
