@@ -12,6 +12,7 @@ from lightning.app.core.constants import APP_SERVER_HOST, APP_SERVER_PORT
 from lightning.app.source_code import LocalSourceCodeDir
 from lightning.app.source_code.uploader import FileUploader
 from lightning.app.utilities.commands import ClientCommand
+from pydantic import validator
 from sqlalchemy import Column
 from sqlmodel import Field, SQLModel
 
@@ -75,7 +76,7 @@ class SweepConfig(SQLModel, table=True):
     stage: str = Stage.NOT_STARTED
     desired_stage: str = Stage.RUNNING
     disk_size: int = 80
-    data_names: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
+    data: Dict[str, Optional[str]] = Field(..., sa_column=Column(pydantic_column_type(Dict[str, Optional[str]])))
     username: Optional[str] = None
 
     @property
@@ -88,6 +89,16 @@ class SweepConfig(SQLModel, table=True):
 
     def is_tensorboard(self):
         return self.logger == LoggerType.TENSORBOARD.value
+
+    @validator("data")
+    def data_validator(cls, v, values, **kwargs):
+        for _, mount_path in v.items():
+            if mount_path is not None:
+                if not v.startswith("/"):
+                    raise Exception("The `mount_path` needs to start with a leading slash (`/`)")
+                elif not v.endswith("/"):
+                    raise Exception("The `mount_path` needs to end with in a trailing slash (`/`)")
+        return v
 
 
 class DistributionParser:
@@ -347,7 +358,12 @@ class RunSweepCommand(ClientCommand):
             type=int,
             help="The disk size in Gigabytes.",
         )
-        parser.add_argument("--data", nargs="+", default=[], help="Provide a list of Data to add to the experiments.")
+        parser.add_argument(
+            "--data",
+            nargs="+",
+            default=[],
+            help="Provide a list of Data (and optionally the mount_path in the format `<name>:<mount_path>`) to mount to the experiments.",
+        )
         hparams, args = parser.parse_known_args()
 
         if hparams.framework != "pytorch_lightning" and hparams.num_nodes > 1:
@@ -394,6 +410,9 @@ class RunSweepCommand(ClientCommand):
         repo.package()
         repo.upload(url=f"{URL}/api/v1/upload_file/{name}")
 
+        data_split = [data.split(":") for data in hparams.data]
+        data = {data[0]: data[1] if len(data) > 0 else None for data in data_split}
+
         config = SweepConfig(
             sweep_id=name,
             script_path=hparams.script_path,
@@ -410,7 +429,7 @@ class RunSweepCommand(ClientCommand):
             direction=hparams.direction,
             experiments={},
             disk_size=hparams.disk_size,
-            data_names=hparams.data,
+            data=data,
             username=getuser(),
         )
         response = self.invoke_handler(config=config)

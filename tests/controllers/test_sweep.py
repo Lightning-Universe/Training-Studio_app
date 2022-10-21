@@ -1,8 +1,5 @@
 import os
 
-from lightning import CloudCompute
-from lightning.app.storage import Mount
-
 from lightning_hpo.commands.data.create import DataConfig
 from lightning_hpo.commands.sweep.run import SweepConfig
 from lightning_hpo.commands.tensorboard.stop import TensorboardConfig
@@ -25,7 +22,7 @@ def test_sweep_controller(monkeypatch):
         logger="tensorboard",
         distributions={"best_model_score": Uniform(1, 10)},
         framework="pytorch_lightning",
-        cloud_compute=CloudCompute(mounts=[Mount("s3://a/", mount_path=os.path.dirname(__file__))]),
+        data={"a/": None},
     )
     sweep_controller = SweepController()
     sweep_controller.db_url = "a"

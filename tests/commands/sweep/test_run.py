@@ -78,9 +78,9 @@ def test_sweep_run_parsing_file_list_and_script_arguments(monkeypatch):
         assert config.distributions == {
             "lr": Distributions(distribution="categorical", params={"choices": [0.0, 1.0, 2.0]}),
         }
-        assert config.script_args == ["--data=something"]
+        assert config.script_args == ["--data.batch=something"]
 
-    argv = ["python", __file__, "--lr", "[0, 1, 2]", "--data", "something"]
+    argv = ["python", __file__, "--lr", "[0, 1, 2]", "--data.batch", "something"]
     run_sweep_command(monkeypatch, argv, check_0)
 
 
@@ -94,9 +94,9 @@ def test_sweep_run_parsing_range(monkeypatch):
                 distribution="categorical", params={"choices": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]}
             ),
         }
-        assert config.script_args == ["--data=something"]
+        assert config.script_args == ["--data.batch=something"]
 
-    argv = ["python", __file__, "--lr", "range(0, 10)", "--data", "something"]
+    argv = ["python", __file__, "--lr", "range(0, 10)", "--data.batch", "something"]
     run_sweep_command(monkeypatch, argv, check_0)
 
 
@@ -110,14 +110,14 @@ def test_sweep_run_parsing_random_search(monkeypatch):
                 distribution="categorical", params={"choices": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]}
             ),
         }
-        assert config.script_args == ["--data=something"]
+        assert config.script_args == ["--data.batch=something"]
 
     argv = [
         "python",
         __file__,
         "--lr",
         "range(0, 10)",
-        "--data",
+        "--data.batch",
         "something",
         "--algorithm",
         "random_search",
@@ -136,7 +136,7 @@ def test_sweep_run_parsing_random_search(monkeypatch):
         __file__,
         "--lr",
         "[0, 1, 2]",
-        "--data",
+        "--data.batch",
         "something",
         "--algorithm",
         "random_search",
@@ -152,7 +152,7 @@ def test_sweep_run_parsing_random_search(monkeypatch):
                 distribution="categorical", params={"choices": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]}
             ),
         }
-        assert config.script_args == ["--data=something"]
+        assert config.script_args == ["--data.batch=something"]
 
     argv = [
         "python",
@@ -161,7 +161,7 @@ def test_sweep_run_parsing_random_search(monkeypatch):
         "[0, 2]",
         "--batch_size",
         "range(0, 10)",
-        "--data",
+        "--data.batch",
         "something",
         "--algorithm",
         "random_search",
@@ -183,7 +183,7 @@ def test_sweep_run_parsing_random_search_further_distributions(monkeypatch):
             ),
             "gamma": Distributions(distribution="log_uniform", params={"low": 32.0, "high": 64.0}),
         }
-        assert config.script_args == ["--data=something"]
+        assert config.script_args == ["--data.batch=something"]
 
     argv = [
         "python",
@@ -194,7 +194,7 @@ def test_sweep_run_parsing_random_search_further_distributions(monkeypatch):
         "range(0, 10)",
         "--gamma",
         "log_uniform(32, 64)",
-        "--data",
+        "--data.batch",
         "something",
         "--algorithm",
         "random_search",

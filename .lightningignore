@@ -24,3 +24,4 @@ LICENSE
 spec.json
 database.db
 examples
+data/*

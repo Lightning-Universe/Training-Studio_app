@@ -25,7 +25,7 @@ class DataConfig(SQLModel, table=True):
     @validator("mount_path")
     def mount_path_validator(cls, v, values, **kwargs):
         if not v.startswith("/"):
-            raise Exception("The `mount_path` needs to start with in a trailing slash (`/`)")
+            raise Exception("The `mount_path` needs to start with a leading slash (`/`)")
         elif not v.endswith("/"):
             raise Exception("The `mount_path` needs to end with in a trailing slash (`/`)")
         return v
@@ -44,11 +44,11 @@ class CreateDataCommand(ClientCommand):
             "--mount_path",
             type=str,
             default=None,
-            help="Where the Data should be mounted to the works. Defaults to `/data/<name>`.",
+            help="Where the Data should be mounted to the works. Defaults to `/data/<name>/`.",
         )
 
         hparams = parser.parse_args()
-        mount_path = hparams.mount_path if hparams.mount_path else os.path.join("/data", hparams.name)
+        mount_path = hparams.mount_path if hparams.mount_path else os.path.join("/data", hparams.name, "")
         response = self.invoke_handler(
             config=DataConfig(name=hparams.name, source=hparams.source, mount_path=mount_path)
         )

@@ -58,9 +58,9 @@ class SweepController(Controller):
                     sweep,
                     code={"drive": self.drive, "name": id},
                     mounts=[
-                        Mount(data.source, mount_path=data.mount_path)
+                        Mount(data.source, mount_path=sweep.data[data.name] or data.mount_path)
                         for data in all_data
-                        if data.name in sweep.data_names
+                        if data.name in sweep.data
                     ],
                 )
 
@@ -76,7 +76,7 @@ class SweepController(Controller):
         work_name = urllib.parse.quote_plus(config.sweep_id)
         data_names = [data.name for data in self.db.get(DataConfig)]
 
-        for data in config.data_names:
+        for data in config.data:
             if data not in data_names:
                 return f"The provided Data '{data}' doesn't exist."
 
