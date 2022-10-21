@@ -123,6 +123,6 @@ class ResearchStudio(LightningFlow):
     @property
     def db_client(self) -> DatabaseClient:
         if self._db_client is None:
-            assert self.db_url is not None
-            self._db_client = DatabaseClient(self.db.db_url, token=self._token, model=self.model)
+            assert self.db.db_url is not None
+            self._db_client = DatabaseClient(self.db.db_url, token=self._token)
         return self._db_client

@@ -77,8 +77,8 @@ class RunExperimentCommand(ClientCommand):
         repo.package()
         repo.upload(url=f"{URL}/api/v1/upload_file/{name}")
 
-        data_split = [data.split(":") for data in hparams.data]
-        data = {data[0]: data[1] if len(data) > 0 else None for data in data_split}
+        data_split = [data.split(":") if ":" in data else (data, None) for data in hparams.data]
+        data = {data[0]: data[1] for data in data_split}
 
         config = SweepConfig(
             sweep_id=name,
