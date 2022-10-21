@@ -79,7 +79,7 @@ def test_experiment_run_parsing_arguments(monkeypatch):
         [
             "",
             __file__,
-            "--mounts",
+            "--data",
             "example",
             "--requirements",
             "'jsonargparse[signatures]'",

@@ -11,7 +11,7 @@ def test_create_drive():
     with pytest.raises(Exception, match="The `source` needs to end with in a trailing slash"):
         DataConfig(name="str", source="s3://a", mount_path="b")
 
-    with pytest.raises(Exception, match="The `mount_path` needs to start with in a trailing slash"):
+    with pytest.raises(Exception, match="The `mount_path` needs to start with a leading slash"):
         DataConfig(name="str", source="s3://a/", mount_path="b")
 
     with pytest.raises(Exception, match="The `mount_path` needs to end with in a trailing slash"):

@@ -30,7 +30,7 @@ def test_sweep_controller(monkeypatch):
     config: SweepConfig = sweep.collect_model()
     assert "best_model_score" in config.distributions
     response = sweep_controller.run_sweep(config)
-    assert response == "The provided mount 'a/' doesn't exist."
+    assert response == "The provided Data 'a/' doesn't exist."
     mount_config = DataConfig(name="a/", source="s3://a/", mount_path=os.path.dirname(__file__) + "/")
     sweep_controller.db.post(mount_config)
     response = sweep_controller.run_sweep(config)
