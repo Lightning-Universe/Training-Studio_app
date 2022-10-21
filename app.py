@@ -1,5 +1,5 @@
 from lightning import LightningApp
 
-from lightning_hpo.app.main import TrainingStudio
+from lightning_hpo.app.main import ResearchStudio
 
-app = LightningApp(TrainingStudio())
+app = LightningApp(ResearchStudio())

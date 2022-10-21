@@ -1,6 +1,8 @@
 import os
+from uuid import uuid4
 
 from lightning import LightningFlow
+from lightning.app.components.database import Database, DatabaseClient
 from lightning.app.frontend import StaticWebFrontend
 from lightning.app.storage import Drive
 
@@ -19,24 +21,15 @@ from lightning_hpo.commands.artifacts.show import (
 from lightning_hpo.commands.data.create import CreateDataCommand, DataConfig
 from lightning_hpo.commands.data.delete import DeleteDataCommand, DeleteDataConfig
 from lightning_hpo.commands.data.show import ShowDataCommand
-from lightning_hpo.components.servers.db import (
-    Database,
-    DatabaseConnector,
-    DatabaseViz,
-    FlowDatabase,
-    FlowDatabaseConnector,
-)
 
 # from lightning_hpo.controllers.notebook import NotebookController
 from lightning_hpo.controllers.sweep import SweepController
 from lightning_hpo.controllers.tensorboard import TensorboardController
 
 
-class TrainingStudio(LightningFlow):
-    def __init__(self, debug: bool = False, work_db: bool = True):
+class ResearchStudio(LightningFlow):
+    def __init__(self):
         super().__init__()
-        self.debug = debug
-
         # 1: Create Drive
         self.drive = Drive("lit://uploaded_files")
 
@@ -46,8 +39,7 @@ class TrainingStudio(LightningFlow):
         self.tensorboard_controller = TensorboardController()
 
         # 4: Create the database.
-        db_cls = Database if work_db else FlowDatabase
-        self.db = db_cls(
+        self.db = Database(
             models=[
                 self.sweep_controller.model,
                 # self.notebook_controller.model,
@@ -56,17 +48,12 @@ class TrainingStudio(LightningFlow):
             ]
         )
 
-        if self.debug:
-            self.db_viz = DatabaseViz()
-
         self.ready = False
-        self._client = None
+        self._db_client = None
+        self._token = uuid4().hex
 
     def run(self):
-        self.db.run()
-
-        if self.debug:
-            self.db_viz.run()
+        self.db.run(token=self._token)
 
         if not self.db.alive():
             return
@@ -76,15 +63,15 @@ class TrainingStudio(LightningFlow):
             self.ready = True
 
         # 3: Run the controllers
-        self.sweep_controller.run(self.db.db_url)
+        self.sweep_controller.run(self.db.db_url, token=self._token)
         # self.notebook_controller.run(self.db.db_url)
-        self.tensorboard_controller.run(self.db.db_url)
+        self.tensorboard_controller.run(self.db.db_url, token=self._token)
 
     def configure_layout(self):
         return StaticWebFrontend(os.path.join(os.path.dirname(__file__), "ui", "build"))
 
     def show_artifacts(self, config: ShowArtifactsConfig) -> ShowArtifactsConfigResponse:
-        sweeps = self.db_client.get(self.sweep_controller.model)
+        sweeps = self.db_client.select_all(self.sweep_controller.model)
         return ShowArtifactsConfigResponse(
             sweep_names=[sweep.sweep_id for sweep in sweeps],
             experiment_names=[exp.name for sweep in sweeps for exp in sweep.experiments.values()],
@@ -92,7 +79,7 @@ class TrainingStudio(LightningFlow):
         )
 
     def download_artifacts(self, config: DownloadArtifactsConfig) -> DownloadArtifactsConfigResponse:
-        sweeps = self.db_client.get(self.sweep_controller.model)
+        sweeps = self.db_client.select_all(self.sweep_controller.model)
         paths, urls = _collect_artifact_urls(config)
         return DownloadArtifactsConfigResponse(
             sweep_names=[sweep.sweep_id for sweep in sweeps],
@@ -101,24 +88,24 @@ class TrainingStudio(LightningFlow):
             urls=urls,
         )
 
-    def create_mount(self, config: DataConfig):
-        mounts = self.db_client.get(DataConfig)
-        for mount in mounts:
-            if mount.name == config.name:
-                return f"The mount `{config.name}` already exists."
-        self.db_client.post(config)
-        return f"The mount `{config.name}` has been created."
+    def create_data(self, config: DataConfig):
+        drives = self.db_client.select_all(DataConfig)
+        for drive in drives:
+            if drive.name == config.name:
+                return f"The data `{config.name}` already exists."
+        self.db_client.insert(config)
+        return f"The data `{config.name}` has been created."
 
-    def delete_mount(self, config: DeleteDataConfig):
-        mounts = self.db_client.get(DataConfig)
-        for mount in mounts:
-            if mount.name == config.name:
-                self.db_client.delete(mount)
-                return f"The mount `{config.name}` has been deleted."
-        return f"The mount `{config.name}` doesn't exist."
+    def delete_data(self, config: DeleteDataConfig):
+        drives = self.db_client.select_all(DataConfig)
+        for drive in drives:
+            if drive.name == config.name:
+                self.db_client.delete(drive)
+                return f"The data `{config.name}` has been deleted."
+        return f"The data `{config.name}` doesn't exist."
 
-    def show_mounts(self):
-        return self.db_client.get(DataConfig)
+    def show_data(self):
+        return self.db_client.select_all(DataConfig)
 
     def configure_commands(self):
         controller_commands = self.sweep_controller.configure_commands()
@@ -127,18 +114,15 @@ class TrainingStudio(LightningFlow):
         controller_commands += [
             {"show artifacts": ShowArtifactsCommand(self.show_artifacts)},
             {"download artifacts": DownloadArtifactsCommand(self.download_artifacts)},
-            {"create data": CreateDataCommand(self.create_mount)},
-            {"delete data": DeleteDataCommand(self.delete_mount)},
-            {"show data": ShowDataCommand(self.show_mounts)},
+            {"create data": CreateDataCommand(self.create_data)},
+            {"delete data": DeleteDataCommand(self.delete_data)},
+            {"show data": ShowDataCommand(self.show_data)},
         ]
         return controller_commands
 
     @property
-    def db_client(self):
-        if self._client is None:
-            assert self.db.db_url is not None
-            if self.db.db_url == "flow":
-                self._client = FlowDatabaseConnector(None)
-            else:
-                self._client = DatabaseConnector(None, db_url=self.db.db_url + "/general/")
-        return self._client
+    def db_client(self) -> DatabaseClient:
+        if self._db_client is None:
+            assert self.db_url is not None
+            self._db_client = DatabaseClient(self.db.db_url, token=self._token, model=self.model)
+        return self._db_client

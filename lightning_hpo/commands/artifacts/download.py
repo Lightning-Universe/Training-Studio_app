@@ -1,16 +1,61 @@
 import argparse
+import math
 import os
 from pathlib import Path
 from typing import List, Optional, Tuple
 
 import requests
-from lightning.app.storage.copier import copy_files
 from lightning.app.utilities.commands import ClientCommand
 from lightning.app.utilities.network import LightningClient
 from lightning_app.utilities.cloud import _get_project
 from pydantic import BaseModel
+from tqdm.auto import tqdm
 
 from lightning_hpo.commands.artifacts.show import _collect_artifact_paths, _filter_paths, ShowArtifactsConfig
+
+
+def _download_file(url: str, target_file: str):
+    target_file = Path(target_file).resolve()
+    target_file.parent.mkdir(exist_ok=True, parents=True)
+
+    response = requests.get(url, allow_redirects=True, stream=True)
+    total_length = response.headers.get("content-length", None)
+
+    with open(target_file, "wb") as target:
+        if total_length is None:
+            target.write(response.content)
+        else:
+            total_length = int(total_length)
+            chunk_size = 1024  # 1 KB
+            for chunk in tqdm(
+                response.iter_content(chunk_size=chunk_size),
+                total=int(total_length / chunk_size),
+                unit="KB",
+                desc=str(target_file.name),
+                leave=True,  # progressbar stays
+            ):
+                target.write(chunk)
+
+
+def _copy_file(source_file: str, target_file: str):
+    source_file = Path(source_file).resolve()
+    target_file = Path(target_file).resolve()
+    target_file.parent.mkdir(exist_ok=True, parents=True)
+
+    total_length = os.stat(source_file).st_size
+
+    with open(target_file, "wb") as target:
+        with open(source_file, "rb") as source:
+            chunk_size = 1024  # 1 KB
+            chunks = math.ceil(total_length / chunk_size)
+            for i in tqdm(
+                range(chunks),
+                total=chunks,
+                unit="KB",
+                desc=str(target_file.name),
+                leave=True,  # progressbar stays
+            ):
+                target.write(source.read(chunk_size))
 
 
 class DownloadArtifactsConfig(BaseModel):
@@ -27,7 +72,7 @@ class DownloadArtifactsConfigResponse(BaseModel):
 
 class DownloadArtifactsCommand(ClientCommand):
 
-    DESCRIPTION = "Download an artifact."
+    description = "Download an artifact."
 
     def run(self) -> None:
         # 1. Parse the user arguments.
@@ -66,20 +111,12 @@ class DownloadArtifactsCommand(ClientCommand):
                     continue
                 if path.startswith("/"):
                     path = path[1:]
-                resp = requests.get(url, allow_redirects=True)
-                target_file = Path(os.path.join(output_dir, str(path).split("drive/")[1])).resolve()
-                target_file.parent.mkdir(exist_ok=True, parents=True)
-                with open(target_file, "wb") as f:
-                    f.write(resp.content)
+                _download_file(url, os.path.join(output_dir, str(path).split("drive/")[1]))
         else:
             for path in response.paths:
                 if not any(name in path for name in hparams.names):
                     continue
-                source_path = Path(path).resolve()
-                target_file = Path(os.path.join(output_dir, str(source_path).split("drive/")[1])).resolve()
-                if not target_file.parent.exists():
-                    os.makedirs(str(target_file.parent), exist_ok=True)
-                copy_files(source_path, target_file)
+                _copy_file(path, os.path.join(output_dir, str(path).split("drive/")[1]))
 
         print("All the specified artifacts were downloaded.")
 

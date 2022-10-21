@@ -12,7 +12,7 @@ from lightning_hpo.commands.sweep.run import CustomLocalSourceCodeDir, Experimen
 
 class RunExperimentCommand(ClientCommand):
 
-    DESCRIPTION = "Run an Experiment."
+    description = "Run an Experiment."
 
     def run(self) -> None:
         parser = ArgumentParser()

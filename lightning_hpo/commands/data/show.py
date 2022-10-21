@@ -5,7 +5,7 @@ from rich.table import Table
 
 class ShowDataCommand(ClientCommand):
 
-    DESCRIPTION = "List all Data."
+    description = "List all Data."
 
     def run(self) -> None:
         response = self.invoke_handler()

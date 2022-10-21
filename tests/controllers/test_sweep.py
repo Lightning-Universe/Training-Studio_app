@@ -8,7 +8,7 @@ from lightning_hpo.controllers import controller
 from lightning_hpo.controllers.sweep import SweepController
 from lightning_hpo.distributions.distributions import Uniform
 from lightning_hpo.utilities.enum import Stage
-from tests.helpers import MockDatabaseConnector, MockObjective
+from tests.helpers import MockDatabaseClient, MockObjective
 
 
 def test_sweep_controller(monkeypatch):
@@ -26,7 +26,7 @@ def test_sweep_controller(monkeypatch):
     )
     sweep_controller = SweepController()
     sweep_controller.db_url = "a"
-    monkeypatch.setattr(controller, "DatabaseConnector", MockDatabaseConnector)
+    monkeypatch.setattr(controller, "DatabaseClient", MockDatabaseClient)
     config: SweepConfig = sweep.collect_model()
     assert "best_model_score" in config.distributions
     response = sweep_controller.run_sweep(config)

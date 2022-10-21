@@ -25,7 +25,7 @@ def test_stop_sweeps_experiment(monkeypatch):
     sweep = Sweep.from_config(config=sweep_config)
 
     sweep_controller = SweepController(Drive("lit://code"))
-    sweep_controller._database = MagicMock()
+    sweep_controller._db_client = MagicMock()
     sweep_controller.r[sweep_config.sweep_id] = sweep
     resp = MagicMock()
     resp.status_code = 200
@@ -34,7 +34,7 @@ def test_stop_sweeps_experiment(monkeypatch):
     sweep_mock = MagicMock()
     sweep_mock.collect_model.return_value = sweep_config
     sweep_controller.r[sweep_config.sweep_id] = sweep_mock
-    sweep_controller._database.get.return_value = [sweep_config]
+    sweep_controller._db_client.select_all.return_value = [sweep_config]
     result = sweep_controller.stop_experiment(config=StopExperimentConfig(name="a"))
     assert result == "The current experiment `a` has been stopped."
     sweep_controller.r[sweep_config.sweep_id].stop_experiment.assert_called()

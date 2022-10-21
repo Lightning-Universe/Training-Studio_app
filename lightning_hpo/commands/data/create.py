@@ -33,7 +33,7 @@ class DataConfig(SQLModel, table=True):
 
 class CreateDataCommand(ClientCommand):
 
-    DESCRIPTION = "Create Data."
+    description = "Create Data."
 
     def run(self) -> None:
         parser = ArgumentParser()

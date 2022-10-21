@@ -10,7 +10,7 @@ class DeleteDataConfig(SQLModel):
 
 class DeleteDataCommand(ClientCommand):
 
-    DESCRIPTION = "Delete Data."
+    description = "Delete Data."
 
     def run(self) -> None:
         parser = ArgumentParser()
