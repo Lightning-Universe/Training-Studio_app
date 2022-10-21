@@ -32,18 +32,18 @@ def test_sweep_controller(monkeypatch):
     response = sweep_controller.run_sweep(config)
     assert response == "The provided Data 'a/' doesn't exist."
     mount_config = DataConfig(name="a/", source="s3://a/", mount_path=os.path.dirname(__file__) + "/")
-    sweep_controller.db.post(mount_config)
+    sweep_controller.db.insert(mount_config)
     response = sweep_controller.run_sweep(config)
     assert response == "Launched a Sweep 'a'."
     assert sweep_controller.db.data["SweepConfig:a"] == config
-    assert len(sweep_controller.db.get()) == 1
+    assert len(sweep_controller.db.select_all(SweepConfig)) == 1
 
     assert sweep_controller.tensorboard_sweep_id is None
     sweep_controller.run("a")
     assert isinstance(sweep_controller.r["a"], Sweep)
     sweep_controller.r["a"] = sweep
     sweep_controller.r["a"]._objective_cls = MockObjective
-    assert len(sweep_controller.db.get(TensorboardConfig)) == 1
+    assert len(sweep_controller.db.select_all(TensorboardConfig)) == 1
     assert sweep_controller.tensorboard_sweep_id == ["a"]
     response = sweep_controller.run_sweep(config)
     assert response == "The current Sweep 'a' is running. It couldn't be updated."

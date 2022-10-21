@@ -79,6 +79,7 @@ class RunExperimentCommand(ClientCommand):
 
         data_split = [data.split(":") if ":" in data else (data, None) for data in hparams.data]
         data = {data[0]: data[1] for data in data_split}
+        print(data)
 
         config = SweepConfig(
             sweep_id=name,
@@ -99,5 +100,6 @@ class RunExperimentCommand(ClientCommand):
             data=data,
             username=str(getuser()),
         )
+        print(config)
         response = self.invoke_handler(config=config)
         print(response)
