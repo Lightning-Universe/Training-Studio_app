@@ -59,7 +59,7 @@ def test_experiment_run_parsing_no_arguments(monkeypatch):
             stage="not_started",
             desired_stage="running",
             disk_size=80,
-            mount_names=[],
+            data_names=[],
         )
         expected.sweep_id = config.sweep_id
         expected.username = config.username
@@ -124,7 +124,7 @@ def test_experiment_run_parsing_arguments(monkeypatch):
             stage="not_started",
             desired_stage="running",
             disk_size=80,
-            mount_names=["example"],
+            data_names=["example"],
         )
         expected.sweep_id = config.sweep_id
         expected.username = config.username
@@ -199,7 +199,7 @@ def test_experiment_run_parsing_requirements(monkeypatch):
             stage="not_started",
             desired_stage="running",
             disk_size=80,
-            mount_names=[],
+            data_names=[],
         )
         expected.sweep_id = config.sweep_id
         expected.username = config.username

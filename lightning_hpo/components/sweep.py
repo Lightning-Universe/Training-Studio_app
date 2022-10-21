@@ -54,6 +54,7 @@ class Sweep(LightningFlow, ControllerResource):
         experiments: Optional[Dict[int, Dict]] = None,
         stage: Optional[str] = Stage.NOT_STARTED,
         logger_url: str = "",
+        data_names: Optional[List[str]] = None,
         **objective_kwargs: Any,
     ):
         """The Sweep class enables to easily run a Python Script with Lightning
@@ -92,13 +93,7 @@ class Sweep(LightningFlow, ControllerResource):
         self.experiments = experiments or {}
         self.stage = stage
         self.logger_url = logger_url
-
-        # TODO: Resolve mount names with forcing s3 protocol
-        cloud_compute = objective_kwargs.get("cloud_compute", None)
-        if cloud_compute is not None:
-            self.mount_names = [mount.source.replace("s3://", "") for mount in cloud_compute.mounts]
-        else:
-            self.mount_names = None
+        self.data_names = data_names
 
         self._objective_cls = _resolve_objective_cls(objective_cls, framework)
         self._algorithm = algorithm or OptunaAlgorithm(direction=direction)
@@ -290,6 +285,7 @@ class Sweep(LightningFlow, ControllerResource):
             direction=config.direction,
             stage=config.stage,
             logger_url=config.logger_url,
+            data_names=config.data_names,
         )
 
     def configure_layout(self):

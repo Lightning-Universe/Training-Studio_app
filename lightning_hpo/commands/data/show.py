@@ -3,9 +3,9 @@ from rich.console import Console
 from rich.table import Table
 
 
-class ShowMountCommand(ClientCommand):
+class ShowDataCommand(ClientCommand):
 
-    DESCRIPTION = "Show Mounts."
+    DESCRIPTION = "List all Data."
 
     def run(self) -> None:
         response = self.invoke_handler()
@@ -14,7 +14,7 @@ class ShowMountCommand(ClientCommand):
             "name",
             "source",
             "mount_path",
-            title="Mounts",
+            title="Data",
             show_header=True,
             header_style="bold green",
         )

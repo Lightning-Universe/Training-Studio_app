@@ -6,7 +6,7 @@ from pydantic import validator
 from sqlmodel import Field, SQLModel
 
 
-class MountConfig(SQLModel, table=True):
+class DataConfig(SQLModel, table=True):
 
     __table_args__ = {"extend_existing": True}
 
@@ -31,22 +31,25 @@ class MountConfig(SQLModel, table=True):
         return v
 
 
-class CreateMountCommand(ClientCommand):
+class CreateDataCommand(ClientCommand):
 
-    DESCRIPTION = "Create a Mount."
+    DESCRIPTION = "Create Data."
 
     def run(self) -> None:
         parser = ArgumentParser()
 
-        parser.add_argument("--name", type=str, required=True, help="The associated name of the Mount.")
-        parser.add_argument("--source", type=str, required=True, help="The associated S3 URL of the Mount.")
+        parser.add_argument("--name", type=str, required=True, help="The name of the Data.")
+        parser.add_argument("--source", type=str, required=True, help="The associated S3 URL of the Data.")
         parser.add_argument(
-            "--mount_path", type=str, default=None, help="Where the Mounts should be mounted to the works"
+            "--mount_path",
+            type=str,
+            default=None,
+            help="Where the Data should be mounted to the works. Defaults to `/data/<name>`.",
         )
 
         hparams = parser.parse_args()
-        mount_path = hparams.mount_path if hparams.mount_path else os.path.join("./mount", hparams.name)
+        mount_path = hparams.mount_path if hparams.mount_path else os.path.join("/data", hparams.name)
         response = self.invoke_handler(
-            config=MountConfig(name=hparams.name, source=hparams.source, mount_path=mount_path)
+            config=DataConfig(name=hparams.name, source=hparams.source, mount_path=mount_path)
         )
         print(response)

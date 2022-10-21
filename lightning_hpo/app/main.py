@@ -16,9 +16,9 @@ from lightning_hpo.commands.artifacts.show import (
     ShowArtifactsConfig,
     ShowArtifactsConfigResponse,
 )
-from lightning_hpo.commands.mount.create import CreateMountCommand, MountConfig
-from lightning_hpo.commands.mount.delete import DeleteMountCommand, DeleteMountConfig
-from lightning_hpo.commands.mount.show import ShowMountCommand
+from lightning_hpo.commands.data.create import CreateDataCommand, DataConfig
+from lightning_hpo.commands.data.delete import DeleteDataCommand, DeleteDataConfig
+from lightning_hpo.commands.data.show import ShowDataCommand
 from lightning_hpo.components.servers.db import (
     Database,
     DatabaseConnector,
@@ -52,7 +52,7 @@ class TrainingStudio(LightningFlow):
                 self.sweep_controller.model,
                 # self.notebook_controller.model,
                 self.tensorboard_controller.model,
-                MountConfig,
+                DataConfig,
             ]
         )
 
@@ -101,16 +101,16 @@ class TrainingStudio(LightningFlow):
             urls=urls,
         )
 
-    def create_mount(self, config: MountConfig):
-        mounts = self.db_client.get(MountConfig)
+    def create_mount(self, config: DataConfig):
+        mounts = self.db_client.get(DataConfig)
         for mount in mounts:
             if mount.name == config.name:
                 return f"The mount `{config.name}` already exists."
         self.db_client.post(config)
         return f"The mount `{config.name}` has been created."
 
-    def delete_mount(self, config: DeleteMountConfig):
-        mounts = self.db_client.get(MountConfig)
+    def delete_mount(self, config: DeleteDataConfig):
+        mounts = self.db_client.get(DataConfig)
         for mount in mounts:
             if mount.name == config.name:
                 self.db_client.delete(mount)
@@ -118,7 +118,7 @@ class TrainingStudio(LightningFlow):
         return f"The mount `{config.name}` doesn't exist."
 
     def show_mounts(self):
-        return self.db_client.get(MountConfig)
+        return self.db_client.get(DataConfig)
 
     def configure_commands(self):
         controller_commands = self.sweep_controller.configure_commands()
@@ -127,9 +127,9 @@ class TrainingStudio(LightningFlow):
         controller_commands += [
             {"show artifacts": ShowArtifactsCommand(self.show_artifacts)},
             {"download artifacts": DownloadArtifactsCommand(self.download_artifacts)},
-            {"create mount": CreateMountCommand(self.create_mount)},
-            {"delete mount": DeleteMountCommand(self.delete_mount)},
-            {"show mounts": ShowMountCommand(self.show_mounts)},
+            {"create data": CreateDataCommand(self.create_mount)},
+            {"delete data": DeleteDataCommand(self.delete_mount)},
+            {"show data": ShowDataCommand(self.show_mounts)},
         ]
         return controller_commands
 
@@ -140,5 +140,5 @@ class TrainingStudio(LightningFlow):
             if self.db.db_url == "flow":
                 self._client = FlowDatabaseConnector(None)
             else:
-                self._client = DatabaseConnector(db_url=self.db.db_url + "/general/")
+                self._client = DatabaseConnector(None, db_url=self.db.db_url + "/general/")
         return self._client

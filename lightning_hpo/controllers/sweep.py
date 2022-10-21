@@ -5,11 +5,11 @@ from lightning.app.storage import Drive, Mount
 from lightning.app.structures import Dict
 
 from lightning_hpo import Sweep
+from lightning_hpo.commands.data.create import DataConfig
 from lightning_hpo.commands.experiment.delete import DeleteExperimentCommand, DeleteExperimentConfig
 from lightning_hpo.commands.experiment.run import RunExperimentCommand
 from lightning_hpo.commands.experiment.show import ShowExperimentsCommand
 from lightning_hpo.commands.experiment.stop import StopExperimentCommand, StopExperimentConfig
-from lightning_hpo.commands.mount.create import MountConfig
 from lightning_hpo.commands.sweep.delete import DeleteSweepCommand, DeleteSweepConfig
 from lightning_hpo.commands.sweep.run import RunSweepCommand, SweepConfig
 from lightning_hpo.commands.sweep.show import ShowSweepsCommand
@@ -53,14 +53,14 @@ class SweepController(Controller):
                             self.db.put(tensorboard)
 
             if work_name not in self.r and sweep.stage != Stage.SUCCEEDED:
-                mounts: List[MountConfig] = self.db.get(MountConfig)
+                all_data: List[DataConfig] = self.db.get(DataConfig)
                 self.r[work_name] = Sweep.from_config(
                     sweep,
                     code={"drive": self.drive, "name": id},
                     mounts=[
-                        Mount(mount.source, root_folder=mount.mount_path)
-                        for mount in mounts
-                        if mount.name in sweep.mount_names
+                        Mount(data.source, mount_path=data.mount_path)
+                        for data in all_data
+                        if data.name in sweep.data_names
                     ],
                 )
 
@@ -74,11 +74,11 @@ class SweepController(Controller):
 
     def run_sweep(self, config: SweepConfig) -> str:
         work_name = urllib.parse.quote_plus(config.sweep_id)
-        mount_names = [mount.name for mount in self.db.get(MountConfig)]
+        data_names = [data.name for data in self.db.get(DataConfig)]
 
-        for mount in config.mount_names:
-            if mount not in mount_names:
-                return f"The provided Mount '{mount}' doesn't exist."
+        for data in config.data_names:
+            if data not in data_names:
+                return f"The provided Data '{data}' doesn't exist."
 
         if work_name not in self.r:
             self.db.post(config)

@@ -75,7 +75,7 @@ class SweepConfig(SQLModel, table=True):
     stage: str = Stage.NOT_STARTED
     desired_stage: str = Stage.RUNNING
     disk_size: int = 80
-    mount_names: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
+    data_names: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
     username: Optional[str] = None
 
     @property
@@ -347,9 +347,7 @@ class RunSweepCommand(ClientCommand):
             type=int,
             help="The disk size in Gigabytes.",
         )
-        parser.add_argument(
-            "--mounts", nargs="+", default=[], help="Provide a list of Mounts to add to the experiments."
-        )
+        parser.add_argument("--data", nargs="+", default=[], help="Provide a list of Data to add to the experiments.")
         hparams, args = parser.parse_known_args()
 
         if hparams.framework != "pytorch_lightning" and hparams.num_nodes > 1:
@@ -412,7 +410,7 @@ class RunSweepCommand(ClientCommand):
             direction=hparams.direction,
             experiments={},
             disk_size=hparams.disk_size,
-            mount_names=hparams.mounts,
+            data_names=hparams.data,
             username=getuser(),
         )
         response = self.invoke_handler(config=config)
