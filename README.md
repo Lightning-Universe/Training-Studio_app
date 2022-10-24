@@ -91,10 +91,10 @@ Lightning App Commands
 You are connected to the local Lightning App. Return to the primary CLI with `lightning disconnect`.
 ```
 
-Run your first Sweep.
+Run your first Sweep from [sweep_examples/scripts](./sweep_examples/scripts) folder
 
 ```bash
-cd sweep_examples/scripts && lightning run sweep train.py --model.lr "[0.001, 0.01, 0.1]" --data.batch "[32, 64]" --algorithm="grid_search" --requirements 'jsonargparse[signatures]>=4.15.2'
+lightning run sweep train.py --model.lr "[0.001, 0.01, 0.1]" --data.batch "[32, 64]" --algorithm="grid_search" --requirements 'jsonargparse[signatures]>=4.15.2'
 ```
 
 ______________________________________________________________________
@@ -147,7 +147,7 @@ trainer = pl.Trainer(
 trainer.fit(model, dm)
 ```
 
-Run the following command to run a multi node training (2 nodes of 4 V100 GPUS each).
+Run your first  multi node training experiment from [sweep_examples/scripts](./sweep_examples/scripts) folder (2 nodes of 4 V100 GPUS each).
 
 ```bash
 python -m lightning run experiment big_model.py --requirements deepspeed lightning-transformers==0.2.3 --num_nodes=2 --cloud_compute=gpu-fast-multi --disk_size=80
