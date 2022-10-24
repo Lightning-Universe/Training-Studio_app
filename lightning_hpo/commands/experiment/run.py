@@ -57,6 +57,13 @@ class RunExperimentCommand(ClientCommand):
             default=[],
             help="Provide a list of Data (and optionally the mount_path in the format `<name>:<mount_path>`) to mount to the experiment.",
         )
+        parser.add_argument(
+            "--framework",
+            default="pytorch_lightning",
+            choices=["pytorch_lightning", "base"],
+            type=str,
+            help="Which framework you are using.",
+        )
         hparams, args = parser.parse_known_args()
 
         name = hparams.name or str(uuid4()).split("-")[-1][:7]
@@ -89,7 +96,7 @@ class RunExperimentCommand(ClientCommand):
             script_args=args,
             distributions={},
             algorithm="",
-            framework="pytorch_lightning",
+            framework=hparams.framework,
             cloud_compute=hparams.cloud_compute,
             num_nodes=hparams.num_nodes,
             logger=hparams.logger,
