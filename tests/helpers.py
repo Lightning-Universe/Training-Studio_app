@@ -8,7 +8,16 @@ from lightning.app.utilities.commands import ClientCommand
 from lightning.app.utilities.enum import make_status, WorkStageStatus
 
 from lightning_hpo import Objective
+from lightning_hpo.commands.data.create import DataConfig
+from lightning_hpo.commands.sweep.run import SweepConfig
+from lightning_hpo.commands.tensorboard.stop import TensorboardConfig
 from lightning_hpo.utilities.utils import get_primary_key
+
+_MODELS = {
+    "DataConfig": DataConfig,
+    "SweepConfig": SweepConfig,
+    "TensorboardConfig": TensorboardConfig,
+}
 
 
 class MockResponse:
@@ -26,6 +35,7 @@ class MockSession:
         self.data = data
 
     def post(self, url, data):
+        print(f"{url}: {data}")
         if "select_all" in url:
             return self.select_all(url, data)
         elif "insert" in url:
@@ -40,9 +50,9 @@ class MockSession:
         return MockResponse(data=[v for name, v in self.data.items() if name.split(":")[0] == general.cls_name])
 
     def insert(self, url, data):
-        primary_key = get_primary_key(self.model)
         general = _GeneralModel.parse_raw(data)
-        data = self.model.parse_raw(general.data)
+        data = general.convert_to_model(_MODELS)
+        primary_key = get_primary_key(data.__class__)
         if getattr(data, primary_key) is None:
             setattr(data, primary_key, str(uuid4()))
         self.data[self.to_key(data)] = data.dict()
@@ -50,19 +60,19 @@ class MockSession:
 
     def update(self, url, data):
         general = _GeneralModel.parse_raw(data)
-        data = self.model.parse_raw(general.data)
+        data = general.convert_to_model(_MODELS)
         self.data[self.to_key(data)] = data.dict()
         return MockResponse(data=None)
 
     def delete(self, url, data):
         general = _GeneralModel.parse_raw(data)
-        data = self.model.parse_raw(general.data)
+        data = general.convert_to_model(_MODELS)
         del self.data[self.to_key(data)]
         return MockResponse(data=None)
 
     @staticmethod
     def to_key(data) -> str:
-        return f"{str(data.__class__.__name__)}:{getattr(data, get_primary_key(data.__class__))}"
+        return f"{data.__class__.__name__}:{getattr(data, get_primary_key(data.__class__))}"
 
 
 class MockDatabaseClient(DatabaseClient):

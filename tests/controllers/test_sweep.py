@@ -39,7 +39,7 @@ def test_sweep_controller(monkeypatch):
     assert len(sweep_controller.db.select_all(SweepConfig)) == 1
 
     assert sweep_controller.tensorboard_sweep_id is None
-    sweep_controller.run("a")
+    sweep_controller.run("a", "")
     assert isinstance(sweep_controller.r["a"], Sweep)
     sweep_controller.r["a"] = sweep
     sweep_controller.r["a"]._objective_cls = MockObjective
@@ -49,7 +49,7 @@ def test_sweep_controller(monkeypatch):
     assert response == "The current Sweep 'a' is running. It couldn't be updated."
 
     while True:
-        sweep_controller.run("a")
+        sweep_controller.run("a", "")
         if sweep_controller.r.get("a", None) is None:
             break
 
