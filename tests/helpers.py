@@ -68,7 +68,7 @@ class MockSession:
 
     @staticmethod
     def to_key(data) -> str:
-        return f"{str(data.__class__.__name__)}:{getattr(data, get_primary_key(data.__class__))}"
+        return f"{data.__class__.__name__}:{getattr(data, get_primary_key(data.__class__))}"
 
 
 class MockDatabaseClient(DatabaseClient):
