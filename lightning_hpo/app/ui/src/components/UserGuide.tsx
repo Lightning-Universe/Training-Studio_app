@@ -51,7 +51,10 @@ export const UserGuideBody = ({ children }: UserGuideBodyProps) => {
       }}>
       {children}
       <Tooltip title={tooltip} onOpen={() => setTooltip('Copy command')}>
-        <IconButton sx={{ margin: '0px 8px', padding: '0px' }} aria-label="copy" onClick={() => copyText(children)}>
+        <IconButton
+          sx={{ margin: '0px 8px', padding: '0px' }}
+          aria-label="copy"
+          onClick={() => copyText(children as string)}>
           <ContentCopyIcon sx={{ fontSize: 16 }} />
         </IconButton>
       </Tooltip>

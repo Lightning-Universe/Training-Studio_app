@@ -41,7 +41,7 @@ const StageToColors = {
   failed: 'error',
   pending: 'primary',
   running: 'primary',
-} as { [k: string]: string };
+} as { [k: string]: 'success' | 'error' | 'primary' };
 
 function createLoggerUrl(url?: string) {
   const cell = url ? (
@@ -58,27 +58,31 @@ function createLoggerUrl(url?: string) {
   return cell;
 }
 
-function stopTensorboard(tensorboardConfig?: TensorboardConfig) {
+function stopTensorboard(tensorboardConfig: TensorboardConfig) {
   appClient.appCommand.stopTensorboardCommandStopTensorboardPost({ sweep_id: tensorboardConfig.sweep_id });
 }
 
 function runTensorboard(tensorboardConfig?: TensorboardConfig) {
-  appClient.appCommand.runTensorboardCommandRunTensorboardPost({
-    id: tensorboardConfig.id,
-    sweep_id: tensorboardConfig.sweep_id,
-    shared_folder: tensorboardConfig.shared_folder,
-    stage: StatusEnum.RUNNING.toLowerCase(),
-    desired_stage: StatusEnum.RUNNING.toLowerCase(),
-    url: undefined,
-  });
+  if (tensorboardConfig) {
+    appClient.appCommand.runTensorboardCommandRunTensorboardPost({
+      id: tensorboardConfig.id,
+      sweep_id: tensorboardConfig.sweep_id,
+      shared_folder: tensorboardConfig.shared_folder,
+      stage: StatusEnum.RUNNING.toLowerCase(),
+      desired_stage: StatusEnum.RUNNING.toLowerCase(),
+      url: undefined,
+    });
+  }
 }
 
 function toCompute(sweep: SweepConfig) {
-  if (sweep.num_nodes > 1) {
-    return `${sweep.num_nodes} nodes x ${ComputeToMachines[sweep.cloud_compute]}`;
-  } else {
-    return `${ComputeToMachines[sweep.cloud_compute]}`;
+  if (sweep.cloud_compute) {
+    if (sweep.num_nodes && sweep.num_nodes > 1) {
+      return `${sweep.num_nodes} nodes x ${ComputeToMachines[sweep.cloud_compute]}`;
+    }
+    return ComputeToMachines[sweep.cloud_compute];
   }
+  return '';
 }
 
 function toProgress(experiment: ExperimentConfig) {
@@ -93,8 +97,8 @@ function toProgress(experiment: ExperimentConfig) {
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <Box sx={{ width: '100%', mr: 1 }}>
           <BorderLinearProgress
-            variant={experiment.progress == 0 ? null : 'determinate'}
-            color={StageToColors[experiment.stage]}
+            variant={experiment.progress == 0 ? undefined : 'determinate'}
+            color={StageToColors[experiment.stage || 'pending']}
             value={experiment.progress}
           />
         </Box>
@@ -112,9 +116,9 @@ function toProgress(experiment: ExperimentConfig) {
 
 function runtimeTime(experiment: ExperimentConfig) {
   if (experiment.end_time) {
-    return formatDurationStartEnd(experiment.end_time, experiment.start_time);
+    return formatDurationStartEnd(Number(experiment.end_time), Number(experiment.start_time));
   }
-  return experiment.start_time ? String(formatDurationFrom(experiment.start_time)) : <Box></Box>;
+  return experiment.start_time ? String(formatDurationFrom(Number(experiment.start_time))) : <Box></Box>;
 }
 
 function toArgs(
@@ -135,19 +139,19 @@ function toArgs(
 
 const handleClick = (url?: string) => {
   if (url) {
-    window.open(url, '_blank').focus();
+    window.open(url, '_blank')?.focus();
   }
 };
 
-function createMenuItems(logger_url: string, tensorboardConfig?: TensorboardConfig) {
+function createMenuItems(logger_url?: string, tensorboardConfig?: TensorboardConfig) {
   var items = [];
-  var url = tensorboardConfig ? tensorboardConfig.url : logger_url;
+  const url = tensorboardConfig ? tensorboardConfig.url : logger_url;
 
   if (url) {
     items.push({
       label: 'Open Logger',
       icon: <OpenInNewIcon sx={{ fontSize: 20 }} />,
-      onClick: () => handleClick(tensorboardConfig ? tensorboardConfig.url : logger_url),
+      onClick: () => handleClick(url),
     });
   }
 
@@ -222,8 +226,7 @@ export function Experiments() {
   );
 
   var rows = sweeps.map(sweep => {
-    const tensorboardConfig =
-      sweep.sweep_id in tensorboardIdsToStatuses ? tensorboardIdsToStatuses[sweep.sweep_id] : null;
+    const tensorboardConfig = tensorboardIdsToStatuses[sweep.sweep_id];
 
     const data = Object.entries(sweep.data)
       .map(entry => {
@@ -247,14 +250,16 @@ export function Experiments() {
     ]);
   });
 
-  const flatArray = [].concat.apply([], rows).map((row: any[]) =>
-    row.map((entry: any) => {
-      if (!entry || entry == 'null') {
-        return '-';
-      }
-      return entry;
-    }),
-  );
+  const flatArray = rows
+    .map((row: any[]) =>
+      row.map((entry: any) => {
+        if (!entry || entry == 'null') {
+          return '-';
+        }
+        return entry;
+      }),
+    )
+    .flat();
 
   return <Table header={experimentHeader} rows={flatArray} />;
 }
