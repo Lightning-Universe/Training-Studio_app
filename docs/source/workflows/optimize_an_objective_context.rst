@@ -4,7 +4,7 @@
 
 Imagine you want to optimize a simple function called ``objective`` inside an ``objective.py`` file.
 
-.. literalinclude:: ../../../examples/scripts/objective.py
+.. literalinclude:: ../../../sweep_examples/scripts/objective.py
 
 ----
 

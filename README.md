@@ -17,7 +17,7 @@
 [![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Lightning-AI/lightning/blob/master/LICENSE)
 </div>
 
-The [Research Studio App](https://lightning-ai.github.io/lightning-hpo/training_studio.html) is a project built upon the [Lightning App](https://lightning.ai/lightning-docs/) framework and provides state-of-the-art sampling hyper-parameters algorithms and efficient experiment pruning strategies.
+The [Research Studio App](https://lightning-ai.github.io/lightning-hpo/training_studio.html) is a full-stack AI application built using the [Lightning App](https://lightning.ai/lightning-docs/) framework to enable running experiment, sweeps with state-of-the-art sampling hyper-parameters algorithms and efficient experiment pruning strategies.
 
 Learn more [here](https://github.com/Lightning-AI/lightning-hpo#the-training-studio-app).
 
@@ -52,7 +52,7 @@ Check the [documentation](https://lightning-ai.github.io/lightning-hpo) to learn
 
 ______________________________________________________________________
 
-## Run the Research Studio App
+## Run the Research Studio App (locally)
 
 In your first terminal, run the Lightning App.
 
