@@ -40,9 +40,9 @@ class MockSession:
         return MockResponse(data=[v for name, v in self.data.items() if name.split(":")[0] == general.cls_name])
 
     def insert(self, url, data):
-        primary_key = get_primary_key(self.model)
         general = _GeneralModel.parse_raw(data)
-        data = self.model.parse_raw(general.data)
+        data = self._parse_raw(general)
+        primary_key = get_primary_key(type(data))
         if getattr(data, primary_key) is None:
             setattr(data, primary_key, str(uuid4()))
         self.data[self.to_key(data)] = data.dict()
@@ -50,15 +50,21 @@ class MockSession:
 
     def update(self, url, data):
         general = _GeneralModel.parse_raw(data)
-        data = self.model.parse_raw(general.data)
+        data = self._parse_raw(general)
         self.data[self.to_key(data)] = data.dict()
         return MockResponse(data=None)
 
     def delete(self, url, data):
         general = _GeneralModel.parse_raw(data)
-        data = self.model.parse_raw(general.data)
+        data = self._parse_raw(general)
         del self.data[self.to_key(data)]
         return MockResponse(data=None)
+
+    def _parse_raw(self, general):
+        if isinstance(self.model, list):
+            models = {cls.__name__: cls for cls in self.model}
+            return models[general.cls_name].parse_raw(general.data)
+        return self.model.parse_raw(general.data)
 
     @staticmethod
     def to_key(data) -> str:

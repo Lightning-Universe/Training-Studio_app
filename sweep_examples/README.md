@@ -56,18 +56,18 @@ app = LightningApp(
 Now, you can optimize it locally.
 
 ```bash
-python -m lightning run app examples/1_app_agnostic.py
+python -m lightning run app 1_app_agnostic.py
 ```
 
 or with ``--cloud`` to run it in the cloud.
 
 ```bash
-python -m lightning run app examples/1_app_agnostic.py --cloud
+python -m lightning run app 1_app_agnostic.py --cloud
 ```
 
 > Note: Locally, each experiment runs into its own process, so there is an overhead if your objective is quick to run.
 
-Find the example [here](./examples/1_app_agnostic.py)
+Find the example [here](./1_app_agnostic.py)
 
 ______________________________________________________________________
 
@@ -106,10 +106,10 @@ app = LightningApp(
 ```
 
 ```bash
-python -m lightning run app examples/2_app_pytorch_lightning.py --cloud --env WANDB_ENTITY={WANDB_ENTITY} --env WANDB_API_KEY={WANDB_API_KEY}
+python -m lightning run app 2_app_pytorch_lightning.py --cloud --env WANDB_ENTITY={WANDB_ENTITY} --env WANDB_API_KEY={WANDB_API_KEY}
 ```
 
-Find the example [here](./examples/2_app_pytorch_lightning.py)
+Find the example [here](./2_app_pytorch_lightning.py)
 
 ![Lightning App UI](https://pl-flash-data.s3.amazonaws.com/assets_lightning/wandb2.png)
 
@@ -232,7 +232,7 @@ app = LightningApp(
 ![Lightning App UI](https://pl-flash-data.s3.amazonaws.com/assets_lightning/lightning_hpo_optimizer.png)
 
 ```bash
-python -m lightning run app examples/3_app_sklearn.py
+python -m lightning run app 3_app_sklearn.py
 ```
 
 As you can see, several experimentss were pruned (stopped) before they finished all of the iterations. Same as when using pure optuna.
@@ -261,7 +261,7 @@ Trail 18 pruned.
 Trail 19 pruned.
 ```
 
-Find the example [here](./examples/3_app_sklearn.py)
+Find the example [here](./3_app_sklearn.py)
 
 ## Select your logger
 
