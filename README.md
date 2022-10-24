@@ -13,9 +13,7 @@
 </p>
 
 [![ReadTheDocs](https://readthedocs.org/projects/pytorch-lightning/badge/?version=stable)](https://lightning-ai.github.io/lightning-hpo)
-
 [![Slack](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://www.pytorchlightning.ai/community)
-
 [![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Lightning-AI/lightning/blob/master/LICENSE)
 </div>
 
@@ -69,6 +67,8 @@ python -m lightning connect localhost -y
 ```
 
 ```bash
+python -m lightning --help
+
 Usage: lightning [OPTIONS] COMMAND [ARGS]...
 
   --help     Show this message and exit.
@@ -91,6 +91,8 @@ Lightning App Commands
 You are connected to the local Lightning App. Return to the primary CLI with `lightning disconnect`.
 ```
 
+Run your first Sweep.
+
 ```bash
 cd sweep_examples/scripts && lightning run sweep train.py --model.lr "[0.001, 0.01, 0.1]" --data.batch "[32, 64]" --algorithm="grid_search" --requirements 'jsonargparse[signatures]>=4.15.2'
 ```
@@ -98,7 +100,7 @@ cd sweep_examples/scripts && lightning run sweep train.py --model.lr "[0.001, 0.
 ______________________________________________________________________
 
 
-## Train a 1B+ Large Language Modeling Model with Multi Node Training
+## Train a 1B+ LLM Model with Multi Node Training in the Cloud.
 
 Run the Research Studio App in the cloud
 
@@ -112,7 +114,7 @@ Connect to the App once ready.
 python -m lightning connect {APP_NAME} -y
 ```
 
-Below is an example of how you can train a 1.6B parameter GPT2 transformer model using Lightning Transformers and DeepSpeed using the [Lightning Transformers](https://github.com/Lightning-AI/lightning-transformers) library.
+Find below an example with a 1.6B parameter GPT2 transformer model using Lightning Transformers and DeepSpeed using the [Lightning Transformers](https://github.com/Lightning-AI/lightning-transformers) library.
 
 ```python
 import pytorch_lightning as pl
@@ -126,7 +128,7 @@ tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = LanguageModelingTransformer(
     pretrained_model_name_or_path=model_name,
     tokenizer=tokenizer,
-    deepspeed_sharding=True,  # defer initialization of the model to shard/load pre-train weights
+    deepspeed_sharding=True,
 )
 
 dm = LanguageModelingDataModule(
