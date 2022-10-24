@@ -2,6 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type DeleteDriveConfig = {
+export type DeleteDataConfig = {
     name: string;
 };

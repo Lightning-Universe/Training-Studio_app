@@ -122,7 +122,7 @@ function toArgs(
   params?: Record<string, number | string | Array<number> | Array<string>>,
 ) {
   var arg = '';
-  if (script_args) {
+  if (script_args && script_args.length > 0) {
     arg = arg + script_args.join(' ') + ' ';
   }
   if (params) {
@@ -178,7 +178,6 @@ export function Experiments() {
   const sweeps = useClientDataState('sweeps') as SweepConfig[];
 
   const appId = getAppId();
-  const enableClipBoard = appId == 'localhost' ? false : true;
 
   if (sweeps.length == 0) {
     setShowHelpPage(HelpPageState.forced);
@@ -190,13 +189,13 @@ export function Experiments() {
     return (
       <UserGuide title="Want to start a hyper-parameter sweep?" subtitle="Use the commands below in your terminal">
         <UserGuideComment>Connect to the app</UserGuideComment>
-        <UserGuideBody enableClipBoard={enableClipBoard}>{`lightning connect ${appId} --yes`}</UserGuideBody>
+        <UserGuideBody>{`lightning connect ${appId} --yes`}</UserGuideBody>
         <UserGuideComment>Download example script</UserGuideComment>
-        <UserGuideBody enableClipBoard={enableClipBoard}>
+        <UserGuideBody>
           {'wget https://raw.githubusercontent.com/Lightning-AI/lightning-hpo/master/examples/scripts/train.py'}
         </UserGuideBody>
         <UserGuideComment>Run a sweep</UserGuideComment>
-        <UserGuideBody enableClipBoard={enableClipBoard}>
+        <UserGuideBody>
           lightning run sweep train.py --model.lr "[0.001, 0.01, 0.1]" --data.batch "[32, 64]"
           --algorithm="grid_search"
         </UserGuideBody>
@@ -210,6 +209,7 @@ export function Experiments() {
     'Name',
     'Best Score',
     'Script Arguments',
+    'Data',
     'Trainable Parameters',
     'Compute',
     'More',
@@ -225,12 +225,22 @@ export function Experiments() {
     const tensorboardConfig =
       sweep.sweep_id in tensorboardIdsToStatuses ? tensorboardIdsToStatuses[sweep.sweep_id] : null;
 
+    const data = Object.entries(sweep.data)
+      .map(entry => {
+        if (entry[1]) {
+          return `${entry[0]}:${entry[1]}`;
+        }
+        return entry[0];
+      })
+      .join(', ');
+
     return Object.entries(sweep.experiments).map(entry => [
       toProgress(entry[1]),
       runtimeTime(entry[1]),
       entry[1].name,
       String(entry[1].best_model_score),
       toArgs(sweep.script_args, entry[1].params),
+      data,
       String(entry[1].total_parameters),
       toCompute(sweep),
       <MoreMenu id={entry[1].name} items={createMenuItems(sweep.logger_url, tensorboardConfig)} />,
@@ -239,7 +249,7 @@ export function Experiments() {
 
   const flatArray = [].concat.apply([], rows).map((row: any[]) =>
     row.map((entry: any) => {
-      if (entry == 'null') {
+      if (!entry || entry == 'null') {
         return '-';
       }
       return entry;
