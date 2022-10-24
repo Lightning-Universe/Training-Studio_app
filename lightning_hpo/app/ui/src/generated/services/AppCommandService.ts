@@ -13,6 +13,7 @@ export class AppCommandService {
 
     /**
      * Run Tensorboard
+     * Run TensorBoard for a given Sweep or Experiment.
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
@@ -33,6 +34,7 @@ export class AppCommandService {
 
     /**
      * Show Tensorboards
+     * Show TensorBoards.
      * @returns any Successful Response
      * @throws ApiError
      */
@@ -45,6 +47,7 @@ export class AppCommandService {
 
     /**
      * Stop Tensorboard
+     * Stop TensorBoard for a given Sweep or Experiment.
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
