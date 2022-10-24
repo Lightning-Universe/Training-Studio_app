@@ -3,9 +3,9 @@ from rich.console import Console
 from rich.table import Table
 
 
-class ShowDriveCommand(ClientCommand):
+class ShowDataCommand(ClientCommand):
 
-    description = "Show Drives."
+    description = "List all Data."
 
     def run(self) -> None:
         response = self.invoke_handler()
@@ -14,16 +14,16 @@ class ShowDriveCommand(ClientCommand):
             "name",
             "source",
             "mount_path",
-            title="Drives",
+            title="Data",
             show_header=True,
             header_style="bold green",
         )
 
-        for drive in response:
+        for mount in response:
             table.add_row(
-                drive["name"],
-                drive["source"],
-                drive["mount_path"],
+                mount["name"],
+                mount["source"],
+                mount["mount_path"],
             )
         console = Console()
         console.print(table)

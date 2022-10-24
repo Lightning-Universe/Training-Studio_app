@@ -123,13 +123,12 @@ MNIST
 .storage/
 .shared/
 infra
-data
 coverage.*
 # Frontend build artifacts
 
 *lightning_logs*
 .storage
-data
+/data
 *.pt
 __py
 wandb

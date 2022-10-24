@@ -9,14 +9,14 @@ export const appClient = new AppClient({
 
 const clientEndpoints = {
   sweeps: (appClient: AppClient) => appClient.appClientCommand.showSweepsCommandShowSweepsPost(),
-  notebooks: (appClient: AppClient) => appClient.appClientCommand.showNotebooksCommandShowNotebooksPost(),
   tensorboards: (appClient: AppClient) => appClient.appApi.showTensorboardsApiShowTensorboardsPost(),
+  data: (appClient: AppClient) => appClient.appClientCommand.showDataCommandShowDataPost(),
 };
 
 const clientDataContexts = {
   sweeps: React.createContext<any[]>([]),
-  notebooks: React.createContext<any[]>([]),
   tensorboards: React.createContext<any[]>([]),
+  data: React.createContext<any[]>([]),
 };
 
 export const ClientDataProvider = (props: { endpoint: keyof typeof clientEndpoints; children: React.ReactNode }) => {

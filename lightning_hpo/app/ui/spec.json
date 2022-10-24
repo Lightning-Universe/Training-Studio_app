@@ -224,8 +224,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "DeleteSweepCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/delete.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/delete.py",
+        "cls_name": "DeleteSweepCommand"
       }
     },
     "/command/run_sweep": {
@@ -245,9 +245,9 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "RunSweepCommand",
         "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/run.py",
-        "requirements": ["traitlets", "lightning-hpo"]
+        "requirements": ["traitlets", "lightning_hpo"],
+        "cls_name": "RunSweepCommand"
       }
     },
     "/command/show_sweeps": {
@@ -259,8 +259,8 @@
         "responses": {
           "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
         },
-        "cls_name": "ShowSweepsCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/show.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/show.py",
+        "cls_name": "ShowSweepsCommand"
       }
     },
     "/command/stop_sweep": {
@@ -280,8 +280,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "StopSweepCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/stop.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/stop.py",
+        "cls_name": "StopSweepCommand"
       }
     },
     "/command/run_experiment": {
@@ -301,8 +301,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "RunExperimentCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/experiment/run.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/experiment/run.py",
+        "cls_name": "RunExperimentCommand"
       }
     },
     "/command/stop_experiment": {
@@ -322,8 +322,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "StopExperimentCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/experiment/stop.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/experiment/stop.py",
+        "cls_name": "StopExperimentCommand"
       }
     },
     "/command/show_experiments": {
@@ -335,8 +335,8 @@
         "responses": {
           "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
         },
-        "cls_name": "ShowExperimentsCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/experiment/show.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/experiment/show.py",
+        "cls_name": "ShowExperimentsCommand"
       }
     },
     "/command/delete_experiment": {
@@ -356,8 +356,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "DeleteExperimentCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/experiment/delete.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/experiment/delete.py",
+        "cls_name": "DeleteExperimentCommand"
       }
     },
     "/command/show_artifacts": {
@@ -377,8 +377,8 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "ShowArtifactsCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/artifacts/show.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/artifacts/show.py",
+        "cls_name": "ShowArtifactsCommand"
       }
     },
     "/command/download_artifacts": {
@@ -398,18 +398,18 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "DownloadArtifactsCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/artifacts/download.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/artifacts/download.py",
+        "cls_name": "DownloadArtifactsCommand"
       }
     },
-    "/command/create_drive": {
+    "/command/create_data": {
       "post": {
         "tags": ["app_client_command"],
-        "summary": "Create Drive",
-        "description": "Create a Drive.",
-        "operationId": "create_drive_command_create_drive_post",
+        "summary": "Create Data",
+        "description": "Create Data.",
+        "operationId": "create_data_command_create_data_post",
         "requestBody": {
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DriveConfig" } } },
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DataConfig" } } },
           "required": true
         },
         "responses": {
@@ -419,18 +419,18 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "CreateDriveCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/drive/create.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/data/create.py",
+        "cls_name": "CreateDataCommand"
       }
     },
-    "/command/delete_drive": {
+    "/command/delete_data": {
       "post": {
         "tags": ["app_client_command"],
-        "summary": "Delete Drive",
-        "description": "Delete a Drive.",
-        "operationId": "delete_drive_command_delete_drive_post",
+        "summary": "Delete Data",
+        "description": "Delete Data.",
+        "operationId": "delete_data_command_delete_data_post",
         "requestBody": {
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DeleteDriveConfig" } } },
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DeleteDataConfig" } } },
           "required": true
         },
         "responses": {
@@ -440,21 +440,21 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_name": "DeleteDriveCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/drive/delete.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/data/delete.py",
+        "cls_name": "DeleteDataCommand"
       }
     },
-    "/command/show_drives": {
+    "/command/show_data": {
       "post": {
         "tags": ["app_client_command"],
-        "summary": "Show Drives",
-        "description": "Show Drives.",
-        "operationId": "show_drives_command_show_drives_post",
+        "summary": "Show Data",
+        "description": "List all Data.",
+        "operationId": "show_data_command_show_data_post",
         "responses": {
           "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
         },
-        "cls_name": "ShowDriveCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/drive/show.py"
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/data/show.py",
+        "cls_name": "ShowDataCommand"
       }
     },
     "/api{full_path}": {
@@ -501,8 +501,18 @@
         "type": "object",
         "properties": { "uploaded_file": { "title": "Uploaded File", "type": "string", "format": "binary" } }
       },
-      "DeleteDriveConfig": {
-        "title": "DeleteDriveConfig",
+      "DataConfig": {
+        "title": "DataConfig",
+        "required": ["name", "source", "mount_path"],
+        "type": "object",
+        "properties": {
+          "name": { "title": "Name", "type": "string" },
+          "source": { "title": "Source", "type": "string" },
+          "mount_path": { "title": "Mount Path", "type": "string" }
+        }
+      },
+      "DeleteDataConfig": {
+        "title": "DeleteDataConfig",
         "required": ["name"],
         "type": "object",
         "properties": { "name": { "title": "Name", "type": "string" } }
@@ -546,16 +556,6 @@
         "properties": {
           "include": { "title": "Include", "type": "string" },
           "exclude": { "title": "Exclude", "type": "string" }
-        }
-      },
-      "DriveConfig": {
-        "title": "DriveConfig",
-        "required": ["name", "source", "mount_path"],
-        "type": "object",
-        "properties": {
-          "name": { "title": "Name", "type": "string" },
-          "source": { "title": "Source", "type": "string" },
-          "mount_path": { "title": "Mount Path", "type": "string" }
         }
       },
       "ExperimentConfig": {
@@ -636,7 +636,7 @@
           "framework",
           "logger",
           "direction",
-          "drive_names"
+          "data"
         ],
         "type": "object",
         "properties": {
@@ -667,7 +667,7 @@
           "stage": { "title": "Stage", "type": "string", "default": "not_started" },
           "desired_stage": { "title": "Desired Stage", "type": "string", "default": "running" },
           "disk_size": { "title": "Disk Size", "type": "integer", "default": 80 },
-          "drive_names": { "title": "Drive Names", "type": "array", "items": { "type": "string" } },
+          "data": { "title": "Data", "type": "object", "additionalProperties": { "type": "string" } },
           "username": { "title": "Username", "type": "string" }
         }
       },

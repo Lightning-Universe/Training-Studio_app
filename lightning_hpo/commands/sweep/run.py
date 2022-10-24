@@ -12,6 +12,7 @@ from lightning.app.core.constants import APP_SERVER_HOST, APP_SERVER_PORT
 from lightning.app.source_code import LocalSourceCodeDir
 from lightning.app.source_code.uploader import FileUploader
 from lightning.app.utilities.commands import ClientCommand
+from pydantic import validator
 from sqlalchemy import Column
 from sqlmodel import Field, SQLModel
 
@@ -75,7 +76,7 @@ class SweepConfig(SQLModel, table=True):
     stage: str = Stage.NOT_STARTED
     desired_stage: str = Stage.RUNNING
     disk_size: int = 80
-    drive_names: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
+    data: Dict[str, Optional[str]] = Field(..., sa_column=Column(pydantic_column_type(Dict[str, Optional[str]])))
     username: Optional[str] = None
 
     @property
@@ -88,6 +89,16 @@ class SweepConfig(SQLModel, table=True):
 
     def is_tensorboard(self):
         return self.logger == LoggerType.TENSORBOARD.value
+
+    @validator("data")
+    def data_validator(cls, v, values, **kwargs):
+        for _, mount_path in v.items():
+            if mount_path is not None:
+                if not mount_path.startswith("/"):
+                    raise Exception("The `mount_path` needs to start with a leading slash (`/`)")
+                elif not mount_path.endswith("/"):
+                    raise Exception("The `mount_path` needs to end with in a trailing slash (`/`)")
+        return v
 
 
 class DistributionParser:
@@ -284,7 +295,7 @@ def parse_random_search(script_args, args):
 class RunSweepCommand(ClientCommand):
 
     description = "Run a Sweep."
-    requirements = ["traitlets", "lightning-hpo"]
+    requirements = ["traitlets", "lightning_hpo"]
     SUPPORTED_DISTRIBUTIONS = ("uniform", "log_uniform", "categorical")
 
     def run(self) -> None:
@@ -348,7 +359,10 @@ class RunSweepCommand(ClientCommand):
             help="The disk size in Gigabytes.",
         )
         parser.add_argument(
-            "--drives", nargs="+", default=[], help="Provide a list of drives to add to the experiments."
+            "--data",
+            nargs="+",
+            default=[],
+            help="Provide a list of Data (and optionally the mount_path in the format `<name>:<mount_path>`) to mount to the experiments.",
         )
         hparams, args = parser.parse_known_args()
 
@@ -396,6 +410,9 @@ class RunSweepCommand(ClientCommand):
         repo.package()
         repo.upload(url=f"{URL}/api/v1/upload_file/{name}")
 
+        data_split = [data.split(":") if ":" in data else (data, None) for data in hparams.data]
+        data = {data[0]: data[1] for data in data_split}
+
         config = SweepConfig(
             sweep_id=name,
             script_path=hparams.script_path,
@@ -412,7 +429,7 @@ class RunSweepCommand(ClientCommand):
             direction=hparams.direction,
             experiments={},
             disk_size=hparams.disk_size,
-            drive_names=hparams.drives,
+            data=data,
             username=getuser(),
         )
         response = self.invoke_handler(config=config)

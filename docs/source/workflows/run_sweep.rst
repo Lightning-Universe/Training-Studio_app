@@ -135,23 +135,26 @@ Here is an example Sweep doing ``baysian`` optimization.
 
 ----
 
-***********************************
-4. Attach Mount Drives in the Cloud
-***********************************
+**************************
+4. Mount Data in the Cloud
+**************************
 
-The Lightning framework enables to mount s3 buckets to your works in the cloud.
+The Lightning framework supports mounting s3 buckets to your works in the cloud.
 
-In order to create a new Drive, you need to provide its name, s3 Source URL (public only for now) and where the data should be mounted within the works.
-
-.. code-block::
-
-   python -m lightning create drive --name example --source s3://pl-flash-data/wiki-test/ --mount_path /data/wiki-test/
-
-Then, you can pass those drives to your experiment as follows:
+In order to create Data, you need to provide its name and s3 Source URL (public only for now).
 
 .. code-block::
 
-   lightning run experiment example.py --drives example
+   python -m lightning create data --name example --source s3://pl-flash-data/wiki-test/
+
+By default, the data will be mounted to ``/data/<name>`` (e.g. ``/data/example/`` in the above example).
+The location can be customized using the ``mount_path`` argument.
+
+Once data has been created, you can pass it to your experiment as follows:
+
+.. code-block::
+
+   lightning run experiment example.py --data example
 
 In this ``example.py``, we are listing all the files to ensure they are properly mounted.
 
@@ -159,10 +162,10 @@ In this ``example.py``, we are listing all the files to ensure they are properly
 
    import glob
 
-   for filename in glob.iglob("/data/wiki-test/**/**", recursive=True):
+   for filename in glob.iglob("/data/example/**/**", recursive=True):
       print(filename)
 
-Here are the logs produced by the ``example.py`` listing the ``/data/wiki-test`` folder.
+Here are the logs produced by the ``example.py`` listing the ``/data/example`` folder.
 
 .. code-block::
 
@@ -182,6 +185,11 @@ Here are the logs produced by the ``example.py`` listing the ``/data/wiki-test``
    b7ebcf51e45c9d8f96356ff8527fff02d3a4cae4c9f5b1e
    ...
 
+You can also choose to mount data to a different location for each experiment by adding the mount location to the data separated by a comma.
+
+.. code-block::
+
+   lightning run experiment example.py --data example:/data/custom_mount/
 
 ----
 

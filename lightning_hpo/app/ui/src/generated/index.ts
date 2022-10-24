@@ -10,12 +10,12 @@ export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
 export type { Body_upload_file_api_v1_upload_file__filename__put } from './models/Body_upload_file_api_v1_upload_file__filename__put';
-export type { DeleteDriveConfig } from './models/DeleteDriveConfig';
+export type { DataConfig } from './models/DataConfig';
+export type { DeleteDataConfig } from './models/DeleteDataConfig';
 export type { DeleteExperimentConfig } from './models/DeleteExperimentConfig';
 export type { DeleteSweepConfig } from './models/DeleteSweepConfig';
 export type { Distributions } from './models/Distributions';
 export type { DownloadArtifactsConfig } from './models/DownloadArtifactsConfig';
-export type { DriveConfig } from './models/DriveConfig';
 export type { ExperimentConfig } from './models/ExperimentConfig';
 export type { HTTPValidationError } from './models/HTTPValidationError';
 export type { ShowArtifactsConfig } from './models/ShowArtifactsConfig';

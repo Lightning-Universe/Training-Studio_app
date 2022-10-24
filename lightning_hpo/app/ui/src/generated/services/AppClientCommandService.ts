@@ -1,11 +1,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { DeleteDriveConfig } from '../models/DeleteDriveConfig';
+import type { DataConfig } from '../models/DataConfig';
+import type { DeleteDataConfig } from '../models/DeleteDataConfig';
 import type { DeleteExperimentConfig } from '../models/DeleteExperimentConfig';
 import type { DeleteSweepConfig } from '../models/DeleteSweepConfig';
 import type { DownloadArtifactsConfig } from '../models/DownloadArtifactsConfig';
-import type { DriveConfig } from '../models/DriveConfig';
 import type { ShowArtifactsConfig } from '../models/ShowArtifactsConfig';
 import type { StopExperimentConfig } from '../models/StopExperimentConfig';
 import type { StopSweepConfig } from '../models/StopSweepConfig';
@@ -213,18 +213,18 @@ export class AppClientCommandService {
     }
 
     /**
-     * Create Drive
-     * Create a Drive.
+     * Create Data
+     * Create Data.
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
      */
-    public createDriveCommandCreateDrivePost(
-        requestBody: DriveConfig,
+    public createDataCommandCreateDataPost(
+        requestBody: DataConfig,
     ): CancelablePromise<any> {
         return this.httpRequest.request({
             method: 'POST',
-            url: '/command/create_drive',
+            url: '/command/create_data',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -234,18 +234,18 @@ export class AppClientCommandService {
     }
 
     /**
-     * Delete Drive
-     * Delete a Drive.
+     * Delete Data
+     * Delete Data.
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
      */
-    public deleteDriveCommandDeleteDrivePost(
-        requestBody: DeleteDriveConfig,
+    public deleteDataCommandDeleteDataPost(
+        requestBody: DeleteDataConfig,
     ): CancelablePromise<any> {
         return this.httpRequest.request({
             method: 'POST',
-            url: '/command/delete_drive',
+            url: '/command/delete_data',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -255,15 +255,15 @@ export class AppClientCommandService {
     }
 
     /**
-     * Show Drives
-     * Show Drives.
+     * Show Data
+     * List all Data.
      * @returns any Successful Response
      * @throws ApiError
      */
-    public showDrivesCommandShowDrivesPost(): CancelablePromise<any> {
+    public showDataCommandShowDataPost(): CancelablePromise<any> {
         return this.httpRequest.request({
             method: 'POST',
-            url: '/command/show_drives',
+            url: '/command/show_data',
         });
     }
 

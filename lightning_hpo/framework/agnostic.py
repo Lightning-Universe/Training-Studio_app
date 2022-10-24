@@ -1,8 +1,7 @@
 from abc import ABC
-from typing import Any, Dict, List, Optional, TypedDict
+from typing import Any, Dict, Optional, TypedDict
 
 from lightning.app.components.python import TracerPythonScript
-from lightning.app.storage.drive import Drive
 from lightning.app.utilities.app_helpers import is_overridden
 
 from lightning_hpo.loggers import LoggerType
@@ -25,7 +24,6 @@ class Objective(TracerPythonScript, ABC):
         sweep_id: str,
         experiment_id,
         experiment_name: str,
-        drives: List[Drive],
         raise_exception: bool = False,
         function_name: str = "objective",
         num_nodes: int = 1,  # TODO # Add support for multi node
@@ -49,8 +47,6 @@ class Objective(TracerPythonScript, ABC):
         self.has_stored = False
         self.num_nodes = num_nodes
         self.progress = None
-        for drive_idx, drive in enumerate(drives):
-            setattr(self, f"drive__{drive_idx}", drive)
 
     def configure_tracer(self):
         assert self.params is not None
