@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type DriveConfig = {
+export type DataConfig = {
     name: string;
     source: string;
     mount_path: string;

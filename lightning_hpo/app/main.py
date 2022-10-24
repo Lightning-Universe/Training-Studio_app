@@ -105,7 +105,9 @@ class ResearchStudio(LightningFlow):
         return f"The data `{config.name}` doesn't exist."
 
     def show_data(self):
-        return self.db_client.select_all(DataConfig)
+        if self.db.db_url:
+            return self.db_client.select_all(DataConfig)
+        return []
 
     def configure_commands(self):
         controller_commands = self.sweep_controller.configure_commands()

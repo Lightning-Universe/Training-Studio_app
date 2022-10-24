@@ -28,11 +28,10 @@ export const UserGuideComment = ({ children }: { children: string }) => {
 };
 
 export type UserGuideBodyProps = {
-  enableClipBoard: boolean;
   children: React.ReactNode;
 };
 
-export const UserGuideBody = ({ enableClipBoard, children }: UserGuideBodyProps) => {
+export const UserGuideBody = ({ children }: UserGuideBodyProps) => {
   const [tooltip, setTooltip] = useState('Copy command');
 
   const copyText = (text: string) => {
@@ -51,13 +50,14 @@ export const UserGuideBody = ({ enableClipBoard, children }: UserGuideBodyProps)
         color: 'grey.100',
       }}>
       {children}
-      {enableClipBoard ? (
-        <Tooltip title={tooltip} onOpen={() => setTooltip('Copy command')}>
-          <IconButton sx={{ margin: '0px 8px', padding: '0px' }} aria-label="copy" onClick={() => copyText(children)}>
-            <ContentCopyIcon sx={{ fontSize: 16 }} />
-          </IconButton>
-        </Tooltip>
-      ) : null}
+      <Tooltip title={tooltip} onOpen={() => setTooltip('Copy command')}>
+        <IconButton
+          sx={{ margin: '0px 8px', padding: '0px' }}
+          aria-label="copy"
+          onClick={() => copyText(children as string)}>
+          <ContentCopyIcon sx={{ fontSize: 16 }} />
+        </IconButton>
+      </Tooltip>
     </Typography>
   );
 };
