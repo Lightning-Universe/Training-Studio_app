@@ -124,7 +124,7 @@ def test_experiment_run_parsing_arguments(monkeypatch):
             stage="not_started",
             desired_stage="running",
             disk_size=80,
-            data={"example", None},
+            data={"example": None},
         )
         expected.sweep_id = config.sweep_id
         expected.username = config.username
