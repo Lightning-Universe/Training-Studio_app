@@ -94,9 +94,9 @@ class SweepConfig(SQLModel, table=True):
     def data_validator(cls, v, values, **kwargs):
         for _, mount_path in v.items():
             if mount_path is not None:
-                if not v.startswith("/"):
+                if not mount_path.startswith("/"):
                     raise Exception("The `mount_path` needs to start with a leading slash (`/`)")
-                elif not v.endswith("/"):
+                elif not mount_path.endswith("/"):
                     raise Exception("The `mount_path` needs to end with in a trailing slash (`/`)")
         return v
 
