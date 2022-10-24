@@ -79,6 +79,8 @@ def test_experiment_run_parsing_arguments(monkeypatch):
         [
             "",
             __file__,
+            "--data",
+            "example",
             "--requirements",
             "'jsonargparse[signatures]'",
             "--model.lr=0.1",
