@@ -20,7 +20,7 @@ class LightningHPOTestApp(LightningTestApp):
 def test_custom_objective_sweep_streamlit():
 
     command_line = [
-        os.path.join(os.getcwd(), "examples/1_app_agnostic.py"),
+        os.path.join(os.getcwd(), "sweep_examples/1_app_agnostic.py"),
         "--open-ui",
         "False",
     ]
@@ -33,7 +33,7 @@ def test_custom_objective_sweep_streamlit():
 def test_pytorch_lightning_objective_sweep_wandb():
 
     command_line = [
-        os.path.join(os.getcwd(), "examples/2_app_pytorch_lightning.py"),
+        os.path.join(os.getcwd(), "sweep_examples/2_app_pytorch_lightning.py"),
         "--open-ui",
         "False",
     ]
@@ -44,7 +44,7 @@ def test_pytorch_lightning_objective_sweep_wandb():
 def test_pytorch_lightning_custom_objective_sweep():
 
     command_line = [
-        os.path.join(os.getcwd(), "examples/3_app_sklearn.py"),
+        os.path.join(os.getcwd(), "sweep_examples/3_app_sklearn.py"),
         "--open-ui",
         "False",
     ]
