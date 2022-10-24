@@ -8,18 +8,7 @@ from lightning.app.utilities.commands import ClientCommand
 from lightning.app.utilities.enum import make_status, WorkStageStatus
 
 from lightning_hpo import Objective
-from lightning_hpo.commands.data.create import DataConfig
-from lightning_hpo.commands.notebook.run import NotebookConfig
-from lightning_hpo.commands.sweep.run import SweepConfig
-from lightning_hpo.commands.tensorboard.stop import TensorboardConfig
 from lightning_hpo.utilities.utils import get_primary_key
-
-_MODELS = {
-    "DataConfig": DataConfig,
-    "NotebookConfig": NotebookConfig,
-    "SweepConfig": SweepConfig,
-    "TensorboardConfig": TensorboardConfig,
-}
 
 
 class MockResponse:
@@ -53,8 +42,8 @@ class MockSession:
 
     def insert(self, url, data):
         general = _GeneralModel.parse_raw(data)
-        data = general.convert_to_model(_MODELS)
-        primary_key = get_primary_key(data.__class__)
+        data = self._parse_raw(general)
+        primary_key = get_primary_key(type(data))
         if getattr(data, primary_key) is None:
             setattr(data, primary_key, str(uuid4()))
         self.data[self.to_key(data)] = data.dict()
@@ -62,15 +51,21 @@ class MockSession:
 
     def update(self, url, data):
         general = _GeneralModel.parse_raw(data)
-        data = general.convert_to_model(_MODELS)
+        data = self._parse_raw(general)
         self.data[self.to_key(data)] = data.dict()
         return MockResponse(data=None)
 
     def delete(self, url, data):
         general = _GeneralModel.parse_raw(data)
-        data = general.convert_to_model(_MODELS)
+        data = self._parse_raw(general)
         del self.data[self.to_key(data)]
         return MockResponse(data=None)
+
+    def _parse_raw(self, general):
+        if isinstance(self.model, list):
+            models = {cls.__name__: cls for cls in self.model}
+            return models[general.cls_name].parse_raw(general.data)
+        return self.model.parse_raw(general.data)
 
     @staticmethod
     def to_key(data) -> str:

@@ -1,6 +1,7 @@
 import urllib.parse
 from typing import List
 
+from lightning.app.api import Post
 from lightning.app.storage import Drive
 
 from lightning_hpo.commands.tensorboard.stop import StopTensorboardConfig, TensorboardConfig
@@ -61,9 +62,9 @@ class TensorboardController(Controller):
             return f"Tensorboard `{config.sweep_id}` was stopped."
         return f"Tensorboard `{config.sweep_id}` doesn't exist."
 
-    def configure_commands(self):
+    def configure_api(self):
         return [
-            {"run tensorboard": self.run_tensorboard},
-            {"show tensorboards": self.show_tensorboards},
-            {"stop tensorboard": self.stop_tensorboard},
+            Post("/api/run/tensorboard", self.run_tensorboard),
+            Post("/api/stop/tensorboard", self.stop_tensorboard),
+            Post("/api/show/tensorboards", self.show_tensorboards),
         ]
