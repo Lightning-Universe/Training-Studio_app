@@ -20,6 +20,7 @@ export class AppClientCommandService {
 
     /**
      * Delete Sweep
+     * Delete a Sweep.
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
@@ -40,6 +41,7 @@ export class AppClientCommandService {
 
     /**
      * Run Sweep
+     * Run a Sweep.
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
@@ -60,6 +62,7 @@ export class AppClientCommandService {
 
     /**
      * Show Sweeps
+     * Show all Sweeps or the Experiments from a given Sweep.
      * @returns any Successful Response
      * @throws ApiError
      */
@@ -72,6 +75,7 @@ export class AppClientCommandService {
 
     /**
      * Stop Sweep
+     * Stop a Sweep.
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
@@ -92,6 +96,7 @@ export class AppClientCommandService {
 
     /**
      * Run Experiment
+     * Run an Experiment.
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
@@ -112,6 +117,7 @@ export class AppClientCommandService {
 
     /**
      * Stop Experiment
+     * Stop an Experiment.
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
@@ -132,6 +138,7 @@ export class AppClientCommandService {
 
     /**
      * Show Experiments
+     * Show Experiments.
      * @returns any Successful Response
      * @throws ApiError
      */
@@ -144,6 +151,7 @@ export class AppClientCommandService {
 
     /**
      * Delete Experiment
+     * Delete an Experiment.
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
@@ -164,6 +172,7 @@ export class AppClientCommandService {
 
     /**
      * Show Artifacts
+     * Show artifacts.
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
@@ -184,6 +193,7 @@ export class AppClientCommandService {
 
     /**
      * Download Artifacts
+     * Download an artifact.
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
@@ -204,6 +214,7 @@ export class AppClientCommandService {
 
     /**
      * Create Drive
+     * Create a Drive.
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
@@ -224,6 +235,7 @@ export class AppClientCommandService {
 
     /**
      * Delete Drive
+     * Delete a Drive.
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
@@ -244,6 +256,7 @@ export class AppClientCommandService {
 
     /**
      * Show Drives
+     * Show Drives.
      * @returns any Successful Response
      * @throws ApiError
      */

@@ -59,11 +59,11 @@ function createLoggerUrl(url?: string) {
 }
 
 function stopTensorboard(tensorboardConfig?: TensorboardConfig) {
-  appClient.appCommand.stopTensorboardCommandStopTensorboardPost({ sweep_id: tensorboardConfig.sweep_id });
+  appClient.appCommand.stopTensorboardApiStopTensorboardPost({ sweep_id: tensorboardConfig.sweep_id });
 }
 
 function runTensorboard(tensorboardConfig?: TensorboardConfig) {
-  appClient.appCommand.runTensorboardCommandRunTensorboardPost({
+  appClient.appCommand.runTensorboardApiRunTensorboardPost({
     id: tensorboardConfig.id,
     sweep_id: tensorboardConfig.sweep_id,
     shared_folder: tensorboardConfig.shared_folder,

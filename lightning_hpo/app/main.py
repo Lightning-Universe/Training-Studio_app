@@ -110,7 +110,6 @@ class ResearchStudio(LightningFlow):
     def configure_commands(self):
         controller_commands = self.sweep_controller.configure_commands()
         # controller_commands += self.notebook_controller.configure_commands()
-        controller_commands += self.tensorboard_controller.configure_commands()
         controller_commands += [
             {"show artifacts": ShowArtifactsCommand(self.show_artifacts)},
             {"download artifacts": DownloadArtifactsCommand(self.download_artifacts)},
@@ -119,6 +118,9 @@ class ResearchStudio(LightningFlow):
             {"show drives": ShowDriveCommand(self.show_drives)},
         ]
         return controller_commands
+
+    def configure_api(self):
+        return self.tensorboard_controller.configure_api()
 
     @property
     def db_client(self) -> DatabaseClient:

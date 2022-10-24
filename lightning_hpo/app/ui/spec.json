@@ -161,155 +161,11 @@
         }
       }
     },
-    "/command/delete_sweep": {
+    "/api/run/tensorboard": {
       "post": {
-        "tags": ["app_client_command"],
-        "summary": "Delete Sweep",
-        "operationId": "delete_sweep_command_delete_sweep_post",
-        "requestBody": {
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DeleteSweepConfig" } } },
-          "required": true
-        },
-        "responses": {
-          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } },
-          "422": {
-            "description": "Validation Error",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
-          }
-        },
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/delete.py",
-        "cls_name": "DeleteSweepCommand"
-      }
-    },
-    "/command/run_sweep": {
-      "post": {
-        "tags": ["app_client_command"],
-        "summary": "Run Sweep",
-        "operationId": "run_sweep_command_run_sweep_post",
-        "requestBody": {
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SweepConfig" } } },
-          "required": true
-        },
-        "responses": {
-          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } },
-          "422": {
-            "description": "Validation Error",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
-          }
-        },
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/run.py",
-        "cls_name": "RunSweepCommand"
-      }
-    },
-    "/command/show_sweeps": {
-      "post": {
-        "tags": ["app_client_command"],
-        "summary": "Show Sweeps",
-        "operationId": "show_sweeps_command_show_sweeps_post",
-        "responses": {
-          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
-        },
-        "cls_name": "ShowSweepsCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/show.py"
-      }
-    },
-    "/command/stop_sweep": {
-      "post": {
-        "tags": ["app_client_command"],
-        "summary": "Stop Sweep",
-        "operationId": "stop_sweep_command_stop_sweep_post",
-        "requestBody": {
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StopSweepConfig" } } },
-          "required": true
-        },
-        "responses": {
-          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } },
-          "422": {
-            "description": "Validation Error",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
-          }
-        },
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/stop.py",
-        "cls_name": "StopSweepCommand"
-      }
-    },
-    "/command/run_experiment": {
-      "post": {
-        "tags": ["app_client_command"],
-        "summary": "Run Experiment",
-        "operationId": "run_experiment_command_run_experiment_post",
-        "requestBody": {
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SweepConfig" } } },
-          "required": true
-        },
-        "responses": {
-          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } },
-          "422": {
-            "description": "Validation Error",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
-          }
-        },
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/experiment/run.py",
-        "cls_name": "RunExperimentCommand"
-      }
-    },
-    "/command/stop_experiment": {
-      "post": {
-        "tags": ["app_client_command"],
-        "summary": "Stop Experiment",
-        "operationId": "stop_experiment_command_stop_experiment_post",
-        "requestBody": {
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StopExperimentConfig" } } },
-          "required": true
-        },
-        "responses": {
-          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } },
-          "422": {
-            "description": "Validation Error",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
-          }
-        },
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/experiment/stop.py",
-        "cls_name": "StopExperimentCommand"
-      }
-    },
-    "/command/show_experiments": {
-      "post": {
-        "tags": ["app_client_command"],
-        "summary": "Show Experiments",
-        "operationId": "show_experiments_command_show_experiments_post",
-        "responses": {
-          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
-        },
-        "cls_name": "ShowExperimentsCommand",
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/experiment/show.py"
-      }
-    },
-    "/command/delete_experiment": {
-      "post": {
-        "tags": ["app_client_command"],
-        "summary": "Delete Experiment",
-        "operationId": "delete_experiment_command_delete_experiment_post",
-        "requestBody": {
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DeleteExperimentConfig" } } },
-          "required": true
-        },
-        "responses": {
-          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } },
-          "422": {
-            "description": "Validation Error",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
-          }
-        },
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/experiment/delete.py",
-        "cls_name": "DeleteExperimentCommand"
-      }
-    },
-    "/command/run_tensorboard": {
-      "post": {
-        "tags": ["app_command"],
+        "tags": ["app_api"],
         "summary": "Run Tensorboard",
-        "operationId": "run_tensorboard_command_run_tensorboard_post",
+        "operationId": "run_tensorboard_api_run_tensorboard_post",
         "requestBody": {
           "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TensorboardConfig" } } },
           "required": true
@@ -323,21 +179,11 @@
         }
       }
     },
-    "/command/show_tensorboards": {
+    "/api/stop/tensorboard": {
       "post": {
-        "tags": ["app_command"],
-        "summary": "Show Tensorboards",
-        "operationId": "show_tensorboards_command_show_tensorboards_post",
-        "responses": {
-          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
-        }
-      }
-    },
-    "/command/stop_tensorboard": {
-      "post": {
-        "tags": ["app_command"],
+        "tags": ["app_api"],
         "summary": "Stop Tensorboard",
-        "operationId": "stop_tensorboard_command_stop_tensorboard_post",
+        "operationId": "stop_tensorboard_api_stop_tensorboard_post",
         "requestBody": {
           "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StopTensorboardConfig" } } },
           "required": true
@@ -351,10 +197,174 @@
         }
       }
     },
+    "/api/show/tensorboards": {
+      "post": {
+        "tags": ["app_api"],
+        "summary": "Show Tensorboards",
+        "operationId": "show_tensorboards_api_show_tensorboards_post",
+        "responses": {
+          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
+        }
+      }
+    },
+    "/command/delete_sweep": {
+      "post": {
+        "tags": ["app_client_command"],
+        "summary": "Delete Sweep",
+        "description": "Delete a Sweep.",
+        "operationId": "delete_sweep_command_delete_sweep_post",
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DeleteSweepConfig" } } },
+          "required": true
+        },
+        "responses": {
+          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } },
+          "422": {
+            "description": "Validation Error",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
+          }
+        },
+        "cls_name": "DeleteSweepCommand",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/delete.py"
+      }
+    },
+    "/command/run_sweep": {
+      "post": {
+        "tags": ["app_client_command"],
+        "summary": "Run Sweep",
+        "description": "Run a Sweep.",
+        "operationId": "run_sweep_command_run_sweep_post",
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SweepConfig" } } },
+          "required": true
+        },
+        "responses": {
+          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } },
+          "422": {
+            "description": "Validation Error",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
+          }
+        },
+        "cls_name": "RunSweepCommand",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/run.py",
+        "requirements": ["traitlets", "lightning-hpo"]
+      }
+    },
+    "/command/show_sweeps": {
+      "post": {
+        "tags": ["app_client_command"],
+        "summary": "Show Sweeps",
+        "description": "Show all Sweeps or the Experiments from a given Sweep.",
+        "operationId": "show_sweeps_command_show_sweeps_post",
+        "responses": {
+          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
+        },
+        "cls_name": "ShowSweepsCommand",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/show.py"
+      }
+    },
+    "/command/stop_sweep": {
+      "post": {
+        "tags": ["app_client_command"],
+        "summary": "Stop Sweep",
+        "description": "Stop a Sweep.",
+        "operationId": "stop_sweep_command_stop_sweep_post",
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StopSweepConfig" } } },
+          "required": true
+        },
+        "responses": {
+          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } },
+          "422": {
+            "description": "Validation Error",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
+          }
+        },
+        "cls_name": "StopSweepCommand",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/sweep/stop.py"
+      }
+    },
+    "/command/run_experiment": {
+      "post": {
+        "tags": ["app_client_command"],
+        "summary": "Run Experiment",
+        "description": "Run an Experiment.",
+        "operationId": "run_experiment_command_run_experiment_post",
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SweepConfig" } } },
+          "required": true
+        },
+        "responses": {
+          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } },
+          "422": {
+            "description": "Validation Error",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
+          }
+        },
+        "cls_name": "RunExperimentCommand",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/experiment/run.py"
+      }
+    },
+    "/command/stop_experiment": {
+      "post": {
+        "tags": ["app_client_command"],
+        "summary": "Stop Experiment",
+        "description": "Stop an Experiment.",
+        "operationId": "stop_experiment_command_stop_experiment_post",
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StopExperimentConfig" } } },
+          "required": true
+        },
+        "responses": {
+          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } },
+          "422": {
+            "description": "Validation Error",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
+          }
+        },
+        "cls_name": "StopExperimentCommand",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/experiment/stop.py"
+      }
+    },
+    "/command/show_experiments": {
+      "post": {
+        "tags": ["app_client_command"],
+        "summary": "Show Experiments",
+        "description": "Show Experiments.",
+        "operationId": "show_experiments_command_show_experiments_post",
+        "responses": {
+          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
+        },
+        "cls_name": "ShowExperimentsCommand",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/experiment/show.py"
+      }
+    },
+    "/command/delete_experiment": {
+      "post": {
+        "tags": ["app_client_command"],
+        "summary": "Delete Experiment",
+        "description": "Delete an Experiment.",
+        "operationId": "delete_experiment_command_delete_experiment_post",
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DeleteExperimentConfig" } } },
+          "required": true
+        },
+        "responses": {
+          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } },
+          "422": {
+            "description": "Validation Error",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
+          }
+        },
+        "cls_name": "DeleteExperimentCommand",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/experiment/delete.py"
+      }
+    },
     "/command/show_artifacts": {
       "post": {
         "tags": ["app_client_command"],
         "summary": "Show Artifacts",
+        "description": "Show artifacts.",
         "operationId": "show_artifacts_command_show_artifacts_post",
         "requestBody": {
           "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ShowArtifactsConfig" } } },
@@ -367,14 +377,15 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/artifacts/show.py",
-        "cls_name": "ShowArtifactsCommand"
+        "cls_name": "ShowArtifactsCommand",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/artifacts/show.py"
       }
     },
     "/command/download_artifacts": {
       "post": {
         "tags": ["app_client_command"],
         "summary": "Download Artifacts",
+        "description": "Download an artifact.",
         "operationId": "download_artifacts_command_download_artifacts_post",
         "requestBody": {
           "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DownloadArtifactsConfig" } } },
@@ -387,14 +398,15 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/artifacts/download.py",
-        "cls_name": "DownloadArtifactsCommand"
+        "cls_name": "DownloadArtifactsCommand",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/artifacts/download.py"
       }
     },
     "/command/create_drive": {
       "post": {
         "tags": ["app_client_command"],
         "summary": "Create Drive",
+        "description": "Create a Drive.",
         "operationId": "create_drive_command_create_drive_post",
         "requestBody": {
           "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DriveConfig" } } },
@@ -407,14 +419,15 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/drive/create.py",
-        "cls_name": "CreateDriveCommand"
+        "cls_name": "CreateDriveCommand",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/drive/create.py"
       }
     },
     "/command/delete_drive": {
       "post": {
         "tags": ["app_client_command"],
         "summary": "Delete Drive",
+        "description": "Delete a Drive.",
         "operationId": "delete_drive_command_delete_drive_post",
         "requestBody": {
           "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DeleteDriveConfig" } } },
@@ -427,14 +440,15 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/drive/delete.py",
-        "cls_name": "DeleteDriveCommand"
+        "cls_name": "DeleteDriveCommand",
+        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_hpo/commands/drive/delete.py"
       }
     },
     "/command/show_drives": {
       "post": {
         "tags": ["app_client_command"],
         "summary": "Show Drives",
+        "description": "Show Drives.",
         "operationId": "show_drives_command_show_drives_post",
         "responses": {
           "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
