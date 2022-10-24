@@ -34,7 +34,7 @@ Import ``Sweep`` and ``Objective`` components and move your Optuna code within t
 Add Imports
 ^^^^^^^^^^^
 
-.. literalinclude:: ../../../examples/3_app_sklearn.py
+.. literalinclude:: ../../../sweep_examples/3_app_sklearn.py
    :lines: 1-9
 
 Implement the CustomObjective
@@ -48,7 +48,7 @@ The core difference from the previous scripts are:
 - ``self.reports``: Lightning HPO automatically takes care of pruning the experiments, simply register the step based reports.
 - ``self.best_model_score``: Lightning HPO expects you to register the best mode score of your model in the ``Objective`` state.
 
-.. literalinclude:: ../../../examples/3_app_sklearn.py
+.. literalinclude:: ../../../sweep_examples/3_app_sklearn.py
    :lines: 12-36
 
 Configure your Sweep
@@ -56,7 +56,7 @@ Configure your Sweep
 
 Finally, you can define your ``Sweep`` and pass it an ``OptunaAlgorithm``
 
-.. literalinclude:: ../../../examples/3_app_sklearn.py
+.. literalinclude:: ../../../sweep_examples/3_app_sklearn.py
    :lines: 39-
 
 ----
@@ -69,12 +69,12 @@ Now, you can optimize it locally.
 
 .. code-block::
 
-   python -m lightning run app examples/1_app_agnostic.py
+   python -m lightning run app sweep_examples/1_app_agnostic.py
 
 or with ``--cloud`` to run it in the cloud.
 
 .. code-block::
 
-   python -m lightning run app examples/1_app_agnostic.py --cloud
+   python -m lightning run app sweep_examples/1_app_agnostic.py --cloud
 
 .. note:: Locally, each experiment runs in its own process, so there is overhead if your objective is quick to run.

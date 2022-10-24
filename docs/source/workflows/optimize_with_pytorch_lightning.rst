@@ -39,11 +39,11 @@ For this example, download ``train.py`` and ``app.py`` files with the following 
 
    wget https://raw.githubusercontent.com/Lightning-AI/lightning-hpo/master/examples/scripts/train.py
 
-   wget -O app.py https://raw.githubusercontent.com/Lightning-AI/lightning-hpo/master/examples/2_app_pytorch_lightning.py
+   wget -O app.py https://raw.githubusercontent.com/Lightning-AI/lightning-hpo/master/sweep_examples/2_app_pytorch_lightning.py
 
 In the ``app.py`` file, we configure a :class:`~lightning_hpo.components.sweep.Sweep` object to run 4 sequential experiments where the ``model.lr``, ``model.gamma``, ``data.batch_size`` and ``trainer.max_epochs`` are hyper-parameters sampled from several distributions.
 
-.. literalinclude:: ../../../examples/2_app_pytorch_lightning.py
+.. literalinclude:: ../../../sweep_examples/2_app_pytorch_lightning.py
 
 Under the hood, the :class:`~lightning_hpo.components.sweep.Sweep` launches one process per experiment and passed the sampled parameters to your script
 e.g this would work with any argument parser such as `hydra <https://github.com/facebookresearch/hydra>`_ or `jsonargparse <https://github.com/omni-us/jsonargparse>`_.
