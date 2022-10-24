@@ -9,12 +9,14 @@ from lightning.app.utilities.enum import make_status, WorkStageStatus
 
 from lightning_hpo import Objective
 from lightning_hpo.commands.data.create import DataConfig
+from lightning_hpo.commands.notebook.run import NotebookConfig
 from lightning_hpo.commands.sweep.run import SweepConfig
 from lightning_hpo.commands.tensorboard.stop import TensorboardConfig
 from lightning_hpo.utilities.utils import get_primary_key
 
 _MODELS = {
     "DataConfig": DataConfig,
+    "NotebookConfig": NotebookConfig,
     "SweepConfig": SweepConfig,
     "TensorboardConfig": TensorboardConfig,
 }
