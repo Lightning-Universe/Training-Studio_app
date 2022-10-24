@@ -26,7 +26,6 @@ class MockSession:
         self.data = data
 
     def post(self, url, data):
-        print(f"{url}: {data}")
         if "select_all" in url:
             return self.select_all(url, data)
         elif "insert" in url:
