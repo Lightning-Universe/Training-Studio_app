@@ -241,7 +241,7 @@ export function Experiments() {
       toProgress(entry[1]),
       runtimeTime(entry[1]),
       entry[1].name,
-      String(entry[1].best_model_score),
+      String(entry[1].best_model_score?.toPrecision(4)),
       toArgs(sweep.script_args, entry[1].params),
       data,
       String(entry[1].total_parameters),
