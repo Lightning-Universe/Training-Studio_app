@@ -250,16 +250,14 @@ export function Experiments() {
     ]);
   });
 
-  const flatArray = rows
-    .map((row: any[]) =>
-      row.map((entry: any) => {
-        if (!entry || entry == 'null') {
-          return '-';
-        }
-        return entry;
-      }),
-    )
-    .flat();
+  const flatArray = rows.flat().map((row: any[]) =>
+    row.map((entry: any) => {
+      if (!entry || entry == 'null') {
+        return '-';
+      }
+      return entry;
+    }),
+  );
 
   return <Table header={experimentHeader} rows={flatArray} />;
 }
