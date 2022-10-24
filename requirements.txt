@@ -1,2 +1,14 @@
-'jsonargparse[signatures]'
+pytorch_lightning
+jsonargparse[signatures]
+git+https://github.com/Lightning-AI/lightning.git@master
+lightning-jupyter
+lightning_cloud
 torchvision
+optuna
+sqlmodel
+wandb
+streamlit
+sqlalchemy
+hiplot
+sklearn
+sqlite_web
