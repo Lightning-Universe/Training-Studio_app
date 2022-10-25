@@ -196,7 +196,7 @@ export function Experiments() {
         <UserGuideBody>{`lightning connect ${appId} --yes`}</UserGuideBody>
         <UserGuideComment>Download example script</UserGuideComment>
         <UserGuideBody>
-          {'wget https://raw.githubusercontent.com/Lightning-AI/lightning-hpo/master/examples/scripts/train.py'}
+          {'wget https://raw.githubusercontent.com/Lightning-AI/lightning-hpo/master/sweep_examples/scripts/train.py'}
         </UserGuideBody>
         <UserGuideComment>Run a sweep</UserGuideComment>
         <UserGuideBody>
