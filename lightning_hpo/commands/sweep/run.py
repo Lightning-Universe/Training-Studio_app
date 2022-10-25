@@ -35,6 +35,7 @@ class ExperimentConfig(SQLModel, table=False):
     best_model_score: Optional[float]
     monitor: Optional[str]
     best_model_path: Optional[str]
+    last_model_path: Optional[str]
     stage: str = Stage.NOT_STARTED
     params: Dict[str, Union[float, int, str, List[float], List[str]]] = Field(
         sa_column=Column(pydantic_column_type(Dict[str, Union[float, int, List[float], List[str]]]))

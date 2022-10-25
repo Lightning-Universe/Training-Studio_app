@@ -143,6 +143,9 @@ class Sweep(LightningFlow, ControllerResource):
                 if logger_url is not None and self.logger_url != logger_url:
                     self.logger_url = logger_url
 
+                if _check_stage(objective, Stage.FAILED):
+                    continue
+
                 objective.run(
                     params=self._algorithm.get_params(experiment_id),
                     restart_count=self.restart_count,
@@ -153,6 +156,7 @@ class Sweep(LightningFlow, ControllerResource):
                 self.experiments[experiment_id]["start_time"] = getattr(objective, "start_time", None)
                 self.experiments[experiment_id]["end_time"] = getattr(objective, "end_time", None)
                 self.experiments[experiment_id]["best_model_score"] = getattr(objective, "best_model_score", None)
+                self.experiments[experiment_id]["last_model_path"] = str(getattr(objective, "last_model_path", ""))
 
                 if _check_stage(objective, Stage.FAILED):
                     self.experiments[experiment_id]["stage"] = Stage.FAILED
@@ -239,6 +243,7 @@ class Sweep(LightningFlow, ControllerResource):
                 experiment_id=experiment_id,
                 experiment_name=experiment_config["name"],
                 cloud_compute=cloud_compute,
+                last_model_path=experiment_config["last_model_path"],
                 **self._kwargs,
             )
             setattr(self, f"w_{experiment_id}", objective)
