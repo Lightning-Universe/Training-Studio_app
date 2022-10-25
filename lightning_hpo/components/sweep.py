@@ -143,6 +143,9 @@ class Sweep(LightningFlow, ControllerResource):
                 if logger_url is not None and self.logger_url != logger_url:
                     self.logger_url = logger_url
 
+                if _check_stage(objective, Stage.FAILED):
+                    continue
+
                 objective.run(
                     params=self._algorithm.get_params(experiment_id),
                     restart_count=self.restart_count,
@@ -153,6 +156,7 @@ class Sweep(LightningFlow, ControllerResource):
                 self.experiments[experiment_id]["start_time"] = getattr(objective, "start_time", None)
                 self.experiments[experiment_id]["end_time"] = getattr(objective, "end_time", None)
                 self.experiments[experiment_id]["best_model_score"] = getattr(objective, "best_model_score", None)
+                self.experiments[experiment_id]["last_model_path"] = str(getattr(objective, "last_model_path", ""))
 
                 if _check_stage(objective, Stage.FAILED):
                     self.experiments[experiment_id]["stage"] = Stage.FAILED
@@ -239,28 +243,25 @@ class Sweep(LightningFlow, ControllerResource):
                 experiment_id=experiment_id,
                 experiment_name=experiment_config["name"],
                 cloud_compute=cloud_compute,
+                last_model_path=experiment_config["last_model_path"],
                 **self._kwargs,
             )
             setattr(self, f"w_{experiment_id}", objective)
+            self.experiments[experiment_id]["stage"] = Stage.PENDING
         return objective
 
     @classmethod
     def from_config(cls, config: SweepConfig, code: Optional[Code] = None, mounts: Optional[List[Mount]] = None):
 
         if config.algorithm == "grid_search":
-            distributions = {k: v.dict()["params"]["choices"] for k, v in config.distributions.items()}
-            algorithm = GridSearch(distributions)
-            distributions = {}
+            algorithm = GridSearch({k: v.dict()["params"]["choices"] for k, v in config.distributions.items()})
             config.total_experiments = algorithm.total_experiments
             config.parallel_experiments = algorithm.total_experiments
 
         elif config.algorithm == "random_search":
             algorithm = RandomSearch({k: v.dict() for k, v in config.distributions.items()})
-            distributions = {}
-
         else:
             algorithm = OptunaAlgorithm(direction=config.direction)
-            distributions = {k: v.dict() for k, v in config.distributions.items()}
 
         return cls(
             script_path=config.script_path,
@@ -269,7 +270,7 @@ class Sweep(LightningFlow, ControllerResource):
             framework=config.framework,
             script_args=config.script_args,
             total_experiments_done=config.total_experiments_done,
-            distributions=distributions,
+            distributions={k: v.dict() for k, v in config.distributions.items()},
             cloud_compute=HPOCloudCompute(
                 config.cloud_compute,
                 count=config.num_nodes,

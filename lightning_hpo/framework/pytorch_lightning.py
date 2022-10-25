@@ -2,6 +2,7 @@ import time
 from typing import Any, Dict, Optional
 
 from lightning.app.components.training import LightningTrainingComponent, PyTorchLightningScriptRunner
+from lightning.app.storage import Path
 
 from lightning_hpo.framework.agnostic import Objective
 
@@ -19,6 +20,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         experiment_id: int,
         experiment_name: str,
         num_nodes: int,
+        last_model_path: Optional[str] = None,
         **kwargs,
     ):
         Objective.__init__(
@@ -34,6 +36,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         self.total_parameters = None
         self.start_time = None
         self.end_time = None
+        self.last_model_path = Path(last_model_path) if last_model_path else None
 
     def configure_tracer(self):
         tracer = Objective.configure_tracer(self)
@@ -41,7 +44,14 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
             return self.add_metadata_tracker(tracer)
         return tracer
 
-    def run(self, params: Optional[Dict[str, Any]] = None, restart_count: int = 0, **kwargs):
+    def run(
+        self,
+        params: Optional[Dict[str, Any]] = None,
+        restart_count: int = 0,
+        **kwargs,
+    ):
+        if self.last_model_path:
+            self.last_model_path.get(overwrite=True)
         self.params = params
         return PyTorchLightningScriptRunner.run(self, params=params, **kwargs)
 
@@ -78,6 +88,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
                 stage: Optional[str] = None,
             ) -> None:
                 self.device_stats_callback.setup(trainer, pl_module, stage)
+                trainer.checkpoint_callback.save_last = True
 
             @rank_zero_only
             def on_train_batch_end(self, trainer, pl_module, *args) -> None:
@@ -99,8 +110,8 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
                     human_readable = get_human_readable_count(total_parameters)
                     self.work.total_parameters = str(human_readable)
 
-                if trainer.checkpoint_callback.best_model_score:
-                    self.best_model_score = float(trainer.checkpoint_callback.best_model_score)
+                if trainer.checkpoint_callback.last_model_path:
+                    self.work.last_model_path = Path(trainer.checkpoint_callback.last_model_path)
 
                 self.device_stats_callback.on_train_batch_end(trainer, pl_module, *args)
 
@@ -110,7 +121,16 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
             kwargs["callbacks"] = callbacks
             return {}, args, kwargs
 
+        def fit_pre_fn(trainer, *args, **kwargs):
+            ckpt_path = kwargs.get("ckpt_path", None)
+            if not ckpt_path and isinstance(self.last_model_path, Path):
+                ckpt_path = str(self.last_model_path)
+                print(f"Restarting from checkpoint: {ckpt_path}")
+                kwargs["ckpt_path"] = ckpt_path
+            return {}, args, kwargs
+
         tracer.add_traced(pl.Trainer, "__init__", pre_fn=trainer_pre_fn)
+        tracer.add_traced(pl.Trainer, "fit", pre_fn=fit_pre_fn)
 
         return tracer
 
@@ -146,10 +166,12 @@ class ObjectiveLightningTrainingComponent(LightningTrainingComponent):
         self.reports = []
         self.has_stored = False
 
-    def run(self, params: Optional[Dict[str, Any]] = None, restart_count: int = 0):
+    def run(
+        self, params: Optional[Dict[str, Any]] = None, restart_count: int = 0, last_model_path: Optional[str] = None
+    ):
         self.params = params
         self.restart_count = restart_count
-        super().run(params=params, restart_count=restart_count)
+        super().run(params=params, restart_count=restart_count, last_model_path=last_model_path)
 
     @property
     def start_time(self):
@@ -174,6 +196,10 @@ class ObjectiveLightningTrainingComponent(LightningTrainingComponent):
     @property
     def best_model_path(self):
         return self.ws[0].best_model_path
+
+    @property
+    def last_model_path(self):
+        return self.ws[0].last_model_path
 
     @property
     def best_model_score(self):

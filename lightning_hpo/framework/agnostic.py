@@ -27,6 +27,7 @@ class Objective(TracerPythonScript, ABC):
         raise_exception: bool = False,
         function_name: str = "objective",
         num_nodes: int = 1,  # TODO # Add support for multi node
+        last_model_path: Optional[str] = None,
         **kwargs,
     ):
         super().__init__(*args, raise_exception=raise_exception, **kwargs)
@@ -47,6 +48,7 @@ class Objective(TracerPythonScript, ABC):
         self.has_stored = False
         self.num_nodes = num_nodes
         self.progress = None
+        self.last_model_path = last_model_path
 
     def configure_tracer(self):
         assert self.params is not None
