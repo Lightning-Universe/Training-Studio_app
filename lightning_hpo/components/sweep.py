@@ -242,25 +242,21 @@ class Sweep(LightningFlow, ControllerResource):
                 **self._kwargs,
             )
             setattr(self, f"w_{experiment_id}", objective)
+            self.experiments[experiment_id]["stage"] = Stage.PENDING
         return objective
 
     @classmethod
     def from_config(cls, config: SweepConfig, code: Optional[Code] = None, mounts: Optional[List[Mount]] = None):
 
         if config.algorithm == "grid_search":
-            distributions = {k: v.dict()["params"]["choices"] for k, v in config.distributions.items()}
-            algorithm = GridSearch(distributions)
-            distributions = {}
+            algorithm = GridSearch({k: v.dict()["params"]["choices"] for k, v in config.distributions.items()})
             config.total_experiments = algorithm.total_experiments
             config.parallel_experiments = algorithm.total_experiments
 
         elif config.algorithm == "random_search":
             algorithm = RandomSearch({k: v.dict() for k, v in config.distributions.items()})
-            distributions = {}
-
         else:
             algorithm = OptunaAlgorithm(direction=config.direction)
-            distributions = {k: v.dict() for k, v in config.distributions.items()}
 
         return cls(
             script_path=config.script_path,
@@ -269,7 +265,7 @@ class Sweep(LightningFlow, ControllerResource):
             framework=config.framework,
             script_args=config.script_args,
             total_experiments_done=config.total_experiments_done,
-            distributions=distributions,
+            distributions={k: v.dict() for k, v in config.distributions.items()},
             cloud_compute=HPOCloudCompute(
                 config.cloud_compute,
                 count=config.num_nodes,
