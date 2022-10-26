@@ -10,6 +10,7 @@ from lightning_hpo.commands.experiment.delete import DeleteExperimentCommand, De
 from lightning_hpo.commands.experiment.run import RunExperimentCommand
 from lightning_hpo.commands.experiment.show import ShowExperimentsCommand
 from lightning_hpo.commands.experiment.stop import StopExperimentCommand, StopExperimentConfig
+from lightning_hpo.commands.logs.show import ShowLogsConfig
 from lightning_hpo.commands.sweep.delete import DeleteSweepCommand, DeleteSweepConfig
 from lightning_hpo.commands.sweep.run import RunSweepCommand, SweepConfig
 from lightning_hpo.commands.sweep.show import ShowSweepsCommand
@@ -155,6 +156,22 @@ class SweepController(Controller):
                     self.r[sweep.sweep_id].stop_experiment(experiment_id)
                     return f"The current experiment `{experiment.name}` has been stopped."
         return f"The current experiment `{config.name}` doesn't exist."
+
+    def show_logs(self) -> List[ShowLogsConfig]:
+        data = []
+        for sweep in self.db.select_all():
+            if sweep.sweep_id in self.r:
+                works = self.r[sweep.sweep_id].works()
+                if sweep.algorithm:
+                    data.append(ShowLogsConfig(name=sweep.sweep_id, components=[w.name for w in works]))
+                for experiment in sweep.experiments.values():
+                    data.append(
+                        ShowLogsConfig(
+                            name=experiment.name,
+                            components=[w.name for w in works if w.experiment_name == experiment.name],
+                        )
+                    )
+        return data
 
     def configure_commands(self):
         return [

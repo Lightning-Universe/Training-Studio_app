@@ -21,6 +21,7 @@ from lightning_hpo.commands.artifacts.show import (
 from lightning_hpo.commands.data.create import CreateDataCommand, DataConfig
 from lightning_hpo.commands.data.delete import DeleteDataCommand, DeleteDataConfig
 from lightning_hpo.commands.data.show import ShowDataCommand
+from lightning_hpo.commands.logs.show import ShowLogsCommand
 
 # from lightning_hpo.controllers.notebook import NotebookController
 from lightning_hpo.controllers.sweep import SweepController
@@ -118,6 +119,7 @@ class ResearchStudio(LightningFlow):
             {"create data": CreateDataCommand(self.create_data)},
             {"delete data": DeleteDataCommand(self.delete_data)},
             {"show data": ShowDataCommand(self.show_data)},
+            {"show logs": ShowLogsCommand(self.sweep_controller.show_logs)},
         ]
         return controller_commands
 
