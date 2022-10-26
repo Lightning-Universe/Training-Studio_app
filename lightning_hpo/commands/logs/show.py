@@ -38,14 +38,14 @@ class ShowLogsCommand(ClientCommand):
         if not components:
             print(
                 f"The provided name {hparams.name} wasn't found."
-                f"Here are the sweeps {sweeps} and experiments {experiments}."
+                f" Here are the sweeps {sweeps} and experiments {experiments}."
             )
             sys.exit(0)
 
-        app_name, app_id = _retrieve_connection_to_an_app()
+        app_name, _ = _retrieve_connection_to_an_app()
 
         if app_name == "localhost":
-            print("The command `show logs` is currently support only in the cloud.")
+            print("The command `show logs` is currently supported only in the cloud.")
             sys.exit(0)
 
         _show_logs(app_name, components, hparams.follow)

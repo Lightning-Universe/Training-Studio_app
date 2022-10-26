@@ -71,7 +71,6 @@ class SweepController(Controller):
                 work_name = urllib.parse.quote_plus(update.sweep_id)
                 for w in self.r[work_name].works():
                     w.stop()
-                self.r.pop(work_name)
 
     def run_sweep(self, config: SweepConfig) -> str:
         work_name = urllib.parse.quote_plus(config.sweep_id)
