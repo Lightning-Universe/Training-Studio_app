@@ -59,12 +59,12 @@ function createLoggerUrl(url?: string) {
 }
 
 function stopTensorboard(tensorboardConfig: TensorboardConfig) {
-  appClient.appCommand.stopTensorboardCommandStopTensorboardPost({ sweep_id: tensorboardConfig.sweep_id });
+  appClient.appApi.stopTensorboardApiStopTensorboardPost({ sweep_id: tensorboardConfig.sweep_id });
 }
 
 function runTensorboard(tensorboardConfig?: TensorboardConfig) {
   if (tensorboardConfig) {
-    appClient.appCommand.runTensorboardCommandRunTensorboardPost({
+    appClient.appApi.runTensorboardApiRunTensorboardPost({
       id: tensorboardConfig.id,
       sweep_id: tensorboardConfig.sweep_id,
       shared_folder: tensorboardConfig.shared_folder,
@@ -196,7 +196,7 @@ export function Experiments() {
         <UserGuideBody>{`lightning connect ${appId} --yes`}</UserGuideBody>
         <UserGuideComment>Download example script</UserGuideComment>
         <UserGuideBody>
-          {'wget https://raw.githubusercontent.com/Lightning-AI/lightning-hpo/master/examples/scripts/train.py'}
+          {'wget https://raw.githubusercontent.com/Lightning-AI/lightning-hpo/master/sweep_examples/scripts/train.py'}
         </UserGuideBody>
         <UserGuideComment>Run a sweep</UserGuideComment>
         <UserGuideBody>

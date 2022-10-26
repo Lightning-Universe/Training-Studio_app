@@ -4,7 +4,7 @@
 
 Imagine you want to optimize a simple function called ``objective`` inside an ``objective.py`` file.
 
-.. literalinclude:: ../../../examples/scripts/objective.py
+.. literalinclude:: ../../../sweep_examples/scripts/objective.py
 
 ----
 
@@ -14,7 +14,7 @@ Imagine you want to optimize a simple function called ``objective`` inside an ``
 
 Import a ``Sweep`` component and provide the path to your script and what you want to optimize on.
 
-.. literalinclude:: ../../../examples/1_app_agnostic.py
+.. literalinclude:: ../../../sweep_examples/1_app_agnostic.py
 
 ----
 
@@ -26,12 +26,12 @@ Now, you can optimize it locally.
 
 .. code-block::
 
-   python -m lightning run app examples/1_app_agnostic.py
+   python -m lightning run app sweep_examples/1_app_agnostic.py
 
 or with ``--cloud`` to run it in the cloud.
 
 .. code-block::
 
-   python -m lightning run app examples/1_app_agnostic.py --cloud
+   python -m lightning run app sweep_examples/1_app_agnostic.py --cloud
 
 .. note:: Locally, each experiment runs in its own process, so there is overhead if your objective is quick to run.

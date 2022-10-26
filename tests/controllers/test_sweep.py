@@ -31,6 +31,7 @@ def test_sweep_controller(monkeypatch):
     assert "best_model_score" in config.distributions
     response = sweep_controller.run_sweep(config)
     assert response == "The provided Data 'a/' doesn't exist."
+    sweep_controller.db._session.model = [SweepConfig, DataConfig, TensorboardConfig]
     mount_config = DataConfig(name="a/", source="s3://a/", mount_path=os.path.dirname(__file__) + "/")
     sweep_controller.db.insert(mount_config)
     response = sweep_controller.run_sweep(config)
@@ -39,7 +40,7 @@ def test_sweep_controller(monkeypatch):
     assert len(sweep_controller.db.select_all(SweepConfig)) == 1
 
     assert sweep_controller.tensorboard_sweep_id is None
-    sweep_controller.run("a")
+    sweep_controller.run("a", "b")
     assert isinstance(sweep_controller.r["a"], Sweep)
     sweep_controller.r["a"] = sweep
     sweep_controller.r["a"]._objective_cls = MockObjective
@@ -49,7 +50,7 @@ def test_sweep_controller(monkeypatch):
     assert response == "The current Sweep 'a' is running. It couldn't be updated."
 
     while True:
-        sweep_controller.run("a")
+        sweep_controller.run("a", "b")
         if sweep_controller.r.get("a", None) is None:
             break
 

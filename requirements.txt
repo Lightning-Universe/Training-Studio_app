@@ -1,6 +1,5 @@
-pytorch_lightning
 jsonargparse[signatures]
-git+https://github.com/Lightning-AI/lightning.git@master
+lightning==2022.10.25
 lightning-jupyter
 lightning_cloud
 torchvision

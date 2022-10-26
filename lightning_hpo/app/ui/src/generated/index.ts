@@ -26,6 +26,6 @@ export type { SweepConfig } from './models/SweepConfig';
 export type { TensorboardConfig } from './models/TensorboardConfig';
 export type { ValidationError } from './models/ValidationError';
 
+export { AppApiService } from './services/AppApiService';
 export { AppClientCommandService } from './services/AppClientCommandService';
-export { AppCommandService } from './services/AppCommandService';
 export { DefaultService } from './services/DefaultService';

@@ -112,7 +112,7 @@ class GridSearch(Algorithm):
         pass
 
     def register_distributions(self, distributions):
-        assert not distributions
+        pass
 
     def get_params(self, experiment_id: int) -> Dict[str, Any]:
         return self.experiments[experiment_id]

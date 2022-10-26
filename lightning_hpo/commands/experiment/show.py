@@ -37,7 +37,7 @@ class ShowExperimentsCommand(ClientCommand):
     description = "Show Experiments."
 
     def run(self) -> None:
-        if sys.argv[-1] == "--help":
+        if sys.argv and sys.argv[-1] == "--help":
             print("optional arguments:")
             print("  -h, --help   show this help message and exit")
             return
