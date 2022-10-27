@@ -3,9 +3,9 @@ import shutil
 
 import psutil
 import pytest
-from lightning_app.storage.path import storage_root_dir
-from lightning_app.utilities.component import _set_context
-from lightning_app.utilities.packaging.app_config import _APP_CONFIG_FILENAME
+from lightning.app.storage.path import storage_root_dir
+from lightning.app.utilities.component import _set_context
+from lightning.app.utilities.packaging.app_config import _APP_CONFIG_FILENAME
 
 
 def pytest_sessionfinish(session, exitstatus):
@@ -29,7 +29,7 @@ def pytest_sessionfinish(session, exitstatus):
 
 @pytest.fixture(scope="function", autouse=True)
 def cleanup():
-    from lightning_app.utilities.app_helpers import _LightningAppRef
+    from lightning.app.utilities.app_helpers import _LightningAppRef
 
     yield
     _LightningAppRef._app_instance = None

@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock
 
-from lightning_app.utilities.enum import CacheCallsKeys
+from lightning.app.utilities.enum import CacheCallsKeys
 
 from lightning_hpo.commands.notebook.run import NotebookConfig
 from lightning_hpo.controllers import controller, notebook

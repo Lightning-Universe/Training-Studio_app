@@ -8,8 +8,8 @@ import pytorch_lightning
 from fsspec.implementations.local import LocalFileSystem
 from lightning import LightningFlow
 from lightning.app.storage import Drive
+from lightning.app.storage.path import filesystem
 from lightning.pytorch.loggers import TensorBoardLogger
-from lightning_app.storage.path import filesystem
 
 from lightning_hpo.loggers.logger import Logger
 
