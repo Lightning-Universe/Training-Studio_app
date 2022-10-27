@@ -57,7 +57,7 @@ ______________________________________________________________________
 In your first terminal, run the Lightning App.
 
 ```bash
-python -m lightning run app app.py.
+python -m lightning run app app.py
 ```
 
 In second terminal, connect to the Lightning App and download its CLI.
