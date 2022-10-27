@@ -84,6 +84,8 @@ class TensorboardLogger(Logger):
         return []
 
     def configure_tracer(self, tracer, sweep_id: str, experiment_id: int, experiment_name: str, params: Dict[str, Any]):
+        import pytorch_lightning
+
         # Create a space logs under the sweep_id folder
         import pytorch_lightning
 
