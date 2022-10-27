@@ -4,12 +4,11 @@ from pathlib import Path
 from time import time
 from typing import Any, Dict, Optional
 
-import pytorch_lightning
 from fsspec.implementations.local import LocalFileSystem
 from lightning import LightningFlow
 from lightning.app.storage import Drive
+from lightning.app.storage.path import filesystem
 from lightning.pytorch.loggers import TensorBoardLogger
-from lightning_app.storage.path import filesystem
 
 from lightning_hpo.loggers.logger import Logger
 
@@ -85,6 +84,8 @@ class TensorboardLogger(Logger):
         return []
 
     def configure_tracer(self, tracer, sweep_id: str, experiment_id: int, experiment_name: str, params: Dict[str, Any]):
+        import pytorch_lightning
+
         # Create a space logs under the sweep_id folder
         drive = Drive(f"lit://{sweep_id}", component_name=experiment_name, allow_duplicates=True)
         use_localhost = "LIGHTNING_APP_STATE_URL" not in os.environ

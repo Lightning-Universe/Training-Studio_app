@@ -6,8 +6,8 @@ import time
 
 import psutil
 from behave import fixture, use_fixture
-from lightning_app.cli.lightning_cli import get_app_url
-from lightning_app.runners.runtime_type import RuntimeType
+from lightning.app.cli.lightning_cli import get_app_url
+from lightning.app.runners.runtime_type import RuntimeType
 from playwright.sync_api import expect, sync_playwright
 
 from lightning_hpo import _PROJECT_ROOT
