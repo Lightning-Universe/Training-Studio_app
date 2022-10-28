@@ -7,9 +7,9 @@ from typing import Any, Dict, Optional
 from lightning_hpo.utilities.imports import _IS_PYTORCH_LIGHTNING_AVAILABLE
 
 if _IS_PYTORCH_LIGHTNING_AVAILABLE:
-    import pytorch_lightning as pl
+    import pytorch_lightning
 else:
-    import lightning.pytorch as pl
+    import lightning.pytorch as pytorch_lightning
 
 from fsspec.implementations.local import LocalFileSystem
 from lightning import LightningFlow
@@ -107,7 +107,7 @@ class TensorboardLogger(Logger):
             kwargs["logger"] = logger
             return {}, args, kwargs
 
-        tracer.add_traced(pl.Trainer, "__init__", pre_fn=trainer_pre_fn)
+        tracer.add_traced(pytorch_lightning.Trainer, "__init__", pre_fn=trainer_pre_fn)
 
     def get_url(self, experiment_id: int) -> None:
         pass
