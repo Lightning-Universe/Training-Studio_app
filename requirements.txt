@@ -1,4 +1,5 @@
 jsonargparse[signatures]
+pytorch_lightning
 lightning==1.8.0rc1
 lightning-jupyter
 lightning_cloud
