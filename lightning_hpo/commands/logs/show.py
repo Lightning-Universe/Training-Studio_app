@@ -20,7 +20,10 @@ class ShowLogsCommand(ClientCommand):
     def run(self):
         parser = argparse.ArgumentParser()
         parser.add_argument(
-            "--name", required=True, type=str, help="The name of the experiment or Sweep to show logs from."
+            "--names",
+            nargs="+",
+            default=[],
+            help="The name or names of the Experiment(s), Sweep(s) or components to show logs from.",
         )
         parser.add_argument("-f", "--follow", action="store_true", default=False)
         hparams = parser.parse_args()
@@ -32,8 +35,11 @@ class ShowLogsCommand(ClientCommand):
         experiments = [c["name"] for c in logs_config if len(c["components"]) == 1]
 
         for config in logs_config:
-            if hparams.name == config["name"]:
-                components.extend(config["components"])
+            for name in hparams.names:
+                if name == config["name"]:
+                    components.extend(config["components"])
+                elif name not in components:
+                    components.append(name)
 
         if not components:
             print(
@@ -48,4 +54,4 @@ class ShowLogsCommand(ClientCommand):
             print("The command `show logs` is currently supported only in the cloud.")
             sys.exit(0)
 
-        _show_logs(app_name, components, hparams.follow)
+        _show_logs(app_name, list(set(components)), hparams.follow)
