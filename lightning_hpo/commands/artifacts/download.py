@@ -8,6 +8,7 @@ import requests
 from lightning.app.utilities.cloud import _get_project
 from lightning.app.utilities.commands import ClientCommand
 from lightning.app.utilities.network import LightningClient
+from lightning.app.utilities.cloud import _get_project
 from pydantic import BaseModel
 from tqdm.auto import tqdm
 

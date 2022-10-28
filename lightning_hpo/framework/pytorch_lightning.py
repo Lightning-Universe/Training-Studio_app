@@ -65,15 +65,27 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         return None
 
     def add_metadata_tracker(self, tracer):
-        import pytorch_lightning as pl
-        from pytorch_lightning.callbacks import Callback, DeviceStatsMonitor
-        from pytorch_lightning.strategies.deepspeed import DeepSpeedStrategy
-        from pytorch_lightning.utilities import rank_zero_only
-        from pytorch_lightning.utilities.model_summary.model_summary import (
-            _is_lazy_weight_tensor,
-            get_human_readable_count,
-        )
-        from pytorch_lightning.utilities.model_summary.model_summary_deepspeed import deepspeed_param_size
+        from lightning_hpo.utilities.imports import _IS_PYTORCH_LIGHTNING_AVAILABLE 
+        if _IS_PYTORCH_LIGHTNING_AVAILABLE:
+            import pytorch_lightning as pl
+            from pytorch_lightning.callbacks import Callback, DeviceStatsMonitor
+            from pytorch_lightning.strategies.deepspeed import DeepSpeedStrategy
+            from pytorch_lightning.utilities import rank_zero_only
+            from pytorch_lightning.utilities.model_summary.model_summary import (
+                _is_lazy_weight_tensor,
+                get_human_readable_count,
+            )
+            from pytorch_lightning.utilities.model_summary.model_summary_deepspeed import deepspeed_param_size
+        else:
+            import lightning.pytorch as pl
+            from lightning.pytorch.callbacks import Callback, DeviceStatsMonitor
+            from lightning.pytorch.strategies.deepspeed import DeepSpeedStrategy
+            from lightning.pytorch.utilities import rank_zero_only
+            from lightning.pytorch.utilities.model_summary.model_summary import (
+                _is_lazy_weight_tensor,
+                get_human_readable_count,
+            )
+            from lightning.pytorch.utilities.model_summary.model_summary_deepspeed import deepspeed_param_size
 
         class ProgressCallback(Callback):
             def __init__(self, work):

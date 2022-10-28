@@ -7,9 +7,9 @@ from lightning_hpo.loggers.logger import Logger
 from lightning_hpo.utilities.imports import _IS_PYTORCH_LIGHTNING_AVAILABLE, _IS_WANDB_AVAILABLE
 
 if _IS_PYTORCH_LIGHTNING_AVAILABLE:
-    import pytorch_lightning
+    import pytorch_lightning as pl
 else:
-    import lightning.pytorch as pytorch_lightning
+    import lightning.pytorch as pl
 
 if _IS_WANDB_AVAILABLE:
     import wandb
@@ -93,7 +93,7 @@ class WandbLogger(Logger):
             wandb.summary[k] = v
 
         def trainer_pre_fn(trainer, *args, **kwargs):
-            logger = pytorch_lightning.loggers.WandbLogger(
+            logger = pl.loggers.WandbLogger(
                 save_dir=os.path.join(os.getcwd(), "wandb/lightning_logs"),
                 project=sweep_id,
                 entity=self.entity,
@@ -102,7 +102,7 @@ class WandbLogger(Logger):
             kwargs["logger"] = [logger]
             return {}, args, kwargs
 
-        tracer.add_traced(pytorch_lightning.Trainer, "__init__", pre_fn=trainer_pre_fn)
+        tracer.add_traced(pl.Trainer, "__init__", pre_fn=trainer_pre_fn)
 
     def get_url(self, experiment_id: int) -> None:
         if self.storage_id is not None:
