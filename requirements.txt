@@ -1,5 +1,6 @@
 jsonargparse[signatures]
-lightning==2022.10.25
+pytorch_lightning
+lightning==1.8.0rc1
 lightning-jupyter
 lightning_cloud
 torchvision
