@@ -1,6 +1,7 @@
 import time
 from typing import Any, Dict, Optional
 
+import pytorch_lightning
 from lightning.app.components.training import LightningTrainingComponent, PyTorchLightningScriptRunner
 from lightning.app.storage import Path
 
@@ -57,23 +58,57 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
 
     def on_after_run(self, script_globals):
         self.end_time = time.time()
-        PyTorchLightningScriptRunner.on_after_run(self, script_globals)
+        self._on_after_run(script_globals)
         self.best_model_path = str(self.best_model_path)
+
+    def _on_after_run(self, script_globals):
+        for v in script_globals.values():
+            if isinstance(v, (pytorch_lightning.cli.LightningCLI)):
+                trainer = v.trainer
+                break
+            elif isinstance(v, (pytorch_lightning.Trainer)):
+                trainer = v
+                break
+        else:
+            raise RuntimeError("No trainer instance found.")
+
+        self.monitor = trainer.checkpoint_callback.monitor
+
+        if trainer.checkpoint_callback.best_model_score:
+            self.best_model_path = Path(trainer.checkpoint_callback.best_model_path)
+            self.best_model_score = float(trainer.checkpoint_callback.best_model_score)
+        else:
+            self.best_model_path = Path(trainer.checkpoint_callback.last_model_path)
+
+        self.has_finished = True
 
     @classmethod
     def distributions(cls):
         return None
 
     def add_metadata_tracker(self, tracer):
-        import pytorch_lightning as pl
-        from pytorch_lightning.callbacks import Callback, DeviceStatsMonitor
-        from pytorch_lightning.strategies.deepspeed import DeepSpeedStrategy
-        from pytorch_lightning.utilities import rank_zero_only
-        from pytorch_lightning.utilities.model_summary.model_summary import (
-            _is_lazy_weight_tensor,
-            get_human_readable_count,
-        )
-        from pytorch_lightning.utilities.model_summary.model_summary_deepspeed import deepspeed_param_size
+        from lightning_hpo.utilities.imports import _IS_PYTORCH_LIGHTNING_AVAILABLE
+
+        if _IS_PYTORCH_LIGHTNING_AVAILABLE:
+            import pytorch_lightning as pl
+            from pytorch_lightning.callbacks import Callback, DeviceStatsMonitor
+            from pytorch_lightning.strategies.deepspeed import DeepSpeedStrategy
+            from pytorch_lightning.utilities import rank_zero_only
+            from pytorch_lightning.utilities.model_summary.model_summary import (
+                _is_lazy_weight_tensor,
+                get_human_readable_count,
+            )
+            from pytorch_lightning.utilities.model_summary.model_summary_deepspeed import deepspeed_param_size
+        else:
+            import lightning.pytorch as pl
+            from lightning.pytorch.callbacks import Callback, DeviceStatsMonitor
+            from lightning.pytorch.strategies.deepspeed import DeepSpeedStrategy
+            from lightning.pytorch.utilities import rank_zero_only
+            from lightning.pytorch.utilities.model_summary.model_summary import (
+                _is_lazy_weight_tensor,
+                get_human_readable_count,
+            )
+            from lightning.pytorch.utilities.model_summary.model_summary_deepspeed import deepspeed_param_size
 
         class ProgressCallback(Callback):
             def __init__(self, work):
