@@ -1,6 +1,9 @@
 import os
 
 from lightning_hpo.commands.data.create import DataConfig
+from lightning_hpo.commands.experiment.delete import DeleteExperimentConfig
+from lightning_hpo.commands.experiment.run import ExperimentConfig
+from lightning_hpo.commands.sweep.delete import DeleteSweepConfig
 from lightning_hpo.commands.sweep.run import SweepConfig
 from lightning_hpo.commands.tensorboard.stop import TensorboardConfig
 from lightning_hpo.components.sweep import Sweep
@@ -57,3 +60,60 @@ def test_sweep_controller(monkeypatch):
             break
 
     assert sweep_controller.db.data["SweepConfig:a"]["stage"] == Stage.SUCCEEDED
+
+
+def test_sweep_controller_delete_sweep(monkeypatch):
+    sweep = Sweep(
+        sweep_id="a",
+        script_path=__file__,
+        total_experiments=2,
+        requirements=[],
+        parallel_experiments=1,
+        logger="tensorboard",
+        distributions={"best_model_score": Uniform(1, 10)},
+        framework="pytorch_lightning",
+        data={"a/": None},
+    )
+    sweep_controller = SweepController()
+    sweep_controller.db_url = "a"
+    monkeypatch.setattr(controller, "DatabaseClient", MockDatabaseClient)
+    config: SweepConfig = sweep.collect_model()
+
+    response = sweep_controller.run_sweep(config)
+    assert response == "Launched a Sweep 'a'."
+    assert len(sweep_controller.db.select_all(TensorboardConfig)) == 1
+
+    delete_config = DeleteSweepConfig()
+    delete_config.name = config.sweep_id
+
+    sweep_controller.delete_sweep(delete_config)
+    assert len(sweep_controller.db.select_all(TensorboardConfig)) == 0
+
+
+def test_sweep_controller_delete_experiment(monkeypatch):
+    sweep = Sweep(
+        sweep_id="a",
+        script_path=__file__,
+        total_experiments=1,
+        requirements=[],
+        parallel_experiments=1,
+        logger="tensorboard",
+        distributions={},
+        experiments={0: ExperimentConfig(name="a", params={})},
+        framework="pytorch_lightning",
+        data={"a/": None},
+    )
+    sweep_controller = SweepController()
+    sweep_controller.db_url = "a"
+    monkeypatch.setattr(controller, "DatabaseClient", MockDatabaseClient)
+    config: SweepConfig = sweep.collect_model()
+
+    response = sweep_controller.run_sweep(config)
+    assert response == "Launched a Sweep 'a'."
+    assert len(sweep_controller.db.select_all(TensorboardConfig)) == 1
+
+    delete_config = DeleteExperimentConfig()
+    delete_config.name = config.sweep_id
+
+    sweep_controller.delete_experiment(delete_config)
+    assert len(sweep_controller.db.select_all(TensorboardConfig)) == 0

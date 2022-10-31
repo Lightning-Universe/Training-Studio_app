@@ -119,23 +119,32 @@ class SweepController(Controller):
                     sweep = sweep.collect_model()
                     del self.r[config.name]
                 self.db.delete(sweep)
+                for tensorboard in self.db.select_all(TensorboardConfig):
+                    if tensorboard.sweep_id == config.name:
+                        tensorboard.desired_stage = Stage.STOPPED
+                        self.db.update(tensorboard)
                 return f"Deleted the sweep `{config.name}`"
         return f"We didn't find the sweep `{config.name}`"
 
     def delete_experiment(self, config: DeleteExperimentConfig):
         sweeps: List[SweepConfig] = self.db.select_all()
         for sweep in sweeps:
-            if config.name != sweep.sweep_id:
-                continue
-            else:
-                if config.name in self.r:
-                    sweep: Sweep = self.r[config.name]
-                    for w in sweep.works():
-                        w.stop()
-                    sweep = sweep.collect_model()
-                    del self.r[config.name]
-                self.db.delete(sweep)
-                return f"Deleted the experiment `{config.name}`"
+            for experiment in sweep.experiments.values():
+                if config.name == experiment.name:
+                    if config.name != sweep.sweep_id:
+                        return f"The experiment `{config.name}` is part of sweep `{sweep.sweep_id}`, which includes multiple experiments. Deleting individual experiments of a sweep is currently unsupported."
+                    if config.name in self.r:
+                        sweep: Sweep = self.r[config.name]
+                        for w in sweep.works():
+                            w.stop()
+                        sweep = sweep.collect_model()
+                        del self.r[config.name]
+                    self.db.delete(sweep)
+                    for tensorboard in self.db.select_all(TensorboardConfig):
+                        if tensorboard.sweep_id == config.name:
+                            tensorboard.desired_stage = Stage.STOPPED
+                            self.db.update(tensorboard)
+                    return f"Deleted the experiment `{config.name}`"
         return f"We didn't find the experiment `{config.name}`"
 
     def run_experiment(self, config: SweepConfig) -> str:
