@@ -8,14 +8,15 @@ from lightning_hpo.utilities.imports import _IS_PYTORCH_LIGHTNING_AVAILABLE
 
 if _IS_PYTORCH_LIGHTNING_AVAILABLE:
     import pytorch_lightning
+    from pytorch_lightning.loggers import TensorBoardLogger
 else:
     import lightning.pytorch as pytorch_lightning
+    from lightning.pytorch.loggers import TensorBoardLogger
 
 from fsspec.implementations.local import LocalFileSystem
 from lightning import LightningFlow
 from lightning.app.storage import Drive
 from lightning.app.storage.path import filesystem
-from lightning.pytorch.loggers import TensorBoardLogger
 
 from lightning_hpo.loggers.logger import Logger
 
