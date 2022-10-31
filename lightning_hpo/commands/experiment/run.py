@@ -74,7 +74,7 @@ class RunExperimentCommand(ClientCommand):
         if len(hparams.requirements) == 1 and Path(hparams.requirements[0]).resolve().exists():
             requirements_path = Path(hparams.requirements[0]).resolve()
             with open(requirements_path, "r") as f:
-                hparams.requirements = [line.replace("\n", "") for line in f.readlines()]
+                hparams.requirements = [line.replace("\n", "") for line in f.readlines() if line.strip()]
 
         repo = CustomLocalSourceCodeDir(path=Path(hparams.script_path).parent.resolve())
 
