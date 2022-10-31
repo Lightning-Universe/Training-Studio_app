@@ -51,6 +51,7 @@ class Sweep(LightningFlow, ControllerResource):
         direction: Optional[str] = None,
         total_experiments_done: Optional[int] = 0,
         requirements: Optional[List[str]] = None,
+        packages: Optional[List[str]] = None,
         experiments: Optional[Dict[int, Dict]] = None,
         stage: Optional[str] = Stage.NOT_STARTED,
         logger_url: str = "",
@@ -82,6 +83,7 @@ class Sweep(LightningFlow, ControllerResource):
         self.parallel_experiments = parallel_experiments
         self.total_experiments_done = total_experiments_done or 0
         self.requirements = requirements or []
+        self.packages = packages or []
         self.script_args = script_args
         self.distributions = distributions or {}
         self.framework = framework
@@ -263,6 +265,11 @@ class Sweep(LightningFlow, ControllerResource):
         else:
             algorithm = OptunaAlgorithm(direction=config.direction)
 
+        class CustomBuildConfig(BuildConfig):
+            def build_commands(self):
+                package_installs = [f"apt install {package}" for package in config.packages]
+                return super().build_commands() + package_installs
+
         return cls(
             script_path=config.script_path,
             total_experiments=config.total_experiments,
@@ -279,7 +286,7 @@ class Sweep(LightningFlow, ControllerResource):
             ),
             sweep_id=config.sweep_id,
             code=code,
-            cloud_build_config=BuildConfig(requirements=config.requirements),
+            cloud_build_config=CustomBuildConfig(requirements=config.requirements),
             logger=config.logger,
             algorithm=algorithm,
             experiments={k: v.dict() for k, v in config.experiments.items()},
