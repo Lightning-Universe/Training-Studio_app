@@ -11,9 +11,10 @@ from lightning_hpo.commands.sweep.run import SweepConfig
 def _show_experiments(sweeps: List[SweepConfig]):
     table = Table(
         "name",
+        "cloud compute",
         "progress",
-        "best_model_score",
-        "sweep_name",
+        "best model score",
+        "sweep name",
         title="Experiments",
         show_header=True,
         header_style="bold green",
@@ -24,6 +25,7 @@ def _show_experiments(sweeps: List[SweepConfig]):
         for experiment in experiments:
             table.add_row(
                 str(experiment.name),
+                sweep.cloud_compute,
                 str(experiment.progress) if experiment.stage != "failed" else "failed",
                 str(round(experiment.best_model_score, 2) if experiment.best_model_score else None),
                 None if len(experiments) == 1 else sweep.sweep_id,
