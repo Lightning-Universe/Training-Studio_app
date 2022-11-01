@@ -5,8 +5,7 @@ from uuid import uuid4
 
 from lightning import LightningWork
 from lightning.app.storage import Drive
-from lightning.app.storage.path import filesystem
-from lightning.app.utilities.component import _is_work_context
+from lightning.app.storage.path import _filesystem
 
 from lightning_hpo.commands.tensorboard.stop import TensorboardConfig
 from lightning_hpo.controllers.controller import ControllerResource
@@ -39,7 +38,7 @@ class Tensorboard(LightningWork, ControllerResource):
         self._process = Popen(cmd, shell=True, env=os.environ)
 
         self.stage = Stage.RUNNING
-        fs = filesystem()
+        fs = _filesystem()
         root_folder = str(self.drive.drive_root)
 
         while True:
@@ -57,11 +56,8 @@ class Tensorboard(LightningWork, ControllerResource):
                     fs.get(source_path, str(Path(target_path).resolve()))
 
     def on_exit(self):
-        if _is_work_context():
-            assert self._process
-            self._process.kill()
-        else:
-            self.stage = Stage.NOT_STARTED
+        assert self._process
+        self._process.kill()
 
     def on_collect_model(self, model_dict):
         model_dict["url"] = self.url

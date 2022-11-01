@@ -4,7 +4,7 @@ import re
 from typing import Dict, List, Optional
 
 import rich
-from lightning.app.storage.path import filesystem, shared_storage_path
+from lightning.app.storage.path import _filesystem, _shared_storage_path
 from lightning.app.utilities.commands import ClientCommand
 from pydantic import BaseModel
 from rich.color import ANSI_COLOR_NAMES
@@ -245,10 +245,10 @@ def _filter_paths(paths: List[str], include: Optional[str], exclude: Optional[st
 
 def _collect_artifact_paths(config: ShowArtifactsConfig, replace: bool = True) -> List[str]:
     """This function is responsible to collecting the files from the shared filesystem."""
-    fs = filesystem()
+    fs = _filesystem()
     paths = []
 
-    shared_storage = shared_storage_path()
+    shared_storage = _shared_storage_path()
     for root_dir, _, files in fs.walk(shared_storage):
         if replace:
             root_dir = str(root_dir).replace(str(shared_storage), "").replace("/artifacts/drive", "")
