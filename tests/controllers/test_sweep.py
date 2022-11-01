@@ -51,7 +51,8 @@ def test_sweep_controller(monkeypatch):
 
     while True:
         sweep_controller.run("a", "b")
-        if sweep_controller.r.get("a", None) is None:
+        sweep: Sweep = sweep_controller.r.get("a", None)
+        if sweep.stage == Stage.SUCCEEDED:
             break
 
     assert sweep_controller.db.data["SweepConfig:a"]["stage"] == Stage.SUCCEEDED
