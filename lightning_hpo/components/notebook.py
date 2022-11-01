@@ -4,7 +4,6 @@ from typing import Optional
 
 from lai_jupyter import JupyterLab
 from lightning import CloudCompute
-from lightning.app.utilities.component import _is_work_context
 
 from lightning_hpo.commands.notebook.run import NotebookConfig
 from lightning_hpo.controllers.controller import ControllerResource
@@ -33,11 +32,9 @@ class JupyterLab(JupyterLab, ControllerResource):
         self.stage = Stage.RUNNING
         self.start_time = time.time()
 
-    # TODO: Cleanup exit mechanism in lightning.
     def on_exit(self):
-        if _is_work_context():
-            assert self._process
-            self._process.kill()
+        assert self._process
+        self._process.kill()
 
     def on_collect_model(self, model_dict):
         model_dict["cloud_compute"] = self.cloud_compute.name

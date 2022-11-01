@@ -16,7 +16,7 @@ else:
 from fsspec.implementations.local import LocalFileSystem
 from lightning import LightningFlow
 from lightning.app.storage import Drive
-from lightning.app.storage.path import filesystem
+from lightning.app.storage.path import _filesystem
 
 from lightning_hpo.loggers.logger import Logger
 
@@ -41,7 +41,7 @@ class DriveTensorBoardLogger(TensorBoardLogger):
         super().finalize(status)
 
     def _upload_to_storage(self):
-        fs = filesystem()
+        fs = _filesystem()
         fs.invalidate_cache()
 
         source_path = Path(self.log_dir).resolve()

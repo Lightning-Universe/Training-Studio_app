@@ -39,7 +39,7 @@ def test_show_artifacts(monkeypatch, tmpdir):
         post = MagicMock(return_value=resp)
         monkeypatch.setattr(requests, "post", post)
 
-        monkeypatch.setattr(show, "shared_storage_path", lambda: tmp)
+        monkeypatch.setattr(show, "_shared_storage_path", lambda: tmp)
         print_mock = MagicMock()
         monkeypatch.setattr(show.rich, "print", print_mock)
 
