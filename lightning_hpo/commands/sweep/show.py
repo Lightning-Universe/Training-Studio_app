@@ -12,10 +12,10 @@ from lightning_hpo.commands.sweep.run import SweepConfig
 
 def _show_empty_sweep():
     table = Table(
-        "id",
-        "cloud_compute",
-        "total_experiments",
-        "total_experiments_done",
+        "name",
+        "cloud compute",
+        "total experiments",
+        "total experiments done",
         title="Sweep",
         show_header=True,
         header_style="bold green",
@@ -45,10 +45,10 @@ def _parse_params(params):
 
 def _show_sweep(sweep: SweepConfig):
     table = Table(
-        "id",
-        "cloud_compute",
-        "total_experiments",
-        "total_experiments_done",
+        "name",
+        "cloud compute",
+        "total experiments",
+        "total experiments done",
         title="Sweep",
         show_header=True,
         header_style="bold green",
