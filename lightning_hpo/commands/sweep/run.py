@@ -407,7 +407,7 @@ class RunSweepCommand(ClientCommand):
 
         if len(hparams.requirements) == 1 and os.path.isfile(hparams.requirements[0]):
             with open(hparams.requirements, "r") as f:
-                hparams.requirements = [line.replace("\n", "") for line in f.readlines()]
+                hparams.requirements = [line.replace("\n", "") for line in f.readlines() if line.strip()]
 
         repo = CustomLocalSourceCodeDir(path=Path(hparams.script_path).parent.resolve())
         # TODO: Resolve this bug.
