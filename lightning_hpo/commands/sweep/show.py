@@ -63,29 +63,6 @@ def _show_sweep(sweep: SweepConfig):
     console = Console()
     console.print(table)
 
-    params = list(sweep.experiments[0].params)
-    monitor = sweep.experiments[0].monitor
-
-    table = Table(
-        "name",
-        "progress",
-        "best_model_score",
-        *params,
-        title=f"Experiments monitor=({monitor})",
-        show_header=True,
-        header_style="bold green",
-    )
-
-    for experiment in sweep.experiments.values():
-        table.add_row(
-            str(experiment.name),
-            str(experiment.progress) if experiment.stage != "failed" else "failed",
-            str(round(experiment.best_model_score, 2) if experiment.best_model_score else None),
-            *[str(round(v, 5)) for v in _parse_params(experiment.params).values()],
-        )
-    console = Console()
-    console.print(table)
-
 
 class ShowSweepsCommand(ClientCommand):
 
