@@ -46,6 +46,7 @@ def test_experiment_run_parsing_no_arguments(monkeypatch):
             parallel_experiments=1,
             total_experiments_done=0,
             requirements=[],
+            packages=[],
             script_args=[],
             algorithm="",
             distributions={},
@@ -111,6 +112,7 @@ def test_experiment_run_parsing_arguments(monkeypatch):
             parallel_experiments=1,
             total_experiments_done=0,
             requirements=["'jsonargparse[signatures]'"],
+            packages=[],
             script_args=["--model.lr=0.1"],
             algorithm="",
             distributions={},
@@ -157,6 +159,29 @@ def test_experiment_run_multiple_requirements(monkeypatch):
     command.run()
 
 
+def test_experiment_run_multiple_packages(monkeypatch):
+
+    monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "",
+            __file__,
+            "--packages",
+            "redis",
+            "ffmpeg",
+        ],
+    )
+
+    def check(config: SweepConfig):
+        assert config.requirements == ["redis", "ffmpeg"]
+
+    command = _create_client_command_mock(run.RunExperimentCommand, None, MagicMock(), check)
+    command.run()
+
+
 def test_experiment_run_parsing_requirements(monkeypatch):
 
     monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
@@ -186,6 +211,7 @@ def test_experiment_run_parsing_requirements(monkeypatch):
             parallel_experiments=1,
             total_experiments_done=0,
             requirements=["pytorch_lightning", "optuna", "deepspeed"],
+            packages=[],
             script_args=[],
             algorithm="",
             distributions={},

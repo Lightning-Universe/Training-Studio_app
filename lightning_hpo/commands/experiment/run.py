@@ -25,6 +25,12 @@ class RunExperimentCommand(ClientCommand):
             help="List of requirements separated by a comma or requirements.txt filepath.",
         )
         parser.add_argument(
+            "--packages",
+            nargs="+",
+            default=[],
+            help="List of system packages to be installed via apt install, separated by a comma.",
+        )
+        parser.add_argument(
             "--cloud_compute",
             default="cpu",
             choices=["cpu", "cpu-small", "cpu-medium", "gpu", "gpu-fast", "gpu-fast-multi"],
@@ -74,7 +80,7 @@ class RunExperimentCommand(ClientCommand):
         if len(hparams.requirements) == 1 and Path(hparams.requirements[0]).resolve().exists():
             requirements_path = Path(hparams.requirements[0]).resolve()
             with open(requirements_path, "r") as f:
-                hparams.requirements = [line.replace("\n", "") for line in f.readlines()]
+                hparams.requirements = [line.replace("\n", "") for line in f.readlines() if line.strip()]
 
         repo = CustomLocalSourceCodeDir(path=Path(hparams.script_path).parent.resolve())
 
@@ -93,6 +99,7 @@ class RunExperimentCommand(ClientCommand):
             total_experiments=1,
             parallel_experiments=1,
             requirements=hparams.requirements,
+            packages=hparams.packages,
             script_args=args,
             distributions={},
             algorithm="",

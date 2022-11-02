@@ -28,7 +28,7 @@ const DataTable = () => {
     );
   }
 
-  const header = ['Name', 'Source', 'Mount Path'];
+  const header = ['Name', 'Source', 'Default Mount Path'];
 
   const rows = data.map(data => {
     return [data.name, data.source, data.mount_path];

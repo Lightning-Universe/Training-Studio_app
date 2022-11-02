@@ -60,6 +60,7 @@ class SweepConfig(SQLModel, table=True):
     parallel_experiments: int
     total_experiments_done: int = 0
     requirements: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
+    packages: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
     script_args: List[str] = Field(..., sa_column=Column(pydantic_column_type(List[str])))
     algorithm: str
     distributions: Dict[str, Distributions] = Field(
@@ -319,6 +320,12 @@ class RunSweepCommand(ClientCommand):
             help="List of requirements separated by a comma or requirements.txt filepath.",
         )
         parser.add_argument(
+            "--packages",
+            nargs="+",
+            default=[],
+            help="List of system packages to be installed via apt install, separated by a comma.",
+        )
+        parser.add_argument(
             "--cloud_compute",
             default="cpu",
             choices=["cpu", "cpu-small", "cpu-medium", "gpu", "gpu-fast", "gpu-fast-multi"],
@@ -400,7 +407,7 @@ class RunSweepCommand(ClientCommand):
 
         if len(hparams.requirements) == 1 and os.path.isfile(hparams.requirements[0]):
             with open(hparams.requirements, "r") as f:
-                hparams.requirements = [line.replace("\n", "") for line in f.readlines()]
+                hparams.requirements = [line.replace("\n", "") for line in f.readlines() if line.strip()]
 
         repo = CustomLocalSourceCodeDir(path=Path(hparams.script_path).parent.resolve())
         # TODO: Resolve this bug.
@@ -420,6 +427,7 @@ class RunSweepCommand(ClientCommand):
             total_experiments=int(total_experiments),
             parallel_experiments=hparams.parallel_experiments if isinstance(hparams.parallel_experiments, int) else 1,
             requirements=hparams.requirements,
+            packages=hparams.packages,
             script_args=script_args,
             distributions=distributions,
             algorithm=hparams.algorithm,

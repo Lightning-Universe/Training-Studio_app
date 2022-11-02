@@ -18,6 +18,7 @@ def test_sweep_controller(monkeypatch):
         script_path=__file__,
         total_experiments=5,
         requirements=[],
+        packages=[],
         parallel_experiments=1,
         logger="tensorboard",
         distributions={"best_model_score": Uniform(1, 10)},
