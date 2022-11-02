@@ -10,7 +10,7 @@ from rich.table import Table
 from lightning_hpo.commands.sweep.run import SweepConfig
 
 
-def _show_empty_sweep():
+def _show_sweeps(sweeps: List[SweepConfig]):
     table = Table(
         "name",
         "cloud compute",
@@ -20,69 +20,15 @@ def _show_empty_sweep():
         show_header=True,
         header_style="bold green",
     )
-
-    console = Console()
-    console.print(table)
-
-
-def _show_sweeps(sweeps: List[SweepConfig]):
-    if not sweeps:
-        _show_empty_sweep()
 
     for sweep in sweeps:
-        _show_sweep(sweep)
-
-
-def _parse_params(params):
-    out = {}
-    for k, v in params.items():
-        if isinstance(v, float) and v == int(v):
-            out[k] = int(v)
-        else:
-            out[k] = v
-    return out
-
-
-def _show_sweep(sweep: SweepConfig):
-    table = Table(
-        "name",
-        "cloud compute",
-        "total experiments",
-        "total experiments done",
-        title="Sweep",
-        show_header=True,
-        header_style="bold green",
-    )
-
-    table.add_row(
-        sweep.sweep_id,
-        sweep.cloud_compute,
-        str(sweep.total_experiments),
-        str(sweep.total_experiments_done),
-    )
-    console = Console()
-    console.print(table)
-
-    params = list(sweep.experiments[0].params)
-    monitor = sweep.experiments[0].monitor
-
-    table = Table(
-        "name",
-        "progress",
-        "best_model_score",
-        *params,
-        title=f"Experiments monitor=({monitor})",
-        show_header=True,
-        header_style="bold green",
-    )
-
-    for experiment in sweep.experiments.values():
         table.add_row(
-            str(experiment.name),
-            str(experiment.progress) if experiment.stage != "failed" else "failed",
-            str(round(experiment.best_model_score, 2) if experiment.best_model_score else None),
-            *[str(round(v, 5)) for v in _parse_params(experiment.params).values()],
+            sweep.sweep_id,
+            sweep.cloud_compute,
+            str(sweep.total_experiments),
+            str(sweep.total_experiments_done),
         )
+
     console = Console()
     console.print(table)
 
@@ -124,4 +70,4 @@ class ShowSweepsCommand(ClientCommand):
                     f"Here are the available ones {[s.sweep_id for s in sweeps]}"
                 )
             assert len(matching_sweep) == 1
-            _show_sweep(*matching_sweep)
+            _show_sweeps(matching_sweep)

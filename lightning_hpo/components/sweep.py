@@ -29,6 +29,16 @@ from lightning_hpo.utilities.utils import (
 )
 
 
+class CustomBuildConfig(BuildConfig):
+    def __init__(self, *args, packages, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.packages = packages
+
+    def build_commands(self):
+        package_installs = [f"apt install {package}" for package in self.packages]
+        return super().build_commands() + package_installs
+
+
 class Sweep(LightningFlow, ControllerResource):
 
     model = SweepConfig
@@ -111,6 +121,7 @@ class Sweep(LightningFlow, ControllerResource):
             "code": code,
             "sweep_id": self.sweep_id,
             "raise_exception": False,
+            "cloud_build_config": CustomBuildConfig(requirements=self.requirements, packages=self.packages),
             **objective_kwargs,
         }
         self._algorithm.register_distributions(self.distributions)
@@ -265,11 +276,6 @@ class Sweep(LightningFlow, ControllerResource):
         else:
             algorithm = OptunaAlgorithm(direction=config.direction)
 
-        class CustomBuildConfig(BuildConfig):
-            def build_commands(self):
-                package_installs = [f"apt install {package}" for package in config.packages]
-                return super().build_commands() + package_installs
-
         return cls(
             script_path=config.script_path,
             total_experiments=config.total_experiments,
@@ -286,7 +292,6 @@ class Sweep(LightningFlow, ControllerResource):
             ),
             sweep_id=config.sweep_id,
             code=code,
-            cloud_build_config=CustomBuildConfig(requirements=config.requirements),
             logger=config.logger,
             algorithm=algorithm,
             experiments={k: v.dict() for k, v in config.experiments.items()},
@@ -294,6 +299,8 @@ class Sweep(LightningFlow, ControllerResource):
             stage=config.stage,
             logger_url=config.logger_url,
             data=config.data,
+            requirements=config.requirements,
+            packages=config.packages,
         )
 
     def configure_layout(self):

@@ -176,7 +176,7 @@ def test_experiment_run_multiple_packages(monkeypatch):
     )
 
     def check(config: SweepConfig):
-        assert config.requirements == ["redis", "ffmpeg"]
+        assert config.packages == ["redis", "ffmpeg"]
 
     command = _create_client_command_mock(run.RunExperimentCommand, None, MagicMock(), check)
     command.run()

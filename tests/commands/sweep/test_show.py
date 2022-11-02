@@ -33,7 +33,7 @@ def test_show_sweeps_client(monkeypatch):
     command.command_name = ""
     command.app_url = ""
     command.run()
-    assert len(console._mock_mock_calls) == 4
+    assert len(console._mock_mock_calls) == 2
     table = console._mock_mock_calls[1].args[0]
     assert isinstance(table, Table)
     assert table.columns[0]._cells == ["thomas-cb8f69f0"]
@@ -52,10 +52,10 @@ def test_show_sweeps_client(monkeypatch):
     command.command_name = ""
     command.app_url = ""
     command.run()
-    assert len(console._mock_mock_calls) == 8
+    assert len(console._mock_mock_calls) == 4
     table = console._mock_mock_calls[-1].args[0]
     assert isinstance(table, Table)
-    assert table.columns[3]._cells[0] == "0.04491"
+    assert table.columns[3]._cells[0] == "3"
 
     sys.argv = ori_sys_argv
 
