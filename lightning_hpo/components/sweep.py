@@ -121,6 +121,7 @@ class Sweep(LightningFlow, ControllerResource):
             "code": code,
             "sweep_id": self.sweep_id,
             "raise_exception": False,
+            "cloud_build_config": CustomBuildConfig(requirements=self.requirements, packages=self.packages),
             **objective_kwargs,
         }
         self._algorithm.register_distributions(self.distributions)
@@ -291,7 +292,6 @@ class Sweep(LightningFlow, ControllerResource):
             ),
             sweep_id=config.sweep_id,
             code=code,
-            cloud_build_config=CustomBuildConfig(requirements=config.requirements, packages=config.packages),
             logger=config.logger,
             algorithm=algorithm,
             experiments={k: v.dict() for k, v in config.experiments.items()},
@@ -299,6 +299,8 @@ class Sweep(LightningFlow, ControllerResource):
             stage=config.stage,
             logger_url=config.logger_url,
             data=config.data,
+            requirements=config.requirements,
+            packages=config.packages,
         )
 
     def configure_layout(self):
