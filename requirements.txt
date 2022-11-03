@@ -12,3 +12,4 @@ sqlalchemy
 hiplot
 sklearn
 sqlite_web
+hydra-core
