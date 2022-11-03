@@ -1,8 +1,7 @@
 jsonargparse[signatures]
-pytorch_lightning==1.8.0
-lightning==1.8.0
+pytorch_lightning==1.8.0post1
+lightning==1.8.0post1
 lightning-jupyter
-lightning_cloud
 torchvision
 optuna
 sqlmodel

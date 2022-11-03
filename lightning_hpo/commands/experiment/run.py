@@ -70,13 +70,6 @@ class RunExperimentCommand(ClientCommand):
             type=str,
             help="Which framework you are using.",
         )
-        parser.add_argument(
-            "--syntax",
-            default="default",
-            choices=["default", "hydra"],
-            type=str,
-            help="Syntax for sweep parameters at the CLI.",
-        )
 
         hparams, args = parser.parse_known_args()
 
