@@ -131,7 +131,7 @@ function toArgs(
   }
   if (params) {
     for (var p in params) {
-      arg = arg + `--${p}=${params[p]} `;
+      arg = arg + `${p}=${params[p]} `;
     }
   }
   return arg;
