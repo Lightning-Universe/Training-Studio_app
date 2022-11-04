@@ -117,3 +117,34 @@ def test_sweep_controller_delete_experiment(monkeypatch):
 
     sweep_controller.delete_experiment(delete_config)
     assert len(sweep_controller.db.select_all(TensorboardConfig)) == 0
+
+
+def test_sweep_controller_delete_experiment_from_sweep(monkeypatch):
+    sweep = Sweep(
+        sweep_id="a",
+        script_path=__file__,
+        total_experiments=2,
+        requirements=[],
+        parallel_experiments=1,
+        logger="tensorboard",
+        distributions={"best_model_score": Uniform(1, 10)},
+        framework="pytorch_lightning",
+        data={"a/": None},
+    )
+    sweep_controller = SweepController()
+    sweep_controller.db_url = "a"
+    monkeypatch.setattr(controller, "DatabaseClient", MockDatabaseClient)
+    config: SweepConfig = sweep.collect_model()
+
+    response = sweep_controller.run_sweep(config)
+    assert response == "Launched a Sweep 'a'."
+    assert len(sweep_controller.db.select_all(TensorboardConfig)) == 1
+
+    experiments = sweep_controller.db.select_all(ExperimentConfig)
+    assert len(experiments) == 2
+
+    delete_config = DeleteExperimentConfig()
+    delete_config.name = experiments.name
+
+    sweep_controller.delete_experiment(delete_config)
+    assert len(sweep_controller.db.select_all(TensorboardConfig)) == 1
