@@ -69,6 +69,7 @@ class RunExperimentCommand(ClientCommand):
             type=str,
             help="Which framework you are using.",
         )
+
         hparams, args = parser.parse_known_args()
 
         name = hparams.name or str(uuid4()).split("-")[-1][:7]

@@ -8,6 +8,7 @@ from typing import Dict, List, Optional, Union
 from uuid import uuid4
 
 import requests
+from hydra.core.override_parser.overrides_parser import OverridesParser
 from lightning.app.source_code import LocalSourceCodeDir
 from lightning.app.source_code.uploader import FileUploader
 from lightning.app.utilities.commands import ClientCommand
@@ -293,6 +294,20 @@ def parse_random_search(script_args, args):
     return distributions
 
 
+def parse_hydra(script_args, args):
+    distributions = {}
+    parser = OverridesParser.create()
+    parsed = parser.parse_overrides(args)
+    for override in parsed:
+        if override.is_sweep_override():
+            key = override.get_key_element()
+            values = override.sweep_string_iterator()
+            distributions[key] = {"distribution": "categorical", "params": {"choices": list(values)}}
+        else:
+            script_args.append(override.input_line)
+    return distributions
+
+
 class RunSweepCommand(ClientCommand):
 
     description = "Run a Sweep."
@@ -371,6 +386,13 @@ class RunSweepCommand(ClientCommand):
             default=[],
             help="Provide a list of Data (and optionally the mount_path in the format `<name>:<mount_path>`) to mount to the experiments.",
         )
+        parser.add_argument(
+            "--syntax",
+            default="default",
+            choices=["default", "hydra"],
+            type=str,
+            help="Syntax for sweep parameters at the CLI.",
+        )
         hparams, args = parser.parse_known_args()
 
         if hparams.framework != "pytorch_lightning" and hparams.num_nodes > 1:
@@ -380,7 +402,10 @@ class RunSweepCommand(ClientCommand):
 
         total_experiments = hparams.total_experiments
 
-        if hparams.algorithm == "grid_search":
+        if hparams.syntax == "hydra":
+            distributions = parse_hydra(script_args, args)
+            total_experiments = -1
+        elif hparams.algorithm == "grid_search":
             distributions = parse_grid_search(script_args, args)
             total_experiments = -1
         elif hparams.algorithm == "random_search":

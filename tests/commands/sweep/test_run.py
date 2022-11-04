@@ -70,6 +70,21 @@ def test_sweep_run_parsing_file_two_lists(monkeypatch):
     run_sweep_command(monkeypatch, argv, check_0)
 
 
+def test_sweep_run_parsing_file_two_lists_hydra(monkeypatch):
+
+    monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
+
+    def check_0(config):
+        assert config.distributions == {
+            "lr": Distributions(distribution="categorical", params={"choices": [0.0, 1.0, 2.0]}),
+            "gamma": Distributions(distribution="categorical", params={"choices": [0.0, 1.0, 2.0]}),
+        }
+        assert config.algorithm == "grid_search"
+
+    argv = ["python", __file__, "--syntax", "hydra", "lr=0,1,2", "gamma=0.0,1.0,2.0"]
+    run_sweep_command(monkeypatch, argv, check_0)
+
+
 def test_sweep_run_parsing_file_list_and_script_arguments(monkeypatch):
 
     monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
@@ -97,6 +112,22 @@ def test_sweep_run_parsing_range(monkeypatch):
         assert config.script_args == ["--data.batch=something"]
 
     argv = ["python", __file__, "--lr", "range(0, 10)", "--data.batch", "something"]
+    run_sweep_command(monkeypatch, argv, check_0)
+
+
+def test_sweep_run_parsing_range_hydra(monkeypatch):
+
+    monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
+
+    def check_0(config):
+        assert config.distributions == {
+            "lr": Distributions(
+                distribution="categorical", params={"choices": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]}
+            ),
+        }
+        assert config.script_args == ["data.batch=something"]
+
+    argv = ["python", __file__, "--syntax", "hydra", "lr=range(0, 10)", "data.batch=something"]
     run_sweep_command(monkeypatch, argv, check_0)
 
 
@@ -167,6 +198,76 @@ def test_sweep_run_parsing_random_search(monkeypatch):
         "random_search",
         "--total_experiments",
         "10",
+    ]
+    run_sweep_command(monkeypatch, argv, check_2)
+
+
+def test_sweep_run_parsing_random_search_hydra(monkeypatch):
+
+    monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
+
+    def check_0(config):
+        assert config.distributions == {
+            "lr": Distributions(
+                distribution="categorical", params={"choices": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]}
+            ),
+        }
+        assert config.script_args == ["data.batch=something"]
+
+    argv = [
+        "python",
+        __file__,
+        "--syntax",
+        "hydra",
+        "--algorithm",
+        "random_search",
+        "--total_experiments",
+        "10",
+        "lr=range(0, 10)",
+        "data.batch=something",
+    ]
+    run_sweep_command(monkeypatch, argv, check_0)
+
+    def check_1(config):
+        assert config.distributions == {
+            "lr": Distributions(distribution="categorical", params={"choices": [0.0, 1.0, 2.0]}),
+        }
+
+    argv = [
+        "python",
+        __file__,
+        "--syntax",
+        "hydra",
+        "--algorithm",
+        "random_search",
+        "--total_experiments",
+        "3",
+        "lr=0,1,2",
+        "data.batch=something",
+    ]
+    run_sweep_command(monkeypatch, argv, check_1)
+
+    def check_2(config):
+        assert {
+            "lr": Distributions(distribution="categorical", params={"choices": [0.0, 2.0]}),
+            "batch_size": Distributions(
+                distribution="categorical", params={"choices": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]}
+            ),
+        }
+        assert config.script_args == ["data.batch=something"]
+
+    argv = [
+        "python",
+        __file__,
+        "--syntax",
+        "hydra",
+        "--algorithm",
+        "random_search",
+        "--total_experiments",
+        "10",
+        "lr=0,2",
+        "batch_size=range(0, 10)",
+        "data.batch=something",
     ]
     run_sweep_command(monkeypatch, argv, check_2)
 
