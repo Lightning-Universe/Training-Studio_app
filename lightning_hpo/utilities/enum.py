@@ -7,3 +7,4 @@ class Stage:
     FAILED = "failed"
     STOPPED = "stopped"
     STOPPING = "stopping"
+    DELETED = "deleted"

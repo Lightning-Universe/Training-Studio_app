@@ -121,7 +121,7 @@ class SweepController(Controller):
                 self.db.delete(sweep)
                 for tensorboard in self.db.select_all(TensorboardConfig):
                     if tensorboard.sweep_id == config.name:
-                        tensorboard.desired_stage = Stage.STOPPED
+                        tensorboard.desired_stage = Stage.DELETED
                         self.db.update(tensorboard)
                 return f"Deleted the sweep `{config.name}`"
         return f"We didn't find the sweep `{config.name}`"
@@ -142,7 +142,7 @@ class SweepController(Controller):
                     self.db.delete(sweep)
                     for tensorboard in self.db.select_all(TensorboardConfig):
                         if tensorboard.sweep_id == config.name:
-                            tensorboard.desired_stage = Stage.STOPPED
+                            tensorboard.desired_stage = Stage.DELETED
                             self.db.update(tensorboard)
                     return f"Deleted the experiment `{config.name}`"
         return f"We didn't find the experiment `{config.name}`"
