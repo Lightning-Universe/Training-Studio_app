@@ -9,7 +9,6 @@ from uuid import uuid4
 
 import requests
 from hydra.core.override_parser.overrides_parser import OverridesParser
-from lightning.app.core.constants import APP_SERVER_HOST, APP_SERVER_PORT
 from lightning.app.source_code import LocalSourceCodeDir
 from lightning.app.source_code.uploader import FileUploader
 from lightning.app.utilities.commands import ClientCommand
@@ -435,13 +434,8 @@ class RunSweepCommand(ClientCommand):
                 hparams.requirements = [line.replace("\n", "") for line in f.readlines() if line.strip()]
 
         repo = CustomLocalSourceCodeDir(path=Path(hparams.script_path).parent.resolve())
-        # TODO: Resolve this bug.
-
-        URL = self.state._state["vars"]["_layout"]["target"].replace("/root", "")
-        if "localhost" in URL:
-            URL = f"{APP_SERVER_HOST}:{APP_SERVER_PORT}"
         repo.package()
-        repo.upload(url=f"{URL}/api/v1/upload_file/{name}")
+        repo.upload(url=f"{self.app_url}/api/v1/upload_file/{name}")
 
         data_split = [data.split(":") if ":" in data else (data, None) for data in hparams.data]
         data = {data[0]: data[1] for data in data_split}

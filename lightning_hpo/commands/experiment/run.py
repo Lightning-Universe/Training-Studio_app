@@ -4,7 +4,6 @@ from getpass import getuser
 from pathlib import Path
 from uuid import uuid4
 
-from lightning.app.core.constants import APP_SERVER_HOST, APP_SERVER_PORT
 from lightning.app.utilities.commands import ClientCommand
 
 from lightning_hpo.commands.sweep.run import CustomLocalSourceCodeDir, ExperimentConfig, SweepConfig
@@ -84,12 +83,8 @@ class RunExperimentCommand(ClientCommand):
                 hparams.requirements = [line.replace("\n", "") for line in f.readlines() if line.strip()]
 
         repo = CustomLocalSourceCodeDir(path=Path(hparams.script_path).parent.resolve())
-
-        URL = self.state._state["vars"]["_layout"]["target"].replace("/root", "")
-        if "localhost" in URL:
-            URL = f"{APP_SERVER_HOST}:{APP_SERVER_PORT}"
         repo.package()
-        repo.upload(url=f"{URL}/api/v1/upload_file/{name}")
+        repo.upload(url=f"{self.app_url}/api/v1/upload_file/{name}")
 
         data_split = [data.split(":") if ":" in data else (data, None) for data in hparams.data]
         data = {data[0]: data[1] for data in data_split}

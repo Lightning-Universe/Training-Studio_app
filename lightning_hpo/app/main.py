@@ -52,6 +52,7 @@ class ResearchStudio(LightningFlow):
         self.ready = False
         self._db_client = None
         self._token = uuid4().hex
+        self.seconds = ",".join([str(v) for v in range(0, 60, 1)])
 
     def run(self):
         self.db.run(token=self._token)
@@ -63,10 +64,13 @@ class ResearchStudio(LightningFlow):
             print("The Research Studio App is ready !")
             self.ready = True
 
-        # 3: Run the controllers
-        self.sweep_controller.run(self.db.db_url, token=self._token)
-        # self.notebook_controller.run(self.db.db_url)
-        self.tensorboard_controller.run(self.db.db_url, token=self._token)
+        # Run every seconds.
+        if self.schedule(f"* * * * * {self.seconds}"):
+
+            # 3: Run the controllers
+            self.sweep_controller.run(self.db.db_url, token=self._token)
+            # self.notebook_controller.run(self.db.db_url)
+            self.tensorboard_controller.run(self.db.db_url, token=self._token)
 
     def configure_layout(self):
         return StaticWebFrontend(os.path.join(os.path.dirname(__file__), "ui", "build"))
