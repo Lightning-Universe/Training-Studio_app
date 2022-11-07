@@ -24,6 +24,11 @@ class TensorboardController(Controller):
                         config=config,
                     )
                     self.r[work_name].stage = Stage.PENDING
+            if config.desired_stage == Stage.DELETED:
+                tensorboard = self.r[work_name]
+                tensorboard.stop()
+                self.db.delete(config)
+                del self.r[work_name]
 
     def show_tensorboards(self) -> List[TensorboardConfig]:
         """Show TensorBoards."""

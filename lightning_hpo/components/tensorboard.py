@@ -19,7 +19,6 @@ class Tensorboard(LightningWork, ControllerResource):
     def __init__(self, *args, drive: Drive, config: TensorboardConfig, **kwargs):
         super().__init__(*args, parallel=True, **kwargs)
         self.drive = drive
-        self.id = config.id
         self.sweep_id = config.sweep_id
         self.shared_folder = config.shared_folder
         self.stage = config.stage
