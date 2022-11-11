@@ -111,12 +111,17 @@ class DownloadArtifactsCommand(ClientCommand):
                     continue
                 if path.startswith("/"):
                     path = path[1:]
-                _download_file(url, os.path.join(output_dir, str(path).split("drive/")[1]))
+                if path.startswith("drive/"):
+                    path = path.split("drive/")[1]
+                _download_file(url, os.path.join(output_dir, path))
         else:
             for path in response.paths:
                 if not any(name in path for name in hparams.names):
                     continue
-                _copy_file(path, os.path.join(output_dir, str(path).split("drive/")[1]))
+                path = str(path)
+                if path.startswith("drive/"):
+                    path = path.split("drive/")[1]
+                _copy_file(path, os.path.join(output_dir, path))
 
         print("All the specified artifacts were downloaded.")
 
