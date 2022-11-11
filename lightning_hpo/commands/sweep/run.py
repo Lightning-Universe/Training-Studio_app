@@ -218,7 +218,7 @@ def parse_args(args):
             parsed[arg_candidate] = []
             last_arg = arg_candidate
 
-    return {k.replace("--", ""): " ".join(v) for k, v in parsed.items()}
+    return {k: " ".join(v) for k, v in parsed.items()}
 
 
 def parse_range_to_categorical(value: str):
