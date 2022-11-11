@@ -2,7 +2,7 @@ import time
 from typing import Any, Dict, Optional
 
 import pytorch_lightning
-from lightning.app.components.training import LightningTrainingComponent, PyTorchLightningScriptRunner
+from lightning.app.components.training import LightningTrainerScript, PyTorchLightningScriptRunner
 from lightning.app.storage import Path
 
 from lightning_hpo.framework.agnostic import Objective
@@ -170,7 +170,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         return tracer
 
 
-class ObjectiveLightningTrainingComponent(LightningTrainingComponent):
+class ObjectiveLightningTrainingComponent(LightningTrainerScript):
     def __init__(
         self,
         *args,
