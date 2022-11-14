@@ -38,8 +38,6 @@ class ShowLogsCommand(ClientCommand):
             for name in hparams.names:
                 if name == config["name"]:
                     components.extend(config["components"])
-                elif name not in components:
-                    components.append(name)
 
         if not components:
             print(
