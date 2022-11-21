@@ -1,6 +1,8 @@
+import os
 import subprocess
 import sys
 import time
+import uuid
 from typing import Any, Dict, Optional
 
 import pytorch_lightning
@@ -24,6 +26,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         experiment_name: str,
         num_nodes: int,
         last_model_path: Optional[str] = None,
+        pip_install_source: bool = False,
         **kwargs,
     ):
         Objective.__init__(
@@ -40,6 +43,8 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         self.start_time = None
         self.end_time = None
         self.last_model_path = Path(last_model_path) if last_model_path else None
+        self.pip_install_source = pip_install_source
+        self._rootwd = os.getcwd()
 
     def configure_tracer(self):
         tracer = Objective.configure_tracer(self)
@@ -53,10 +58,21 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         restart_count: int = 0,
         **kwargs,
     ):
+        if self.pip_install_source:
+            os.chdir(self._rootwd)
+            uid = uuid.uuid4().hex[:8]
+            dirname = f"uploaded-{uid}"
+            os.makedirs(dirname)
+            os.chdir(dirname)
+
         if self.last_model_path:
             self.last_model_path.get(overwrite=True)
         self.params = params
         return PyTorchLightningScriptRunner.run(self, params=params, **kwargs)
+
+    def on_before_run(self):
+        if self.pip_install_source:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "-e", "."])
 
     def on_after_run(self, script_globals):
         self.end_time = time.time()
@@ -192,7 +208,7 @@ class ObjectiveLightningTrainingComponent(LightningTrainerScript):
             experiment_id=experiment_id,
             experiment_name=experiment_name,
             num_nodes=num_nodes,
-            **kwargs,
+            pip_install_source=pip_install_source**kwargs,
         )
         self.experiment_id = experiment_id
         self.experiment_name = experiment_name
@@ -203,13 +219,10 @@ class ObjectiveLightningTrainingComponent(LightningTrainerScript):
         self.sweep_id = sweep_id
         self.reports = []
         self.has_stored = False
-        self.pip_install_source = pip_install_source
 
     def run(
         self, params: Optional[Dict[str, Any]] = None, restart_count: int = 0, last_model_path: Optional[str] = None
     ):
-        if self.pip_install_source:
-            subprocess.check_call([sys.executable, "-m", "pip", "install", "-e", "."])
         self.params = params
         self.restart_count = restart_count
         super().run(params=params, restart_count=restart_count, last_model_path=last_model_path)
