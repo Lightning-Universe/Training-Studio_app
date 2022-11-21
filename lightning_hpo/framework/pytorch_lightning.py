@@ -1,7 +1,15 @@
 import time
 from typing import Any, Dict, Optional
 
-import pytorch_lightning
+from lightning_hpo.utilities.imports import _IS_PYTORCH_LIGHTNING_AVAILABLE
+
+if _IS_PYTORCH_LIGHTNING_AVAILABLE:
+    import pytorch_lightning
+    import pytorch_lightning.cli
+else:
+    import lightning.pytorch
+    import lightning.pytorch.cli
+
 from lightning.app.components.training import LightningTrainerScript, PyTorchLightningScriptRunner
 from lightning.app.storage import Path
 
@@ -62,15 +70,26 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         self.best_model_path = str(self.best_model_path)
 
     def _on_after_run(self, script_globals):
-        for v in script_globals.values():
-            if isinstance(v, (pytorch_lightning.cli.LightningCLI)):
-                trainer = v.trainer
-                break
-            elif isinstance(v, (pytorch_lightning.Trainer)):
-                trainer = v
-                break
+        if _IS_PYTORCH_LIGHTNING_AVAILABLE:
+            for v in script_globals.values():
+                if isinstance(v, (pytorch_lightning.cli.LightningCLI)):
+                    trainer = v.trainer
+                    break
+                elif isinstance(v, (pytorch_lightning.Trainer)):
+                    trainer = v
+                    break
+            else:
+                raise RuntimeError("No trainer instance found.")
         else:
-            raise RuntimeError("No trainer instance found.")
+            for v in script_globals.values():
+                if isinstance(v, (lightning.pytorch.cli.LightningCLI)):
+                    trainer = v.trainer
+                    break
+                elif isinstance(v, (lightning.pytorch.Trainer)):
+                    trainer = v
+                    break
+            else:
+                raise RuntimeError("No trainer instance found.")
 
         self.monitor = trainer.checkpoint_callback.monitor
 
