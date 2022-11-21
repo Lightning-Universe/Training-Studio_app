@@ -69,6 +69,12 @@ class RunExperimentCommand(ClientCommand):
             type=str,
             help="Which framework you are using.",
         )
+        parser.add_argument(
+            "--pip-install-source",
+            default=False,
+            action="store_true",
+            help="Run `pip install -e .` on the uploaded source before running",
+        )
 
         hparams, args = parser.parse_known_args()
 
@@ -106,6 +112,7 @@ class RunExperimentCommand(ClientCommand):
             direction="minimize",  # This won't be used
             experiments={0: ExperimentConfig(name=name, params={})},
             disk_size=hparams.disk_size,
+            pip_install_source=hparams.pip_install_source,
             data=data,
             username=str(getuser()),
         )

@@ -1,3 +1,5 @@
+import subprocess
+import sys
 import time
 from typing import Any, Dict, Optional
 
@@ -179,6 +181,7 @@ class ObjectiveLightningTrainingComponent(LightningTrainerScript):
         logger: str,
         sweep_id: str,
         num_nodes: int = 1,
+        pip_install_source: bool = False,
         **kwargs,
     ):
         super().__init__(
@@ -200,10 +203,13 @@ class ObjectiveLightningTrainingComponent(LightningTrainerScript):
         self.sweep_id = sweep_id
         self.reports = []
         self.has_stored = False
+        self.pip_install_source = pip_install_source
 
     def run(
         self, params: Optional[Dict[str, Any]] = None, restart_count: int = 0, last_model_path: Optional[str] = None
     ):
+        if self.pip_install_source:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "-e", "."])
         self.params = params
         self.restart_count = restart_count
         super().run(params=params, restart_count=restart_count, last_model_path=last_model_path)

@@ -65,6 +65,7 @@ class Sweep(LightningFlow, ControllerResource):
         experiments: Optional[Dict[int, Dict]] = None,
         stage: Optional[str] = Stage.NOT_STARTED,
         logger_url: str = "",
+        pip_install_source: bool = False,
         data: Optional[List[str]] = None,
         **objective_kwargs: Any,
     ):
@@ -105,6 +106,7 @@ class Sweep(LightningFlow, ControllerResource):
         self.experiments = experiments or {}
         self.stage = stage
         self.logger_url = logger_url
+        self.pip_install_source = pip_install_source
         self.data = data
 
         self._objective_cls = _resolve_objective_cls(objective_cls, framework)
@@ -257,6 +259,7 @@ class Sweep(LightningFlow, ControllerResource):
                 experiment_name=experiment_config["name"],
                 cloud_compute=cloud_compute,
                 last_model_path=experiment_config["last_model_path"],
+                pip_install_source=self.pip_install_source,
                 **self._kwargs,
             )
             setattr(self, f"w_{experiment_id}", objective)
@@ -299,6 +302,7 @@ class Sweep(LightningFlow, ControllerResource):
             stage=config.stage,
             logger_url=config.logger_url,
             data=config.data,
+            pip_install_source=config.pip_install_source,
             requirements=config.requirements,
             packages=config.packages,
         )
