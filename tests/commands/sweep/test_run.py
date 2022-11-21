@@ -47,7 +47,7 @@ def test_sweep_run_parsing_file_single_list(monkeypatch):
 
     def check_0(config):
         assert config.distributions == {
-            "lr": Distributions(distribution="categorical", params={"choices": [0.0, 1.0, 2.0]})
+            "--lr": Distributions(distribution="categorical", params={"choices": [0.0, 1.0, 2.0]})
         }
         assert config.algorithm == "grid_search"
 
@@ -61,8 +61,8 @@ def test_sweep_run_parsing_file_two_lists(monkeypatch):
 
     def check_0(config):
         assert config.distributions == {
-            "lr": Distributions(distribution="categorical", params={"choices": [0.0, 1.0, 2.0]}),
-            "gamma": Distributions(distribution="categorical", params={"choices": [0.0, 1.0, 2.0]}),
+            "--lr": Distributions(distribution="categorical", params={"choices": [0.0, 1.0, 2.0]}),
+            "--gamma": Distributions(distribution="categorical", params={"choices": [0.0, 1.0, 2.0]}),
         }
         assert config.algorithm == "grid_search"
 
@@ -91,7 +91,7 @@ def test_sweep_run_parsing_file_list_and_script_arguments(monkeypatch):
 
     def check_0(config):
         assert config.distributions == {
-            "lr": Distributions(distribution="categorical", params={"choices": [0.0, 1.0, 2.0]}),
+            "--lr": Distributions(distribution="categorical", params={"choices": [0.0, 1.0, 2.0]}),
         }
         assert config.script_args == ["--data.batch=something"]
 
@@ -105,7 +105,7 @@ def test_sweep_run_parsing_range(monkeypatch):
 
     def check_0(config):
         assert config.distributions == {
-            "lr": Distributions(
+            "--lr": Distributions(
                 distribution="categorical", params={"choices": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]}
             ),
         }
@@ -137,7 +137,7 @@ def test_sweep_run_parsing_random_search(monkeypatch):
 
     def check_0(config):
         assert config.distributions == {
-            "lr": Distributions(
+            "--lr": Distributions(
                 distribution="categorical", params={"choices": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]}
             ),
         }
@@ -159,7 +159,7 @@ def test_sweep_run_parsing_random_search(monkeypatch):
 
     def check_1(config):
         assert config.distributions == {
-            "lr": Distributions(distribution="categorical", params={"choices": [0.0, 1.0, 2.0]}),
+            "--lr": Distributions(distribution="categorical", params={"choices": [0.0, 1.0, 2.0]}),
         }
 
     argv = [
@@ -178,8 +178,8 @@ def test_sweep_run_parsing_random_search(monkeypatch):
 
     def check_2(config):
         assert {
-            "lr": Distributions(distribution="categorical", params={"choices": [0.0, 2.0]}),
-            "batch_size": Distributions(
+            "--lr": Distributions(distribution="categorical", params={"choices": [0.0, 2.0]}),
+            "--batch_size": Distributions(
                 distribution="categorical", params={"choices": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]}
             ),
         }
@@ -278,11 +278,11 @@ def test_sweep_run_parsing_random_search_further_distributions(monkeypatch):
 
     def check_1(config):
         assert config.distributions == {
-            "lr": Distributions(distribution="categorical", params={"choices": [0.0, 2.0]}),
-            "batch_size": Distributions(
+            "--lr": Distributions(distribution="categorical", params={"choices": [0.0, 2.0]}),
+            "--batch_size": Distributions(
                 distribution="categorical", params={"choices": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]}
             ),
-            "gamma": Distributions(distribution="log_uniform", params={"low": 32.0, "high": 64.0}),
+            "--gamma": Distributions(distribution="log_uniform", params={"low": 32.0, "high": 64.0}),
         }
         assert config.script_args == ["--data.batch=something"]
 
@@ -311,8 +311,8 @@ def test_parsing(monkeypatch):
 
     def check(config):
         assert config.distributions == {
-            "model.lr": Distributions(distribution="categorical", params={"choices": [0.001]}),
-            "data.batch": Distributions(distribution="categorical", params={"choices": [32.0, 64.0]}),
+            "--model.lr": Distributions(distribution="categorical", params={"choices": [0.001]}),
+            "--data.batch": Distributions(distribution="categorical", params={"choices": [32.0, 64.0]}),
         }
         assert config.script_args == ["--something=else"]
 
