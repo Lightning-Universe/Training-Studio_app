@@ -208,7 +208,8 @@ class ObjectiveLightningTrainingComponent(LightningTrainerScript):
             experiment_id=experiment_id,
             experiment_name=experiment_name,
             num_nodes=num_nodes,
-            pip_install_source=pip_install_source**kwargs,
+            pip_install_source=pip_install_source,
+            **kwargs,
         )
         self.experiment_id = experiment_id
         self.experiment_name = experiment_name
