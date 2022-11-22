@@ -58,17 +58,17 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         restart_count: int = 0,
         **kwargs,
     ):
+        code_dir = "."
         if self.pip_install_source:
             os.chdir(self._rootwd)
             uid = uuid.uuid4().hex[:8]
-            dirname = f"uploaded-{uid}"
-            os.makedirs(dirname)
-            os.chdir(dirname)
+            code_dir = f"code-{uid}"
+            os.makedirs(code_dir)
 
         if self.last_model_path:
             self.last_model_path.get(overwrite=True)
         self.params = params
-        return PyTorchLightningScriptRunner.run(self, params=params, **kwargs)
+        return PyTorchLightningScriptRunner.run(self, params=params, code_dir=code_dir, **kwargs)
 
     def on_before_run(self):
         if self.pip_install_source:
