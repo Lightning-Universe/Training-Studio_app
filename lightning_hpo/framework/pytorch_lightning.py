@@ -1,4 +1,8 @@
+import os
+import subprocess
+import sys
 import time
+import uuid
 from typing import Any, Dict, Optional
 
 import pytorch_lightning
@@ -22,6 +26,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         experiment_name: str,
         num_nodes: int,
         last_model_path: Optional[str] = None,
+        pip_install_source: bool = False,
         **kwargs,
     ):
         Objective.__init__(
@@ -38,6 +43,8 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         self.start_time = None
         self.end_time = None
         self.last_model_path = Path(last_model_path) if last_model_path else None
+        self.pip_install_source = pip_install_source
+        self._rootwd = os.getcwd()
 
     def configure_tracer(self):
         tracer = Objective.configure_tracer(self)
@@ -51,10 +58,21 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         restart_count: int = 0,
         **kwargs,
     ):
+        code_dir = "."
+        if self.pip_install_source:
+            os.chdir(self._rootwd)
+            uid = uuid.uuid4().hex[:8]
+            code_dir = f"code-{uid}"
+            os.makedirs(code_dir)
+
         if self.last_model_path:
             self.last_model_path.get(overwrite=True)
         self.params = params
-        return PyTorchLightningScriptRunner.run(self, params=params, **kwargs)
+        return PyTorchLightningScriptRunner.run(self, params=params, code_dir=code_dir, **kwargs)
+
+    def on_before_run(self):
+        if self.pip_install_source:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "-e", "."])
 
     def on_after_run(self, script_globals):
         self.end_time = time.time()
@@ -179,6 +197,7 @@ class ObjectiveLightningTrainingComponent(LightningTrainerScript):
         logger: str,
         sweep_id: str,
         num_nodes: int = 1,
+        pip_install_source: bool = False,
         **kwargs,
     ):
         super().__init__(
@@ -189,6 +208,7 @@ class ObjectiveLightningTrainingComponent(LightningTrainerScript):
             experiment_id=experiment_id,
             experiment_name=experiment_name,
             num_nodes=num_nodes,
+            pip_install_source=pip_install_source,
             **kwargs,
         )
         self.experiment_id = experiment_id

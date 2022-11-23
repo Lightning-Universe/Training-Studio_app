@@ -78,6 +78,7 @@ class SweepConfig(SQLModel, table=True):
     stage: str = Stage.NOT_STARTED
     desired_stage: str = Stage.RUNNING
     disk_size: int = 80
+    pip_install_source: bool = False
     data: Dict[str, Optional[str]] = Field(..., sa_column=Column(pydantic_column_type(Dict[str, Optional[str]])))
     username: Optional[str] = None
 
@@ -263,7 +264,7 @@ def parse_grid_search(script_args, args):
         if expected_value:
             distributions[key] = expected_value
         else:
-            script_args.append(f"--{key}={value}")
+            script_args.append(f"{key}={value}")
     return distributions
 
 
@@ -290,7 +291,7 @@ def parse_random_search(script_args, args):
         if expected_value:
             distributions[key] = expected_value
         else:
-            script_args.append(f"--{key}={value}")
+            script_args.append(f"{key}={value}")
     return distributions
 
 
@@ -393,6 +394,13 @@ class RunSweepCommand(ClientCommand):
             type=str,
             help="Syntax for sweep parameters at the CLI.",
         )
+        parser.add_argument(
+            "--pip-install-source",
+            default=False,
+            action="store_true",
+            help="Run `pip install -e .` on the uploaded source before running",
+        )
+
         hparams, args = parser.parse_known_args()
 
         if hparams.framework != "pytorch_lightning" and hparams.num_nodes > 1:
@@ -457,6 +465,7 @@ class RunSweepCommand(ClientCommand):
             direction=hparams.direction,
             experiments={},
             disk_size=hparams.disk_size,
+            pip_install_source=hparams.pip_install_source,
             data=data,
             username=getuser(),
         )

@@ -1,3 +1,7 @@
+import os
+import subprocess
+import sys
+import uuid
 from abc import ABC
 from typing import Any, Dict, Optional, TypedDict
 
@@ -28,6 +32,7 @@ class Objective(TracerPythonScript, ABC):
         function_name: str = "objective",
         num_nodes: int = 1,  # TODO # Add support for multi node
         last_model_path: Optional[str] = None,
+        pip_install_source: bool = False,
         **kwargs,
     ):
         super().__init__(*args, raise_exception=raise_exception, **kwargs)
@@ -49,6 +54,8 @@ class Objective(TracerPythonScript, ABC):
         self.num_nodes = num_nodes
         self.progress = None
         self.last_model_path = last_model_path
+        self.pip_install_source = pip_install_source
+        self._rootwd = os.getcwd()
 
     def configure_tracer(self):
         assert self.params is not None
@@ -63,11 +70,21 @@ class Objective(TracerPythonScript, ABC):
         return tracer
 
     def run(self, params: Optional[Dict[str, Any]] = None, restart_count: int = 0):
+        if self.pip_install_source:
+            os.chdir(self._rootwd)
+            uid = uuid.uuid4().hex[:8]
+            dirname = f"uploaded-{uid}"
+            os.makedirs(dirname)
+            os.chdir(dirname)
         self.params = params or {}
         if is_overridden("objective", self, Objective):
             self.objective(**self.params)
         else:
             return super().run(params=params)
+
+    def on_before_run(self):
+        if self.pip_install_source:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "-e", "."])
 
     def on_after_run(self, global_scripts: Any):
         objective_fn = global_scripts.get(self.function_name, None)
