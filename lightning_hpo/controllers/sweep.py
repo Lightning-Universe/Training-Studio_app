@@ -1,7 +1,7 @@
 import urllib.parse
 from typing import List
 
-from lightning.app.storage import Drive, Mount
+from lightning.app.storage import Drive
 from lightning.app.structures import Dict
 
 from lightning_hpo import Sweep
@@ -58,8 +58,8 @@ class SweepController(Controller):
                 self.r[work_name] = Sweep.from_config(
                     sweep,
                     code={"drive": self.drive, "name": id},
-                    mounts=[
-                        Mount(data.source, mount_path=sweep.data[data.name] or data.mount_path)
+                    data=[
+                        (data.source, sweep.data[data.name] or data.mount_path)
                         for data in all_data
                         if data.name in sweep.data
                     ],
