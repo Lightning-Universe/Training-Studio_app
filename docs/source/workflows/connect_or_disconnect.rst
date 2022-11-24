@@ -79,30 +79,44 @@ If you are already connected to a Lightning App, disconnect from the App using t
 ----
 
 *******************
-Research Studio CLI
+Training Studio CLI
 *******************
 
-The Lightning Research Studio App provides a CLI to interact with the App once running.
+The Lightning Training Studio App provides a CLI to interact with the App once running.
 
 .. code-block::
 
     lightning --help
 
     You are connected to the local Lightning App.
+
     Usage: lightning [OPTIONS] COMMAND [ARGS]...
 
-    --help     Show this message and exit.
+      --help     Show this message and exit.
 
     Lightning App Commands
-        delete sweep
-        download artifacts
-        run notebook
-        run sweep
-        show artifacts
-        show notebooks
-        show sweeps
-        stop notebook
-        stop sweep
+      create data        Create a Data association by providing a public S3 bucket and an optional mount point.
+                         The contents of the bucket can be then mounted on experiments and sweeps and
+                         accessed through the filesystem.
+      delete data        Delete a data association. Note that this will not delete the data itself,
+                         it will only make it unavailable to experiments and sweeps.
+      delete experiment  Delete an experiment. Note that artifacts will still be available after the operation.
+      delete sweep       Delete a sweep. Note that artifacts will still be available after the operation.
+      download artifacts Download artifacts for experiments or sweeps.
+      run experiment     Run an experiment by providing a script, the cloud compute type and optional
+                         data entries to be made available at a given path.
+      run sweep          Run a sweep by providing a script, the cloud compute type and optional
+                         data entries to be made available at a given path. Hyperparameters can be
+                         provided as lists (`model.lr="[0.01, 0.1]"`) or using distributions
+                         (`model.lr="uniform(0.01, 0.1)"`, `model.lr="log_uniform(0.01, 0.1)"`).
+                         Hydra multirun override syntax is also supported.
+      show artifacts     Show artifacts for experiments or sweeps, in flat or tree layout.
+      show data          List all data associations.
+      show experiments   Show experiments and their statuses.
+      show logs          Show logs of an experiment or a sweep. Optionally follow logs as they stream.
+      show sweeps        Show all sweeps and their statuses, or the experiments for a given sweep.
+      stop experiment    Stop an experiment. Note that currently experiments cannot be resumed.
+      stop sweep         Stop all experiments in a sweep. Note that currently sweeps cannot be resumed.
 
 ----
 
@@ -161,14 +175,14 @@ Next Steps
 
 .. displayitem::
    :header: Show or Download Artifacts
-   :description: Learn how to interact with your Research Studio App artifacts
+   :description: Learn how to interact with your Training Studio App artifacts
    :col_css: col-md-6
    :button_link: show_or_download_artifacts.html
    :height: 180
 
 .. displayitem::
    :header: Show or Download Logs
-   :description: Learn how to interact with your Research Studio App logs
+   :description: Learn how to interact with your Training Studio App logs
    :col_css: col-md-6
    :button_link: show_or_download_logs.html
    :height: 180

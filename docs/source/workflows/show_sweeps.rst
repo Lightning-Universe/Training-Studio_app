@@ -15,7 +15,7 @@ Show Sweeps
 1. Check available options
 **************************
 
-The Research Studio App CLI provides its own help.
+The Training Studio App CLI provides its own help.
 
 .. code-block::
 
@@ -145,7 +145,7 @@ Next Steps
 
 .. displayitem::
    :header: Show or Download Artifacts
-   :description: Learn how to interact with your Research Studio App artifacts
+   :description: Learn how to interact with your Training Studio App artifacts
    :col_css: col-md-6
    :button_link: show_or_download_artifacts.html
    :height: 180

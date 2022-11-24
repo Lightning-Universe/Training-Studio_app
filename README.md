@@ -74,20 +74,33 @@ Usage: lightning [OPTIONS] COMMAND [ARGS]...
   --help     Show this message and exit.
 
 Lightning App Commands
-  create data        Create Data.
-  delete data        Delete Data.
-  delete experiment  Delete an Experiment.
-  delete sweep       Delete a Sweep.
-  download artifacts Download an artifact.
-  run experiment     Run an Experiment.
-  run sweep          Run a Sweep.
-  show artifacts     Show artifacts.
-  show data          List all Data.
-  show experiments   Show Experiments.
-  show logs          Show the logs of an Experiment or a Sweep.
-  show sweeps        Show all Sweeps
-  stop experiment    Stop an Experiment.
-  stop sweep         Stop a Sweep.
+Usage: lightning [OPTIONS] COMMAND [ARGS]...
+
+  --help     Show this message and exit.
+
+Lightning App Commands
+  create data        Create a Data association by providing a public S3 bucket and an optional mount point.
+                     The contents of the bucket can be then mounted on experiments and sweeps and
+                     accessed through the filesystem.
+  delete data        Delete a data association. Note that this will not delete the data itself,
+                     it will only make it unavailable to experiments and sweeps.
+  delete experiment  Delete an experiment. Note that artifacts will still be available after the operation.
+  delete sweep       Delete a sweep. Note that artifacts will still be available after the operation.
+  download artifacts Download artifacts for experiments or sweeps.
+  run experiment     Run an experiment by providing a script, the cloud compute type and optional
+                     data entries to be made available at a given path.
+  run sweep          Run a sweep by providing a script, the cloud compute type and optional
+                     data entries to be made available at a given path. Hyperparameters can be
+                     provided as lists (`model.lr="[0.01, 0.1]"`) or using distributions
+                     (`model.lr="uniform(0.01, 0.1)"`, `model.lr="log_uniform(0.01, 0.1)"`).
+                     Hydra multirun override syntax is also supported.
+  show artifacts     Show artifacts for experiments or sweeps, in flat or tree layout.
+  show data          List all data associations.
+  show experiments   Show experiments and their statuses.
+  show logs          Show logs of an experiment or a sweep. Optionally follow logs as they stream.
+  show sweeps        Show all sweeps and their statuses, or the experiments for a given sweep.
+  stop experiment    Stop an experiment. Note that currently experiments cannot be resumed.
+  stop sweep         Stop all experiments in a sweep. Note that currently sweeps cannot be resumed.
 
 You are connected to the local Lightning App. Return to the primary CLI with `lightning disconnect`.
 ```

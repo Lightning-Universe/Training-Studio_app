@@ -15,7 +15,7 @@ Run a Sweep
 1. Check available options
 **************************
 
-The Research Studio App CLI provides its own help.
+The Training Studio App CLI provides its own help.
 
 You can run the following command to learn more:
 
@@ -55,7 +55,7 @@ In order to run a Sweep, you can pass arguments as follow to perform ``grid_sear
 
    lightning run sweep train.py --model.lr "[0.001, 0.01, 0.1]" --data.batch "[32, 64]" --algorithm="grid_search"
 
-Finally, your code is uploaded to the App and the Research Studio App responds that the Sweep ``1dbfed8a`` was launched.
+Finally, your code is uploaded to the App and the Training Studio App responds that the Sweep ``1dbfed8a`` was launched.
 
 .. code-block::
 

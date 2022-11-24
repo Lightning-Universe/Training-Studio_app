@@ -1,7 +1,7 @@
 :orphan:
 
 ###########################
-Run the Research Studio App
+Run the Training Studio App
 ###########################
 
 .. _run_the_training_studio_app:
@@ -15,7 +15,7 @@ Run the Research Studio App
 1. Setup your environment
 *************************
 
-In order to run the Research Studio App, you need to complete the :doc:`installation guide <../installation>`.
+In order to run the Training Studio App, you need to complete the :doc:`installation guide <../installation>`.
 
 ----
 
@@ -39,7 +39,7 @@ If you want to enable the `Weights And Biases Logger <https://wandb.ai/>`_, foll
 
 .. warning::
 
-   The Research Studio App is fault-tolerant and tracks all information within an Sqlite Database. You can clean up the database with the following command: **rm database.db**.
+   The Training Studio App is fault-tolerant and tracks all information within an Sqlite Database. You can clean up the database with the following command: **rm database.db**.
 
 ----
 
@@ -119,14 +119,14 @@ Next Steps
 
 .. displayitem::
    :header: Show or Download Artifacts
-   :description: Learn how to interact with your Research Studio App artifacts
+   :description: Learn how to interact with your Training Studio App artifacts
    :col_css: col-md-6
    :button_link: show_or_download_artifacts.html
    :height: 180
 
 .. displayitem::
    :header: Show or Download Logs
-   :description: Learn how to interact with your Research Studio App logs
+   :description: Learn how to interact with your Training Studio App logs
    :col_css: col-md-6
    :button_link: show_or_download_logs.html
    :height: 180

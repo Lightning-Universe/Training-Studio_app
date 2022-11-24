@@ -1,6 +1,6 @@
-# Research Studio App UI
+# Training Studio App UI
 
-This guide explains the process of: installing the dependencies for, building, and developing the Research Studio App React UI.
+This guide explains the process of: installing the dependencies for, building, and developing the Training Studio App React UI.
 
 ## Installing Dependencies
 
