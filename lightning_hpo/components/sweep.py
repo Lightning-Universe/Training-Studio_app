@@ -1,6 +1,6 @@
 import os
 import uuid
-from typing import Any, Dict, List, Optional, Type, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
 from uuid import uuid4
 
 from lightning import BuildConfig, CloudCompute, LightningFlow
@@ -66,7 +66,7 @@ class Sweep(LightningFlow, ControllerResource):
         stage: Optional[str] = Stage.NOT_STARTED,
         logger_url: str = "",
         pip_install_source: bool = False,
-        data: Optional[List[str]] = None,
+        data: Optional[List[Tuple[str, str]]] = None,
         **objective_kwargs: Any,
     ):
         """The Sweep class enables to easily run a Python Script with Lightning
@@ -252,7 +252,9 @@ class Sweep(LightningFlow, ControllerResource):
         objective = getattr(self, f"w_{experiment_id}", None)
         if objective is None:
             cloud_compute = CloudCompute(
-                name=self.cloud_compute if self.cloud_compute else "cpu", disk_size=self.disk_size
+                name=self.cloud_compute if self.cloud_compute else "cpu",
+                disk_size=self.disk_size,
+                mounts=[Mount(source, mount_path) for source, mount_path in self.data],
             )
             objective = self._objective_cls(
                 experiment_id=experiment_id,
@@ -267,7 +269,9 @@ class Sweep(LightningFlow, ControllerResource):
         return objective
 
     @classmethod
-    def from_config(cls, config: SweepConfig, code: Optional[Code] = None, mounts: Optional[List[Mount]] = None):
+    def from_config(
+        cls, config: SweepConfig, code: Optional[Code] = None, data: Optional[List[Tuple[str, str]]] = None
+    ):
 
         if config.algorithm == "grid_search":
             algorithm = GridSearch({k: v.dict()["params"]["choices"] for k, v in config.distributions.items()})
@@ -278,6 +282,8 @@ class Sweep(LightningFlow, ControllerResource):
             algorithm = RandomSearch({k: v.dict() for k, v in config.distributions.items()})
         else:
             algorithm = OptunaAlgorithm(direction=config.direction)
+
+        # mounts = [Mount(source, mount_path) for source, mount_path in data]
 
         return cls(
             script_path=config.script_path,
@@ -291,7 +297,6 @@ class Sweep(LightningFlow, ControllerResource):
                 config.cloud_compute,
                 count=config.num_nodes,
                 disk_size=config.disk_size,
-                mounts=mounts,
             ),
             sweep_id=config.sweep_id,
             code=code,
@@ -301,7 +306,7 @@ class Sweep(LightningFlow, ControllerResource):
             direction=config.direction,
             stage=config.stage,
             logger_url=config.logger_url,
-            data=config.data,
+            data=data,
             pip_install_source=config.pip_install_source,
             requirements=config.requirements,
             packages=config.packages,
