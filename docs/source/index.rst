@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 #################################
-Welcome to ⚡ Research Studio App
+Welcome to ⚡ Training Studio App
 #################################
 
 .. twocolumns::
@@ -22,7 +22,7 @@ Welcome to ⚡ Research Studio App
 ----
 
 ***************************
-Run the Research Studio App
+Run the Training Studio App
 ***************************
 
 .. note:: This is only temporary as some changes are being released to PiPy
@@ -62,7 +62,7 @@ Get Started
       <div class="row">
 
 .. displayitem::
-   :header: The Research Studio App
+   :header: The Training Studio App
    :description: Manage Sweeps and Experiments to accelerate Training.
    :col_css: col-md-12
    :button_link: training_studio.html
@@ -91,9 +91,9 @@ Get Started
 
 .. toctree::
    :maxdepth: 1
-   :caption: Use Research Studio to...
+   :caption: Use Training Studio to...
 
-   Run the Research Studio App <workflows/run_training_studio_app>
+   Run the Training Studio App <workflows/run_training_studio_app>
    Connect or Disconnect to a Lightning App <workflows/connect_or_disconnect>
    Run a Sweep or Experiment <workflows/run_sweep>
    Show Sweeps or Experiments <workflows/show_sweeps>

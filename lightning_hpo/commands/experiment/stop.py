@@ -10,7 +10,7 @@ class StopExperimentConfig(BaseModel):
 
 class StopExperimentCommand(ClientCommand):
 
-    description = "Stop an Experiment."
+    description = "Stop an experiment. Note that currently experiments cannot be resumed."
 
     def run(self) -> None:
         parser = ArgumentParser()

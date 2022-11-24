@@ -11,7 +11,8 @@ from lightning_hpo.commands.sweep.run import CustomLocalSourceCodeDir, Experimen
 
 class RunExperimentCommand(ClientCommand):
 
-    description = "Run an Experiment."
+    description = """Run an experiment by providing a script, the cloud compute type and optional
+                     data entries to be made available at a given path."""
 
     def run(self) -> None:
         parser = ArgumentParser()

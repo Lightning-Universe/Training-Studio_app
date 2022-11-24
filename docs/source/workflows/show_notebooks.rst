@@ -58,7 +58,7 @@ Next Steps
 
 .. displayitem::
    :header: Show or Download Artifacts
-   :description: Learn how to interact with your Research Studio App artifacts
+   :description: Learn how to interact with your Training Studio App artifacts
    :col_css: col-md-4
    :button_link: show_or_download_artifacts.html
    :height: 180

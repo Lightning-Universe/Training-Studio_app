@@ -1,7 +1,7 @@
 :orphan:
 
 ###############
-Research Studio
+Training Studio
 ###############
 
 .. _training_studio:
@@ -11,7 +11,7 @@ Research Studio
       .. image:: https://pl-flash-data.s3.amazonaws.com/assets_lightning/training_app.png
          :alt: Logo of the App
    :right:
-      The Research Studio App is a `Lightning App <https://github.com/Lightning-AI/lightning>`_ that enables you to quickly perform machine-learning research in collaborative ways by bringing
+      The Training Studio App is a `Lightning App <https://github.com/Lightning-AI/lightning>`_ that enables you to quickly perform machine-learning research in collaborative ways by bringing
       all the tools you need in a single place (notebook, tensorboard, wandb, sweeps, etc...) and is runnable locally or on `lightning.ai <https://lightning.ai/>`_ platform.
 
 .. join_slack::
@@ -21,21 +21,21 @@ Research Studio
 ----
 
 ********************************
-The Research Studio App Benefits
+The Training Studio App Benefits
 ********************************
 
-The Research Studio App builds on the Lightning HPO Sweep Component to provide a way to manage sweeps and accelerate ML development with some added benefits:
+The Training Studio App builds on the Lightning HPO Sweep Component to provide a way to manage sweeps and accelerate ML development with some added benefits:
 
 * A Command-Line Interface to run your local scripts as sweeps or create development tools such as notebooks.
 * A React UI to easily keep track of your sweeps and tools.
-* Ability to run the Research Studio App on your own GPU machines (on-prem) or on `lightning.ai <https://lightning.ai/>`_ cloud platform.
+* Ability to run the Training Studio App on your own GPU machines (on-prem) or on `lightning.ai <https://lightning.ai/>`_ cloud platform.
 * Ability to have several users connect to the same App and collaborate together.
 * Organize your sweeps checkpoints or logging with several loggers of your choice such as Wandb, Tensorboard.
 
 ----
 
 ***************************
-Run the Research Studio App
+Run the Training Studio App
 ***************************
 
 .. raw:: html
@@ -45,15 +45,15 @@ Run the Research Studio App
       <div class="row">
 
 .. displayitem::
-   :header: Run the Research Studio App
+   :header: Run the Training Studio App
    :description: Learn how to start the Lightning App.
    :col_css: col-md-6
    :button_link: workflows/run_training_studio_app.html
    :height: 180
 
 .. displayitem::
-   :header: Connect to the Research Studio App
-   :description: Learn how to connect and disconnect from the Research Studio App.
+   :header: Connect to the Training Studio App
+   :description: Learn how to connect and disconnect from the Training Studio App.
    :col_css: col-md-6
    :button_link: workflows/connect_or_disconnect.html
    :height: 180
@@ -154,14 +154,14 @@ App Utilities
 
 .. displayitem::
    :header: Show or Download Artifacts
-   :description: Learn how to interact with your Research Studio App artifacts
+   :description: Learn how to interact with your Training Studio App artifacts
    :col_css: col-md-6
    :button_link: workflows/show_or_download_artifacts.html
    :height: 180
 
 .. displayitem::
    :header: Show or Download Logs
-   :description: Learn how to interact with your Research Studio App logs
+   :description: Learn how to interact with your Training Studio App logs
    :col_css: col-md-6
    :button_link: workflows/show_or_download_logs.html
    :height: 180

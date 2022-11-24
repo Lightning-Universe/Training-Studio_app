@@ -68,7 +68,7 @@ Next Steps
    :height: 180
 
 .. displayitem::
-   :header: The Research Studio App
+   :header: The Training Studio App
    :description: Manage Sweeps and Tools to accelerate Training.
    :col_css: col-md-6
    :button_link: training_studio.html

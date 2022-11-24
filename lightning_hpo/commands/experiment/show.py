@@ -36,7 +36,7 @@ def _show_experiments(sweeps: List[SweepConfig]):
 
 class ShowExperimentsCommand(ClientCommand):
 
-    description = "Show Experiments."
+    description = "Show experiments and their statuses."
 
     def run(self) -> None:
         if sys.argv and sys.argv[-1] == "--help":

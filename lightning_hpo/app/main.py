@@ -28,7 +28,7 @@ from lightning_hpo.controllers.sweep import SweepController
 from lightning_hpo.controllers.tensorboard import TensorboardController
 
 
-class ResearchStudio(LightningFlow):
+class TrainingStudio(LightningFlow):
     def __init__(self):
         super().__init__()
         # 1: Create Drive
@@ -61,7 +61,7 @@ class ResearchStudio(LightningFlow):
             return
 
         if not self.ready:
-            print("The Research Studio App is ready !")
+            print("The Training Studio App is ready !")
             self.ready = True
 
         # Run every seconds.
