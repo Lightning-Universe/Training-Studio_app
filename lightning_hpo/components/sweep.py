@@ -254,7 +254,7 @@ class Sweep(LightningFlow, ControllerResource):
             cloud_compute = CloudCompute(
                 name=self.cloud_compute if self.cloud_compute else "cpu",
                 disk_size=self.disk_size,
-                mounts=[Mount(source, mount_path) for source, mount_path in self.data],
+                mounts=[Mount(source, mount_path) for source, mount_path in self.data] if self.data else None,
             )
             objective = self._objective_cls(
                 experiment_id=experiment_id,
@@ -282,8 +282,6 @@ class Sweep(LightningFlow, ControllerResource):
             algorithm = RandomSearch({k: v.dict() for k, v in config.distributions.items()})
         else:
             algorithm = OptunaAlgorithm(direction=config.direction)
-
-        # mounts = [Mount(source, mount_path) for source, mount_path in data]
 
         return cls(
             script_path=config.script_path,
