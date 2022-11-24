@@ -33,18 +33,20 @@ class DataConfig(SQLModel, table=True):
 
 class CreateDataCommand(ClientCommand):
 
-    description = "Create Data."
+    description = """Create a Data association by providing a public S3 bucket and an optional mount point.
+                     The contents of the bucket can be then mounted on experiments and sweeps and
+                     accessed through the filesystem."""
 
     def run(self) -> None:
         parser = ArgumentParser()
 
         parser.add_argument("--name", type=str, required=True, help="The name of the Data.")
-        parser.add_argument("--source", type=str, required=True, help="The associated S3 URL of the Data.")
+        parser.add_argument("--source", type=str, required=True, help="The S3 URL of the Data.")
         parser.add_argument(
             "--mount_path",
             type=str,
             default=None,
-            help="Where the Data should be mounted to the works. Defaults to `/data/<name>/`.",
+            help="Where the Data should be mounted in experiments and sweeps. Defaults to `/data/<name>/`.",
         )
 
         hparams = parser.parse_args()
