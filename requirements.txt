@@ -1,6 +1,6 @@
 jsonargparse[signatures]
 pytorch_lightning==1.8.2
-lightning==1.8.2
+lightning
 lightning-jupyter
 torchvision
 optuna
