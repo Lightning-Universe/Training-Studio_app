@@ -110,7 +110,7 @@ if __name__ == "__main__":
             "max_epochs": 10,
             "limit_train_batches": 20,
             "limit_val_batches": 5,
-            "callbacks": [ModelCheckpoint(monitor="val_acc")],
+            "callbacks": [ModelCheckpoint(monitor="val_loss")],
         },
     )
     cli.trainer.fit(cli.model, datamodule=cli.datamodule)
