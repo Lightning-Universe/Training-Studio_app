@@ -1,7 +1,7 @@
 import os
 from uuid import uuid4
 
-from lightning import LightningFlow
+from lightning import LightningFlow, CloudCompute
 from lightning.app.components.database import Database, DatabaseClient
 from lightning.app.frontend import StaticWebFrontend
 from lightning.app.storage import Drive
@@ -48,6 +48,7 @@ class TrainingStudio(LightningFlow):
                 DataConfig,
             ]
         )
+        self.db.cloud_compute = CloudCompute("cpu", disk_size=80)
 
         self.has_setup = False
         self._db_client = None

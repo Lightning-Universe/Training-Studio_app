@@ -8,7 +8,6 @@ import torchvision.transforms as T
 from pytorch_lightning import LightningDataModule, LightningModule
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.utilities.cli import LightningCLI
-from torchmetrics import Accuracy
 from torchvision.datasets import MNIST
 
 
@@ -44,7 +43,6 @@ class ImageClassifier(LightningModule):
         self.save_hyperparameters(ignore="model")
         print(self.hparams)
         self.model = model or Net()
-        self.val_acc = Accuracy()
 
         checkpoint_path = os.path.join(os.path.dirname(__file__), "demo_weights")
         if os.path.exists(checkpoint_path):
@@ -68,7 +66,6 @@ class ImageClassifier(LightningModule):
         x, y = batch
         logits = self.forward(x)
         loss = F.nll_loss(logits, y.long())
-        self.log("val_acc", self.val_acc(logits, y))
         self.log("val_loss", loss)
 
     def configure_optimizers(self):
