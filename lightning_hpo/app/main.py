@@ -49,7 +49,7 @@ class TrainingStudio(LightningFlow):
             ]
         )
 
-        self.ready = False
+        self.has_setup = False
         self._db_client = None
         self._token = uuid4().hex
         self.seconds = ",".join([str(v) for v in range(0, 60, 1)])
@@ -60,9 +60,9 @@ class TrainingStudio(LightningFlow):
         if not self.db.alive():
             return
 
-        if not self.ready:
+        if not self.has_setup:
             print("The Training Studio App is ready !")
-            self.ready = True
+            self.has_setup = True
 
         # Run every seconds.
         if self.schedule(f"* * * * * {self.seconds}"):

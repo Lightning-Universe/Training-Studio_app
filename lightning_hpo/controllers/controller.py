@@ -36,7 +36,7 @@ class Controller(LightningFlow):
         self.r = Dict()
         self.drive = drive
         self._db_client = None
-        self.ready = False
+        self.has_setup = False
 
     def run(self, db_url: str, token: str, configs: Optional[List[Type[SQLModel]]] = None):
         self.db_url = db_url
@@ -47,11 +47,11 @@ class Controller(LightningFlow):
         # 1: Read from the database and generate the works accordingly.
         # if self.schedule("* * * * * 0,5,10,15,20,25,30,35,40,45,50,55"):
         db_configs = self.db.select_all()
-        if not self.ready:
+        if not self.has_setup:
             for config in db_configs:
                 config.stage = Stage.NOT_STARTED
                 self.db.update(config)
-            self.ready = True
+            self.has_setup = True
 
         if configs:
             db_configs += db_configs
