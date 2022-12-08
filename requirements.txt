@@ -9,6 +9,6 @@ wandb
 streamlit
 sqlalchemy
 hiplot
-sklearn
+scikit-learn
 sqlite_web
 hydra-core
