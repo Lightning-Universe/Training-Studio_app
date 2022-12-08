@@ -1,7 +1,7 @@
 import os
 from uuid import uuid4
 
-from lightning import LightningFlow, CloudCompute
+from lightning import CloudCompute, LightningFlow
 from lightning.app.components.database import Database, DatabaseClient
 from lightning.app.frontend import StaticWebFrontend
 from lightning.app.storage import Drive
