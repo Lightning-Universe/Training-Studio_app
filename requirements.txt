@@ -1,6 +1,6 @@
 jsonargparse[signatures]
 pytorch_lightning
-lightning>=1.8.4
+lightning==1.8.4
 lightning-jupyter
 torchvision
 optuna
@@ -12,3 +12,4 @@ hiplot
 scikit-learn
 sqlite_web
 hydra-core
+tensorboard
