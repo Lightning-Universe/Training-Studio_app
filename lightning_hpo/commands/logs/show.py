@@ -34,16 +34,22 @@ class ShowLogsCommand(ClientCommand):
         sweeps = [c["name"] for c in logs_config if len(c["components"]) > 1]
         experiments = [c["name"] for c in logs_config if len(c["components"]) == 1]
 
-        for config in logs_config:
-            for name in hparams.names:
-                if name == config["name"]:
-                    components.extend(config["components"])
+        if not hparams.names:
+            components = sweeps + experiments
+        else:
+            for config in logs_config:
+                for name in hparams.names:
+                    if name == config["name"]:
+                        components.extend(config["components"])
 
         if not components:
-            print(
-                f"The provided name {hparams.name} wasn't found."
-                f" Here are the sweeps {sweeps} and experiments {experiments}."
-            )
+            if not sweeps and not experiments:
+                print("There isn't logs yet as you haven't run any experiments or sweeps.")
+            else:
+                print(
+                    f"The provided name {hparams.names} wasn't found."
+                    f" Here are the sweeps {sweeps} and experiments {experiments}."
+                )
             sys.exit(0)
 
         app_name, _ = _retrieve_connection_to_an_app()
