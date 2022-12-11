@@ -33,7 +33,8 @@ class Tensorboard(LightningWork, ControllerResource):
         os.makedirs(local_folder, exist_ok=True)
 
         # Note: Used tensorboard built-in sync methods but it doesn't seem to work.
-        cmd = f"tensorboard --logdir={local_folder} --host {self.host} --port {self.port}"
+        extras = "--reload_interval 1 --reload_multifile True"
+        cmd = f"tensorboard --logdir={local_folder} --host {self.host} --port {self.port} {extras}"
         self._process = Popen(cmd, shell=True, env=os.environ)
 
         self.stage = Stage.RUNNING
