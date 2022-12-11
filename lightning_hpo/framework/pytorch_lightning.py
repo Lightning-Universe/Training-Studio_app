@@ -109,7 +109,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
 
         if _IS_PYTORCH_LIGHTNING_AVAILABLE:
             import pytorch_lightning as pl
-            from pytorch_lightning.callbacks import Callback, DeviceStatsMonitor
+            from pytorch_lightning.callbacks import Callback
             from pytorch_lightning.strategies.deepspeed import DeepSpeedStrategy
             from pytorch_lightning.utilities import rank_zero_only
             from pytorch_lightning.utilities.model_summary.model_summary import (
@@ -119,7 +119,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
             from pytorch_lightning.utilities.model_summary.model_summary_deepspeed import deepspeed_param_size
         else:
             import lightning.pytorch as pl
-            from lightning.pytorch.callbacks import Callback, DeviceStatsMonitor
+            from lightning.pytorch.callbacks import Callback
             from lightning.pytorch.strategies.deepspeed import DeepSpeedStrategy
             from lightning.pytorch.utilities import rank_zero_only
             from lightning.pytorch.utilities.model_summary.model_summary import (
@@ -132,7 +132,6 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
             def __init__(self, work):
                 self.work = work
                 self.work.start_time = time.time()
-                self.device_stats_callback = DeviceStatsMonitor(cpu_stats=True)
 
             def setup(
                 self,
@@ -140,7 +139,6 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
                 pl_module,
                 stage: Optional[str] = None,
             ) -> None:
-                self.device_stats_callback.setup(trainer, pl_module, stage)
                 trainer.checkpoint_callback.save_last = True
 
             @rank_zero_only
@@ -165,8 +163,6 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
 
                 if trainer.checkpoint_callback.last_model_path:
                     self.work.last_model_path = Path(trainer.checkpoint_callback.last_model_path)
-
-                self.device_stats_callback.on_train_batch_end(trainer, pl_module, *args)
 
         def trainer_pre_fn(trainer, *args, **kwargs):
             callbacks = kwargs.get("callbacks", [])
