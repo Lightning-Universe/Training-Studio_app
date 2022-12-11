@@ -1,12 +1,8 @@
+# Get information about the Sweep command
 lightning run sweep --help 
 
-"""
-usage: sweep [-h] [--algorithm {grid_search,random_search,bayesian}] [--total_experiments TOTAL_EXPERIMENTS]
-             [--parallel_experiments PARALLEL_EXPERIMENTS] [--requirements REQUIREMENTS [REQUIREMENTS ...]]
-             [--packages PACKAGES [PACKAGES ...]] [--cloud_compute {cpu,cpu-small,cpu-medium,gpu,gpu-fast,gpu-fast-multi}]
-             [--name NAME] [--logger {tensorboard,wandb}] [--direction {minimize,maximize}] [--framework {pytorch_lightning,base}]
-             [--num_nodes NUM_NODES] [--disk_size DISK_SIZE] [--data DATA [DATA ...]] [--syntax {default,hydra}]
-             [--pip-install-source]
+# Result:
+usage: sweep [-h] ...
              script_path
 
 positional arguments:
@@ -21,10 +17,12 @@ optional arguments:
   --parallel_experiments PARALLEL_EXPERIMENTS
                         Number of experiments to run.
   --requirements REQUIREMENTS [REQUIREMENTS ...]
-                        List of requirements separated by a comma or requirements.txt filepath.
+                        List of requirements separated 
+                        by a comma or requirements.txt filepath.
   --packages PACKAGES [PACKAGES ...]
-                        List of system packages to be installed via apt install, separated by a comma.
-  --cloud_compute {cpu,cpu-small,cpu-medium,gpu,gpu-fast,gpu-fast-multi}
+                        List of system packages to be installed 
+                        via apt install, separated by a comma.
+  --cloud_compute {cpu,...,gpu,...,gpu-fast-multi}
                         The machine to use in the cloud.
   --name NAME           Configure your sweep name.
   --logger {tensorboard,wandb}
@@ -37,10 +35,11 @@ optional arguments:
                         The number of nodes.
   --disk_size DISK_SIZE
                         The disk size in Gigabytes.
-  --data DATA [DATA ...]
-                        Provide a list of Data (and optionally the mount_path in the format `<name>:<mount_path>`) to mount to the
-                        experiments.
+  --data DATA [DATA ...] Provide a list of Data
+                        in the format: `<name>` 
+                        or `<name>:<mount_path>`
+                        to mount to the experiments.
   --syntax {default,hydra}
                         Syntax for sweep parameters at the CLI.
-  --pip-install-source  Run `pip install -e .` on the uploaded source before running
-"""
+  --pip-install-source  Run `pip install -e .` on 
+                        the uploaded source before running

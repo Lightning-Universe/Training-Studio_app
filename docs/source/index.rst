@@ -33,12 +33,12 @@ Want to start a hyper-parameter sweep?
 **************************************
 
 .. lit_tabs::
-   :titles: 1. Connect to the app; 2. Create a new folder & move inside; 3. Copy & paste this Lightning Trainer script to a train.py file; 4. Launch a Grid Search Sweep; 5. Launch a Grid Search Sweep on GPU; 6. Use CLI help to learn more;
-   :code_files: sweep/connect.bash; sweep/new_folder.bash; sweep/script.py; sweep/sweep.bash; sweep/sweep_gpu.bash; sweep/help.bash;
+   :titles: 1. Connect to the app; 2. Create a new folder & move inside; 3. Copy & paste this Lightning Trainer script to a train.py file; 4. Launch a Grid Search Sweep; 5. Launch a Grid Search Sweep on GPU; 6. Use CLI help to learn more
+   :code_files: sweep/connect.bash; sweep/new_folder.bash; sweep/script.py; sweep/sweep.bash; sweep/sweep_gpu.bash; sweep/help.bash
    :highlights:
    :works: 
    :enable_run: false
-   :tab_rows: 6
+   :tab_rows: 5
    :height: 620px
 
 ----
@@ -53,7 +53,7 @@ Want to use your own data?
    :highlights:
    :works: 
    :enable_run: false
-   :tab_rows: 6
+   :tab_rows: 5
 
 ----
 
@@ -62,12 +62,12 @@ What else can I do with the Training Studio App?
 ************************************************
 
 .. lit_tabs::
-   :titles: General Usage Information; Granular Usage Information; Show Experiments & Sweeps; Show Logs; Show & Download Artifacts; 
-   :code_files: extra/help.bash; extra/help_module.bash; extra/experiment_and_sweep.bash; extra/logs.bash; data/artifacts.bash;
+   :titles: General Usage Information; Granular Usage Information; Show Experiments & Sweeps; Show Logs; Show & Download Artifacts
+   :code_files: extra/help.bash; extra/help_module.bash; extra/experiment_and_sweep.bash; extra/logs.bash; extra/artifacts.bash
    :highlights:
    :works: 
    :enable_run: false
-   :tab_rows: 6
+   :tab_rows: 5
 
 .. .. note:: This is only temporary as some changes are being released to PiPy
 

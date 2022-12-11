@@ -1,7 +1,7 @@
 # General Help
 lightning --help
 
-# Output
+# Result:
 Lightning App Commands
   create data        ...
   delete data        ...
