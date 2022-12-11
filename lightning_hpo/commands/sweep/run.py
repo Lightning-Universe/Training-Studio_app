@@ -346,7 +346,7 @@ class RunSweepCommand(ClientCommand):
         )
         parser.add_argument(
             "--cloud_compute",
-            default="cpu",
+            default="cpu-small",
             choices=["cpu", "cpu-small", "cpu-medium", "gpu", "gpu-fast", "gpu-fast-multi"],
             type=str,
             help="The machine to use in the cloud.",

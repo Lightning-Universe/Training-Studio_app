@@ -99,7 +99,7 @@ class TensorboardLogger(Logger):
         if use_localhost:
             logger = TensorBoardLogger(save_dir=str(drive.root), name="", version="")
         else:
-            logger = DriveTensorBoardLogger(save_dir=".", name="", drive=drive, refresh_time=5)
+            logger = DriveTensorBoardLogger(save_dir=".", name="", drive=drive, refresh_time=1)
 
         # TODO: Collect the monitor + metric at the end.
         logger.log_hyperparams(params)

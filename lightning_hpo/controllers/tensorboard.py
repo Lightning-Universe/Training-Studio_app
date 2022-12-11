@@ -1,9 +1,9 @@
 import urllib.parse
 from typing import List
 
+import lightning as L
 from lightning.app.api import Post
 from lightning.app.storage import Drive
-
 from lightning_hpo.commands.tensorboard.stop import StopTensorboardConfig, TensorboardConfig
 from lightning_hpo.components.tensorboard import Tensorboard
 from lightning_hpo.controllers.controller import Controller
@@ -22,6 +22,7 @@ class TensorboardController(Controller):
                     self.r[work_name] = Tensorboard(
                         drive=Drive(f"lit://{config.sweep_id}"),
                         config=config,
+                        cloud_compute=L.CloudCompute("cpu-small"),
                     )
                     self.r[work_name].stage = Stage.PENDING
             if config.desired_stage == Stage.DELETED:
