@@ -17,7 +17,7 @@ Wandb Logger
 
 .. code-block:: python
 
-    from lightning_hpo import Sweep
+    from lightning_training_studio import Sweep
 
     Sweep(..., logger="wandb")
 

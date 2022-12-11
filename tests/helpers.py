@@ -7,8 +7,8 @@ from lightning.app.components.database.utilities import _GeneralModel
 from lightning.app.utilities.commands import ClientCommand
 from lightning.app.utilities.enum import make_status, WorkStageStatus
 
-from lightning_hpo import Objective
-from lightning_hpo.utilities.utils import get_primary_key
+from lightning_training_studio import Objective
+from lightning_training_studio.utilities.utils import get_primary_key
 
 
 class MockResponse:

@@ -5,10 +5,10 @@ from unittest.mock import MagicMock
 
 from lightning.app.storage import Drive
 
-from lightning_hpo.commands.sweep.delete import DeleteSweepConfig
-from lightning_hpo.components.sweep import Sweep, SweepConfig
-from lightning_hpo.controllers.sweep import SweepController
-from lightning_hpo.utilities.enum import Stage
+from lightning_training_studio.commands.sweep.delete import DeleteSweepConfig
+from lightning_training_studio.components.sweep import Sweep, SweepConfig
+from lightning_training_studio.controllers.sweep import SweepController
+from lightning_training_studio.utilities.enum import Stage
 
 
 def test_delete_sweeps_server(monkeypatch, tmpdir):

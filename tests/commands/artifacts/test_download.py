@@ -7,7 +7,10 @@ from unittest.mock import MagicMock
 
 import requests
 
-from lightning_hpo.commands.artifacts.download import DownloadArtifactsCommand, DownloadArtifactsConfigResponse
+from lightning_training_studio.commands.artifacts.download import (
+    DownloadArtifactsCommand,
+    DownloadArtifactsConfigResponse,
+)
 
 
 def test_download_artifacts(monkeypatch, tmpdir):

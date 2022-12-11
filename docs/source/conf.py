@@ -16,7 +16,7 @@ import sys
 
 import lai_sphinx_theme
 
-import lightning_hpo
+import lightning_training_studio
 
 _PATH_HERE = os.path.abspath(os.path.dirname(__file__))
 _PATH_ROOT = os.path.realpath(os.path.join(_PATH_HERE, "..", ".."))
@@ -27,14 +27,14 @@ SPHINX_MOCK_REQUIREMENTS = int(os.environ.get("SPHINX_MOCK_REQUIREMENTS", True))
 # -- Project information -----------------------------------------------------
 
 # this name shall match the project name in Github as it is used for linking to code
-project = "lightning_hpo"
-copyright = lightning_hpo.__copyright__
-author = lightning_hpo.__author__
+project = "lightning_training_studio"
+copyright = lightning_training_studio.__copyright__
+author = lightning_training_studio.__author__
 
 # The short X.Y version
-version = lightning_hpo.__version__
+version = lightning_training_studio.__version__
 # The full version, including alpha/beta/rc tags
-release = lightning_hpo.__version__
+release = lightning_training_studio.__version__
 
 # Options for the linkcode extension
 # ----------------------------------
@@ -148,15 +148,15 @@ pygments_style = None
 # a list of builtin themes.
 #
 html_theme = "lai_sphinx_theme"
-html_theme_path = [os.environ.get('LIT_SPHINX_PATH', lai_sphinx_theme.get_html_theme_path())]
+html_theme_path = [os.environ.get("LIT_SPHINX_PATH", lai_sphinx_theme.get_html_theme_path())]
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 
 html_theme_options = {
-    "pytorch_project": lightning_hpo.__homepage__,
-    "canonical_url": lightning_hpo.__homepage__,
+    "pytorch_project": lightning_training_studio.__homepage__,
+    "canonical_url": lightning_training_studio.__homepage__,
     "collapse_navigation": False,
     "display_version": True,
     "logo_only": False,
@@ -222,7 +222,7 @@ texinfo_documents = [
         project + " Documentation",
         author,
         project,
-        lightning_hpo.__docs__,
+        lightning_training_studio.__docs__,
         "Miscellaneous",
     ),
 ]
@@ -367,6 +367,6 @@ doctest_test_doctest_blocks = ""
 doctest_global_setup = """
 import importlib
 import os
-import lightning_hpo as hpo
+import lightning_training_studio as hpo
 """
 coverage_skip_undoc_in_source = True

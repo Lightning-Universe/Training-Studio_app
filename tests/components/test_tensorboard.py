@@ -1,8 +1,8 @@
 import pytest
 from lightning.app.storage import Drive
 
-from lightning_hpo.commands.tensorboard.stop import TensorboardConfig
-from lightning_hpo.components import tensorboard as T
+from lightning_training_studio.commands.tensorboard.stop import TensorboardConfig
+from lightning_training_studio.components import tensorboard as T
 
 
 def test_tensorboard_work(monkeypatch):

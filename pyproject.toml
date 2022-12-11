@@ -10,7 +10,7 @@ requires = [
 
 [tool.isort]
 known_first_party = [
-    "lightning_hpo"
+    "lightning_training_studio"
 ]
 profile = "black"
 line_length = 120

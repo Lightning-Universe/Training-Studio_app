@@ -1,6 +1,6 @@
 import pytest
 
-from lightning_hpo.commands.data.create import DataConfig
+from lightning_training_studio.commands.data.create import DataConfig
 
 
 def test_create_drive():

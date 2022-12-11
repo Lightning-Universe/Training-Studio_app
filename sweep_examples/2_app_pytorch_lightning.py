@@ -3,9 +3,9 @@ import os.path as ops
 import optuna
 from lightning import LightningApp
 
-from lightning_hpo import Sweep
-from lightning_hpo.algorithm.optuna import OptunaAlgorithm
-from lightning_hpo.distributions.distributions import Categorical, IntUniform, LogUniform, Uniform
+from lightning_training_studio import Sweep
+from lightning_training_studio.algorithm.optuna import OptunaAlgorithm
+from lightning_training_studio.distributions.distributions import Categorical, IntUniform, LogUniform, Uniform
 
 app = LightningApp(
     Sweep(

@@ -3,8 +3,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from lightning_hpo.commands.sweep import run
-from lightning_hpo.commands.sweep.run import Distributions, RunSweepCommand
+from lightning_training_studio.commands.sweep import run
+from lightning_training_studio.commands.sweep.run import Distributions, RunSweepCommand
 from tests.helpers import _create_client_command_mock
 
 

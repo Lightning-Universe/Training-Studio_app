@@ -19,7 +19,7 @@ If you're already a PyTorch Lightning user and are looking forward to doing hype
 
 You are in the right place and Lightning HPO is what you are looking for !
 
-Lightning HPO provides a :class:`~lightning_hpo.components.sweep.Sweep` abstraction to coordinate complex hyper-parameters
+Lightning HPO provides a :class:`~lightning_training_studio.components.sweep.Sweep` abstraction to coordinate complex hyper-parameters
 which can be run locally or in the cloud with a simple CLI change.
 
 ----
@@ -29,7 +29,7 @@ Prepare your Sweep
 ******************
 
 
-Import a :class:`~lightning_hpo.components.sweep.Sweep` component, pass the path to your script and define your arguments in an ``app.py`` file.
+Import a :class:`~lightning_training_studio.components.sweep.Sweep` component, pass the path to your script and define your arguments in an ``app.py`` file.
 
 For this example, download ``train.py`` and ``app.py`` files with the following commands.
 
@@ -41,11 +41,11 @@ For this example, download ``train.py`` and ``app.py`` files with the following 
 
    wget -O app.py https://raw.githubusercontent.com/Lightning-AI/lightning-hpo/master/sweep_examples/2_app_pytorch_lightning.py
 
-In the ``app.py`` file, we configure a :class:`~lightning_hpo.components.sweep.Sweep` object to run 4 sequential experiments where the ``model.lr``, ``model.gamma``, ``data.batch_size`` and ``trainer.max_epochs`` are hyper-parameters sampled from several distributions.
+In the ``app.py`` file, we configure a :class:`~lightning_training_studio.components.sweep.Sweep` object to run 4 sequential experiments where the ``model.lr``, ``model.gamma``, ``data.batch_size`` and ``trainer.max_epochs`` are hyper-parameters sampled from several distributions.
 
 .. literalinclude:: ../../../sweep_examples/2_app_pytorch_lightning.py
 
-Under the hood, the :class:`~lightning_hpo.components.sweep.Sweep` launches one process per experiment and passed the sampled parameters to your script
+Under the hood, the :class:`~lightning_training_studio.components.sweep.Sweep` launches one process per experiment and passed the sampled parameters to your script
 e.g this would work with any argument parser such as `hydra <https://github.com/facebookresearch/hydra>`_ or `jsonargparse <https://github.com/omni-us/jsonargparse>`_.
 
 .. code-block::

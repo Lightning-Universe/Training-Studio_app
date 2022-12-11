@@ -1,8 +1,8 @@
 from lightning.app.runners import MultiProcessRuntime
 from lightning.app.testing import LightningTestApp
 
-from lightning_hpo.app.main import TrainingStudio
-from lightning_hpo.controllers import controller
+from lightning_training_studio.app.main import TrainingStudio
+from lightning_training_studio.controllers import controller
 from tests.helpers import MockDatabaseClient
 
 

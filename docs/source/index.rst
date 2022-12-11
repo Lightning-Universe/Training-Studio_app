@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 ##########################
-Training Studio CheatSheet 
+Training Studio CheatSheet
 ##########################
 
 Build models ⚡ *Lightning fast*.
@@ -14,9 +14,9 @@ Build models ⚡ *Lightning fast*.
 
 ----
 
-*********************
-Install Lightning HPO
-*********************
+*****
+Setup
+*****
 
 First, install Lightning & Lightning-HPO.
 
@@ -36,7 +36,7 @@ Want to start a hyper-parameter sweep?
    :titles: 1. Connect to the app; 2. Create a new folder & move inside; 3. Copy & paste this Lightning Trainer script to a train.py file; 4. Launch a Grid Search Sweep; 5. Launch a Grid Search Sweep on GPU; 6. Use CLI help to learn more
    :code_files: sweep/connect.bash; sweep/new_folder.bash; sweep/script.py; sweep/sweep.bash; sweep/sweep_gpu.bash; sweep/help.bash
    :highlights:
-   :works: 
+   :works:
    :enable_run: false
    :tab_rows: 5
    :height: 620px
@@ -51,7 +51,7 @@ Want to use your own data?
    :titles: 1. Connect to the app; 2. Add your own Datasets from s3; 3. Show your Datasets; 4. Use your Datasets with a Sweep
    :code_files: sweep/connect.bash; data/add.bash; data/show.bash; data/sweep.bash;
    :highlights:
-   :works: 
+   :works:
    :enable_run: false
    :tab_rows: 5
 
@@ -65,7 +65,7 @@ What else can I do with the Training Studio App?
    :titles: General Usage Information; Granular Usage Information; Show Experiments & Sweeps; Show Logs; Show & Download Artifacts
    :code_files: extra/help.bash; extra/help_module.bash; extra/experiment_and_sweep.bash; extra/logs.bash; extra/artifacts.bash
    :highlights:
-   :works: 
+   :works:
    :enable_run: false
    :tab_rows: 5
 
