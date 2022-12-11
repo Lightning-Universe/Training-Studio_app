@@ -14,7 +14,4 @@ jinja2>=3.0.0,<3.1.0
 ipython[notebook]
 ipython_genutils
 sphinx-autobuild
-
-
-
 lai-sphinx-theme
