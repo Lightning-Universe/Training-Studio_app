@@ -77,6 +77,7 @@ class SweepConfig(SQLModel, table=True):
     direction: str
     stage: str = Stage.NOT_STARTED
     desired_stage: str = Stage.RUNNING
+    shm_size: int = 1024
     disk_size: int = 80
     pip_install_source: bool = False
     data: Dict[str, Optional[str]] = Field(..., sa_column=Column(pydantic_column_type(Dict[str, Optional[str]])))
@@ -380,6 +381,12 @@ class RunSweepCommand(ClientCommand):
             help="The number of nodes.",
         )
         parser.add_argument(
+            "--shm_size",
+            default=1024,
+            type=int,
+            help="Size of shared memory in MiB, backed by RAM.",
+        )
+        parser.add_argument(
             "--disk_size",
             default=10,
             type=int,
@@ -469,6 +476,7 @@ class RunSweepCommand(ClientCommand):
             logger=hparams.logger,
             direction=hparams.direction,
             experiments={},
+            shm_size=hparams.shm_size,
             disk_size=hparams.disk_size,
             pip_install_source=hparams.pip_install_source,
             data=data,

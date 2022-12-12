@@ -18,6 +18,7 @@
       "logger": "wandb",
       "direction": "maximize",
       "status": "succeeded",
+      "shm_size": 1024,
       "disk_size": 80,
       "username": ""
     }

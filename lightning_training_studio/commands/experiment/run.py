@@ -52,6 +52,12 @@ class RunExperimentCommand(ClientCommand):
             help="The number of nodes.",
         )
         parser.add_argument(
+            "--shm_size",
+            default=1024,
+            type=int,
+            help="Size of shared memory in MiB, backed by RAM.",
+        )
+        parser.add_argument(
             "--disk_size",
             default=80,
             type=int,
@@ -112,6 +118,7 @@ class RunExperimentCommand(ClientCommand):
             logger=hparams.logger,
             direction="minimize",  # This won't be used
             experiments={0: ExperimentConfig(name=name, params={})},
+            shm_size=hparams.shm_size,
             disk_size=hparams.disk_size,
             pip_install_source=hparams.pip_install_source,
             data=data,
