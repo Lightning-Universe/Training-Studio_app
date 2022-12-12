@@ -42,14 +42,13 @@ def test_download_artifacts(monkeypatch, tmpdir):
         post = MagicMock(return_value=resp)
         monkeypatch.setattr(requests, "post", post)
 
-        output_dir = osp.join(str(tmpdir), ".shared/")
+        output_dir = osp.join(str(tmpdir), "new_folder")
         os.makedirs(output_dir)
         sys.argv = ["", "--output_dir", output_dir, "--names", "something"]
         command = DownloadArtifactsCommand(None)
         command.command_name = ""
         command.app_url = ""
         command.run()
-
         assert osp.exists(osp.join(output_dir, "c/example.txt"))
         assert not osp.exists(osp.join(output_dir, "f/example.txt"))
 

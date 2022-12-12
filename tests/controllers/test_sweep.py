@@ -57,8 +57,9 @@ def test_sweep_controller(monkeypatch):
     assert response == "The current Sweep 'a' is running. It couldn't be updated."
 
     while True:
-        sweep_controller.run("a", "b")
         sweep: Sweep = sweep_controller.r.get("a", None)
+        sweep.data = None
+        sweep_controller.run("a", "b")
         if sweep.stage == Stage.SUCCEEDED:
             break
 
