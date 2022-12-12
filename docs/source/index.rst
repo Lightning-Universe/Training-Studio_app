@@ -3,9 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-#####################################
-PyTorch Lightning Training Studio App
-#####################################
+###############################################
+Welcome to ⚡ PyTorch Lightning Training Studio
+###############################################
 
 Build models ⚡ *Lightning fast*.
 
@@ -42,6 +42,18 @@ Run a Lightning Trainer script in the cloud.
    :height: 540px
 
 ----
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Home
+
+   self
+
+.. toctree::
+   :maxdepth: 1
+   :caption: More Examples
+
+   Large Language Models <more_examples/llms>
 
 .. .. note:: This is only temporary as some changes are being released to PiPy
 

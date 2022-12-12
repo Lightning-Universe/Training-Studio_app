@@ -5,7 +5,6 @@ import time
 import uuid
 from typing import Any, Dict, Optional
 
-import pytorch_lightning
 from lightning.app.components.training import LightningTrainerScript, PyTorchLightningScriptRunner
 from lightning.app.storage import Path
 
@@ -76,59 +75,26 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
 
     def on_after_run(self, script_globals):
         self.end_time = time.time()
-        self._on_after_run(script_globals)
         self.best_model_path = str(self.best_model_path)
-
-    def _on_after_run(self, script_globals):
-        for v in script_globals.values():
-            if isinstance(v, (pytorch_lightning.cli.LightningCLI)):
-                trainer = v.trainer
-                break
-            elif isinstance(v, (pytorch_lightning.Trainer)):
-                trainer = v
-                break
-        else:
-            raise RuntimeError("No trainer instance found.")
-
-        self.monitor = trainer.checkpoint_callback.monitor
-
-        if trainer.checkpoint_callback.best_model_score:
-            self.best_model_path = Path(trainer.checkpoint_callback.best_model_path)
-            self.best_model_score = float(trainer.checkpoint_callback.best_model_score)
-        else:
-            self.best_model_path = Path(trainer.checkpoint_callback.last_model_path)
-
-        self.has_finished = True
+        super().on_after_run(script_globals)
 
     @classmethod
     def distributions(cls):
         return None
 
     def add_metadata_tracker(self, tracer):
-        from lightning_training_studio.utilities.imports import _IS_PYTORCH_LIGHTNING_AVAILABLE
+        import lightning.pytorch as lp
+        import pytorch_lightning as pl
+        from lightning.pytorch.utilities import rank_zero_only
+        from lightning.pytorch.utilities.model_summary.model_summary import (
+            _is_lazy_weight_tensor,
+            get_human_readable_count,
+        )
+        from lightning.pytorch.utilities.model_summary.model_summary_deepspeed import deepspeed_param_size
 
-        if _IS_PYTORCH_LIGHTNING_AVAILABLE:
-            import pytorch_lightning as pl
-            from pytorch_lightning.callbacks import Callback
-            from pytorch_lightning.strategies.deepspeed import DeepSpeedStrategy
-            from pytorch_lightning.utilities import rank_zero_only
-            from pytorch_lightning.utilities.model_summary.model_summary import (
-                _is_lazy_weight_tensor,
-                get_human_readable_count,
-            )
-            from pytorch_lightning.utilities.model_summary.model_summary_deepspeed import deepspeed_param_size
-        else:
-            import lightning.pytorch as pl
-            from lightning.pytorch.callbacks import Callback
-            from lightning.pytorch.strategies.deepspeed import DeepSpeedStrategy
-            from lightning.pytorch.utilities import rank_zero_only
-            from lightning.pytorch.utilities.model_summary.model_summary import (
-                _is_lazy_weight_tensor,
-                get_human_readable_count,
-            )
-            from lightning.pytorch.utilities.model_summary.model_summary_deepspeed import deepspeed_param_size
+        strategies = (lp.strategies.DeepSpeedStrategy, pl.strategies.DeepSpeedStrategy)
 
-        class ProgressCallback(Callback):
+        class ProgressCallback(pl.Callback, lp.Callback):
             def __init__(self, work):
                 self.work = work
                 self.work.start_time = time.time()
@@ -150,7 +116,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
                     self.work.progress = round(progress, 4)
 
                 if not self.work.total_parameters:
-                    if isinstance(trainer.strategy, DeepSpeedStrategy) and trainer.strategy.zero_stage_3:
+                    if isinstance(trainer.strategy, strategies) and trainer.strategy.zero_stage_3:
                         total_parameters = sum(
                             deepspeed_param_size(p) if not _is_lazy_weight_tensor(p) else 0
                             for p in pl_module.parameters()
@@ -179,7 +145,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
             return {}, args, kwargs
 
         tracer.add_traced(pl.Trainer, "__init__", pre_fn=trainer_pre_fn)
-        tracer.add_traced(pl.Trainer, "fit", pre_fn=fit_pre_fn)
+        tracer.add_traced(lp.Trainer, "fit", pre_fn=fit_pre_fn)
 
         return tracer
 

@@ -192,11 +192,17 @@ export function Experiments() {
   if (showHelpPage == HelpPageState.forced || showHelpPage == HelpPageState.shown) {
     return (
       <UserGuide title="Want to start a hyper-parameter sweep?" subtitle="Use the commands below in your terminal">
+        <UserGuideComment>Install Lightning</UserGuideComment>
+        <UserGuideBody>{`pip install lightning`}</UserGuideBody>
         <UserGuideComment>Connect to the app</UserGuideComment>
         <UserGuideBody>{`lightning connect ${appId} --yes`}</UserGuideBody>
+        <UserGuideComment>Create a new folder and enter it</UserGuideComment>
+        <UserGuideBody>{`mkdir new_folder && cd new_folder`}</UserGuideBody>
         <UserGuideComment>Download example script</UserGuideComment>
         <UserGuideBody>
-          {'wget https://raw.githubusercontent.com/Lightning-AI/lightning-hpo/master/sweep_examples/scripts/train.py'}
+          {
+            'curl -o train.py https://raw.githubusercontent.com/Lightning-AI/lightning-hpo/master/sweep_examples/scripts/train.py'
+          }
         </UserGuideBody>
         <UserGuideComment>Run a sweep</UserGuideComment>
         <UserGuideBody>
