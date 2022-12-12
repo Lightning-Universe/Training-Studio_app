@@ -33,13 +33,13 @@ Run an example
 Run a Lightning Trainer script in the cloud.
 
 .. lit_tabs::
-   :titles: 1. Lightning Trainer Example; 2. Prepare locally; 2. Launch an experiment; 3. Launch a Grid Search; 4. Show experiment & Sweeps; 5. Show logs; 6. Show & Download Artifacts; 7. Use your own data; 8. Stop & Delete Experiments or Sweep
-   :code_files: example/script.py; example/prepare.bash; example/experiment.bash; example/sweep.bash; example/show_experiment_and_sweep.bash; example/logs.bash; example/artifacts.bash; example/data.bash; example/stop_delete.bash
+   :titles: 1. Lightning Trainer Example; 2. Prepare locally; 2. Launch an experiment; 3. Launch a Grid Search; 4. Show experiment & Sweeps; 5. Show logs; 6. Show & Download Artifacts; 7. Use your own data; 8. Stop & Delete Experiments or Sweep; 9 Getting Help;
+   :code_files: example/script.py; example/prepare.bash; example/experiment.bash; example/sweep.bash; example/show_experiment_and_sweep.bash; example/logs.bash; example/artifacts.bash; example/data.bash; example/stop_delete.bash; example/help.bash
    :highlights:
    :works:
    :enable_run: false
    :tab_rows: 3
-   :height: 490px
+   :height: 540px
 
 ----
 
