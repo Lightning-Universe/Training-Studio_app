@@ -2,7 +2,6 @@
     <h1>
         PyTorch Lightning Training Studio App
     </h1>
-    <img src="https://pl-flash-data.s3.amazonaws.com/assets_lightning/lightning_training_studio_logo.png">
 
 <div align="center">
 
