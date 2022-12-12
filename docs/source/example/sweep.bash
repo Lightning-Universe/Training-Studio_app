@@ -24,6 +24,9 @@ lightning run sweep train.py \
 # Install extra dependencies
 lightning run sweep train.py ... --requirements="torchvision, deepspeed"
 
+# Use hydra
+lightning run sweep train.py ... --syntax="hydra"
+
 # Increase disk size to 80GB
 lightning run sweep train.py ... --disk_size=80
 
