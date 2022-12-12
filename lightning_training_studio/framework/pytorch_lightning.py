@@ -75,8 +75,32 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
 
     def on_after_run(self, script_globals):
         self.end_time = time.time()
+        self._on_after_run(script_globals)
         self.best_model_path = str(self.best_model_path)
-        super().on_after_run(script_globals)
+
+    def _on_after_run(self, script_globals):
+        import lightning.pytorch as lp
+        import pytorch_lightning as pl
+
+        for v in script_globals.values():
+            if isinstance(v, ((pl.cli.LightningCLI, lp.cli.LightningCLI))):
+                trainer = v.trainer
+                break
+            elif isinstance(v, (pl.Trainer, lp.Trainer)):
+                trainer = v
+                break
+        else:
+            raise RuntimeError("No trainer instance found.")
+
+        self.monitor = trainer.checkpoint_callback.monitor
+
+        if trainer.checkpoint_callback.best_model_score:
+            self.best_model_path = Path(trainer.checkpoint_callback.best_model_path)
+            self.best_model_score = float(trainer.checkpoint_callback.best_model_score)
+        else:
+            self.best_model_path = Path(trainer.checkpoint_callback.last_model_path)
+
+        self.has_finished = True
 
     @classmethod
     def distributions(cls):

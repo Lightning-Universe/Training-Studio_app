@@ -1,15 +1,3 @@
-jsonargparse[signatures]
 pytorch_lightning
-lightning>=1.8.4.post0
-lightning-jupyter
+'jsonargparse[signatures]'
 torchvision
-optuna
-sqlmodel
-wandb
-streamlit
-sqlalchemy
-hiplot
-scikit-learn
-sqlite_web
-hydra-core
-tensorboard
