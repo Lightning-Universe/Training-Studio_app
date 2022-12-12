@@ -102,6 +102,8 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         else:
             self.best_model_path = Path(trainer.checkpoint_callback.last_model_path)
 
+        self.drive.put(self._rootwd)
+
         self.has_finished = True
 
     @classmethod

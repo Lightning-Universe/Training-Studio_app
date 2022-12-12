@@ -95,4 +95,7 @@ class Objective(TracerPythonScript, ABC):
                 self.best_model_score = round(res, 4)
             elif isinstance(res, dict):
                 assert isinstance(res, ObjectiveResult)
+
+        self.drive.put(self._rootwd)
+
         super().on_after_run(global_scripts)
