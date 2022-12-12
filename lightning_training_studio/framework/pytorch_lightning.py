@@ -80,10 +80,12 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
 
     def _on_after_run(self, script_globals):
         import lightning.pytorch as lp
+        import lightning.pytorch.cli as lp_cli
         import pytorch_lightning as pl
+        import pytorch_lightning.cli as pl_cli
 
         for v in script_globals.values():
-            if isinstance(v, ((pl.cli.LightningCLI, lp.cli.LightningCLI))):
+            if isinstance(v, ((pl_cli.LightningCLI, lp_cli.LightningCLI))):
                 trainer = v.trainer
                 break
             elif isinstance(v, (pl.Trainer, lp.Trainer)):
@@ -169,6 +171,9 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
             return {}, args, kwargs
 
         tracer.add_traced(pl.Trainer, "__init__", pre_fn=trainer_pre_fn)
+        tracer.add_traced(pl.Trainer, "fit", pre_fn=fit_pre_fn)
+
+        tracer.add_traced(lp.Trainer, "__init__", pre_fn=trainer_pre_fn)
         tracer.add_traced(lp.Trainer, "fit", pre_fn=fit_pre_fn)
 
         return tracer
