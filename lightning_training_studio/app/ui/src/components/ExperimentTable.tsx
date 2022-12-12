@@ -191,12 +191,23 @@ export function Experiments() {
 
   if (showHelpPage == HelpPageState.forced || showHelpPage == HelpPageState.shown) {
     return (
-      <UserGuide title="Want to get started?" subtitle="Use the commands below in your terminal">
+      <UserGuide title="Want to start a hyper-parameter sweep?" subtitle="Use the commands below in your terminal">
         <UserGuideComment>Install Lightning</UserGuideComment>
         <UserGuideBody>{`pip install lightning`}</UserGuideBody>
         <UserGuideComment>Connect to the app</UserGuideComment>
         <UserGuideBody>{`lightning connect ${appId} --yes`}</UserGuideBody>
-        <UserGuideComment>Click on the Docs Tab & follow Run Example Section</UserGuideComment>
+        <UserGuideComment>Create a new folder</UserGuideComment>
+        <UserGuideBody>{`mkdir new_folder && cd new_folder`}</UserGuideBody>
+        <UserGuideComment>Download example script</UserGuideComment>
+        <UserGuideBody>
+          {
+            'curl -o train.py https://raw.githubusercontent.com/Lightning-AI/lightning-hpo/master/sweep_examples/scripts/train.py'
+          }
+        </UserGuideBody>
+        <UserGuideComment>Run a sweep</UserGuideComment>
+        <UserGuideBody>
+          lightning run sweep train.py --model.lr "[0.001, 0.01]" --data.batch "[32, 64]" --algorithm="grid_search"
+        </UserGuideBody>
       </UserGuide>
     );
   }
