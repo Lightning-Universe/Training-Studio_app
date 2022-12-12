@@ -50,7 +50,6 @@ class Sweep(LightningFlow, ControllerResource):
         parallel_experiments: int = 1,
         script_args: Optional[Union[list, str]] = None,
         env: Optional[Dict] = None,
-        shm_size: int = 0,
         cloud_compute: Optional[HPOCloudCompute] = None,
         script_path: Optional[str] = None,
         algorithm: Optional[Algorithm] = None,
@@ -101,7 +100,7 @@ class Sweep(LightningFlow, ControllerResource):
         self.framework = framework
         self.cloud_compute = getattr(cloud_compute, "name", "default")
         self.num_nodes = getattr(cloud_compute, "count", 1) if cloud_compute else 1
-        self.shm_size = shm_size
+        self.shm_size = getattr(cloud_compute, "shm_size", 1024) if cloud_compute else 1024
         self.disk_size = getattr(cloud_compute, "disk_size", 1) if cloud_compute else 10
         self.logger = logger
         self.direction = direction
@@ -125,9 +124,7 @@ class Sweep(LightningFlow, ControllerResource):
             "code": code,
             "sweep_id": self.sweep_id,
             "raise_exception": False,
-            "cloud_build_config": CustomBuildConfig(
-                requirements=self.requirements, packages=self.packages, shm_size=self.shm_size
-            ),
+            "cloud_build_config": CustomBuildConfig(requirements=self.requirements, packages=self.packages),
             **objective_kwargs,
         }
         self._algorithm.register_distributions(self.distributions)
@@ -257,6 +254,7 @@ class Sweep(LightningFlow, ControllerResource):
         if objective is None:
             cloud_compute = CloudCompute(
                 name=self.cloud_compute if self.cloud_compute else "cpu",
+                shm_size=self.shm_size,
                 disk_size=self.disk_size,
                 mounts=[Mount(source, mount_path) for source, mount_path in self.data] if self.data else None,
             )
@@ -298,9 +296,9 @@ class Sweep(LightningFlow, ControllerResource):
             cloud_compute=HPOCloudCompute(
                 config.cloud_compute,
                 count=config.num_nodes,
+                shm_size=config.shm_size,
                 disk_size=config.disk_size,
             ),
-            shm_size=config.shm_size,
             sweep_id=config.sweep_id,
             code=code,
             logger=config.logger,
