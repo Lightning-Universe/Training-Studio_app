@@ -14,18 +14,6 @@ Build models ⚡ *Lightning fast*.
 
 ----
 
-.. *****
-.. Setup
-.. *****
-
-.. .. lit_tabs::
-..    :descriptions: 1. Install the Training Studio; 2. Duplicate the Training Studio on your own account; 3. Connect to the App Training Studio
-..    :code_files: /setup/pip.bash; /setup/duplicate.bash; /setup/connect.bash; example/show_experiment_and_sweep.bash
-..    :tab_rows: 4
-..    :height: 290px
-
-.. ----
-
 ***************
 Run an example
 ***************
@@ -41,7 +29,9 @@ Run a Lightning Pytorch Trainer example in the cloud.
    :tab_rows: 3
    :height: 540px
 
-----
+.. raw:: html
+
+   <div style="display:none">
 
 .. toctree::
    :maxdepth: 1
