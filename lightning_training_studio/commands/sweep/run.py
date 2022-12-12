@@ -343,7 +343,7 @@ class RunSweepCommand(ClientCommand):
             "--packages",
             nargs="+",
             default=[],
-            help="List of system packages to be installed via apt install, separated by a comma.",
+            help="List of system packages to be installed via apt install.",
         )
         parser.add_argument(
             "--cloud_compute",
