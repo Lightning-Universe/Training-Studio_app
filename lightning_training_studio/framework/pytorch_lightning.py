@@ -102,7 +102,9 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         else:
             self.best_model_path = Path(trainer.checkpoint_callback.last_model_path)
 
-        self.drive.put(self._rootwd)
+        synced = [el for el in os.listdir(self._rootwd) if el != "venv"]
+        for el in synced:
+            self.drive.put(el)
 
         self.has_finished = True
 
