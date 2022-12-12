@@ -192,8 +192,8 @@ export function Experiments() {
   if (showHelpPage == HelpPageState.forced || showHelpPage == HelpPageState.shown) {
     return (
       <UserGuide title="Want to start a hyper-parameter sweep?" subtitle="Use the commands below in your terminal">
-        <UserGuideComment>Install Lightning</UserGuideComment>
-        <UserGuideBody>{`pip install lightning`}</UserGuideBody>
+        <UserGuideComment>Install Training Studio</UserGuideComment>
+        <UserGuideBody>{`pip install lightning-training-studio`}</UserGuideBody>
         <UserGuideComment>Connect to the app</UserGuideComment>
         <UserGuideBody>{`lightning connect ${appId} --yes`}</UserGuideBody>
         <UserGuideComment>Create a new folder and enter it</UserGuideComment>

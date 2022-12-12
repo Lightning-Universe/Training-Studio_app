@@ -20,6 +20,8 @@ const DataTable = () => {
   if (showHelpPage == HelpPageState.forced || showHelpPage == HelpPageState.shown) {
     return (
       <UserGuide title="Want to add data?" subtitle="Use the commands below in your terminal">
+        <UserGuideComment>Install Training Studio</UserGuideComment>
+        <UserGuideBody>{`pip install lightning-training-studio`}</UserGuideBody>
         <UserGuideComment>Connect to the app</UserGuideComment>
         <UserGuideBody>{`lightning connect ${appId} --yes`}</UserGuideBody>
         <UserGuideComment>Add data from an S3 bucket</UserGuideComment>
