@@ -36,7 +36,7 @@ class CustomBuildConfig(BuildConfig):
 
     def build_commands(self):
         package_installs = [f"sudo apt install {package}" for package in self.packages]
-        return super().build_commands() + "sudo apt update" + package_installs
+        return super().build_commands() + ["sudo apt update"] + package_installs
 
 
 class Sweep(LightningFlow, ControllerResource):
