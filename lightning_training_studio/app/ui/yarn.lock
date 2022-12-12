@@ -6871,9 +6871,9 @@ levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-"lightning-ui@https://@github.com/gridai/lightning-ui.git#6feccec7dacf33a199d99f12f388f1b3898c1110":
+"lightning-ui@git+ssh://git@github.com/gridai/lightning-ui.git#6feccec7dacf33a199d99f12f388f1b3898c1110":
   version "0.1.0"
-  resolved "https://@github.com/gridai/lightning-ui.git#6feccec7dacf33a199d99f12f388f1b3898c1110"
+  resolved "git+ssh://git@github.com/gridai/lightning-ui.git#6feccec7dacf33a199d99f12f388f1b3898c1110"
   dependencies:
     "@emotion/react" "^11.7.1"
     "@emotion/styled" "^11.6.0"
