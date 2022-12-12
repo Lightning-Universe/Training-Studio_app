@@ -12,7 +12,7 @@ Large Language Models
 ----
 
 .. lit_tabs::
-   :titles: 1. Install Lightning minGPT; 2. Run an experiment; 3. Scale the model size
+   :titles: 1. Setup Lightning minGPT; 2. Run an experiment; 3. Scale the model size
    :code_files: llms/clone.bash; llms/experiment.bash; llms/scale.bash
    :works:
    :enable_run: false
