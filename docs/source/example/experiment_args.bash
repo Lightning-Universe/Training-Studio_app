@@ -6,11 +6,11 @@ lightning run experiment --requirements=requirements.txt \
 
 # Specifying a list of requirements
 # Specifying requirements in a file
-lightning run experiment --requirements=="imgaug==0.4.0","pandas>=1.5.0" \
+lightning run experiment --requirements="imgaug==0.4.0","pandas>=1.5.0" \
     train.py --model.lr=0.001 --data.batch=32
 
 # Specifying system packages
-lightning run experiment --packages="ffmpeg libsm6 libxext6" \
+lightning run experiment --packages=ffmpeg,libsm6,libxext6 \
     train.py --model.lr=0.001 --data.batch=32
 
 # Running pip install . on the source dir before running

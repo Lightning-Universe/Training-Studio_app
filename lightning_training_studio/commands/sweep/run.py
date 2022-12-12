@@ -335,15 +335,15 @@ class RunSweepCommand(ClientCommand):
         parser.add_argument("--parallel_experiments", default=None, type=int, help="Number of experiments to run.")
         parser.add_argument(
             "--requirements",
-            nargs="+",
-            default=[],
+            default="",
             help="List of requirements separated by a comma or requirements.txt filepath.",
+            type=lambda arg: [el for el in arg.split(",")],
         )
         parser.add_argument(
             "--packages",
-            nargs="+",
-            default=[],
-            help="List of system packages to be installed via apt install.",
+            default="",
+            help="List of system packages to be installed via apt install, separated by a comma.",
+            type=lambda arg: [el for el in arg.split(",")],
         )
         parser.add_argument(
             "--cloud_compute",
