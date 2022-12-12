@@ -19,12 +19,17 @@ const DataTable = () => {
 
   if (showHelpPage == HelpPageState.forced || showHelpPage == HelpPageState.shown) {
     return (
-      <UserGuide title="Want to get started?" subtitle="Use the commands below in your terminal">
-        <UserGuideComment>Install Lightning</UserGuideComment>
-        <UserGuideBody>{`pip install lightning`}</UserGuideBody>
+      <UserGuide title="Want to add data?" subtitle="Use the commands below in your terminal">
         <UserGuideComment>Connect to the app</UserGuideComment>
         <UserGuideBody>{`lightning connect ${appId} --yes`}</UserGuideBody>
-        <UserGuideComment>Click on the Docs Tab & follow Run Example Section</UserGuideComment>
+        <UserGuideComment>Add data from an S3 bucket</UserGuideComment>
+        <UserGuideBody>
+          {'lightning create data --name mnist --source s3://lightning-example-public/MNIST/'}
+        </UserGuideBody>
+        <UserGuideComment>Show the Data Table</UserGuideComment>
+        <UserGuideBody>{'lightning show data'}</UserGuideBody>
+        <UserGuideComment>Run an Experiment with the Data</UserGuideComment>
+        <UserGuideBody>{'lightning run experiment train.py --data mnist:/content/data/MNIST/'}</UserGuideBody>
       </UserGuide>
     );
   }
