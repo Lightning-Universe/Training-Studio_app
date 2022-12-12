@@ -38,20 +38,20 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      - name: Install dependencies
-        run: |
-          pip install  --requirement requirements.txt -U -f https://download.pytorch.org/whl/cpu/torch_stable.html  --quiet
-          pip install  --requirement requirements/docs.txt
-          pip install -e .
-          python --version ; pip --version ; pip list
-        shell: bash
-
       - uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY_ID }}
           aws-region: us-east-1
       - run: aws s3 sync s3://sphinx-packages/ pypi/
+
+      - name: Install dependencies
+        run: |
+          pip install  --requirement requirements.txt -U -f https://download.pytorch.org/whl/cpu/torch_stable.html -f pypi --quiet
+          pip install  --requirement requirements/docs.txt -f pypi
+          pip install -e .
+          python --version ; pip --version ; pip list
+        shell: bash
 
       - name: Test Documentation
         working-directory: ./docs
@@ -82,10 +82,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY_ID }}
+          aws-region: us-east-1
+      - run: aws s3 sync s3://sphinx-packages/ pypi/
+
       - name: Install dependencies
         run: |
-          pip install  --requirement requirements.txt -U -f https://download.pytorch.org/whl/torch_stable.html  --quiet
-          pip install  --requirement requirements/docs.txt
+          pip install  --requirement requirements.txt -U -f https://download.pytorch.org/whl/torch_stable.html -f pypi  --quiet
+          pip install  --requirement requirements/docs.txt -f pypi
           pip install -e .
           # install Texlive, see https://linuxconfig.org/how-to-install-latex-on-ubuntu-20-04-focal-fossa-linux
           sudo apt-get update
@@ -94,13 +101,6 @@ jobs:
           pip --version
           pip list
         shell: bash
-
-      - uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY_ID }}
-          aws-region: us-east-1
-      - run: aws s3 sync s3://sphinx-packages/ pypi/
 
       - name: Make Documentation
         working-directory: ./docs
