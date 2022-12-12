@@ -44,10 +44,6 @@ class ImageClassifier(LightningModule):
         print(self.hparams)
         self.model = model or Net()
 
-        checkpoint_path = os.path.join(os.path.dirname(__file__), "demo_weights")
-        if os.path.exists(checkpoint_path):
-            self.load_state_dict(torch.load(checkpoint_path).state_dict())
-
     @property
     def example_input_array(self):
         return torch.zeros((1, 1, 28, 28))
@@ -90,16 +86,12 @@ class MNISTDataModule(LightningDataModule):
             MNIST("./data", download=True)
 
     def train_dataloader(self):
-        train_dataset = MNIST(
-            "./data", train=True, download=False, transform=self.transform)
-        return torch.utils.data.DataLoader(
-            train_dataset, batch_size=int(self.hparams.batch_size))
+        train_dataset = MNIST("./data", train=True, download=False, transform=self.transform)
+        return torch.utils.data.DataLoader(train_dataset, batch_size=int(self.hparams.batch_size))
 
     def val_dataloader(self):
-        val_dataset = MNIST(
-            "./data", train=False, download=False, transform=self.transform)
-        return torch.utils.data.DataLoader(
-            val_dataset, batch_size=int(self.hparams.batch_size))
+        val_dataset = MNIST("./data", train=False, download=False, transform=self.transform)
+        return torch.utils.data.DataLoader(val_dataset, batch_size=int(self.hparams.batch_size))
 
 
 if __name__ == "__main__":

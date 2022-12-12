@@ -188,8 +188,8 @@ def parse_distributions(script_args, args):
     for arg in args:
         is_distribution = False
         for p in [UniformDistributionParser, LogUniformDistributionParser, CategoricalDistributionParser]:
-            if p.is_distribution(arg.replace("--", "")):
-                distributions.update(p.parse(arg.replace("--", "")))
+            if p.is_distribution(arg):
+                distributions.update(p.parse(arg))
                 is_distribution = True
                 break
         if not is_distribution:

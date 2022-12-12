@@ -3,9 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-##########################
-Training Studio CheatSheet
-##########################
+#####################################
+PyTorch Lightning Training Studio App
+#####################################
 
 Build models ⚡ *Lightning fast*.
 
@@ -18,56 +18,30 @@ Build models ⚡ *Lightning fast*.
 Setup
 *****
 
-First, install Lightning & Lightning-HPO.
-
 .. lit_tabs::
-   :descriptions: Pip; Macs, Apple Silicon (M1/M2/M3); Windows
-   :code_files: /install/pip.bash; /install/mac.bash; /install/windows.bash
+   :descriptions: 1. Install the Training Studio; 2. Duplicate the Training Studio on your own account; 3. Connect to the App Training Studio
+   :code_files: /setup/pip.bash; /setup/duplicate.bash; /setup/connect.bash; example/show_experiment_and_sweep.bash
    :tab_rows: 4
-   :height: 180px
+   :height: 290px
 
 ----
 
-**************************************
-Want to start a hyper-parameter sweep?
-**************************************
+***************
+Run an example
+***************
+
+Run a Lightning Trainer script in the cloud.
 
 .. lit_tabs::
-   :titles: 1. Connect to the app; 2. Create a new folder & move inside; 3. Copy & paste this Lightning Trainer script to a train.py file; 4. Launch a Grid Search Sweep; 5. Launch a Grid Search Sweep on GPU; 6. Use CLI help to learn more
-   :code_files: sweep/connect.bash; sweep/new_folder.bash; sweep/script.py; sweep/sweep.bash; sweep/sweep_gpu.bash; sweep/help.bash
+   :titles: 1. Lightning Trainer Example; 2. Prepare locally; 2. Launch an experiment; 3. Launch a Grid Search; 4. Show experiment & Sweeps; 5. Show logs; 6. Show & Download Artifacts; 7. Use your own data; 8. Stop & Delete Experiments or Sweep
+   :code_files: example/script.py; example/prepare.bash; example/experiment.bash; example/sweep.bash; example/show_experiment_and_sweep.bash; example/logs.bash; example/artifacts.bash; example/data.bash; example/stop_delete.bash
    :highlights:
    :works:
    :enable_run: false
-   :tab_rows: 5
-   :height: 620px
+   :tab_rows: 3
+   :height: 490px
 
 ----
-
-**************************
-Want to use your own data?
-**************************
-
-.. lit_tabs::
-   :titles: 1. Connect to the app; 2. Add your own Datasets from s3; 3. Show your Datasets; 4. Use your Datasets with a Sweep
-   :code_files: sweep/connect.bash; data/add.bash; data/show.bash; data/sweep.bash;
-   :highlights:
-   :works:
-   :enable_run: false
-   :tab_rows: 5
-
-----
-
-************************************************
-What else can I do with the Training Studio App?
-************************************************
-
-.. lit_tabs::
-   :titles: General Usage Information; Granular Usage Information; Show Experiments & Sweeps; Show Logs; Show & Download Artifacts
-   :code_files: extra/help.bash; extra/help_module.bash; extra/experiment_and_sweep.bash; extra/logs.bash; extra/artifacts.bash
-   :highlights:
-   :works:
-   :enable_run: false
-   :tab_rows: 5
 
 .. .. note:: This is only temporary as some changes are being released to PiPy
 

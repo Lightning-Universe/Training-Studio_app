@@ -1,6 +1,6 @@
 <div align="center">
     <h1>
-        Training Studio App
+        PyTorch Lightning Training Studio App
     </h1>
     <img src="https://pl-flash-data.s3.amazonaws.com/assets_lightning/lightning_training_studio_logo.png">
 
@@ -17,7 +17,7 @@
 [![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Lightning-AI/lightning/blob/master/LICENSE)
 </div>
 
-The [Training Studio App](https://lightning-ai.github.io/lightning-hpo/training_studio.html) is a full-stack AI application built using the [Lightning](https://lightning.ai/lightning-docs/) framework to enable running experiments or sweeps with state-of-the-art sampling hyper-parameters algorithms and efficient experiment pruning strategies and more.
+The [PyTorch Lightning Training Studio App](https://lightning-ai.github.io/lightning-hpo/training_studio.html) is a full-stack AI application built using the [Lightning](https://lightning.ai/lightning-docs/) framework to enable running experiments or sweeps with state-of-the-art sampling hyper-parameters algorithms and efficient experiment pruning strategies and more.
 
 Learn more [here](https://github.com/Lightning-AI/lightning-hpo#the-training-studio-app).
 

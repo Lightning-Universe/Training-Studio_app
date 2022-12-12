@@ -35,7 +35,8 @@ class ShowLogsCommand(ClientCommand):
         experiments = [c["name"] for c in logs_config if len(c["components"]) == 1]
 
         if not hparams.names:
-            components = sweeps + experiments
+            for config in logs_config:
+                components.extend(config["components"])
         else:
             for config in logs_config:
                 for name in hparams.names:

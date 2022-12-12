@@ -7,7 +7,6 @@
 
 # Example: {tchaton}/Apps/{lightning/training-studio}
 
-# 2. Connect to your App as follows: 
+# 2. Connect to your App as follows:
 # lightning connect {APP_NAME} -y
-
 lightning connect lightning/training-studio --yes

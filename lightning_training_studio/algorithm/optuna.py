@@ -151,7 +151,7 @@ class RandomSearch(Algorithm):
             self.study.add_trial(trial)
 
     def register_distributions(self, distributions):
-        assert not distributions
+        pass
 
     def get_params(self, experiment_id: int) -> Dict[str, Any]:
         params = self.experiments[experiment_id].params
@@ -159,6 +159,8 @@ class RandomSearch(Algorithm):
         for k, v in params.items():
             if isinstance(v, float) and v == int(v):
                 out[k] = int(v)
+            elif isinstance(v, float):
+                out[k] = round(v, 7)
             else:
                 out[k] = v
         return out
