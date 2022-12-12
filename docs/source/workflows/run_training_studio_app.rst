@@ -49,7 +49,7 @@ If you want to enable the `Weights And Biases Logger <https://wandb.ai/>`_, foll
 
 .. note:: This is only temporary as some changes are being released to PiPy
 
-Go back within the ``lightning_hpo`` folder
+Go back within the ``lightning_training_studio`` folder
 
 .. code-block::
 

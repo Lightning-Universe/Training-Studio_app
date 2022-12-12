@@ -9,7 +9,7 @@ exclude *.json
 exclude tests/commands/experiment/test_requirements
 
 recursive-include sweep_examples *
-recursive-include lightning_hpo *
+recursive-include lightning_training_studio *
 recursive-include requirements *
 
 recursive-exclude docs *

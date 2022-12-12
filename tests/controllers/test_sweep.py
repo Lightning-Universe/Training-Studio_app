@@ -1,19 +1,19 @@
 import os
 from unittest.mock import MagicMock
 
-from lightning_hpo.commands.data.create import DataConfig
-from lightning_hpo.commands.experiment.delete import DeleteExperimentConfig
-from lightning_hpo.commands.experiment.run import ExperimentConfig
-from lightning_hpo.commands.sweep.delete import DeleteSweepConfig
-from lightning_hpo.commands.sweep.run import SweepConfig
-from lightning_hpo.commands.tensorboard.stop import TensorboardConfig
-from lightning_hpo.components.sweep import Sweep
-from lightning_hpo.components.tensorboard import Tensorboard
-from lightning_hpo.controllers import controller
-from lightning_hpo.controllers.sweep import SweepController
-from lightning_hpo.controllers.tensorboard import TensorboardController
-from lightning_hpo.distributions.distributions import Uniform
-from lightning_hpo.utilities.enum import Stage
+from lightning_training_studio.commands.data.create import DataConfig
+from lightning_training_studio.commands.experiment.delete import DeleteExperimentConfig
+from lightning_training_studio.commands.experiment.run import ExperimentConfig
+from lightning_training_studio.commands.sweep.delete import DeleteSweepConfig
+from lightning_training_studio.commands.sweep.run import SweepConfig
+from lightning_training_studio.commands.tensorboard.stop import TensorboardConfig
+from lightning_training_studio.components.sweep import Sweep
+from lightning_training_studio.components.tensorboard import Tensorboard
+from lightning_training_studio.controllers import controller
+from lightning_training_studio.controllers.sweep import SweepController
+from lightning_training_studio.controllers.tensorboard import TensorboardController
+from lightning_training_studio.distributions.distributions import Uniform
+from lightning_training_studio.utilities.enum import Stage
 from tests.helpers import MockDatabaseClient, MockObjective
 
 
@@ -57,8 +57,9 @@ def test_sweep_controller(monkeypatch):
     assert response == "The current Sweep 'a' is running. It couldn't be updated."
 
     while True:
-        sweep_controller.run("a", "b")
         sweep: Sweep = sweep_controller.r.get("a", None)
+        sweep.data = None
+        sweep_controller.run("a", "b")
         if sweep.stage == Stage.SUCCEEDED:
             break
 

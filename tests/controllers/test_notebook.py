@@ -3,10 +3,10 @@ from unittest.mock import MagicMock
 import pytest
 from lightning.app.utilities.enum import CacheCallsKeys
 
-from lightning_hpo.commands.notebook.run import NotebookConfig
-from lightning_hpo.controllers import controller, notebook
-from lightning_hpo.controllers.notebook import NotebookController
-from lightning_hpo.utilities.enum import Stage
+from lightning_training_studio.commands.notebook.run import NotebookConfig
+from lightning_training_studio.controllers import controller, notebook
+from lightning_training_studio.controllers.notebook import NotebookController
+from lightning_training_studio.utilities.enum import Stage
 from tests.helpers import MockDatabaseClient
 
 

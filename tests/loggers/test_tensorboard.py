@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 def test_tensorboard_logger(monkeypatch):
 
-    from lightning_hpo.loggers import tensorboard
+    from lightning_training_studio.loggers import tensorboard
 
     pytorch_lightning = MagicMock()
     monkeypatch.setattr(tensorboard, "pytorch_lightning", pytorch_lightning)

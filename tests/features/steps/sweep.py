@@ -6,7 +6,7 @@ import uuid
 from behave import given, then, when
 from playwright.sync_api import expect, Page
 
-from lightning_hpo import _PROJECT_ROOT
+from lightning_training_studio import _PROJECT_ROOT
 
 
 @when("I execute lightning run sweep")

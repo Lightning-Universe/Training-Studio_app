@@ -2,9 +2,9 @@ import os.path as ops
 
 from lightning import LightningApp
 
-from lightning_hpo import Sweep
-from lightning_hpo.algorithm import RandomSearch
-from lightning_hpo.distributions import Uniform
+from lightning_training_studio import Sweep
+from lightning_training_studio.algorithm import RandomSearch
+from lightning_training_studio.distributions import Uniform
 
 app = LightningApp(
     Sweep(

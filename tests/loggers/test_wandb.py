@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from lightning_hpo.loggers import wandb as wandb_logger
+from lightning_training_studio.loggers import wandb as wandb_logger
 
 
 def test_wandb_logger(monkeypatch):

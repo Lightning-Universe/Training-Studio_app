@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 from lightning.app.utilities.state import AppState
 
-from lightning_hpo.loggers.streamlit.hyperplot import HiPlotFlow, render_fn
+from lightning_training_studio.loggers.streamlit.hyperplot import HiPlotFlow, render_fn
 
 
 def test_hiplot(monkeypatch):

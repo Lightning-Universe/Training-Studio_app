@@ -4,8 +4,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from lightning_hpo.commands.experiment import run
-from lightning_hpo.commands.sweep.run import SweepConfig
+from lightning_training_studio.commands.experiment import run
+from lightning_training_studio.commands.sweep.run import SweepConfig
 from tests.helpers import _create_client_command_mock
 
 
@@ -265,7 +265,7 @@ def test_experiment_run_parsing_pip_install(monkeypatch):
             total_experiments=1,
             parallel_experiments=1,
             total_experiments_done=0,
-            requirements=["pytorch_lightning", "optuna", "deepspeed"],
+            requirements=[],
             packages=[],
             script_args=[],
             algorithm="",

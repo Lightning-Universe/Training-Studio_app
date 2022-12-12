@@ -2,10 +2,10 @@ from typing import Any, Dict
 
 import optuna
 
-from lightning_hpo.algorithm import OptunaAlgorithm
-from lightning_hpo.components.sweep import Sweep
-from lightning_hpo.distributions import Categorical, Uniform
-from lightning_hpo.utilities.enum import Stage
+from lightning_training_studio.algorithm import OptunaAlgorithm
+from lightning_training_studio.components.sweep import Sweep
+from lightning_training_studio.distributions import Categorical, Uniform
+from lightning_training_studio.utilities.enum import Stage
 from tests.helpers import FailedMockObjective, MockObjective
 
 

@@ -8,10 +8,10 @@ import requests
 from lightning.app.storage import Drive
 from rich.table import Table
 
-from lightning_hpo.commands.sweep import show
-from lightning_hpo.commands.sweep.show import ShowSweepsCommand
-from lightning_hpo.components.sweep import Sweep, SweepConfig
-from lightning_hpo.controllers.sweep import SweepController
+from lightning_training_studio.commands.sweep import show
+from lightning_training_studio.commands.sweep.show import ShowSweepsCommand
+from lightning_training_studio.components.sweep import Sweep, SweepConfig
+from lightning_training_studio.controllers.sweep import SweepController
 
 
 def test_show_sweeps_client(monkeypatch):

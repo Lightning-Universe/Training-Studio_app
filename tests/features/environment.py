@@ -10,7 +10,7 @@ from lightning.app.cli.lightning_cli import get_app_url
 from lightning.app.runners.runtime_type import RuntimeType
 from playwright.sync_api import expect, sync_playwright
 
-from lightning_hpo import _PROJECT_ROOT
+from lightning_training_studio import _PROJECT_ROOT
 
 
 def kill(proc_pid):

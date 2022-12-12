@@ -1,9 +1,9 @@
 from unittest.mock import MagicMock
 
-from lightning_hpo.commands.tensorboard.stop import TensorboardConfig
-from lightning_hpo.controllers import controller, tensorboard
-from lightning_hpo.controllers.tensorboard import TensorboardController
-from lightning_hpo.utilities.enum import Stage
+from lightning_training_studio.commands.tensorboard.stop import TensorboardConfig
+from lightning_training_studio.controllers import controller, tensorboard
+from lightning_training_studio.controllers.tensorboard import TensorboardController
+from lightning_training_studio.utilities.enum import Stage
 from tests.helpers import MockDatabaseClient
 
 

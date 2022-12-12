@@ -7,8 +7,8 @@ from unittest.mock import MagicMock
 
 import requests
 
-from lightning_hpo.commands.artifacts import show
-from lightning_hpo.commands.artifacts.show import ShowArtifactsCommand, ShowArtifactsConfigResponse
+from lightning_training_studio.commands.artifacts import show
+from lightning_training_studio.commands.artifacts.show import ShowArtifactsCommand, ShowArtifactsConfigResponse
 
 
 def test_show_artifacts(monkeypatch, tmpdir):

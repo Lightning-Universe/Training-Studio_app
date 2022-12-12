@@ -15,9 +15,9 @@ repos:
       - id: check-added-large-files
         exclude: |
           (?x)(
-              ^lightning_hpo/app/ui/build|
-              ^lightning_hpo/app/ui/yarn.lock|
-              ^lightning_hpo/app/ui/src/generated
+              ^lightning_training_studio/app/ui/build|
+              ^lightning_training_studio/app/ui/yarn.lock|
+              ^lightning_training_studio/app/ui/src/generated
           )
 
   - repo: https://github.com/PyCQA/isort
@@ -56,9 +56,9 @@ repos:
       - id: prettier
         exclude: |
           (?x)(
-              ^lightning_hpo/app/ui/build|
+              ^lightning_training_studio/app/ui/build|
               README.md|
-              ^lightning_hpo/app/ui/src/generated|
+              ^lightning_training_studio/app/ui/src/generated|
               ^.github|
               ^tests|
               ^docs

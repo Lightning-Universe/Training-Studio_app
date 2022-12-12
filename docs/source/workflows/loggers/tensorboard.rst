@@ -15,7 +15,7 @@ Simply add ``logger=tensorboard`` to the ``Sweep`` component.
 
 .. code-block:: python
 
-   from lightning_hpo import Sweep
+   from lightning_training_studio import Sweep
 
    Sweep(..., logger="tensorboard")
 

@@ -6,10 +6,10 @@ from unittest.mock import MagicMock
 import requests
 from lightning.app.storage import Drive
 
-from lightning_hpo.commands.sweep.stop import StopSweepConfig
-from lightning_hpo.components.sweep import Sweep, SweepConfig
-from lightning_hpo.controllers.sweep import SweepController
-from lightning_hpo.utilities.enum import Stage
+from lightning_training_studio.commands.sweep.stop import StopSweepConfig
+from lightning_training_studio.components.sweep import Sweep, SweepConfig
+from lightning_training_studio.controllers.sweep import SweepController
+from lightning_training_studio.utilities.enum import Stage
 
 
 def test_stop_sweeps_server(monkeypatch):

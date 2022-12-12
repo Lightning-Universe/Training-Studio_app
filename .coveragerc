@@ -1,9 +1,9 @@
 [run]
 source =
-    lightning_hpo
+    lightning_training_studio
 concurrency =
     multiprocessing
     thread
 parallel = True
 omit =
-    lightning_hpo/setup_tools.py
+    lightning_training_studio/setup_tools.py

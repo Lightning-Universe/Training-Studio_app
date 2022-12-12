@@ -2,8 +2,8 @@ import os.path as ops
 
 from lightning import LightningApp
 
-from lightning_hpo import Sweep
-from lightning_hpo.algorithm import GridSearch
+from lightning_training_studio import Sweep
+from lightning_training_studio.algorithm import GridSearch
 
 app = LightningApp(
     Sweep(

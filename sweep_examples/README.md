@@ -39,8 +39,8 @@ Import a `Sweep` component, provide the path to your script and what you want to
 ```python
 import os.path as ops
 from lightning import LightningApp
-from lightning_hpo import Sweep
-from lightning_hpo.distributions import Uniform
+from lightning_training_studio import Sweep
+from lightning_training_studio.distributions import Uniform
 
 app = LightningApp(
     Sweep(
@@ -81,9 +81,9 @@ Here is how to launch 100 experiments 10 at a times with 2 nodes of 4 GPUs for e
 import os.path as ops
 
 from lightning import LightningApp
-from lightning_hpo.algorithm import OptunaAlgorithm
-from lightning_hpo import Sweep, CloudCompute
-from lightning_hpo.distributions import Uniform, IntUniform, Categorical, LogUniform
+from lightning_training_studio.algorithm import OptunaAlgorithm
+from lightning_training_studio import Sweep, CloudCompute
+from lightning_training_studio.distributions import Uniform, IntUniform, Categorical, LogUniform
 
 app = LightningApp(
     Sweep(
@@ -188,9 +188,9 @@ from sklearn import datasets
 import optuna
 from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import train_test_split
-from lightning_hpo.distributions import LogUniform
-from lightning_hpo.algorithm import OptunaAlgorithm
-from lightning_hpo import Objective, Sweep
+from lightning_training_studio.distributions import LogUniform
+from lightning_training_studio.algorithm import OptunaAlgorithm
+from lightning_training_studio import Objective, Sweep
 
 
 class MyObjective(Objective):
@@ -229,7 +229,7 @@ app = LightningApp(
 )
 ```
 
-![Lightning App UI](https://pl-flash-data.s3.amazonaws.com/assets_lightning/lightning_hpo_optimizer.png)
+![Lightning App UI](https://pl-flash-data.s3.amazonaws.com/assets_lightning/lightning_training_studio_optimizer.png)
 
 ```bash
 python -m lightning run app 3_app_sklearn.py
@@ -284,7 +284,7 @@ ______________________________________________________________________
 Here is how to use the latest research such as [Hyperband paper](http://www.jmlr.org/papers/volume18/16-558/16-558.pdf)
 
 ```python
-from lightning_hpo.algorithm import OptunaAlgorithm
+from lightning_training_studio.algorithm import OptunaAlgorithm
 import optuna
 
 Sweep(

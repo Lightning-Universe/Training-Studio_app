@@ -2,8 +2,8 @@ import os.path as ops
 
 from lightning import LightningApp
 
-from lightning_hpo import Sweep
-from lightning_hpo.distributions.distributions import Uniform
+from lightning_training_studio import Sweep
+from lightning_training_studio.distributions.distributions import Uniform
 
 app = LightningApp(
     Sweep(

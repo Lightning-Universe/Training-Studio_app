@@ -1,15 +1,15 @@
 from sqlalchemy import Column
 from sqlmodel import Field, SQLModel
 
-from lightning_hpo.distributions import Uniform
-from lightning_hpo.distributions.distributions import Categorical
-from lightning_hpo.utilities.enum import Stage
-from lightning_hpo.utilities.utils import get_best_model_path, get_best_model_score, pydantic_column_type
+from lightning_training_studio.distributions import Uniform
+from lightning_training_studio.distributions.distributions import Categorical
+from lightning_training_studio.utilities.enum import Stage
+from lightning_training_studio.utilities.utils import get_best_model_path, get_best_model_score, pydantic_column_type
 from tests.helpers import MockObjective
 
 
 def test_score_and_path():
-    from lightning_hpo.components.sweep import Sweep
+    from lightning_training_studio.components.sweep import Sweep
 
     sweep = Sweep(
         5,
