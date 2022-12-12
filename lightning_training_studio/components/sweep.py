@@ -100,7 +100,7 @@ class Sweep(LightningFlow, ControllerResource):
         self.framework = framework
         self.cloud_compute = getattr(cloud_compute, "name", "default")
         self.num_nodes = getattr(cloud_compute, "count", 1) if cloud_compute else 1
-        self.shm_size = getattr(cloud_compute, "shm_size", 1) if cloud_compute else 64
+        self.shm_size = getattr(cloud_compute, "shm_size", 1024) if cloud_compute else 1024
         self.disk_size = getattr(cloud_compute, "disk_size", 1) if cloud_compute else 10
         self.logger = logger
         self.direction = direction
