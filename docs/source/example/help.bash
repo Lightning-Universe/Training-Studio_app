@@ -43,3 +43,15 @@ optional arguments:
                         Syntax for sweep parameters at the CLI.
   --pip-install-source  Run `pip install -e .` on
                         the uploaded source before running
+
+
+# Get more granular information for each command
+lightning run sweep --help
+
+OR
+
+lightning show logs --help
+
+OR
+
+any of the CLI commands.

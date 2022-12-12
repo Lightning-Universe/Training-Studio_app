@@ -50,7 +50,7 @@ class SweepController(Controller):
                 elif sweep.stage in (Stage.FAILED, Stage.SUCCEEDED):
                     for tensorboard in self.db.select_all(TensorboardConfig):
                         if tensorboard.sweep_id == id:
-                            tensorboard.desired_stage = Stage.STOPPED
+                            tensorboard.desired_stage = Stage.DELETED
                             self.db.update(tensorboard)
 
             if work_name not in self.r and sweep.stage != Stage.SUCCEEDED:

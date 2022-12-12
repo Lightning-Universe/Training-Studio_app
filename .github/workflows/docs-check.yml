@@ -46,6 +46,13 @@ jobs:
           python --version ; pip --version ; pip list
         shell: bash
 
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY_ID }}
+          aws-region: us-east-1
+      - run: aws s3 sync s3://sphinx-packages/ pypi/
+
       - name: Test Documentation
         working-directory: ./docs
         env:
@@ -87,6 +94,13 @@ jobs:
           pip --version
           pip list
         shell: bash
+
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY_ID }}
+          aws-region: us-east-1
+      - run: aws s3 sync s3://sphinx-packages/ pypi/
 
       - name: Make Documentation
         working-directory: ./docs
