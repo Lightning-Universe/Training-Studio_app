@@ -44,10 +44,6 @@ class ImageClassifier(LightningModule):
         print(self.hparams)
         self.model = model or Net()
 
-        checkpoint_path = os.path.join(os.path.dirname(__file__), "demo_weights")
-        if os.path.exists(checkpoint_path):
-            self.load_state_dict(torch.load(checkpoint_path).state_dict())
-
     @property
     def example_input_array(self):
         return torch.zeros((1, 1, 28, 28))
@@ -88,6 +84,8 @@ class MNISTDataModule(LightningDataModule):
             should_download = len(os.listdir("./data/MNIST/raw")) != 8
         if should_download:
             MNIST("./data", download=True)
+        else:
+            print("The data already exists !")
 
     def train_dataloader(self):
         train_dataset = MNIST("./data", train=True, download=False, transform=self.transform)

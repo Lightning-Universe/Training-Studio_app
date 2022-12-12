@@ -19,11 +19,12 @@ const DataTable = () => {
 
   if (showHelpPage == HelpPageState.forced || showHelpPage == HelpPageState.shown) {
     return (
-      <UserGuide title="Want to add data?" subtitle="Use the commands below in your terminal">
+      <UserGuide title="Want to get started?" subtitle="Use the commands below in your terminal">
+        <UserGuideComment>Install Lightning</UserGuideComment>
+        <UserGuideBody>{`pip install lightning`}</UserGuideBody>
         <UserGuideComment>Connect to the app</UserGuideComment>
         <UserGuideBody>{`lightning connect ${appId} --yes`}</UserGuideBody>
-        <UserGuideComment>Add data from an S3 bucket</UserGuideComment>
-        <UserGuideBody>{'lightning create data --name example --source s3://pl-flash-data/wiki-test/'}</UserGuideBody>
+        <UserGuideComment>Click on the Docs Tab & follow Run Example Section</UserGuideComment>
       </UserGuide>
     );
   }

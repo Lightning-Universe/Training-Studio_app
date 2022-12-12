@@ -2,10 +2,10 @@
 lightning show logs
 
 # View the logs for a single sweep
-lightning show logs --names {SWEEP_NAME}
+lightning show logs --names bayesian_search
 
 # View the logs for a single experiment
-lightning show logs --names {EXP_NAME}
+lightning show logs --names my_first_training
 
 # View the logs for a several experiments
-lightning show logs --names {EXP_NAME_0} {EXP_NAME_1}
+lightning show logs --names my_first_training my_second_training

@@ -3,6 +3,7 @@ import { ShowHelpPageProvider } from 'hooks/useShowHelpPageState';
 import { SnackbarProvider } from 'lightning-ui/src/design-system/components';
 import ThemeProvider from 'lightning-ui/src/design-system/theme';
 import { StatusEnum } from 'lightning-ui/src/shared/components/Status';
+import { useRef } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter } from 'react-router-dom';
 import { Experiments } from './components/ExperimentTable';
@@ -23,6 +24,12 @@ const statusToEnum = {
   stopping: StatusEnum.STOPPING,
 } as { [k: string]: StatusEnum };
 
+function Docs({ src }: { src?: string }) {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const height = iframeRef.current ? `calc(100vh)` : '100vh';
+  return <iframe ref={iframeRef} title={'docs'} src={src} style={{ width: '100%', height }} />;
+}
+
 function AppTabs() {
   const { selectedTab, setSelectedTab } = useSelectedTabState();
 
@@ -35,6 +42,7 @@ function AppTabs() {
         content: <Experiments />,
       },
       { title: 'Data', content: <></> },
+      { title: 'Docs', content: <></> },
     ];
   } else if (selectedTab == 1) {
     tabItems = [
@@ -43,6 +51,13 @@ function AppTabs() {
         title: 'Data',
         content: <DataTable />,
       },
+      { title: 'Docs', content: <></> },
+    ];
+  } else if (selectedTab == 2) {
+    tabItems = [
+      { title: 'Experiments', content: <></> },
+      { title: 'Data', content: <></> },
+      { title: 'Docs', content: <Docs src="https://lightning-ai.github.io/lightning-hpo/" /> },
     ];
   }
 

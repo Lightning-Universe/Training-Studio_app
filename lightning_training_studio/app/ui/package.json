@@ -12,7 +12,7 @@
     "axios": "^0.27.2",
     "filter-material-ui": "2.7.0",
     "fontfaceobserver": "^2.1.0",
-    "lightning-ui": "git+ssh://git@github.com/gridai/lightning-ui.git",
+    "lightning-ui": "git+ssh://git@github.com/gridai/lightning-ui.git#6feccec7dacf33a199d99f12f388f1b3898c1110",
     "lodash": "^4.17.21",
     "notistack": "^2.0.4",
     "minimatch": "^3.0.5",

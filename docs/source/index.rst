@@ -3,9 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-#####################################
-PyTorch Lightning Training Studio App
-#####################################
+###############################################
+Welcome to ⚡ PyTorch Lightning Training Studio
+###############################################
 
 Build models ⚡ *Lightning fast*.
 
@@ -14,26 +14,26 @@ Build models ⚡ *Lightning fast*.
 
 ----
 
-*****
-Setup
-*****
+.. *****
+.. Setup
+.. *****
 
-.. lit_tabs::
-   :descriptions: 1. Install the Training Studio; 2. Duplicate the Training Studio on your own account; 3. Connect to the App Training Studio
-   :code_files: /setup/pip.bash; /setup/duplicate.bash; /setup/connect.bash; example/show_experiment_and_sweep.bash
-   :tab_rows: 4
-   :height: 290px
+.. .. lit_tabs::
+..    :descriptions: 1. Install the Training Studio; 2. Duplicate the Training Studio on your own account; 3. Connect to the App Training Studio
+..    :code_files: /setup/pip.bash; /setup/duplicate.bash; /setup/connect.bash; example/show_experiment_and_sweep.bash
+..    :tab_rows: 4
+..    :height: 290px
 
-----
+.. ----
 
 ***************
 Run an example
 ***************
 
-Run a Lightning Trainer script in the cloud.
+Run a Lightning Pytorch Trainer example in the cloud.
 
 .. lit_tabs::
-   :titles: 1. Lightning Trainer Example; 2. Prepare locally; 2. Launch an experiment; 3. Launch a Grid Search; 4. Show experiment & Sweeps; 5. Show logs; 6. Show & Download Artifacts; 7. Use your own data; 8. Stop & Delete Experiments or Sweep; 9 Getting Help;
+   :titles: 1. Lightning Pytorch Trainer example; 2. Prepare locally; 2. Launch Experiments; 3. Launch Sweeps; 4. Show Experiments & Sweeps; 5. Show logs; 6. Show & Download Artifacts; 7. Use your own data; 8. Stop & Delete Experiments or Sweep; 9 Getting Help;
    :code_files: example/script.py; example/prepare.bash; example/experiment.bash; example/sweep.bash; example/show_experiment_and_sweep.bash; example/logs.bash; example/artifacts.bash; example/data.bash; example/stop_delete.bash; example/help.bash
    :highlights:
    :works:
@@ -42,6 +42,18 @@ Run a Lightning Trainer script in the cloud.
    :height: 540px
 
 ----
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Home
+
+   self
+
+.. toctree::
+   :maxdepth: 1
+   :caption: More Examples
+
+   Large Language Models <more_examples/llms>
 
 .. .. note:: This is only temporary as some changes are being released to PiPy
 
