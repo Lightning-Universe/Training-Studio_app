@@ -84,6 +84,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         import pytorch_lightning as pl
         import pytorch_lightning.cli as pl_cli
 
+        trainer = None
         for v in script_globals.values():
             if isinstance(v, ((pl_cli.LightningCLI, lp_cli.LightningCLI))):
                 trainer = v.trainer
@@ -91,16 +92,17 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
             elif isinstance(v, (pl.Trainer, lp.Trainer)):
                 trainer = v
                 break
-        else:
-            raise RuntimeError("No trainer instance found.")
+        # else:
+        #     raise RuntimeError("No trainer instance found.")
 
-        self.monitor = trainer.checkpoint_callback.monitor
+        if trainer is not None:
+            self.monitor = trainer.checkpoint_callback.monitor
 
-        if trainer.checkpoint_callback.best_model_score:
-            self.best_model_path = Path(trainer.checkpoint_callback.best_model_path)
-            self.best_model_score = float(trainer.checkpoint_callback.best_model_score)
-        else:
-            self.best_model_path = Path(trainer.checkpoint_callback.last_model_path)
+            if trainer.checkpoint_callback.best_model_score:
+                self.best_model_path = Path(trainer.checkpoint_callback.best_model_path)
+                self.best_model_score = float(trainer.checkpoint_callback.best_model_score)
+            else:
+                self.best_model_path = Path(trainer.checkpoint_callback.last_model_path)
 
         output_dir = os.path.exists(os.path.join(self._rootwd, "output"))
         if output_dir:
