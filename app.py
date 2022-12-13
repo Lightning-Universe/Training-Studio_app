@@ -5,13 +5,7 @@ from lightning.app.utilities import frontend
 
 from lightning_training_studio.app.main import TrainingStudio
 
-description = dedent(
-    """
-The Lightning PyTorch Training Studio App is a full-stack AI application
-built using the Lightning framework enabling to run experiments or sweep
-with SOTA hyper-parameters algorithms locally or in the cloud.
-"""
-)
+description = "The Lightning PyTorch Training Studio App is an AI application that uses the Lightning framework to run experiments or sweep with state-of-the-art algorithms, locally or in the cloud."
 
 on_after_connect = dedent(
     """

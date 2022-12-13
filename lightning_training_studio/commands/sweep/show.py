@@ -35,7 +35,7 @@ def _show_sweeps(sweeps: List[SweepConfig]):
 
 class ShowSweepsCommand(ClientCommand):
 
-    description = "Show all sweeps and their statuses, or the experiments for a given sweep."
+    description = "To show all sweeps and their statuses, or the experiments for a given sweep."
 
     # TODO: (tchaton) Upstream to Lightning
     def invoke_handler(self, config: Optional[BaseModel] = None) -> Dict[str, Any]:
