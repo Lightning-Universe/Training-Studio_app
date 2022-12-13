@@ -448,7 +448,11 @@ class RunSweepCommand(ClientCommand):
         if not os.path.exists(hparams.script_path):
             raise FileNotFoundError(f"The provided script doesn't exist: {hparams.script_path}")
 
-        if len(hparams.requirements) == 1 and Path(hparams.requirements[0]).resolve().exists():
+        if (
+            len(hparams.requirements) == 1
+            and hparams.requirements[0]  # noqa: W503
+            and Path(hparams.requirements[0]).resolve().exists()  # noqa: W503
+        ):
             requirements_path = Path(hparams.requirements[0]).resolve()
             with open(requirements_path, "r") as f:
                 hparams.requirements = [line.replace("\n", "") for line in f.readlines() if line.strip()]
