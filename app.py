@@ -7,9 +7,9 @@ from lightning_training_studio.app.main import TrainingStudio
 
 description = dedent(
     """
-    The Lightning PyTorch Training Studio App is a full-stack AI application
-    built using the Lightning framework enabling to run experiments or sweep
-    with SOTA hyper-parameters algorithms locally or in the cloud.
+The Lightning PyTorch Training Studio App is a full-stack AI application
+built using the Lightning framework enabling to run experiments or sweep
+with SOTA hyper-parameters algorithms locally or in the cloud.
 """
 )
 
