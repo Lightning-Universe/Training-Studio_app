@@ -22,7 +22,7 @@ Run a Lightning Pytorch Trainer example in the cloud.
 
 .. lit_tabs::
    :titles: 1. Lightning Pytorch Trainer example; 2. Prepare locally; 2. Launch Experiments; 3. Launch Sweeps; 4. Show Experiments & Sweeps; 5. Show logs; 6. Show & Download Artifacts; 7. Use your own data; 8. Stop & Delete Experiments or Sweep; 9 Getting Help;
-   :code_files: example/script.py; example/prepare.bash; example/experiment.bash; example/sweep.bash; example/show_experiment_and_sweep.bash; example/logs.bash; example/artifacts.bash; example/data.bash; example/stop_delete.bash; example/help.bash
+   :code_files: example/script.py; example/prepare.bash; example/experiment.bash; example/experiment_args.bash; example/sweep.bash; example/sweep_hydra.bash; example/sweep_args.bash; example/show_experiment_and_sweep.bash; example/logs.bash; example/artifacts.bash; example/data.bash; example/stop_delete.bash; example/help.bash
    :highlights:
    :works:
    :enable_run: false

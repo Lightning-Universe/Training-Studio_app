@@ -335,15 +335,15 @@ class RunSweepCommand(ClientCommand):
         parser.add_argument("--parallel_experiments", default=None, type=int, help="Number of experiments to run.")
         parser.add_argument(
             "--requirements",
-            nargs="+",
-            default=[],
+            default="",
             help="List of requirements separated by a comma or requirements.txt filepath.",
+            type=lambda arg: [el for el in arg.split(",")],
         )
         parser.add_argument(
             "--packages",
-            nargs="+",
-            default=[],
+            default="",
             help="List of system packages to be installed via apt install, separated by a comma.",
+            type=lambda arg: [el for el in arg.split(",")],
         )
         parser.add_argument(
             "--cloud_compute",
@@ -448,7 +448,11 @@ class RunSweepCommand(ClientCommand):
         if not os.path.exists(hparams.script_path):
             raise FileNotFoundError(f"The provided script doesn't exist: {hparams.script_path}")
 
-        if len(hparams.requirements) == 1 and Path(hparams.requirements[0]).resolve().exists():
+        if (
+            len(hparams.requirements) == 1
+            and hparams.requirements[0]  # noqa: W503
+            and Path(hparams.requirements[0]).resolve().exists()  # noqa: W503
+        ):
             requirements_path = Path(hparams.requirements[0]).resolve()
             with open(requirements_path, "r") as f:
                 hparams.requirements = [line.replace("\n", "") for line in f.readlines() if line.strip()]
