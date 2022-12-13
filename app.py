@@ -9,7 +9,7 @@ description = "The Lightning PyTorch Training Studio App is an AI application th
 
 on_after_connect = dedent(
     """
-Run those commands to run your first Sweep:
+Run these commands to run your first Sweep:
 
 # Create a new folder
 mkdir new_folder && cd new_folder
