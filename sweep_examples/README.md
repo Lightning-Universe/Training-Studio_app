@@ -71,9 +71,9 @@ Find the example [here](./1_app_agnostic.py)
 
 ______________________________________________________________________
 
-### 2. App PyTorch Lightning
+### 2. Lightning PyTorch Studio App
 
-This example shows you how to use Lightning HPO with [PyTorch Lightning](https://pytorch-lightning.readthedocs.io/en/stable/) framework.
+This example shows you how to use Lightning HPO with [Lightning PyTorch Studio App](https://pytorch-lightning.readthedocs.io/en/stable/) framework.
 
 Here is how to launch 100 experiments 10 at a times with 2 nodes of 4 GPUs for each in the cloud.
 
