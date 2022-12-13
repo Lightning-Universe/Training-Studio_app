@@ -96,8 +96,8 @@ class Objective(TracerPythonScript, ABC):
             elif isinstance(res, dict):
                 assert isinstance(res, ObjectiveResult)
 
-        synced = [el for el in os.listdir(self._rootwd) if el != "venv"]
-        for el in synced:
-            self.drive.put(el)
+        output_dir = os.path.exists(os.path.join(self._rootwd, "output"))
+        if output_dir:
+            self.drive.put(output_dir)
 
         super().on_after_run(global_scripts)
