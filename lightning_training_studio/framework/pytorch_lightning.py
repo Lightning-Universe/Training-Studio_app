@@ -24,6 +24,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         experiment_id: int,
         experiment_name: str,
         num_nodes: int,
+        artifacts_path: Optional[str] = None,
         last_model_path: Optional[str] = None,
         pip_install_source: bool = False,
         **kwargs,
@@ -43,6 +44,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         self.end_time = None
         self.last_model_path = Path(last_model_path) if last_model_path else None
         self.pip_install_source = pip_install_source
+        self.artifacts_path = artifacts_path
         self._rootwd = os.getcwd()
 
     def configure_tracer(self):
@@ -104,7 +106,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
             else:
                 self.best_model_path = Path(trainer.checkpoint_callback.last_model_path)
 
-        output_dir = os.path.exists(os.path.join(self._rootwd, "output"))
+        output_dir = os.path.exists(os.path.join(self._rootwd, self.artifacts_path))
         if output_dir:
             self.drive.put(output_dir)
 

@@ -31,6 +31,7 @@ class Objective(TracerPythonScript, ABC):
         raise_exception: bool = False,
         function_name: str = "objective",
         num_nodes: int = 1,  # TODO # Add support for multi node
+        artifacts_path: Optional[str] = None,
         last_model_path: Optional[str] = None,
         pip_install_source: bool = False,
         **kwargs,
@@ -52,6 +53,7 @@ class Objective(TracerPythonScript, ABC):
         self.function_name = function_name
         self.has_stored = False
         self.num_nodes = num_nodes
+        self.artifacts_path = artifacts_path
         self.progress = None
         self.last_model_path = last_model_path
         self.pip_install_source = pip_install_source
@@ -96,7 +98,7 @@ class Objective(TracerPythonScript, ABC):
             elif isinstance(res, dict):
                 assert isinstance(res, ObjectiveResult)
 
-        output_dir = os.path.exists(os.path.join(self._rootwd, "output"))
+        output_dir = os.path.exists(os.path.join(self._rootwd, self.artifacts_path))
         if output_dir:
             self.drive.put(output_dir)
 
