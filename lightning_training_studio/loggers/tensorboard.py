@@ -117,7 +117,7 @@ class TensorboardLogger(Logger):
 
         if _IS_PYTORCH_LIGHTNING_AVAILABLE:
             tracer.add_traced(pytorch_lightning.Trainer, "__init__", pre_fn=trainer_pre_fn)
-        tracer.add_traced(lightning.pytorch.Trainer, "__init__", pre_fn=trainer_pre_fn)
+        tracer.add_traced(lightning.Trainer, "__init__", pre_fn=trainer_pre_fn)
 
     def get_url(self, experiment_id: int) -> None:
         pass
