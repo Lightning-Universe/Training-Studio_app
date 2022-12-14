@@ -5,9 +5,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.transforms as T
-from lightning import LightningDataModule, LightningModule
-from lightning.pytorch.callbacks import ModelCheckpoint
-from lightning.pytorch.utilities.cli import LightningCLI
+from pytorch_lightning import LightningDataModule, LightningModule
+from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.utilities.cli import LightningCLI
 from torchvision.datasets import MNIST
 
 
@@ -105,9 +105,9 @@ if __name__ == "__main__":
         save_config_overwrite=True,
         run=False,
         trainer_defaults={
-            "max_epochs": 10,
-            "limit_train_batches": 50,
-            "limit_val_batches": 20,
+            "max_epochs": 100,
+            "limit_train_batches": 10,
+            "limit_val_batches": 5,
             "callbacks": [ModelCheckpoint(monitor="val_loss")],
         },
     )
