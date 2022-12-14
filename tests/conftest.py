@@ -1,5 +1,6 @@
 import os
 import shutil
+import threading
 
 import psutil
 import pytest
@@ -25,6 +26,11 @@ def pytest_sessionfinish(session, exitstatus):
             child.kill()
         except Exception:
             pass
+
+    main_thread = threading.current_thread()
+    for t in threading.enumerate():
+        if t is not main_thread:
+            t.join(0)
 
 
 @pytest.fixture(scope="function", autouse=True)

@@ -192,6 +192,10 @@ export function Experiments() {
   if (showHelpPage == HelpPageState.forced || showHelpPage == HelpPageState.shown) {
     return (
       <UserGuide title="Want to start a hyper-parameter sweep?" subtitle="Use the commands below in your terminal">
+        <UserGuideComment>Create a new Conda Env</UserGuideComment>
+        <UserGuideBody>{`conda create --yes --name training-studio python=3.9`}</UserGuideBody>
+        <UserGuideComment>Activate the conda env</UserGuideComment>
+        <UserGuideBody>{`conda activate training-studio`}</UserGuideBody>
         <UserGuideComment>Install Lightning</UserGuideComment>
         <UserGuideBody>{`pip install lightning`}</UserGuideBody>
         <UserGuideComment>Connect to the app</UserGuideComment>
@@ -207,6 +211,7 @@ export function Experiments() {
         <UserGuideComment>Run a sweep</UserGuideComment>
         <UserGuideBody>
           lightning run sweep train.py --model.lr "[0.001, 0.01]" --data.batch "[32, 64]" --algorithm="grid_search"
+          --cloud_compute="cpu-medium"
         </UserGuideBody>
       </UserGuide>
     );

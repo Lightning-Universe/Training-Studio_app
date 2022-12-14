@@ -4,13 +4,14 @@ from pathlib import Path
 from time import time
 from typing import Any, Dict, Optional
 
+import lightning
+
 from lightning_training_studio.utilities.imports import _IS_PYTORCH_LIGHTNING_AVAILABLE
 
 if _IS_PYTORCH_LIGHTNING_AVAILABLE:
     import pytorch_lightning
     from pytorch_lightning.loggers import TensorBoardLogger
 else:
-    import lightning.pytorch as pytorch_lightning
     from lightning.pytorch.loggers import TensorBoardLogger
 
 from fsspec.implementations.local import LocalFileSystem
@@ -23,7 +24,7 @@ from lightning_training_studio.loggers.logger import Logger
 
 class DriveTensorBoardLogger(TensorBoardLogger):
     def __init__(self, *args, drive: Drive, refresh_time: int = 5, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, flush_secs=refresh_time, max_queue=1, **kwargs)
         self.timestamp = None
         self.drive = drive
         self.refresh_time = refresh_time
@@ -97,9 +98,15 @@ class TensorboardLogger(Logger):
         use_localhost = "LIGHTNING_APP_STATE_URL" not in os.environ
 
         if use_localhost:
-            logger = TensorBoardLogger(save_dir=str(drive.root), name="", version="")
+            logger = TensorBoardLogger(
+                save_dir=str(drive.root),
+                name="",
+                version="",
+                flush_secs=1,
+                max_queue=1,
+            )
         else:
-            logger = DriveTensorBoardLogger(save_dir=".", name="", drive=drive, refresh_time=1)
+            logger = DriveTensorBoardLogger(save_dir=".", name="", drive=drive, refresh_time=0)
 
         # TODO: Collect the monitor + metric at the end.
         logger.log_hyperparams(params)
@@ -108,7 +115,9 @@ class TensorboardLogger(Logger):
             kwargs["logger"] = logger
             return {}, args, kwargs
 
-        tracer.add_traced(pytorch_lightning.Trainer, "__init__", pre_fn=trainer_pre_fn)
+        if _IS_PYTORCH_LIGHTNING_AVAILABLE:
+            tracer.add_traced(pytorch_lightning.Trainer, "__init__", pre_fn=trainer_pre_fn)
+        tracer.add_traced(lightning.Trainer, "__init__", pre_fn=trainer_pre_fn)
 
     def get_url(self, experiment_id: int) -> None:
         pass
