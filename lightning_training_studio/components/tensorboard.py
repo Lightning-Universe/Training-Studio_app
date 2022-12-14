@@ -25,6 +25,7 @@ class Tensorboard(LightningWork, ControllerResource):
         self.desired_stage = config.desired_stage
         self.config = config.dict()
         self._process = None
+        self.downloaded_file = False
 
     def run(self):
         use_localhost = "LIGHTNING_APP_STATE_URL" not in os.environ
@@ -32,7 +33,6 @@ class Tensorboard(LightningWork, ControllerResource):
         os.makedirs(local_folder, exist_ok=True)
         fs = _filesystem()
         root_folder = str(self.drive.drive_root)
-        downloaded_file = False
         extras = "--reload_interval 1 --reload_multifile True"
 
         while True:
@@ -48,8 +48,8 @@ class Tensorboard(LightningWork, ControllerResource):
                         if not parent.exists():
                             parent.mkdir(exist_ok=True, parents=True)
                     fs.get(source_path, str(Path(target_path).resolve()))
-                    downloaded_file = True
-            if downloaded_file and self._process is None:
+                    self.downloaded_file = True
+            if self.downloaded_file and self._process is None:
                 cmd = f"tensorboard --logdir={local_folder} --host {self.host} --port {self.port} {extras}"
                 self._process = Popen(cmd, shell=True, env=os.environ)
                 self.stage = Stage.RUNNING
