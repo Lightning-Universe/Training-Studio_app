@@ -10,7 +10,7 @@ class DeleteExperimentConfig(BaseModel):
 
 class DeleteExperimentCommand(ClientCommand):
 
-    description = "Delete an experiment. Note that artifacts will still be available after the operation."
+    description = """To delete an experiment. The artifacts are still available after the operation is complete."""
 
     def run(self) -> None:
         parser = ArgumentParser()

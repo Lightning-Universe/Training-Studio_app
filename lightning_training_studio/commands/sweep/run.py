@@ -312,11 +312,10 @@ def parse_hydra(script_args, args):
 
 class RunSweepCommand(ClientCommand):
 
-    description = """Run a sweep by providing a script, the cloud compute type and optional
-                     data entries to be made available at a given path. Hyperparameters can be
-                     provided as lists (`model.lr=\"[0.01, 0.1]\"`) or using distributions
-                     (`model.lr=\"uniform(0.01, 0.1)\"`, `model.lr=\"log_uniform(0.01, 0.1)\"`).
-                     Hydra multirun override syntax is also supported."""
+    description = """
+        To run a sweep, provide a script, the cloud compute to use, and an optional data.
+        Hyperparameters can be provided as lists or using distributions. Hydra multirun syntax is also supported.
+    """
     requirements = ["traitlets", "lightning_training_studio"]
     SUPPORTED_DISTRIBUTIONS = ("uniform", "log_uniform", "categorical")
 

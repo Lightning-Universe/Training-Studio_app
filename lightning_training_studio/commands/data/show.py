@@ -5,7 +5,7 @@ from rich.table import Table
 
 class ShowDataCommand(ClientCommand):
 
-    description = "List all data associations."
+    description = "To list all data associations."
 
     def run(self) -> None:
         response = self.invoke_handler()

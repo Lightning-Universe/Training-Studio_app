@@ -11,8 +11,7 @@ from lightning_training_studio.commands.sweep.run import CustomLocalSourceCodeDi
 
 class RunExperimentCommand(ClientCommand):
 
-    description = """Run an experiment by providing a script, the cloud compute type and optional
-                     data entries to be made available at a given path."""
+    description = """To run an experiment, provide a script, the cloud compute to use, and optional data."""
 
     def run(self) -> None:
         parser = ArgumentParser()

@@ -6,7 +6,7 @@ __copyright__ = f"Copyright (c) 2021-2022, {__author__}."
 __homepage__ = "https://github.com/PyTorchLightning/lightning"
 __docs__ = "Lightning HPO"
 __long_doc__ = """
-The PyTorch Lightning Training Studio App provides a pythonic implementation for Scalable Hyperparameter Tuning.
+The Lightning PyTorch Training Studio App provides a pythonic implementation for Scalable Hyperparameter Tuning.
 This library relies on Optuna for providing state-of-the-art sampling hyper-parameters algorithms and efficient experiment pruning strategies.
 """
 

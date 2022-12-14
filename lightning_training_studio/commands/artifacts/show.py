@@ -174,7 +174,7 @@ class ShowArtifactsConfigResponse(BaseModel):
 
 class ShowArtifactsCommand(ClientCommand):
 
-    description = "Show artifacts for experiments or sweeps, in flat or tree layout."
+    description = "To show artifacts for experiments or sweeps."
 
     def run(self) -> None:
         # 1. Parse the user arguments.

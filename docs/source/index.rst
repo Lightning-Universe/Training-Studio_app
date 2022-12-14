@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 ###############################################
-Welcome to ⚡ PyTorch Lightning Training Studio
+Welcome to ⚡ Lightning PyTorch Training Studio
 ###############################################
 
 Build models ⚡ *Lightning fast*.

@@ -15,7 +15,7 @@ class ShowLogsConfig(BaseModel):
 
 class ShowLogsCommand(ClientCommand):
 
-    description: str = "Show logs of an experiment or a sweep. Optionally follow logs as they stream."
+    description: str = "To show the logs of an experiment or sweep, use the option to follow the logs as they stream."
 
     def run(self):
         parser = argparse.ArgumentParser()

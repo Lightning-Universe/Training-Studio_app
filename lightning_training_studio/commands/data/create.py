@@ -33,9 +33,10 @@ class DataConfig(SQLModel, table=True):
 
 class CreateDataCommand(ClientCommand):
 
-    description = """Create a Data association by providing a public S3 bucket and an optional mount point.
-                     The contents of the bucket can be then mounted on experiments and sweeps and
-                     accessed through the filesystem."""
+    description = """
+    To create a data association, provide a public S3 bucket and an optional mount point.
+    The contents of the bucket can then be accessed through the file system in experiments and sweeps.
+    """
 
     def run(self) -> None:
         parser = ArgumentParser()

@@ -10,8 +10,7 @@ class DeleteDataConfig(SQLModel):
 
 class DeleteDataCommand(ClientCommand):
 
-    description = """Delete a data association. Note that this will not delete the data itself,
-                     it will only make it unavailable to experiments and sweeps."""
+    description = """To delete a data association, note this doesn't delete the data, but only the reference."""
 
     def run(self) -> None:
         parser = ArgumentParser()
