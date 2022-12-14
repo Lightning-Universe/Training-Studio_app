@@ -12,7 +12,6 @@ if _IS_PYTORCH_LIGHTNING_AVAILABLE:
     import pytorch_lightning
     from pytorch_lightning.loggers import TensorBoardLogger
 else:
-    import lightning.pytorch as pytorch_lightning
     from lightning.pytorch.loggers import TensorBoardLogger
 
 from fsspec.implementations.local import LocalFileSystem
@@ -116,7 +115,8 @@ class TensorboardLogger(Logger):
             kwargs["logger"] = logger
             return {}, args, kwargs
 
-        tracer.add_traced(pytorch_lightning.Trainer, "__init__", pre_fn=trainer_pre_fn)
+        if _IS_PYTORCH_LIGHTNING_AVAILABLE:
+            tracer.add_traced(pytorch_lightning.Trainer, "__init__", pre_fn=trainer_pre_fn)
         tracer.add_traced(lightning.pytorch.Trainer, "__init__", pre_fn=trainer_pre_fn)
 
     def get_url(self, experiment_id: int) -> None:
