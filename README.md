@@ -62,7 +62,7 @@ lightning run app app.py
 In second terminal, connect to the Lightning App and download its CLI.
 
 ```bash
-lightning connect localhost --yes
+lightning connect localhost
 ```
 
 ```bash
@@ -123,7 +123,7 @@ lightning run app app.py --cloud
 Connect to the App once ready.
 
 ```
-lightning connect {APP_NAME} --yes
+lightning connect {APP_NAME}
 ```
 
 Run your first  multi node training experiment from [sweep_examples/scripts](./sweep_examples/scripts) folder (2 nodes of 4 V100 GPUS each).
