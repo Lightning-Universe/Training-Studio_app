@@ -9,4 +9,4 @@
 
 # 2. Connect to your App as follows:
 # lightning connect {APP_NAME} -y
-lightning connect lightning/training-studio --yes
+lightning connect lightning/training-studio

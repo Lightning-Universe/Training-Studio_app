@@ -23,11 +23,11 @@ Once a Lightning App is running locally or in the cloud, your can simply connect
 
 .. code-block::
 
-   lightning connect {CLOUD_APP_NAME} --yes
+   lightning connect {CLOUD_APP_NAME}
 
 .. code-block::
 
-   lightning connect localhost --yes
+   lightning connect localhost
 
    Storing `delete_sweep` under {HOME}/.lightning/lightning_connection/commands/delete_sweep.py
    You can review all the downloaded commands under {HOME}/.lightning/lightning_connection/commands folder.

@@ -199,7 +199,7 @@ export function Experiments() {
         <UserGuideComment>Install Lightning</UserGuideComment>
         <UserGuideBody>{`pip install lightning`}</UserGuideBody>
         <UserGuideComment>Connect to the app</UserGuideComment>
-        <UserGuideBody>{`lightning connect ${appId} --yes`}</UserGuideBody>
+        <UserGuideBody>{`lightning connect ${appId}`}</UserGuideBody>
         <UserGuideComment>Create a new folder</UserGuideComment>
         <UserGuideBody>{`mkdir new_folder && cd new_folder`}</UserGuideBody>
         <UserGuideComment>Download example script</UserGuideComment>

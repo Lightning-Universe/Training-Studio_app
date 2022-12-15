@@ -21,7 +21,7 @@ const DataTable = () => {
     return (
       <UserGuide title="Want to add data?" subtitle="Use the commands below in your terminal">
         <UserGuideComment>Connect to the app</UserGuideComment>
-        <UserGuideBody>{`lightning connect ${appId} --yes`}</UserGuideBody>
+        <UserGuideBody>{`lightning connect ${appId}`}</UserGuideBody>
         <UserGuideComment>Add data from an S3 bucket</UserGuideComment>
         <UserGuideBody>
           {'lightning create data --name mnist --source s3://lightning-example-public/MNIST/'}
