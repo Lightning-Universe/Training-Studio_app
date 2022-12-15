@@ -106,8 +106,8 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
             else:
                 self.best_model_path = Path(trainer.checkpoint_callback.last_model_path)
 
-        output_dir = os.path.exists(os.path.join(self._rootwd, self.artifacts_path))
-        if output_dir:
+        if self.artifacts_path:
+            output_dir = os.path.exists(os.path.join(self._rootwd, self.artifacts_path))
             self.drive.put(output_dir)
 
         self.has_finished = True
