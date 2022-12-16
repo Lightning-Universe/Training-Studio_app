@@ -8,7 +8,7 @@ class DeleteDataConfig(SQLModel):
     name: str
 
 
-class DeleteDataCommand(ClientCommand):
+class RemoveDatasetCommand(ClientCommand):
 
     description = """To delete a data association, note this doesn't delete the data, but only the reference."""
 

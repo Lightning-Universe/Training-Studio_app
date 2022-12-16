@@ -1,5 +1,3 @@
-import CancelIcon from '@mui/icons-material/Cancel';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { Divider, Grid, Typography } from '@mui/material';
 import MuiTab from '@mui/material/Tab';
 import MuiTabs from '@mui/material/Tabs';
@@ -31,7 +29,7 @@ const Tabs = (props: TabsProps) => {
       <Stack
         direction="row"
         spacing={1}
-        sx={{ paddingX: '14px', paddingY: '9px', position: 'absolute', top: 0, right: 0, zIndex: 1000 }}>
+        sx={{ paddingX: '14px', paddingY: '9px', position: 'absolute', top: 1, right: 0, zIndex: 1000 }}>
         {showHelpPage != HelpPageState.forced ? (
           <IconButton
             sx={{
@@ -39,17 +37,25 @@ const Tabs = (props: TabsProps) => {
               '&:hover': {
                 backgroundColor: 'grey.20',
               },
-              'height': '28px',
-              'width': '28px',
+              'height': '50px',
+              'width': '50px',
             }}
-            aria-label="docs"
+            aria-label="commands"
             onClick={() => {
               setShowHelpPage(showHelpPage == HelpPageState.shown ? HelpPageState.notShown : HelpPageState.shown);
             }}>
             {showHelpPage == HelpPageState.shown ? (
-              <CancelIcon sx={{ color: 'grey.70', fontSize: 16 }} />
+              <Box sx={{ minWidth: 35 }}>
+                <Typography sx={{ fontSize: 12 }} color="grey.70">
+                  <b>CLI Help</b>
+                </Typography>
+              </Box>
             ) : (
-              <HelpOutlineIcon sx={{ color: 'grey.70', fontSize: 16 }} />
+              <Box sx={{ minWidth: 35 }}>
+                <Typography sx={{ fontSize: 12 }} color="primary">
+                  <b>CLI Help</b>
+                </Typography>
+              </Box>
             )}
           </IconButton>
         ) : (
@@ -58,7 +64,7 @@ const Tabs = (props: TabsProps) => {
       </Stack>
       <Grid container spacing={1}>
         <Grid item xs={12} sm="auto">
-          <Box sx={{ marginX: '14px', marginY: '8px' }}>
+          <Box sx={{ marginX: '20px', marginY: '20px' }}>
             <Typography variant="h6">Training Studio</Typography>
           </Box>
         </Grid>

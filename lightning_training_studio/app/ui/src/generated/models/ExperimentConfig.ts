@@ -7,6 +7,7 @@ export type ExperimentConfig = {
     best_model_score?: number;
     monitor?: string;
     best_model_path?: string;
+    last_model_path?: string;
     stage?: string;
     params: Record<string, (number | string | Array<number> | Array<string>)>;
     exception?: string;

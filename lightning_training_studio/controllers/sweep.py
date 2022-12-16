@@ -159,6 +159,8 @@ class SweepController(Controller):
                     if experiment.stage == Stage.SUCCEEDED:
                         return f"The current experiment `{experiment.name}` has already succeeded."
                     self.r[sweep.sweep_id].stop_experiment(experiment_id)
+                    sweep_config: SweepConfig = self.r[sweep.sweep_id].collect_model()
+                    self.db.update(sweep_config)
                     return f"The current experiment `{experiment.name}` has been stopped."
         return f"The current experiment `{config.name}` doesn't exist."
 

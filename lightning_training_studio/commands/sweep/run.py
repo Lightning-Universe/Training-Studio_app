@@ -400,10 +400,10 @@ class RunSweepCommand(ClientCommand):
             help="The path where artifacts will be saved from.",
         )
         parser.add_argument(
-            "--data",
+            "--dataset",
             nargs="+",
             default=[],
-            help="Provide a list of Data (and optionally the mount_path in the format `<name>:<mount_path>`) to mount to the experiments.",
+            help="Provide a list of datasets (and optionally the mount_path in the format `<name>:<mount_path>`) to mount to the experiments.",
         )
         parser.add_argument(
             "--syntax",
@@ -468,7 +468,7 @@ class RunSweepCommand(ClientCommand):
         repo.package()
         repo.upload(url=f"{self.app_url}/api/v1/upload_file/{name}")
 
-        data_split = [data.split(":") if ":" in data else (data, None) for data in hparams.data]
+        data_split = [dataset.split(":") if ":" in dataset else (dataset, None) for dataset in hparams.dataset]
         data = {data[0]: data[1] for data in data_split}
 
         config = SweepConfig(

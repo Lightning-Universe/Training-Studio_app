@@ -165,6 +165,8 @@ class Sweep(LightningFlow, ControllerResource):
 
                 if _check_stage(objective, Stage.FAILED):
                     self.experiments[experiment_id]["stage"] = Stage.FAILED
+                    if getattr(objective, "start_time", None):
+                        self.experiments[experiment_id]["end_time"] = str(time.time())
                     continue
 
                 objective.run(
@@ -227,7 +229,7 @@ class Sweep(LightningFlow, ControllerResource):
                 if self.experiments[experiment_id]["stage"] not in (Stage.STOPPED, Stage.SUCCEEDED, Stage.FAILED):
                     self.experiments[experiment_id]["stage"] = Stage.STOPPED
                     if self.experiments[experiment_id]["start_time"] is not None:
-                        self.experiments[experiment_id]["end_time"] = time.time()
+                        self.experiments[experiment_id]["end_time"] = str(time.time())
         for work in self.works():
             work.stop()
         self.stage = Stage.STOPPED
@@ -249,6 +251,7 @@ class Sweep(LightningFlow, ControllerResource):
         if objective:
             objective.stop()
             self.experiments[experiment_id]["stage"] = Stage.STOPPED
+            self.experiments[experiment_id]["end_time"] = str(time.time())
             self.total_experiments_done += 1
 
     def check_finished_experiment(self, objective) -> bool:

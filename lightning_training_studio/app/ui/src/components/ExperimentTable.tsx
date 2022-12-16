@@ -194,7 +194,9 @@ export function Experiments() {
 
   if (showHelpPage == HelpPageState.forced || showHelpPage == HelpPageState.shown) {
     return (
-      <UserGuide title="Want to start a hyper-parameter sweep?" subtitle="Use the commands below in your terminal">
+      <UserGuide
+        title="Want to start a hyper-parameter sweep?"
+        subtitle="Use the commands below in your local terminal on your own computer.">
         <UserGuideComment>Create a new Conda Env</UserGuideComment>
         <UserGuideBody>{`conda create --yes --name training-studio python=3.9`}</UserGuideBody>
         <UserGuideComment>Activate the conda env</UserGuideComment>
