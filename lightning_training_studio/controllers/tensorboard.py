@@ -54,7 +54,6 @@ class TensorboardController(Controller):
             matched_tensorboard.stage = Stage.STOPPED
             matched_tensorboard.desired_stage = Stage.RUNNING
             self.db.update(config)
-            print(self.db.select_all())
             return f"Re-Launched a Tensorboard `{config.sweep_id}`."
 
         self.db.insert(config)
