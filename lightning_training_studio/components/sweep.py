@@ -66,6 +66,7 @@ class Sweep(LightningFlow, ControllerResource):
         stage: Optional[str] = Stage.NOT_STARTED,
         logger_url: str = "",
         pip_install_source: bool = False,
+        artifacts_path: Optional[str] = None,
         data: Optional[List[Tuple[str, str]]] = None,
         **objective_kwargs: Any,
     ):
@@ -108,6 +109,7 @@ class Sweep(LightningFlow, ControllerResource):
         self.stage = stage
         self.logger_url = logger_url
         self.pip_install_source = pip_install_source
+        self.artifacts_path = artifacts_path
         self.data = data
 
         self._objective_cls = _resolve_objective_cls(objective_cls, framework)
@@ -120,6 +122,7 @@ class Sweep(LightningFlow, ControllerResource):
             "env": env,
             "script_args": script_args,
             "num_nodes": getattr(cloud_compute, "count", 1) if cloud_compute else 1,
+            "artifacts_path": artifacts_path,
             "logger": logger,
             "code": code,
             "sweep_id": self.sweep_id,
@@ -307,6 +310,7 @@ class Sweep(LightningFlow, ControllerResource):
             direction=config.direction,
             stage=config.stage,
             logger_url=config.logger_url,
+            artifacts_path=config.artifacts_path,
             data=data,
             pip_install_source=config.pip_install_source,
             requirements=config.requirements,

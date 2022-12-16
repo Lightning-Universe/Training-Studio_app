@@ -6,6 +6,7 @@ from abc import ABC
 from typing import Any, Dict, Optional, TypedDict
 
 from lightning.app.components.python import TracerPythonScript
+from lightning.app.storage import Drive
 from lightning.app.utilities.app_helpers import is_overridden
 
 from lightning_training_studio.loggers import LoggerType
@@ -31,6 +32,7 @@ class Objective(TracerPythonScript, ABC):
         raise_exception: bool = False,
         function_name: str = "objective",
         num_nodes: int = 1,  # TODO # Add support for multi node
+        artifacts_path: Optional[str] = None,
         last_model_path: Optional[str] = None,
         pip_install_source: bool = False,
         **kwargs,
@@ -52,6 +54,7 @@ class Objective(TracerPythonScript, ABC):
         self.function_name = function_name
         self.has_stored = False
         self.num_nodes = num_nodes
+        self.artifacts_path = artifacts_path
         self.progress = None
         self.last_model_path = last_model_path
         self.pip_install_source = pip_install_source
@@ -96,8 +99,8 @@ class Objective(TracerPythonScript, ABC):
             elif isinstance(res, dict):
                 assert isinstance(res, ObjectiveResult)
 
-        output_dir = os.path.exists(os.path.join(self._rootwd, "output"))
-        if output_dir:
-            self.drive.put(output_dir)
+        if self.artifacts_path and os.path.exists(self.artifacts_path):
+            drive = Drive(f"lit://{self.sweep_id}", component_name=self.experiment_name, allow_duplicates=True)
+            drive.put(self.artifacts_path)
 
         super().on_after_run(global_scripts)
