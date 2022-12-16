@@ -220,8 +220,7 @@ class Sweep(LightningFlow, ControllerResource):
 
     def stop(self):
         for experiment_id in range(self.num_experiments):
-            objective = self._get_objective(experiment_id)
-            if _check_stage(objective, Stage.RUNNING):
+            if self.experiments[experiment_id]["stage"] not in (Stage.STOPPED, Stage.SUCCEEDED, Stage.FAILED):
                 self.experiments[experiment_id]["stage"] = Stage.STOPPED
                 self.experiments[experiment_id]["end_time"] = time.time()
         for work in self.works():
