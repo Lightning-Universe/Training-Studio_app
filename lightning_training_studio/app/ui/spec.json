@@ -66,6 +66,15 @@
         }
       }
     },
+    "/api/v1/layout": {
+      "get": {
+        "summary": "Get Layout",
+        "operationId": "get_layout_api_v1_layout_get",
+        "responses": {
+          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
+        }
+      }
+    },
     "/api/v1/spec": {
       "get": {
         "summary": "Get Spec",
@@ -211,7 +220,7 @@
       "post": {
         "tags": ["app_client_command"],
         "summary": "Delete Sweep",
-        "description": "Delete a Sweep.",
+        "description": "To delete a sweep, note that the artifacts will still be available after the operation is complete.",
         "operationId": "delete_sweep_command_delete_sweep_post",
         "requestBody": {
           "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DeleteSweepConfig" } } },
@@ -224,15 +233,15 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_training_studio/commands/sweep/delete.py",
-        "cls_name": "DeleteSweepCommand"
+        "cls_name": "DeleteSweepCommand",
+        "cls_path": "/Users/thomas/Documents/Github/lightning-hpo/lightning_training_studio/commands/sweep/delete.py"
       }
     },
     "/command/run_sweep": {
       "post": {
         "tags": ["app_client_command"],
         "summary": "Run Sweep",
-        "description": "Run a Sweep.",
+        "description": "\n        To run a sweep, provide a script, the cloud compute to use, and an optional data.\n        Hyperparameters can be provided as lists or using distributions. Hydra multirun syntax is also supported.\n    ",
         "operationId": "run_sweep_command_run_sweep_post",
         "requestBody": {
           "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SweepConfig" } } },
@@ -245,21 +254,21 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_training_studio/commands/sweep/run.py",
         "requirements": ["traitlets", "lightning_training_studio"],
-        "cls_name": "RunSweepCommand"
+        "cls_name": "RunSweepCommand",
+        "cls_path": "/Users/thomas/Documents/Github/lightning-hpo/lightning_training_studio/commands/sweep/run.py"
       }
     },
     "/command/show_sweeps": {
       "post": {
         "tags": ["app_client_command"],
         "summary": "Show Sweeps",
-        "description": "Show all Sweeps or the Experiments from a given Sweep.",
+        "description": "To show all sweeps and their statuses, or the experiments for a given sweep.",
         "operationId": "show_sweeps_command_show_sweeps_post",
         "responses": {
           "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
         },
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_training_studio/commands/sweep/show.py",
+        "cls_path": "/Users/thomas/Documents/Github/lightning-hpo/lightning_training_studio/commands/sweep/show.py",
         "cls_name": "ShowSweepsCommand"
       }
     },
@@ -267,7 +276,7 @@
       "post": {
         "tags": ["app_client_command"],
         "summary": "Stop Sweep",
-        "description": "Stop a Sweep.",
+        "description": "To stop all experiments in a sweep, note that currently sweeps cannot be resumed.",
         "operationId": "stop_sweep_command_stop_sweep_post",
         "requestBody": {
           "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StopSweepConfig" } } },
@@ -280,15 +289,15 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_training_studio/commands/sweep/stop.py",
-        "cls_name": "StopSweepCommand"
+        "cls_name": "StopSweepCommand",
+        "cls_path": "/Users/thomas/Documents/Github/lightning-hpo/lightning_training_studio/commands/sweep/stop.py"
       }
     },
     "/command/run_experiment": {
       "post": {
         "tags": ["app_client_command"],
         "summary": "Run Experiment",
-        "description": "Run an Experiment.",
+        "description": "To run an experiment, provide a script, the cloud compute to use, and optional data.",
         "operationId": "run_experiment_command_run_experiment_post",
         "requestBody": {
           "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SweepConfig" } } },
@@ -301,15 +310,15 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_training_studio/commands/experiment/run.py",
-        "cls_name": "RunExperimentCommand"
+        "cls_name": "RunExperimentCommand",
+        "cls_path": "/Users/thomas/Documents/Github/lightning-hpo/lightning_training_studio/commands/experiment/run.py"
       }
     },
     "/command/stop_experiment": {
       "post": {
         "tags": ["app_client_command"],
         "summary": "Stop Experiment",
-        "description": "Stop an Experiment.",
+        "description": "To stop an experiment, note that currently experiments cannot be resumed.",
         "operationId": "stop_experiment_command_stop_experiment_post",
         "requestBody": {
           "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StopExperimentConfig" } } },
@@ -322,20 +331,20 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_training_studio/commands/experiment/stop.py",
-        "cls_name": "StopExperimentCommand"
+        "cls_name": "StopExperimentCommand",
+        "cls_path": "/Users/thomas/Documents/Github/lightning-hpo/lightning_training_studio/commands/experiment/stop.py"
       }
     },
     "/command/show_experiments": {
       "post": {
         "tags": ["app_client_command"],
         "summary": "Show Experiments",
-        "description": "Show Experiments.",
+        "description": "To show experiments and their statuses.",
         "operationId": "show_experiments_command_show_experiments_post",
         "responses": {
           "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
         },
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_training_studio/commands/experiment/show.py",
+        "cls_path": "/Users/thomas/Documents/Github/lightning-hpo/lightning_training_studio/commands/experiment/show.py",
         "cls_name": "ShowExperimentsCommand"
       }
     },
@@ -343,7 +352,7 @@
       "post": {
         "tags": ["app_client_command"],
         "summary": "Delete Experiment",
-        "description": "Delete an Experiment.",
+        "description": "To delete an experiment. The artifacts are still available after the operation is complete.",
         "operationId": "delete_experiment_command_delete_experiment_post",
         "requestBody": {
           "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DeleteExperimentConfig" } } },
@@ -356,15 +365,15 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_training_studio/commands/experiment/delete.py",
-        "cls_name": "DeleteExperimentCommand"
+        "cls_name": "DeleteExperimentCommand",
+        "cls_path": "/Users/thomas/Documents/Github/lightning-hpo/lightning_training_studio/commands/experiment/delete.py"
       }
     },
     "/command/show_artifacts": {
       "post": {
         "tags": ["app_client_command"],
         "summary": "Show Artifacts",
-        "description": "Show artifacts.",
+        "description": "To show artifacts for experiments or sweeps.",
         "operationId": "show_artifacts_command_show_artifacts_post",
         "requestBody": {
           "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ShowArtifactsConfig" } } },
@@ -377,15 +386,15 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_training_studio/commands/artifacts/show.py",
-        "cls_name": "ShowArtifactsCommand"
+        "cls_name": "ShowArtifactsCommand",
+        "cls_path": "/Users/thomas/Documents/Github/lightning-hpo/lightning_training_studio/commands/artifacts/show.py"
       }
     },
     "/command/download_artifacts": {
       "post": {
         "tags": ["app_client_command"],
         "summary": "Download Artifacts",
-        "description": "Download an artifact.",
+        "description": "Download artifacts for experiments or sweeps.",
         "operationId": "download_artifacts_command_download_artifacts_post",
         "requestBody": {
           "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DownloadArtifactsConfig" } } },
@@ -398,16 +407,16 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_training_studio/commands/artifacts/download.py",
-        "cls_name": "DownloadArtifactsCommand"
+        "cls_name": "DownloadArtifactsCommand",
+        "cls_path": "/Users/thomas/Documents/Github/lightning-hpo/lightning_training_studio/commands/artifacts/download.py"
       }
     },
-    "/command/create_data": {
+    "/command/add_dataset": {
       "post": {
         "tags": ["app_client_command"],
-        "summary": "Create Data",
-        "description": "Create Data.",
-        "operationId": "create_data_command_create_data_post",
+        "summary": "Add Dataset",
+        "description": "\n    To create a data association, provide a public S3 bucket and an optional mount point.\n    The contents of the bucket can then be accessed through the file system in experiments and sweeps.\n    ",
+        "operationId": "add_dataset_command_add_dataset_post",
         "requestBody": {
           "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DataConfig" } } },
           "required": true
@@ -419,16 +428,16 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_training_studio/commands/data/create.py",
-        "cls_name": "CreateDataCommand"
+        "cls_name": "AddDatasetCommand",
+        "cls_path": "/Users/thomas/Documents/Github/lightning-hpo/lightning_training_studio/commands/data/create.py"
       }
     },
-    "/command/delete_data": {
+    "/command/remove_dataset": {
       "post": {
         "tags": ["app_client_command"],
-        "summary": "Delete Data",
-        "description": "Delete Data.",
-        "operationId": "delete_data_command_delete_data_post",
+        "summary": "Remove Dataset",
+        "description": "To delete a data association, note this doesn't delete the data, but only the reference.",
+        "operationId": "remove_dataset_command_remove_dataset_post",
         "requestBody": {
           "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DeleteDataConfig" } } },
           "required": true
@@ -440,21 +449,34 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_training_studio/commands/data/delete.py",
-        "cls_name": "DeleteDataCommand"
+        "cls_name": "RemoveDatasetCommand",
+        "cls_path": "/Users/thomas/Documents/Github/lightning-hpo/lightning_training_studio/commands/data/delete.py"
       }
     },
-    "/command/show_data": {
+    "/command/show_datasets": {
       "post": {
         "tags": ["app_client_command"],
-        "summary": "Show Data",
-        "description": "List all Data.",
-        "operationId": "show_data_command_show_data_post",
+        "summary": "Show Datasets",
+        "description": "To list all data associations.",
+        "operationId": "show_datasets_command_show_datasets_post",
         "responses": {
           "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
         },
-        "cls_path": "/Users/thomas/Documents/GitHub/LAI-lightning-hpo-App/lightning_training_studio/commands/data/show.py",
-        "cls_name": "ShowDataCommand"
+        "cls_path": "/Users/thomas/Documents/Github/lightning-hpo/lightning_training_studio/commands/data/show.py",
+        "cls_name": "ShowDatasetsCommand"
+      }
+    },
+    "/command/show_logs": {
+      "post": {
+        "tags": ["app_client_command"],
+        "summary": "Show Logs",
+        "description": "To show the logs of an experiment or sweep, use the option to follow the logs as they stream.",
+        "operationId": "show_logs_command_show_logs_post",
+        "responses": {
+          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
+        },
+        "cls_path": "/Users/thomas/Documents/Github/lightning-hpo/lightning_training_studio/commands/logs/show.py",
+        "cls_name": "ShowLogsCommand"
       }
     },
     "/api{full_path}": {
@@ -567,6 +589,7 @@
           "best_model_score": { "title": "Best Model Score", "type": "number" },
           "monitor": { "title": "Monitor", "type": "string" },
           "best_model_path": { "title": "Best Model Path", "type": "string" },
+          "last_model_path": { "title": "Last Model Path", "type": "string" },
           "stage": { "title": "Stage", "type": "string", "default": "not_started" },
           "params": {
             "title": "Params",
@@ -629,6 +652,7 @@
           "total_experiments",
           "parallel_experiments",
           "requirements",
+          "packages",
           "script_args",
           "algorithm",
           "distributions",
@@ -646,6 +670,7 @@
           "parallel_experiments": { "title": "Parallel Experiments", "type": "integer" },
           "total_experiments_done": { "title": "Total Experiments Done", "type": "integer", "default": 0 },
           "requirements": { "title": "Requirements", "type": "array", "items": { "type": "string" } },
+          "packages": { "title": "Packages", "type": "array", "items": { "type": "string" } },
           "script_args": { "title": "Script Args", "type": "array", "items": { "type": "string" } },
           "algorithm": { "title": "Algorithm", "type": "string" },
           "distributions": {
@@ -662,11 +687,14 @@
           "framework": { "title": "Framework", "type": "string" },
           "cloud_compute": { "title": "Cloud Compute", "type": "string", "default": "cpu" },
           "num_nodes": { "title": "Num Nodes", "type": "integer", "default": 1 },
+          "artifacts_path": { "title": "Artifacts Path", "type": "string" },
           "logger": { "title": "Logger", "type": "string" },
           "direction": { "title": "Direction", "type": "string" },
           "stage": { "title": "Stage", "type": "string", "default": "not_started" },
           "desired_stage": { "title": "Desired Stage", "type": "string", "default": "running" },
+          "shm_size": { "title": "Shm Size", "type": "integer", "default": 1024 },
           "disk_size": { "title": "Disk Size", "type": "integer", "default": 80 },
+          "pip_install_source": { "title": "Pip Install Source", "type": "boolean", "default": false },
           "data": { "title": "Data", "type": "object", "additionalProperties": { "type": "string" } },
           "username": { "title": "Username", "type": "string" }
         }
@@ -676,7 +704,6 @@
         "required": ["sweep_id", "shared_folder"],
         "type": "object",
         "properties": {
-          "id": { "title": "Id", "type": "integer" },
           "sweep_id": { "title": "Sweep Id", "type": "string" },
           "shared_folder": { "title": "Shared Folder", "type": "string" },
           "stage": { "title": "Stage", "type": "string", "default": "not_started" },

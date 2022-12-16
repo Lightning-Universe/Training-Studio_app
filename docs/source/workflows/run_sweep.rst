@@ -141,11 +141,11 @@ Here is an example Sweep doing ``baysian`` optimization.
 
 The Lightning framework supports mounting s3 buckets to your works in the cloud.
 
-In order to create Data, you need to provide its name and s3 Source URL (public only for now).
+In order to add dataset, you need to provide its name and s3 Source URL (public only for now).
 
 .. code-block::
 
-   python -m lightning create data --name example --source s3://pl-flash-data/wiki-test/
+   python -m lightning add dataset --name example --source s3://pl-flash-data/wiki-test/
 
 By default, the data will be mounted to ``/data/<name>`` (e.g. ``/data/example/`` in the above example).
 The location can be customized using the ``mount_path`` argument.

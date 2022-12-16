@@ -20,7 +20,7 @@ export class AppClientCommandService {
 
     /**
      * Delete Sweep
-     * Delete a Sweep.
+     * To delete a sweep, note that the artifacts will still be available after the operation is complete.
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
@@ -41,7 +41,10 @@ export class AppClientCommandService {
 
     /**
      * Run Sweep
-     * Run a Sweep.
+     *
+     * To run a sweep, provide a script, the cloud compute to use, and an optional data.
+     * Hyperparameters can be provided as lists or using distributions. Hydra multirun syntax is also supported.
+     *
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
@@ -62,7 +65,7 @@ export class AppClientCommandService {
 
     /**
      * Show Sweeps
-     * Show all Sweeps or the Experiments from a given Sweep.
+     * To show all sweeps and their statuses, or the experiments for a given sweep.
      * @returns any Successful Response
      * @throws ApiError
      */
@@ -75,7 +78,7 @@ export class AppClientCommandService {
 
     /**
      * Stop Sweep
-     * Stop a Sweep.
+     * To stop all experiments in a sweep, note that currently sweeps cannot be resumed.
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
@@ -96,7 +99,7 @@ export class AppClientCommandService {
 
     /**
      * Run Experiment
-     * Run an Experiment.
+     * To run an experiment, provide a script, the cloud compute to use, and optional data.
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
@@ -117,7 +120,7 @@ export class AppClientCommandService {
 
     /**
      * Stop Experiment
-     * Stop an Experiment.
+     * To stop an experiment, note that currently experiments cannot be resumed.
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
@@ -138,7 +141,7 @@ export class AppClientCommandService {
 
     /**
      * Show Experiments
-     * Show Experiments.
+     * To show experiments and their statuses.
      * @returns any Successful Response
      * @throws ApiError
      */
@@ -151,7 +154,7 @@ export class AppClientCommandService {
 
     /**
      * Delete Experiment
-     * Delete an Experiment.
+     * To delete an experiment. The artifacts are still available after the operation is complete.
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
@@ -172,7 +175,7 @@ export class AppClientCommandService {
 
     /**
      * Show Artifacts
-     * Show artifacts.
+     * To show artifacts for experiments or sweeps.
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
@@ -193,7 +196,7 @@ export class AppClientCommandService {
 
     /**
      * Download Artifacts
-     * Download an artifact.
+     * Download artifacts for experiments or sweeps.
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
@@ -213,18 +216,21 @@ export class AppClientCommandService {
     }
 
     /**
-     * Create Data
-     * Create Data.
+     * Add Dataset
+     *
+     * To create a data association, provide a public S3 bucket and an optional mount point.
+     * The contents of the bucket can then be accessed through the file system in experiments and sweeps.
+     *
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
      */
-    public createDataCommandCreateDataPost(
+    public addDatasetCommandAddDatasetPost(
         requestBody: DataConfig,
     ): CancelablePromise<any> {
         return this.httpRequest.request({
             method: 'POST',
-            url: '/command/create_data',
+            url: '/command/add_dataset',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -234,18 +240,18 @@ export class AppClientCommandService {
     }
 
     /**
-     * Delete Data
-     * Delete Data.
+     * Remove Dataset
+     * To delete a data association, note this doesn't delete the data, but only the reference.
      * @param requestBody
      * @returns any Successful Response
      * @throws ApiError
      */
-    public deleteDataCommandDeleteDataPost(
+    public removeDatasetCommandRemoveDatasetPost(
         requestBody: DeleteDataConfig,
     ): CancelablePromise<any> {
         return this.httpRequest.request({
             method: 'POST',
-            url: '/command/delete_data',
+            url: '/command/remove_dataset',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -255,15 +261,28 @@ export class AppClientCommandService {
     }
 
     /**
-     * Show Data
-     * List all Data.
+     * Show Datasets
+     * To list all data associations.
      * @returns any Successful Response
      * @throws ApiError
      */
-    public showDataCommandShowDataPost(): CancelablePromise<any> {
+    public showDatasetsCommandShowDatasetsPost(): CancelablePromise<any> {
         return this.httpRequest.request({
             method: 'POST',
-            url: '/command/show_data',
+            url: '/command/show_datasets',
+        });
+    }
+
+    /**
+     * Show Logs
+     * To show the logs of an experiment or sweep, use the option to follow the logs as they stream.
+     * @returns any Successful Response
+     * @throws ApiError
+     */
+    public showLogsCommandShowLogsPost(): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'POST',
+            url: '/command/show_logs',
         });
     }
 
