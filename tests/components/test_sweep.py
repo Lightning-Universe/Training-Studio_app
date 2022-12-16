@@ -40,11 +40,23 @@ class PrunedMockObjective(MockObjective):
         self.on_after_run()
 
 
+class PrunedMockObjectiveSuperRun(MockObjective):
+    def run(self, params: Dict[str, Any], restart_count: int):
+        score = params["best_model_score"]
+        score = score + 1 if score > 5 else 1
+        self.reports = [(score, idx) for idx in range(100)]
+        self.params = params
+        self.best_model_path = params.get("best_model_path")
+        self.best_model_score = params.get("best_model_score")
+        self._backend = MagicMock()
+        super().run(params, restart_count)
+
+
 def test_sweep_pruned():
 
     sweep = Sweep(
         total_experiments=25,
-        objective_cls=PrunedMockObjective,
+        objective_cls=PrunedMockObjectiveSuperRun,
         distributions={
             "best_model_score": Uniform(0, 10),
         },
