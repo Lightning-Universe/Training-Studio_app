@@ -18,7 +18,6 @@ class TensorboardController(Controller):
     def on_reconcile_start(self, configs: List[TensorboardConfig]):
         for config in configs:
             work_name = urllib.parse.quote_plus(config.sweep_id)
-            print(work_name, work_name not in self.r, config)
             if work_name not in self.r:
                 if config.stage in (Stage.STOPPED, Stage.NOT_STARTED) and config.desired_stage == Stage.RUNNING:
                     self.r[work_name] = Tensorboard(
