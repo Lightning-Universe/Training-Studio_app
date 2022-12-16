@@ -66,7 +66,7 @@ class RunExperimentCommand(ClientCommand):
             "--artifacts_path",
             default="",
             type=str,
-            help="The path where artifacts will be saved from.",
+            help="The artifacts under this path at the end of an experiment are persisted to the Lightning Drive.",
         )
         parser.add_argument(
             "--data",
