@@ -73,6 +73,7 @@ class SweepConfig(SQLModel, table=True):
     framework: str
     cloud_compute: str = "cpu"
     num_nodes: int = 1
+    artifacts_path: str = ""
     logger: str
     direction: str
     stage: str = Stage.NOT_STARTED
@@ -80,6 +81,7 @@ class SweepConfig(SQLModel, table=True):
     shm_size: int = 1024
     disk_size: int = 80
     pip_install_source: bool = False
+    artifacts_path: Optional[str] = None
     data: Dict[str, Optional[str]] = Field(..., sa_column=Column(pydantic_column_type(Dict[str, Optional[str]])))
     username: Optional[str] = None
 
@@ -392,10 +394,16 @@ class RunSweepCommand(ClientCommand):
             help="The disk size in Gigabytes.",
         )
         parser.add_argument(
-            "--data",
+            "--artifacts_path",
+            default="",
+            type=str,
+            help="The path where artifacts will be saved from.",
+        )
+        parser.add_argument(
+            "--dataset",
             nargs="+",
             default=[],
-            help="Provide a list of Data (and optionally the mount_path in the format `<name>:<mount_path>`) to mount to the experiments.",
+            help="Provide a list of datasets (and optionally the mount_path in the format `<name>:<mount_path>`) to mount to the experiments.",
         )
         parser.add_argument(
             "--syntax",
@@ -460,7 +468,7 @@ class RunSweepCommand(ClientCommand):
         repo.package()
         repo.upload(url=f"{self.app_url}/api/v1/upload_file/{name}")
 
-        data_split = [data.split(":") if ":" in data else (data, None) for data in hparams.data]
+        data_split = [dataset.split(":") if ":" in dataset else (dataset, None) for dataset in hparams.dataset]
         data = {data[0]: data[1] for data in data_split}
 
         config = SweepConfig(
@@ -482,6 +490,7 @@ class RunSweepCommand(ClientCommand):
             shm_size=hparams.shm_size,
             disk_size=hparams.disk_size,
             pip_install_source=hparams.pip_install_source,
+            artifacts_path=hparams.artifacts_path,
             data=data,
             username=getuser(),
         )

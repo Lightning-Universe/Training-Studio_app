@@ -10,7 +10,7 @@ export const appClient = new AppClient({
 const clientEndpoints = {
   sweeps: (appClient: AppClient) => appClient.appClientCommand.showSweepsCommandShowSweepsPost(),
   tensorboards: (appClient: AppClient) => appClient.appApi.showTensorboardsApiShowTensorboardsPost(),
-  data: (appClient: AppClient) => appClient.appClientCommand.showDataCommandShowDataPost(),
+  data: (appClient: AppClient) => appClient.appClientCommand.showDatasetsCommandShowDatasetsPost(),
 };
 
 const clientDataContexts = {

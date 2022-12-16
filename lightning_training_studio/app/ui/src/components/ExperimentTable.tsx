@@ -2,7 +2,7 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import StopCircle from '@mui/icons-material/StopCircle';
 import useShowHelpPageState, { HelpPageState } from 'hooks/useShowHelpPageState';
-import { Box, Link, Stack, Table, Typography } from 'lightning-ui/src/design-system/components';
+import { Box, Table, Typography } from 'lightning-ui/src/design-system/components';
 import { StatusEnum } from 'lightning-ui/src/shared/components/Status';
 import { AppClient, ExperimentConfig, SweepConfig, TensorboardConfig } from '../generated';
 import useClientDataState from '../hooks/useClientDataState';
@@ -43,21 +43,6 @@ const StageToColors = {
   running: 'primary',
 } as { [k: string]: 'success' | 'error' | 'primary' };
 
-function createLoggerUrl(url?: string) {
-  const cell = url ? (
-    <Link href={url} target="_blank" underline="hover">
-      <Stack direction="row" alignItems="center" spacing={0.5}>
-        <OpenInNewIcon sx={{ fontSize: 20 }} />
-        <Typography variant="subtitle2">Open</Typography>
-      </Stack>
-    </Link>
-  ) : (
-    <Box>{StatusEnum.NOT_STARTED}</Box>
-  );
-
-  return cell;
-}
-
 function stopTensorboard(tensorboardConfig: TensorboardConfig) {
   appClient.appApi.stopTensorboardApiStopTensorboardPost({ sweep_id: tensorboardConfig.sweep_id });
 }
@@ -86,10 +71,28 @@ function toCompute(sweep: SweepConfig) {
 }
 
 function toProgress(experiment: ExperimentConfig) {
-  if (experiment.stage == 'failed') {
+  if (experiment.stage == 'pending') {
+    return (
+      <Box sx={{ minWidth: 35 }}>
+        <Typography variant="caption" display="block">{`Pending`}</Typography>
+      </Box>
+    );
+  } else if (experiment.stage == 'stopped') {
+    return (
+      <Box sx={{ minWidth: 35 }}>
+        <Typography variant="caption" display="block">{`Stopped`}</Typography>
+      </Box>
+    );
+  } else if (experiment.stage == 'failed') {
     return (
       <Box sx={{ minWidth: 35 }}>
         <Typography variant="caption" display="block">{`Failed`}</Typography>
+      </Box>
+    );
+  } else if (experiment.stage == 'succeeded') {
+    return (
+      <Box sx={{ minWidth: 35 }}>
+        <Typography variant="caption" display="block">{`Succeeded`}</Typography>
       </Box>
     );
   } else {
@@ -98,7 +101,7 @@ function toProgress(experiment: ExperimentConfig) {
         <Box sx={{ width: '100%', mr: 1 }}>
           <BorderLinearProgress
             variant={experiment.progress == 0 ? undefined : 'determinate'}
-            color={StageToColors[experiment.stage || 'pending']}
+            color={StageToColors[experiment.stage]}
             value={experiment.progress}
           />
         </Box>
@@ -146,27 +149,27 @@ const handleClick = (url?: string) => {
 function createMenuItems(logger_url?: string, tensorboardConfig?: TensorboardConfig) {
   var items = [];
   const url = tensorboardConfig ? tensorboardConfig.url : logger_url;
+  const status = tensorboardConfig?.stage ? statusToEnum[tensorboardConfig.stage] : StatusEnum.NOT_STARTED;
 
-  if (url) {
-    items.push({
-      label: 'Open Logger',
-      icon: <OpenInNewIcon sx={{ fontSize: 20 }} />,
-      onClick: () => handleClick(url),
-    });
-  }
+  items.push({
+    label: 'Open Tensorboard',
+    icon: <OpenInNewIcon sx={{ fontSize: 20 }} />,
+    onClick: () => handleClick(url),
+    disabled: status != StatusEnum.RUNNING,
+  });
 
   if (tensorboardConfig) {
     const status = tensorboardConfig?.stage ? statusToEnum[tensorboardConfig.stage] : StatusEnum.NOT_STARTED;
 
-    if (status == StatusEnum.RUNNING || status == StatusEnum.PENDING) {
+    if (status == StatusEnum.RUNNING) {
       items.push({
-        label: 'Stop Logger',
+        label: 'Stop Tensorboard',
         icon: <StopCircle sx={{ fontSize: 20 }} />,
         onClick: () => stopTensorboard(tensorboardConfig),
       });
-    } else {
+    } else if (status == StatusEnum.STOPPED) {
       items.push({
-        label: 'Run Logger',
+        label: 'Start Tensorboard',
         icon: <PlayCircleIcon sx={{ fontSize: 20 }} />,
         onClick: () => runTensorboard(tensorboardConfig),
       });
@@ -191,11 +194,17 @@ export function Experiments() {
 
   if (showHelpPage == HelpPageState.forced || showHelpPage == HelpPageState.shown) {
     return (
-      <UserGuide title="Want to start a hyper-parameter sweep?" subtitle="Use the commands below in your terminal">
+      <UserGuide
+        title="Want to start a hyper-parameter sweep?"
+        subtitle="Use the commands below in your local terminal on your own computer.">
+        <UserGuideComment>Create a new Conda Env</UserGuideComment>
+        <UserGuideBody>{`conda create --yes --name training-studio python=3.9`}</UserGuideBody>
+        <UserGuideComment>Activate the conda env</UserGuideComment>
+        <UserGuideBody>{`conda activate training-studio`}</UserGuideBody>
         <UserGuideComment>Install Lightning</UserGuideComment>
         <UserGuideBody>{`pip install lightning`}</UserGuideBody>
         <UserGuideComment>Connect to the app</UserGuideComment>
-        <UserGuideBody>{`lightning connect ${appId} --yes`}</UserGuideBody>
+        <UserGuideBody>{`lightning connect ${appId}`}</UserGuideBody>
         <UserGuideComment>Create a new folder</UserGuideComment>
         <UserGuideBody>{`mkdir new_folder && cd new_folder`}</UserGuideBody>
         <UserGuideComment>Download example script</UserGuideComment>
@@ -207,6 +216,7 @@ export function Experiments() {
         <UserGuideComment>Run a sweep</UserGuideComment>
         <UserGuideBody>
           lightning run sweep train.py --model.lr "[0.001, 0.01]" --data.batch "[32, 64]" --algorithm="grid_search"
+          --cloud_compute="cpu-medium"
         </UserGuideBody>
       </UserGuide>
     );
@@ -215,7 +225,9 @@ export function Experiments() {
   const experimentHeader = [
     'Progress',
     'Runtime',
+    'Sweep Name',
     'Name',
+    'Monitor',
     'Best Score',
     'Script Arguments',
     'Data',
@@ -245,7 +257,9 @@ export function Experiments() {
     return Object.entries(sweep.experiments).map(entry => [
       toProgress(entry[1]),
       runtimeTime(entry[1]),
+      sweep.sweep_id,
       entry[1].name,
+      String(entry[1].monitor),
       entry[1].best_model_score && String(entry[1].best_model_score.toPrecision(4)),
       toArgs(sweep.script_args, entry[1].params),
       data,
@@ -257,7 +271,7 @@ export function Experiments() {
 
   const flatArray = rows.flat().map((row: any[]) =>
     row.map((entry: any) => {
-      if (!entry || entry == 'null') {
+      if (!entry || entry == 'null' || entry == 'None') {
         return '-';
       }
       return entry;

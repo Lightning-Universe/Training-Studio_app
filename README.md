@@ -62,7 +62,7 @@ lightning run app app.py
 In second terminal, connect to the Lightning App and download its CLI.
 
 ```bash
-lightning connect localhost --yes
+lightning connect localhost
 ```
 
 ```bash
@@ -78,10 +78,10 @@ Usage: lightning [OPTIONS] COMMAND [ARGS]...
   --help     Show this message and exit.
 
 Lightning App Commands
-  create data        Create a Data association by providing a public S3 bucket and an optional mount point.
+  add dataset        Create a dataset association by providing a public S3 bucket and an optional mount point.
                      The contents of the bucket can be then mounted on experiments and sweeps and
                      accessed through the filesystem.
-  delete data        Delete a data association. Note that this will not delete the data itself,
+  remove dataset     Delete a dataset association. Note that this will not delete the data itself,
                      it will only make it unavailable to experiments and sweeps.
   delete experiment  Delete an experiment. Note that artifacts will still be available after the operation.
   delete sweep       Delete a sweep. Note that artifacts will still be available after the operation.
@@ -123,7 +123,7 @@ lightning run app app.py --cloud
 Connect to the App once ready.
 
 ```
-lightning connect {APP_NAME} --yes
+lightning connect {APP_NAME}
 ```
 
 Run your first  multi node training experiment from [sweep_examples/scripts](./sweep_examples/scripts) folder (2 nodes of 4 V100 GPUS each).

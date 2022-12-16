@@ -6,7 +6,7 @@ import uuid
 from typing import Any, Dict, Optional
 
 from lightning.app.components.training import LightningTrainerScript, PyTorchLightningScriptRunner
-from lightning.app.storage import Path
+from lightning.app.storage import Drive, Path
 
 from lightning_training_studio.framework.agnostic import Objective
 
@@ -24,6 +24,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         experiment_id: int,
         experiment_name: str,
         num_nodes: int,
+        artifacts_path: Optional[str] = None,
         last_model_path: Optional[str] = None,
         pip_install_source: bool = False,
         **kwargs,
@@ -43,7 +44,11 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         self.end_time = None
         self.last_model_path = Path(last_model_path) if last_model_path else None
         self.pip_install_source = pip_install_source
+        self.artifacts_path = artifacts_path
         self._rootwd = os.getcwd()
+        self.sweep_id = sweep_id
+        self.experiment_id = experiment_id
+        self.experiment_name = experiment_name
 
     def configure_tracer(self):
         tracer = Objective.configure_tracer(self)
@@ -104,9 +109,9 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
             else:
                 self.best_model_path = Path(trainer.checkpoint_callback.last_model_path)
 
-        output_dir = os.path.exists(os.path.join(self._rootwd, "output"))
-        if output_dir:
-            self.drive.put(output_dir)
+        if self.artifacts_path and os.path.exists(self.artifacts_path):
+            drive = Drive(f"lit://{self.sweep_id}", component_name=self.experiment_name, allow_duplicates=True)
+            drive.put(self.artifacts_path)
 
         self.has_finished = True
 
@@ -138,6 +143,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
                 stage: Optional[str] = None,
             ) -> None:
                 trainer.checkpoint_callback.save_last = True
+                self.work.monitor = trainer.checkpoint_callback.monitor
 
             @rank_zero_only
             def on_train_batch_end(self, trainer, pl_module, *args) -> None:
@@ -159,8 +165,14 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
                     human_readable = get_human_readable_count(total_parameters)
                     self.work.total_parameters = str(human_readable)
 
-                if trainer.checkpoint_callback.last_model_path:
-                    self.work.last_model_path = Path(trainer.checkpoint_callback.last_model_path)
+                ckpt = trainer.checkpoint_callback
+
+                if ckpt.best_model_score and ckpt.best_model_score != self.work.best_model_score:
+                    self.work.best_model_path = Path(ckpt.best_model_path)
+                    self.work.best_model_score = float(ckpt.best_model_score)
+
+                if ckpt.last_model_path:
+                    self.work.last_model_path = Path(ckpt.last_model_path)
 
         def trainer_pre_fn(trainer, *args, **kwargs):
             callbacks = kwargs.get("callbacks", [])

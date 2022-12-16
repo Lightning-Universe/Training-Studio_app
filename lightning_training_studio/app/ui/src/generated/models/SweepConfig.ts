@@ -12,6 +12,7 @@ export type SweepConfig = {
     parallel_experiments: number;
     total_experiments_done?: number;
     requirements: Array<string>;
+    packages: Array<string>;
     script_args: Array<string>;
     algorithm: string;
     distributions: Record<string, Distributions>;
@@ -20,11 +21,14 @@ export type SweepConfig = {
     framework: string;
     cloud_compute?: string;
     num_nodes?: number;
+    artifacts_path?: string;
     logger: string;
     direction: string;
     stage?: string;
     desired_stage?: string;
+    shm_size?: number;
     disk_size?: number;
+    pip_install_source?: boolean;
     data: Record<string, string>;
     username?: string;
 };

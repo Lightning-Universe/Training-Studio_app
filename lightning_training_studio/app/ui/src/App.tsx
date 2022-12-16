@@ -41,14 +41,14 @@ function AppTabs() {
         title: 'Experiments',
         content: <Experiments />,
       },
-      { title: 'Data', content: <></> },
+      { title: 'Datasets', content: <></> },
       { title: 'Docs', content: <></> },
     ];
   } else if (selectedTab == 1) {
     tabItems = [
       { title: 'Experiments', content: <></> },
       {
-        title: 'Data',
+        title: 'Datasets',
         content: <DataTable />,
       },
       { title: 'Docs', content: <></> },
@@ -56,7 +56,7 @@ function AppTabs() {
   } else if (selectedTab == 2) {
     tabItems = [
       { title: 'Experiments', content: <></> },
-      { title: 'Data', content: <></> },
+      { title: 'Datasets', content: <></> },
       { title: 'Docs', content: <Docs src="https://lightning-ai.github.io/lightning-hpo/" /> },
     ];
   }
@@ -69,7 +69,7 @@ function AppTabs() {
             selectedTab={selectedTab}
             onChange={setSelectedTab}
             tabItems={tabItems}
-            sxTabs={{ width: '100%', backgroundColor: 'white', paddingX: 2, top: 0, zIndex: 1000 }}
+            sxTabs={{ width: '100%', backgroundColor: 'white', paddingX: 2, paddingY: 1, zIndex: 1000 }}
           />
         </ClientDataProvider>
       </ClientDataProvider>

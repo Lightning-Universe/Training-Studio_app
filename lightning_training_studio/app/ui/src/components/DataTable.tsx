@@ -19,17 +19,20 @@ const DataTable = () => {
 
   if (showHelpPage == HelpPageState.forced || showHelpPage == HelpPageState.shown) {
     return (
-      <UserGuide title="Want to add data?" subtitle="Use the commands below in your terminal">
+      <UserGuide
+        title="Use your own S3 datasets in your Sweeps & Experiments."
+        subtitle="Use the commands below in your local terminal on your own computer.">
         <UserGuideComment>Connect to the app</UserGuideComment>
-        <UserGuideBody>{`lightning connect ${appId} --yes`}</UserGuideBody>
-        <UserGuideComment>Add data from an S3 bucket</UserGuideComment>
+        <UserGuideBody>{`lightning connect ${appId}`}</UserGuideBody>
+        <UserGuideComment>Add a dataset by providing its name and s3 source location</UserGuideComment>
         <UserGuideBody>
-          {'lightning create data --name mnist --source s3://lightning-example-public/MNIST/'}
+          {'lightning add dataset --name mnist --source s3://lightning-example-public/MNIST/'}
         </UserGuideBody>
-        <UserGuideComment>Show the Data Table</UserGuideComment>
-        <UserGuideBody>{'lightning show data'}</UserGuideBody>
-        <UserGuideComment>Run an Experiment with the Data</UserGuideComment>
-        <UserGuideBody>{'lightning run experiment train.py --data mnist:/content/data/MNIST/'}</UserGuideBody>
+        <UserGuideComment>
+          Run an experiment using the newly added <b>mnist</b> dataset. The data are visible under{' '}
+          <b>/content/data/MNIST/</b>
+        </UserGuideComment>
+        <UserGuideBody>{'lightning run experiment train.py --dataset mnist:/content/data/MNIST/'}</UserGuideBody>
       </UserGuide>
     );
   }

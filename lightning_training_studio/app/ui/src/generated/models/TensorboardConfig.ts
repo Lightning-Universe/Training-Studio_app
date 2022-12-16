@@ -3,7 +3,6 @@
 /* eslint-disable */
 
 export type TensorboardConfig = {
-    id?: number;
     sweep_id: string;
     shared_folder: string;
     stage?: string;

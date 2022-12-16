@@ -14,5 +14,6 @@ def test_tensorboard_work(monkeypatch):
     config = TensorboardConfig(id=0, sweep_id="1", shared_folder="")
     drive = Drive("lit://a")
     tensorboard = T.Tensorboard(drive=drive, config=config)
+    tensorboard.downloaded_file = True
     with pytest.raises(Exception, match="HERE"):
         tensorboard.run()

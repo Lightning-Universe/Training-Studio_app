@@ -18,9 +18,9 @@ from lightning_training_studio.commands.artifacts.show import (
     ShowArtifactsConfig,
     ShowArtifactsConfigResponse,
 )
-from lightning_training_studio.commands.data.create import CreateDataCommand, DataConfig
-from lightning_training_studio.commands.data.delete import DeleteDataCommand, DeleteDataConfig
-from lightning_training_studio.commands.data.show import ShowDataCommand
+from lightning_training_studio.commands.data.create import AddDatasetCommand, DataConfig
+from lightning_training_studio.commands.data.delete import DeleteDataConfig, RemoveDatasetCommand
+from lightning_training_studio.commands.data.show import ShowDatasetsCommand
 from lightning_training_studio.commands.logs.show import ShowLogsCommand
 
 # from lightning_training_studio.controllers.notebook import NotebookController
@@ -98,7 +98,7 @@ class TrainingStudio(LightningFlow):
             urls=urls,
         )
 
-    def create_data(self, config: DataConfig):
+    def add_datasets(self, config: DataConfig):
         drives = self.db_client.select_all(DataConfig)
         for drive in drives:
             if drive.name == config.name:
@@ -106,7 +106,7 @@ class TrainingStudio(LightningFlow):
         self.db_client.insert(config)
         return f"The data `{config.name}` has been created."
 
-    def delete_data(self, config: DeleteDataConfig):
+    def remove_datasets(self, config: DeleteDataConfig):
         drives = self.db_client.select_all(DataConfig)
         for drive in drives:
             if drive.name == config.name:
@@ -114,7 +114,7 @@ class TrainingStudio(LightningFlow):
                 return f"The data `{config.name}` has been deleted."
         return f"The data `{config.name}` doesn't exist."
 
-    def show_data(self):
+    def show_datasets(self):
         if self.db.db_url:
             return self.db_client.select_all(DataConfig)
         return []
@@ -125,9 +125,9 @@ class TrainingStudio(LightningFlow):
         controller_commands += [
             {"show artifacts": ShowArtifactsCommand(self.show_artifacts)},
             {"download artifacts": DownloadArtifactsCommand(self.download_artifacts)},
-            {"create data": CreateDataCommand(self.create_data)},
-            {"delete data": DeleteDataCommand(self.delete_data)},
-            {"show data": ShowDataCommand(self.show_data)},
+            {"add dataset": AddDatasetCommand(self.add_datasets)},
+            {"remove dataset": RemoveDatasetCommand(self.remove_datasets)},
+            {"show datasets": ShowDatasetsCommand(self.show_datasets)},
             {"show logs": ShowLogsCommand(self.sweep_controller.show_logs)},
         ]
         return controller_commands

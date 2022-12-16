@@ -8,9 +8,9 @@ class DeleteDataConfig(SQLModel):
     name: str
 
 
-class DeleteDataCommand(ClientCommand):
+class RemoveDatasetCommand(ClientCommand):
 
-    description = """To delete a data association, note this doesn't delete the data, but only the reference."""
+    description = """To delete a dataset association, note this doesn't delete the data, but only the reference."""
 
     def run(self) -> None:
         parser = ArgumentParser()

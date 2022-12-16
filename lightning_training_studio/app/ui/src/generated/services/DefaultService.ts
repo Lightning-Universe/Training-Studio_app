@@ -65,6 +65,18 @@ export class DefaultService {
     }
 
     /**
+     * Get Layout
+     * @returns any Successful Response
+     * @throws ApiError
+     */
+    public getLayoutApiV1LayoutGet(): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'GET',
+            url: '/api/v1/layout',
+        });
+    }
+
+    /**
      * Get Spec
      * @param xLightningSessionUuid
      * @param xLightningSessionId

@@ -63,10 +63,16 @@ class RunExperimentCommand(ClientCommand):
             help="The disk size in Gigabytes.",
         )
         parser.add_argument(
-            "--data",
+            "--artifacts_path",
+            default="",
+            type=str,
+            help="The artifacts under this path at the end of an experiment are persisted to the Lightning Drive.",
+        )
+        parser.add_argument(
+            "--dataset",
             nargs="+",
             default=[],
-            help="Provide a list of Data (and optionally the mount_path in the format `<name>:<mount_path>`) to mount to the experiment.",
+            help="Provide a list of datasets (and optionally the mount_path in the format `<name>:<mount_path>`) to mount to the experiment.",
         )
         parser.add_argument(
             "--framework",
@@ -102,7 +108,7 @@ class RunExperimentCommand(ClientCommand):
         repo.package()
         repo.upload(url=f"{self.app_url}/api/v1/upload_file/{name}")
 
-        data_split = [data.split(":") if ":" in data else (data, None) for data in hparams.data]
+        data_split = [dataset.split(":") if ":" in dataset else (dataset, None) for dataset in hparams.dataset]
         data = {data[0]: data[1] for data in data_split}
 
         config = SweepConfig(
@@ -124,6 +130,7 @@ class RunExperimentCommand(ClientCommand):
             shm_size=hparams.shm_size,
             disk_size=hparams.disk_size,
             pip_install_source=hparams.pip_install_source,
+            artifacts_path=hparams.artifacts_path,
             data=data,
             username=str(getuser()),
         )

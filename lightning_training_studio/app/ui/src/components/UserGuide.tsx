@@ -10,7 +10,7 @@ export type UserGuideProps = {
   children: React.ReactNode;
 };
 
-export const UserGuideComment = ({ children }: { children: string }) => {
+export const UserGuideComment = ({ children }: { children: React.ReactNode }) => {
   return (
     <Typography
       sx={{
@@ -93,7 +93,7 @@ const UserGuide = ({ title, subtitle, children }: UserGuideProps) => {
           <Box sx={{ borderRadius: '50%', width: '12px', height: '12px', backgroundColor: 'grey.20' }} />
           <Box sx={{ borderRadius: '50%', width: '12px', height: '12px', backgroundColor: 'grey.20' }} />
         </Stack>
-        <CardContent sx={{ width: { xs: 'auto', md: '614px' } }}>{children}</CardContent>
+        <CardContent sx={{ width: { xs: 'auto', md: '650px' } }}>{children}</CardContent>
       </Card>
     </Stack>
   );
