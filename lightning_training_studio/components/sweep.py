@@ -1,4 +1,5 @@
 import os
+import time
 import uuid
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
 from uuid import uuid4
@@ -160,6 +161,7 @@ class Sweep(LightningFlow, ControllerResource):
                     self.logger_url = logger_url
 
                 if _check_stage(objective, Stage.FAILED):
+                    self.experiments[experiment_id]["stage"] = Stage.FAILED
                     continue
 
                 objective.run(
@@ -173,6 +175,7 @@ class Sweep(LightningFlow, ControllerResource):
                 self.experiments[experiment_id]["end_time"] = getattr(objective, "end_time", None)
                 self.experiments[experiment_id]["best_model_score"] = getattr(objective, "best_model_score", None)
                 self.experiments[experiment_id]["last_model_path"] = str(getattr(objective, "last_model_path", ""))
+                self.experiments[experiment_id]["monitor"] = str(getattr(objective, "monitor", ""))
 
                 if _check_stage(objective, Stage.FAILED):
                     self.experiments[experiment_id]["stage"] = Stage.FAILED
@@ -214,6 +217,16 @@ class Sweep(LightningFlow, ControllerResource):
             self.experiments[experiment_id]["stage"] == Stage.FAILED for experiment_id in range(self.num_experiments)
         ):
             self.stage = Stage.FAILED
+
+    def stop(self):
+        for experiment_id in range(self.num_experiments):
+            objective = self._get_objective(experiment_id)
+            if _check_stage(objective, Stage.RUNNING):
+                self.experiments[experiment_id]["stage"] = Stage.STOPPED
+                self.experiments[experiment_id]["end_time"] = time.time()
+        for work in self.works():
+            work.stop()
+        self.stage = Stage.STOPPED
 
     @property
     def num_experiments(self) -> int:

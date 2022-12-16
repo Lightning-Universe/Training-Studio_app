@@ -138,6 +138,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
                 stage: Optional[str] = None,
             ) -> None:
                 trainer.checkpoint_callback.save_last = True
+                self.work.monitor = trainer.checkpoint_callback.monitor
 
             @rank_zero_only
             def on_train_batch_end(self, trainer, pl_module, *args) -> None:

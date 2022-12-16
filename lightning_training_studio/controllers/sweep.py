@@ -95,13 +95,8 @@ class SweepController(Controller):
         if work_name in self.r:
             # TODO: Add support for __del__ in lightning
             sweep: Sweep = self.r[work_name]
-            for w in sweep.works():
-                w.stop()
-            sweep.stage = Stage.STOPPED
+            sweep.stop()
             sweep_config: SweepConfig = sweep.collect_model()
-            for experiment in sweep_config.experiments.values():
-                if experiment.stage == Stage.RUNNING:
-                    experiment.stage = Stage.STOPPED
             self.db.update(sweep_config)
             return f"Stopped the sweep `{config.sweep_id}`"
         return f"We didn't find the sweep `{config.sweep_id}`"
