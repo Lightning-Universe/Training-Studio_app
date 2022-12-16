@@ -6,7 +6,7 @@ import uuid
 from typing import Any, Dict, Optional
 
 from lightning.app.components.training import LightningTrainerScript, PyTorchLightningScriptRunner
-from lightning.app.storage import Path
+from lightning.app.storage import Drive, Path
 
 from lightning_training_studio.framework.agnostic import Objective
 
@@ -46,6 +46,9 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
         self.pip_install_source = pip_install_source
         self.artifacts_path = artifacts_path
         self._rootwd = os.getcwd()
+        self.sweep_id = sweep_id
+        self.experiment_id = experiment_id
+        self.experiment_name = experiment_name
 
     def configure_tracer(self):
         tracer = Objective.configure_tracer(self)
@@ -106,10 +109,9 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
             else:
                 self.best_model_path = Path(trainer.checkpoint_callback.last_model_path)
 
-        if self.artifacts_path:
-            output_dir = os.path.join(self._rootwd, self.artifacts_path)
-            if os.path.exists(output_dir):
-                self.drive.put(output_dir)
+        if self.artifacts_path and os.path.exists(self.artifacts_path):
+            drive = Drive(f"lit://{self.sweep_id}", component_name=self.experiment_name, allow_duplicates=True)
+            drive.put(self.artifacts_path)
 
         self.has_finished = True
 

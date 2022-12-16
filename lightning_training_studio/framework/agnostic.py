@@ -6,6 +6,7 @@ from abc import ABC
 from typing import Any, Dict, Optional, TypedDict
 
 from lightning.app.components.python import TracerPythonScript
+from lightning.app.storage import Drive
 from lightning.app.utilities.app_helpers import is_overridden
 
 from lightning_training_studio.loggers import LoggerType
@@ -98,8 +99,8 @@ class Objective(TracerPythonScript, ABC):
             elif isinstance(res, dict):
                 assert isinstance(res, ObjectiveResult)
 
-        output_dir = os.path.exists(os.path.join(self._rootwd, self.artifacts_path))
-        if output_dir:
-            self.drive.put(output_dir)
+        if self.artifacts_path and os.path.exists(self.artifacts_path):
+            drive = Drive(f"lit://{self.sweep_id}", component_name=self.experiment_name, allow_duplicates=True)
+            drive.put(self.artifacts_path)
 
         super().on_after_run(global_scripts)
