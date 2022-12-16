@@ -2,7 +2,7 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import StopCircle from '@mui/icons-material/StopCircle';
 import useShowHelpPageState, { HelpPageState } from 'hooks/useShowHelpPageState';
-import { Box, Link, Stack, Table, Typography } from 'lightning-ui/src/design-system/components';
+import { Box, Table, Typography } from 'lightning-ui/src/design-system/components';
 import { StatusEnum } from 'lightning-ui/src/shared/components/Status';
 import { AppClient, ExperimentConfig, SweepConfig, TensorboardConfig } from '../generated';
 import useClientDataState from '../hooks/useClientDataState';
@@ -42,21 +42,6 @@ const StageToColors = {
   pending: 'primary',
   running: 'primary',
 } as { [k: string]: 'success' | 'error' | 'primary' };
-
-function createLoggerUrl(url?: string) {
-  const cell = url ? (
-    <Link href={url} target="_blank" underline="hover">
-      <Stack direction="row" alignItems="center" spacing={0.5}>
-        <OpenInNewIcon sx={{ fontSize: 20 }} />
-        <Typography variant="subtitle2">Open</Typography>
-      </Stack>
-    </Link>
-  ) : (
-    <Box>{StatusEnum.NOT_STARTED}</Box>
-  );
-
-  return cell;
-}
 
 function stopTensorboard(tensorboardConfig: TensorboardConfig) {
   appClient.appApi.stopTensorboardApiStopTensorboardPost({ sweep_id: tensorboardConfig.sweep_id });
@@ -164,27 +149,27 @@ const handleClick = (url?: string) => {
 function createMenuItems(logger_url?: string, tensorboardConfig?: TensorboardConfig) {
   var items = [];
   const url = tensorboardConfig ? tensorboardConfig.url : logger_url;
+  const status = tensorboardConfig?.stage ? statusToEnum[tensorboardConfig.stage] : StatusEnum.NOT_STARTED;
 
-  if (url) {
-    items.push({
-      label: 'Open Logger',
-      icon: <OpenInNewIcon sx={{ fontSize: 20 }} />,
-      onClick: () => handleClick(url),
-    });
-  }
+  items.push({
+    label: 'Open Tensorboard',
+    icon: <OpenInNewIcon sx={{ fontSize: 20 }} />,
+    onClick: () => handleClick(url),
+    disabled: status != StatusEnum.RUNNING,
+  });
 
   if (tensorboardConfig) {
     const status = tensorboardConfig?.stage ? statusToEnum[tensorboardConfig.stage] : StatusEnum.NOT_STARTED;
 
-    if (status == StatusEnum.RUNNING || status == StatusEnum.PENDING) {
+    if (status == StatusEnum.RUNNING) {
       items.push({
-        label: 'Stop Logger',
+        label: 'Stop Tensorboard',
         icon: <StopCircle sx={{ fontSize: 20 }} />,
         onClick: () => stopTensorboard(tensorboardConfig),
       });
-    } else {
+    } else if (status == StatusEnum.STOPPED) {
       items.push({
-        label: 'Run Logger',
+        label: 'Start Tensorboard',
         icon: <PlayCircleIcon sx={{ fontSize: 20 }} />,
         onClick: () => runTensorboard(tensorboardConfig),
       });

@@ -27,6 +27,7 @@ class SweepController(Controller):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.tensorboard_sweep_id = None
+        self.tensorboard_sweep_id_detach = []
 
     def on_reconcile_start(self, sweeps: List[SweepConfig]):
         # 1: Retrieve the tensorboard configs from the database
@@ -47,11 +48,12 @@ class SweepController(Controller):
                 if id not in self.tensorboard_sweep_id:
                     self.tensorboard_sweep_id.append(id)
                     self.db.insert(TensorboardConfig(sweep_id=id, shared_folder=str(drive.drive_root)))
-                elif sweep.stage in (Stage.FAILED, Stage.SUCCEEDED):
+                elif sweep.stage in (Stage.FAILED, Stage.SUCCEEDED) and id not in self.tensorboard_sweep_id_detach:
                     for tensorboard in self.db.select_all(TensorboardConfig):
                         if tensorboard.sweep_id == id:
-                            tensorboard.desired_stage = Stage.DELETED
+                            tensorboard.desired_stage = Stage.STOPPED
                             self.db.update(tensorboard)
+                            self.tensorboard_sweep_id_detach.append(id)
 
             if work_name not in self.r and sweep.stage != Stage.SUCCEEDED:
                 all_data: List[DataConfig] = self.db.select_all(DataConfig)

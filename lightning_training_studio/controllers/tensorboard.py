@@ -18,6 +18,7 @@ class TensorboardController(Controller):
     def on_reconcile_start(self, configs: List[TensorboardConfig]):
         for config in configs:
             work_name = urllib.parse.quote_plus(config.sweep_id)
+            print(work_name, work_name not in self.r, config)
             if work_name not in self.r:
                 if config.stage in (Stage.STOPPED, Stage.NOT_STARTED) and config.desired_stage == Stage.RUNNING:
                     self.r[work_name] = Tensorboard(
@@ -26,7 +27,9 @@ class TensorboardController(Controller):
                         cloud_compute=L.CloudCompute("cpu-small"),
                     )
                     self.r[work_name].stage = Stage.PENDING
-            if config.desired_stage == Stage.DELETED:
+            elif config.desired_stage == Stage.STOPPED:
+                self._stop_tensorboard(work_name)
+            elif config.desired_stage == Stage.DELETED:
                 tensorboard = self.r[work_name]
                 tensorboard.stop()
                 self.db.delete(config)
@@ -50,22 +53,26 @@ class TensorboardController(Controller):
         if matched_tensorboard:
             matched_tensorboard.stage = Stage.STOPPED
             matched_tensorboard.desired_stage = Stage.RUNNING
-            self.db.update(matched_tensorboard)
+            self.db.update(config)
+            print(self.db.select_all())
             return f"Re-Launched a Tensorboard `{config.sweep_id}`."
 
         self.db.insert(config)
         return f"Launched a Tensorboard `{config.sweep_id}`."
 
+    def _stop_tensorboard(self, work_name):
+        self.r[work_name].stop()
+        self.r[work_name]._url = ""
+        self.r[work_name].stage = Stage.STOPPED
+        self.r[work_name].desired_stage = Stage.STOPPED
+        self.db.update(self.r[work_name].collect_model())
+        del self.r[work_name]
+
     def stop_tensorboard(self, config: StopTensorboardConfig):
         """Stop TensorBoard for a given Sweep or Experiment."""
         work_name = urllib.parse.quote_plus(config.sweep_id)
         if work_name in self.r:
-            self.r[work_name].stop()
-            self.r[work_name]._url = ""
-            self.r[work_name].stage = Stage.STOPPED
-            self.r[work_name].desired_stage = Stage.STOPPED
-            self.db.update(self.r[work_name].collect_model())
-            del self.r[work_name]
+            self._stop_tensorboard(work_name)
             return f"Tensorboard `{config.sweep_id}` was stopped."
         return f"Tensorboard `{config.sweep_id}` doesn't exist."
 
