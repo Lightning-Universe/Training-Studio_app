@@ -25,7 +25,9 @@ lightning run sweep train.py --model.lr "[0.001, 0.01]" --data.batch "[32, 64]" 
 app = LightningApp(
     TrainingStudio(),
     info=frontend.AppInfo(
-        title="Lightning PyTorch Training Studio", description=description, on_connect_end=on_connect_end
+        title="Lightning PyTorch Training Studio",
+        description=description,
+        on_connect_end=on_connect_end,
     ),
-    log_level="debug",
+    log_level="info",
 )
