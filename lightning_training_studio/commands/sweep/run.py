@@ -73,6 +73,7 @@ class SweepConfig(SQLModel, table=True):
     framework: str
     cloud_compute: str = "cpu"
     num_nodes: int = 1
+    artifacts_path: str = ""
     logger: str
     direction: str
     stage: str = Stage.NOT_STARTED
@@ -80,6 +81,7 @@ class SweepConfig(SQLModel, table=True):
     shm_size: int = 1024
     disk_size: int = 80
     pip_install_source: bool = False
+    artifacts_path: Optional[str] = None
     data: Dict[str, Optional[str]] = Field(..., sa_column=Column(pydantic_column_type(Dict[str, Optional[str]])))
     username: Optional[str] = None
 
@@ -392,6 +394,12 @@ class RunSweepCommand(ClientCommand):
             help="The disk size in Gigabytes.",
         )
         parser.add_argument(
+            "--artifacts_path",
+            default="",
+            type=str,
+            help="The path where artifacts will be saved from.",
+        )
+        parser.add_argument(
             "--data",
             nargs="+",
             default=[],
@@ -482,6 +490,7 @@ class RunSweepCommand(ClientCommand):
             shm_size=hparams.shm_size,
             disk_size=hparams.disk_size,
             pip_install_source=hparams.pip_install_source,
+            artifacts_path=hparams.artifacts_path,
             data=data,
             username=getuser(),
         )

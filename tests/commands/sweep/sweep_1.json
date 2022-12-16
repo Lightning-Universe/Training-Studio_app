@@ -20,6 +20,7 @@
       "status": "succeeded",
       "shm_size": 1024,
       "disk_size": 80,
-      "username": ""
+      "username": "",
+      "artifacts_path": ""
     }
   ]

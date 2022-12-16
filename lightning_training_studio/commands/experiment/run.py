@@ -63,6 +63,12 @@ class RunExperimentCommand(ClientCommand):
             help="The disk size in Gigabytes.",
         )
         parser.add_argument(
+            "--artifacts_path",
+            default="",
+            type=str,
+            help="The artifacts under this path at the end of an experiment are persisted to the Lightning Drive.",
+        )
+        parser.add_argument(
             "--data",
             nargs="+",
             default=[],
@@ -124,6 +130,7 @@ class RunExperimentCommand(ClientCommand):
             shm_size=hparams.shm_size,
             disk_size=hparams.disk_size,
             pip_install_source=hparams.pip_install_source,
+            artifacts_path=hparams.artifacts_path,
             data=data,
             username=str(getuser()),
         )

@@ -30,6 +30,7 @@ def test_sweep_controller(monkeypatch):
         distributions={"best_model_score": Uniform(1, 10)},
         framework="pytorch_lightning",
         data={"a/": None},
+        artifacts_path="",
     )
     sweep_controller = SweepController()
     sweep_controller.db_url = "a"
@@ -113,6 +114,7 @@ def test_sweep_controller_delete_sweep(monkeypatch):
         distributions={"best_model_score": Uniform(1, 10)},
         framework="pytorch_lightning",
         data={},
+        artifacts_path="",
     )
     sweep_controller, tensorboard_controller, config = _sweep_controller_setup(monkeypatch, sweep)
 
@@ -139,6 +141,7 @@ def test_sweep_controller_delete_xexperiment(monkeypatch):
         experiments={0: ExperimentConfig(name="a", params={}).dict()},
         framework="pytorch_lightning",
         data={},
+        artifacts_path="",
     )
     sweep_controller, tensorboard_controller, config = _sweep_controller_setup(monkeypatch, sweep)
 
@@ -162,6 +165,7 @@ def test_sweep_controller_delete_experiment_from_sweep(monkeypatch):
         distributions={"best_model_score": Uniform(1, 10)},
         framework="pytorch_lightning",
         data={},
+        artifacts_path="",
     )
     sweep_controller, tensorboard_controller, config = _sweep_controller_setup(monkeypatch, sweep)
 

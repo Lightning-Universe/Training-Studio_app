@@ -63,6 +63,7 @@ def test_experiment_run_parsing_no_arguments(monkeypatch):
             disk_size=80,
             pip_install_source=False,
             data={},
+            artifacts_path="",
         )
         expected.sweep_id = config.sweep_id
         expected.username = config.username
@@ -89,6 +90,8 @@ def test_experiment_run_parsing_arguments(monkeypatch):
             "--model.lr=0.1",
             "--cloud_compute",
             "cpu-medium",
+            "--artifacts_path",
+            "output",
         ],
     )
 
@@ -131,6 +134,7 @@ def test_experiment_run_parsing_arguments(monkeypatch):
             disk_size=80,
             pip_install_source=False,
             data={"example": None},
+            artifacts_path="output",
         )
         expected.sweep_id = config.sweep_id
         expected.username = config.username
@@ -232,6 +236,7 @@ def test_experiment_run_parsing_requirements(monkeypatch):
             disk_size=80,
             pip_install_source=False,
             data={},
+            artifacts_path="",
         )
         expected.sweep_id = config.sweep_id
         expected.username = config.username
@@ -286,6 +291,7 @@ def test_experiment_run_parsing_pip_install(monkeypatch):
             disk_size=80,
             pip_install_source=True,
             data={},
+            artifacts_path="",
         )
         expected.sweep_id = config.sweep_id
         expected.username = config.username
