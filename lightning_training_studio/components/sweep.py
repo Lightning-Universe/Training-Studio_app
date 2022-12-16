@@ -122,7 +122,7 @@ class Sweep(LightningFlow, ControllerResource):
             "env": env,
             "script_args": script_args,
             "num_nodes": getattr(cloud_compute, "count", 1) if cloud_compute else 1,
-            # "artifacts_path": artifacts_path,
+            "artifacts_path": artifacts_path,
             "logger": logger,
             "code": code,
             "sweep_id": self.sweep_id,
