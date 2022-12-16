@@ -304,12 +304,12 @@ class Sweep(LightningFlow, ControllerResource):
             if isinstance(objective, LightningFlow):
                 num_works = len([work for work in objective.works()])
                 if num_works == 1:
-                    objective.works()[0].display_name = f"root.{self.sweep_id}/{experiment_config['name']}"
+                    objective.works()[0].display_name = f"{self.sweep_id}/{experiment_config['name']}"
                 else:
                     for idx, work in enumerate(objective.works()):
-                        work.display_name = f"root.{self.sweep_id}/{experiment_config['name']}.{idx}"
+                        work.display_name = f"{self.sweep_id}/{experiment_config['name']}.{idx}"
             else:
-                objective.display_name = f"root.{self.sweep_id}/{experiment_config['name']}"
+                objective.display_name = f"{self.sweep_id}/{experiment_config['name']}"
 
         return objective
 

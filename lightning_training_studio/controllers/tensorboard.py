@@ -25,7 +25,7 @@ class TensorboardController(Controller):
                         config=config,
                         cloud_compute=L.CloudCompute("cpu-small"),
                     )
-                    self.r[work_name].display_name = f"root.{config.sweep_id}/tensorboard"
+                    self.r[work_name].display_name = f"{config.sweep_id}/tensorboard"
                     self.r[work_name].stage = Stage.PENDING
             elif config.desired_stage == Stage.STOPPED:
                 self._stop_tensorboard(work_name)
