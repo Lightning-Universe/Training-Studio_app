@@ -254,8 +254,7 @@ class Sweep(LightningFlow, ControllerResource):
             works = objective.works()
         else:
             works = [objective]
-        finished = len(works) > 0 and all(work.has_succeeded for work in works)
-        return finished
+        return all(work.has_finished for work in works)
 
     def _get_objective(self, experiment_id: int):
         experiment_config = self.experiments.get(experiment_id, None)
