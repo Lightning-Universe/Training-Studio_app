@@ -50,12 +50,12 @@ class RunExperimentCommand(ClientCommand):
             type=int,
             help="The number of nodes.",
         )
-        parser.add_argument(
-            "--shm_size",
-            default=1024,
-            type=int,
-            help="Size of shared memory in MiB, backed by RAM.",
-        )
+        # parser.add_argument(
+        #     "--shm_size",
+        #     default=1024,
+        #     type=int,
+        #     help="Size of shared memory in MiB, backed by RAM.",
+        # )
         parser.add_argument(
             "--disk_size",
             default=80,
