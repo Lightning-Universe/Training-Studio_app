@@ -268,6 +268,17 @@ class Sweep(LightningFlow, ControllerResource):
             )
             setattr(self, f"w_{experiment_id}", objective)
             self.experiments[experiment_id]["stage"] = Stage.PENDING
+
+            if isinstance(objective, LightningFlow):
+                num_works = len([work for work in objective.works()])
+                if num_works == 1:
+                    objective.works()[0].display_name = f"root.{self.sweep_id}/{experiment_config['name']}"
+                else:
+                    for idx, work in enumerate(objective.works()):
+                        work.display_name = f"root.{self.sweep_id}/{experiment_config['name']}.{idx}"
+            else:
+                objective.display_name = f"root.{self.sweep_id}/{experiment_config['name']}"
+
         return objective
 
     @classmethod
