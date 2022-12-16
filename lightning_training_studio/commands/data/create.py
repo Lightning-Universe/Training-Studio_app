@@ -34,7 +34,7 @@ class DataConfig(SQLModel, table=True):
 class AddDatasetCommand(ClientCommand):
 
     description = """
-    To create a data association, provide a public S3 bucket and an optional mount point.
+    To create a dataset association, provide a public S3 bucket and an optional mount point.
     The contents of the bucket can then be accessed through the file system in experiments and sweeps.
     """
 
