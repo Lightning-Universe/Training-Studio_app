@@ -1,4 +1,5 @@
 from typing import Any, Dict
+from unittest.mock import MagicMock
 
 import optuna
 
@@ -29,10 +30,14 @@ def test_sweep_with_failed_experiments():
 
 class PrunedMockObjective(MockObjective):
     def run(self, params: Dict[str, Any], restart_count: int):
-        super().run(params, restart_count)
         score = params["best_model_score"]
         score = score + 1 if score > 5 else 1
         self.reports = [(score, idx) for idx in range(100)]
+        self.params = params
+        self.best_model_path = params.get("best_model_path")
+        self.best_model_score = params.get("best_model_score")
+        self._backend = MagicMock()
+        self.on_after_run()
 
 
 def test_sweep_pruned():
@@ -59,3 +64,27 @@ def test_sweep_pruned():
     sweep.run()
     assert sweep.total_experiments == 25
     assert "pruned" in {v["stage"] for k, v in sweep.experiments.items()}
+
+
+def test_sweep_stop():
+    sweep = Sweep(
+        total_experiments=25,
+        objective_cls=PrunedMockObjective,
+        distributions={
+            "best_model_score": Uniform(0, 10),
+        },
+        algorithm=OptunaAlgorithm(
+            optuna.create_study(
+                pruner=optuna.pruners.MedianPruner(),
+                direction="maximize",
+            )
+        ),
+    )
+
+    for _ in range(5):
+        sweep.run()
+
+    sweep.stop()
+    assert sweep.experiments[0]["stage"] == "stopped"
+    assert sweep.experiments[0]["end_time"] is None
+    assert sweep.stage == "stopped"

@@ -34,6 +34,7 @@ class MyObjective(Objective):
             self.reports = self.reports + [[intermediate_value, step]]
 
         self.best_model_score = clf.score(valid_x, valid_y)
+        self.has_finished = True
 
 
 app = LightningApp(

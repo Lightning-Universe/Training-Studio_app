@@ -220,9 +220,11 @@ class Sweep(LightningFlow, ControllerResource):
 
     def stop(self):
         for experiment_id in range(self.num_experiments):
-            if self.experiments[experiment_id]["stage"] not in (Stage.STOPPED, Stage.SUCCEEDED, Stage.FAILED):
-                self.experiments[experiment_id]["stage"] = Stage.STOPPED
-                self.experiments[experiment_id]["end_time"] = time.time()
+            if experiment_id in self.experiments:
+                if self.experiments[experiment_id]["stage"] not in (Stage.STOPPED, Stage.SUCCEEDED, Stage.FAILED):
+                    self.experiments[experiment_id]["stage"] = Stage.STOPPED
+                    if self.experiments[experiment_id]["start_time"] is not None:
+                        self.experiments[experiment_id]["end_time"] = time.time()
         for work in self.works():
             work.stop()
         self.stage = Stage.STOPPED
@@ -247,14 +249,16 @@ class Sweep(LightningFlow, ControllerResource):
             self.total_experiments_done += 1
 
     def check_finished_experiment(self, objective) -> bool:
-        if not getattr(objective, "start_time", None):
+        if isinstance(objective, LightningFlow) and not getattr(objective, "start_time", None):
             return False
 
         if isinstance(objective, LightningFlow):
             works = objective.works()
         else:
             works = [objective]
-        return all(work.has_finished for work in works)
+        # TODO: Understand why has_succeeded doesn't work there.
+        value = all(work.has_finished for work in works)
+        return value
 
     def _get_objective(self, experiment_id: int):
         experiment_config = self.experiments.get(experiment_id, None)
