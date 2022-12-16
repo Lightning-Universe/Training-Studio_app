@@ -194,7 +194,7 @@ class Sweep(LightningFlow, ControllerResource):
                         self.stage = Stage.RUNNING
                         self.experiments[experiment_id]["stage"] = Stage.RUNNING
 
-                if objective.best_model_score:
+                if self.check_finished_experiment(objective):
                     if self.experiments[experiment_id]["stage"] == Stage.SUCCEEDED:
                         pass
                     elif self.experiments[experiment_id]["stage"] not in (Stage.PRUNED, Stage.STOPPED, Stage.FAILED):
@@ -246,6 +246,17 @@ class Sweep(LightningFlow, ControllerResource):
             objective.stop()
             self.experiments[experiment_id]["stage"] = Stage.STOPPED
             self.total_experiments_done += 1
+
+    def check_finished_experiment(self, objective) -> bool:
+        if not getattr(objective, "start_time", None):
+            return False
+
+        if isinstance(objective, LightningFlow):
+            works = objective.works()
+        else:
+            works = [objective]
+        finished = len(works) > 0 and all(work.has_succeeded for work in works)
+        return finished
 
     def _get_objective(self, experiment_id: int):
         experiment_config = self.experiments.get(experiment_id, None)

@@ -160,6 +160,10 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
                     human_readable = get_human_readable_count(total_parameters)
                     self.work.total_parameters = str(human_readable)
 
+                if trainer.checkpoint_callback.best_model_score:
+                    self.work.best_model_path = Path(trainer.checkpoint_callback.best_model_path)
+                    self.work.best_model_score = float(trainer.checkpoint_callback.best_model_score)
+
                 if trainer.checkpoint_callback.last_model_path:
                     self.work.last_model_path = Path(trainer.checkpoint_callback.last_model_path)
 
