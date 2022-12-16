@@ -2,7 +2,16 @@ import time
 from subprocess import Popen
 from typing import Optional
 
-from lai_jupyter import JupyterLab
+from lightning_utilities.core.imports import package_available
+
+if package_available("lai_jupyter"):
+    from lai_jupyter import JupyterLab
+else:
+
+    class JupyterLab:
+        pass
+
+
 from lightning import CloudCompute
 
 from lightning_training_studio.commands.notebook.run import NotebookConfig

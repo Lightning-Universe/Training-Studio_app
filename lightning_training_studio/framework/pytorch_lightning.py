@@ -143,6 +143,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
                 stage: Optional[str] = None,
             ) -> None:
                 trainer.checkpoint_callback.save_last = True
+                self.work.monitor = trainer.checkpoint_callback.monitor
 
             @rank_zero_only
             def on_train_batch_end(self, trainer, pl_module, *args) -> None:
@@ -164,8 +165,14 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
                     human_readable = get_human_readable_count(total_parameters)
                     self.work.total_parameters = str(human_readable)
 
-                if trainer.checkpoint_callback.last_model_path:
-                    self.work.last_model_path = Path(trainer.checkpoint_callback.last_model_path)
+                ckpt = trainer.checkpoint_callback
+
+                if ckpt.best_model_score and ckpt.best_model_score != self.work.best_model_score:
+                    self.work.best_model_path = Path(ckpt.best_model_path)
+                    self.work.best_model_score = float(ckpt.best_model_score)
+
+                if ckpt.last_model_path:
+                    self.work.last_model_path = Path(ckpt.last_model_path)
 
         def trainer_pre_fn(trainer, *args, **kwargs):
             callbacks = kwargs.get("callbacks", [])

@@ -71,10 +71,28 @@ function toCompute(sweep: SweepConfig) {
 }
 
 function toProgress(experiment: ExperimentConfig) {
-  if (experiment.stage == 'failed') {
+  if (experiment.stage == 'pending') {
+    return (
+      <Box sx={{ minWidth: 35 }}>
+        <Typography variant="caption" display="block">{`Pending`}</Typography>
+      </Box>
+    );
+  } else if (experiment.stage == 'stopped') {
+    return (
+      <Box sx={{ minWidth: 35 }}>
+        <Typography variant="caption" display="block">{`Stopped`}</Typography>
+      </Box>
+    );
+  } else if (experiment.stage == 'failed') {
     return (
       <Box sx={{ minWidth: 35 }}>
         <Typography variant="caption" display="block">{`Failed`}</Typography>
+      </Box>
+    );
+  } else if (experiment.stage == 'succeeded') {
+    return (
+      <Box sx={{ minWidth: 35 }}>
+        <Typography variant="caption" display="block">{`Succeeded`}</Typography>
       </Box>
     );
   } else {
@@ -83,7 +101,7 @@ function toProgress(experiment: ExperimentConfig) {
         <Box sx={{ width: '100%', mr: 1 }}>
           <BorderLinearProgress
             variant={experiment.progress == 0 ? undefined : 'determinate'}
-            color={StageToColors[experiment.stage || 'pending']}
+            color={StageToColors[experiment.stage]}
             value={experiment.progress}
           />
         </Box>
@@ -205,7 +223,9 @@ export function Experiments() {
   const experimentHeader = [
     'Progress',
     'Runtime',
+    'Sweep Name',
     'Name',
+    'Monitor',
     'Best Score',
     'Script Arguments',
     'Data',
@@ -235,7 +255,9 @@ export function Experiments() {
     return Object.entries(sweep.experiments).map(entry => [
       toProgress(entry[1]),
       runtimeTime(entry[1]),
+      sweep.sweep_id,
       entry[1].name,
+      String(entry[1].monitor),
       entry[1].best_model_score && String(entry[1].best_model_score.toPrecision(4)),
       toArgs(sweep.script_args, entry[1].params),
       data,
@@ -247,7 +269,7 @@ export function Experiments() {
 
   const flatArray = rows.flat().map((row: any[]) =>
     row.map((entry: any) => {
-      if (!entry || entry == 'null') {
+      if (!entry || entry == 'null' || entry == 'None') {
         return '-';
       }
       return entry;

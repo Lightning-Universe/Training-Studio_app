@@ -36,6 +36,4 @@ def test_stop_sweeps_server(monkeypatch):
     sweep_controller.r[sweep_config.sweep_id] = sweep_mock
     result = sweep_controller.stop_sweep(config=StopSweepConfig(sweep_id=sweep_config.sweep_id))
     assert result == "Stopped the sweep `thomas-cb8f69f0`"
-    assert sweep_mock.stage == Stage.STOPPED
-    assert sweep_config.experiments[0].stage == Stage.NOT_STARTED
-    assert sweep_config.experiments[1].stage == Stage.STOPPED
+    sweep_mock.stop.assert_called()

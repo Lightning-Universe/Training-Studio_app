@@ -59,6 +59,8 @@ class Objective(TracerPythonScript, ABC):
         self.last_model_path = last_model_path
         self.pip_install_source = pip_install_source
         self._rootwd = os.getcwd()
+        self.start_time = None
+        self.has_finished = False
 
     def configure_tracer(self):
         assert self.params is not None
@@ -104,3 +106,5 @@ class Objective(TracerPythonScript, ABC):
             drive.put(self.artifacts_path)
 
         super().on_after_run(global_scripts)
+
+        self.has_finished = True
