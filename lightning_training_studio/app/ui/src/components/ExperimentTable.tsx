@@ -139,9 +139,10 @@ function timeLeft(experiment: ExperimentConfig) {
     return '';
   }
   if (experiment.progress) {
+    const nowTime = getTime();
     const estimatedEnd =
-      Number(experiment.start_time) + (100 * (getTime() - Number(experiment.start_time))) / experiment.progress;
-    return experiment.start_time ? String(formatDurationStartEnd(estimatedEnd, getTime())) : '';
+      Number(experiment.start_time) + (100 * (nowTime - Number(experiment.start_time))) / experiment.progress;
+    return experiment.start_time ? String(formatDurationStartEnd(estimatedEnd, nowTime)) : '';
   }
 }
 
