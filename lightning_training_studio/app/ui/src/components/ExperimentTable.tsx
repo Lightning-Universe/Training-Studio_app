@@ -74,7 +74,7 @@ function toProgress(experiment: ExperimentConfig) {
   if (experiment.stage == 'pending') {
     return (
       <Box sx={{ minWidth: 35 }}>
-        <Typography variant="caption" display="block">{`Pending`}</Typography>
+        <Typography variant="caption" display="block">{`Pending...`}</Typography>
       </Box>
     );
   } else if (experiment.stage == 'stopped') {
