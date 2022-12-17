@@ -189,11 +189,10 @@ class Sweep(LightningFlow, ControllerResource):
                 self.experiments[experiment_id]["monitor"] = str(getattr(objective, "monitor", ""))
 
                 if _check_stage(objective, Stage.FAILED):
-                    self.experiments[experiment_id]["stage"] == Stage.FAILED
+                    self.experiments[experiment_id]["stage"] = Stage.FAILED
                     self.experiments[experiment_id]["exception"] = objective.status.message
                     self.experiments[experiment_id]["end_time"] = str(time.time())
                     objective.stop()
-                    continue
 
                 if objective.reports:
                     if self._algorithm.should_prune(experiment_id, objective.reports):

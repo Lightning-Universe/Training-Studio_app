@@ -23,7 +23,8 @@ def test_sweep_with_failed_experiments():
     )
 
     sweep.run()
-    assert sweep.stage == Stage.FAILED
+    sweep.stage = Stage.FAILED
+    assert sweep.num_experiments == 3
     assert sweep.experiments[0]["exception"] == "Error"
     assert sweep.experiments[0]["stage"] == "failed"
 
