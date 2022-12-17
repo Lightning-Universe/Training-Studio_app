@@ -135,7 +135,7 @@ function getTime() {
 }
 
 function timeLeft(experiment: ExperimentConfig) {
-  if (experiment.end_time && experiment.progress) {
+  if (experiment.end_time || experiment.stage == 'stopped' || experiment.stage == 'failed') {
     return '';
   }
   if (experiment.progress) {
