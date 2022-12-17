@@ -89,6 +89,12 @@ function toProgress(experiment: ExperimentConfig) {
         <Typography variant="caption" display="block">{`Failed`}</Typography>
       </Box>
     );
+  } else if (experiment.stage == 'pruned') {
+    return (
+      <Box sx={{ minWidth: 35 }}>
+        <Typography variant="caption" display="block">{`Pruned`}</Typography>
+      </Box>
+    );
   } else if (experiment.stage == 'succeeded') {
     return (
       <Box sx={{ minWidth: 35 }}>
