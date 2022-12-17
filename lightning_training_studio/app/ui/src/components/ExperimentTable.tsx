@@ -71,7 +71,7 @@ function toCompute(sweep: SweepConfig) {
 }
 
 function toProgress(experiment: ExperimentConfig) {
-  if (experiment.stage == 'pending') {
+  if (experiment.stage == 'pending' && !experiment.progress) {
     return (
       <Box sx={{ minWidth: 35 }}>
         <Typography variant="caption" display="block">{`Pending...`}</Typography>

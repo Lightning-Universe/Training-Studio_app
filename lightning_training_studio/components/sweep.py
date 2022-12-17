@@ -163,12 +163,6 @@ class Sweep(LightningFlow, ControllerResource):
                 if logger_url is not None and self.logger_url != logger_url:
                     self.logger_url = logger_url
 
-                if _check_stage(objective, Stage.FAILED):
-                    self.experiments[experiment_id]["stage"] = Stage.FAILED
-                    if getattr(objective, "start_time", None):
-                        self.experiments[experiment_id]["end_time"] = str(time.time())
-                    continue
-
                 objective.run(
                     params=self._algorithm.get_params(experiment_id),
                     restart_count=self.restart_count,
@@ -178,8 +172,12 @@ class Sweep(LightningFlow, ControllerResource):
                     self.experiments[experiment_id]["stage"] = Stage.PENDING
                     continue
 
-                if _check_stage(objective, Stage.STOPPED):
-                    self.experiments[experiment_id]["stage"] = Stage.STOPPED
+                if self.experiments[experiment_id]["stage"] in (
+                    Stage.FAILED,
+                    Stage.PRUNED,
+                    Stage.STOPPED,
+                    Stage.SUCCEEDED,
+                ):
                     continue
 
                 self.experiments[experiment_id]["progress"] = objective.progress
@@ -191,40 +189,34 @@ class Sweep(LightningFlow, ControllerResource):
                 self.experiments[experiment_id]["monitor"] = str(getattr(objective, "monitor", ""))
 
                 if _check_stage(objective, Stage.FAILED):
-                    self.experiments[experiment_id]["stage"] = Stage.FAILED
+                    self.experiments[experiment_id]["stage"] == Stage.FAILED
                     self.experiments[experiment_id]["exception"] = objective.status.message
+                    self.experiments[experiment_id]["end_time"] = str(time.time())
                     objective.stop()
+                    continue
 
-                if objective.reports and not self.experiments[experiment_id]["stage"] == "pruned":
+                if objective.reports:
                     if self._algorithm.should_prune(experiment_id, objective.reports):
                         self.experiments[experiment_id]["stage"] = Stage.PRUNED
                         objective.stop()
                         self.total_experiments_done += 1
                         continue
 
-                if self.stage != Stage.FAILED and self.experiments[experiment_id]["stage"] == Stage.PENDING:
-                    if self.experiments[experiment_id]["stage"] != objective.status:
-                        self.stage = Stage.RUNNING
-                        self.experiments[experiment_id]["stage"] = Stage.RUNNING
-
                 if self.check_finished_experiment(objective):
-                    if self.experiments[experiment_id]["stage"] == Stage.SUCCEEDED:
-                        pass
-                    elif self.experiments[experiment_id]["stage"] not in (Stage.PRUNED, Stage.STOPPED, Stage.FAILED):
-                        self._algorithm.experiment_end(experiment_id, objective.best_model_score)
-                        self._logger.on_after_experiment_end(
-                            sweep_id=self.sweep_id,
-                            experiment_id=objective.experiment_id,
-                            monitor=objective.monitor,
-                            score=objective.best_model_score,
-                            params=self._algorithm.get_params(experiment_id),
-                        )
-                        self.experiments[experiment_id]["best_model_score"] = objective.best_model_score
-                        self.experiments[experiment_id]["best_model_path"] = str(objective.best_model_path)
-                        self.experiments[experiment_id]["monitor"] = objective.monitor
-                        self.experiments[experiment_id]["stage"] = Stage.SUCCEEDED
-                        self.total_experiments_done += 1
-                        objective.stop()
+                    self._algorithm.experiment_end(experiment_id, objective.best_model_score)
+                    self._logger.on_after_experiment_end(
+                        sweep_id=self.sweep_id,
+                        experiment_id=objective.experiment_id,
+                        monitor=objective.monitor,
+                        score=objective.best_model_score,
+                        params=self._algorithm.get_params(experiment_id),
+                    )
+                    self.experiments[experiment_id]["best_model_score"] = objective.best_model_score
+                    self.experiments[experiment_id]["best_model_path"] = str(objective.best_model_path)
+                    self.experiments[experiment_id]["monitor"] = objective.monitor
+                    self.experiments[experiment_id]["stage"] = Stage.SUCCEEDED
+                    self.total_experiments_done += 1
+                    objective.stop()
 
         if all(
             self.experiments[experiment_id]["stage"] == Stage.FAILED for experiment_id in range(self.num_experiments)
