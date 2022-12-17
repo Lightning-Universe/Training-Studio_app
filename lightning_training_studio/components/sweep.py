@@ -174,6 +174,14 @@ class Sweep(LightningFlow, ControllerResource):
                     restart_count=self.restart_count,
                 )
 
+                if _check_stage(objective, Stage.PENDING):
+                    self.experiments[experiment_id]["stage"] = Stage.PENDING
+                    continue
+
+                if _check_stage(objective, Stage.STOPPED):
+                    self.experiments[experiment_id]["stage"] = Stage.STOPPED
+                    continue
+
                 self.experiments[experiment_id]["progress"] = objective.progress
                 self.experiments[experiment_id]["total_parameters"] = getattr(objective, "total_parameters", None)
                 self.experiments[experiment_id]["start_time"] = getattr(objective, "start_time", None)
