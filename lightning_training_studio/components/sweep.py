@@ -4,7 +4,7 @@ import uuid
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
 from uuid import uuid4
 
-from lightning import BuildConfig, CloudCompute, LightningFlow
+from lightning import BuildConfig, CloudCompute, LightningFlow, LightningWork
 from lightning.app.components.python.tracer import Code
 from lightning.app.frontend import StaticWebFrontend
 from lightning.app.storage.mount import Mount
@@ -301,15 +301,17 @@ class Sweep(LightningFlow, ControllerResource):
             setattr(self, f"w_{experiment_id}", objective)
             self.experiments[experiment_id]["stage"] = Stage.PENDING
 
-            if isinstance(objective, LightningFlow):
-                num_works = len([work for work in objective.works()])
-                if num_works == 1:
-                    objective.works()[0].display_name = f"{self.sweep_id}/{experiment_config['name']}"
+            # TODO: Remove when display name is merged
+            if hasattr(LightningWork, "_display_name"):
+                if isinstance(objective, LightningFlow):
+                    num_works = len([work for work in objective.works()])
+                    if num_works == 1:
+                        objective.works()[0].display_name = f"{self.sweep_id}/{experiment_config['name']}"
+                    else:
+                        for idx, work in enumerate(objective.works()):
+                            work.display_name = f"{self.sweep_id}/{experiment_config['name']}.{idx}"
                 else:
-                    for idx, work in enumerate(objective.works()):
-                        work.display_name = f"{self.sweep_id}/{experiment_config['name']}.{idx}"
-            else:
-                objective.display_name = f"{self.sweep_id}/{experiment_config['name']}"
+                    objective.display_name = f"{self.sweep_id}/{experiment_config['name']}"
 
         return objective
 
