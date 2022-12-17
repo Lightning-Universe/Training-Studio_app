@@ -55,6 +55,10 @@ class TrainingStudio(LightningFlow):
         self._token = uuid4().hex
         self.seconds = ",".join([str(v) for v in range(0, 60, 1)])
 
+    @property
+    def ready(self) -> bool:
+        return self.db.alive()
+
     def run(self):
         self.db.run(token=self._token)
 
