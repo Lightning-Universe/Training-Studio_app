@@ -130,19 +130,18 @@ function runtimeTime(experiment: ExperimentConfig) {
   return experiment.start_time ? String(formatDurationFrom(Number(experiment.start_time))) : '';
 }
 
+function getTime() {
+  return Number(new Date().getTime() / 1000);
+}
+
 function timeLeft(experiment: ExperimentConfig) {
   if (experiment.end_time && experiment.progress) {
     return '';
   }
   if (experiment.progress) {
     const estimatedEnd =
-      Number(experiment.start_time) +
-      (100 * (Number(new Date().getTime() / 1000) - Number(experiment.start_time))) / experiment.progress;
-    return experiment.start_time ? (
-      String(formatDurationStartEnd(estimatedEnd, Number(new Date().getTime() / 1000)))
-    ) : (
-      <Box></Box>
-    );
+      Number(experiment.start_time) + (100 * (getTime() - Number(experiment.start_time))) / experiment.progress;
+    return experiment.start_time ? String(formatDurationStartEnd(estimatedEnd, getTime())) : '';
   }
 }
 
