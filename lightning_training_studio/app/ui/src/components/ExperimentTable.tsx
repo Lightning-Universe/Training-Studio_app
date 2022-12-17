@@ -124,10 +124,26 @@ function toProgress(experiment: ExperimentConfig) {
 }
 
 function runtimeTime(experiment: ExperimentConfig) {
-  if (experiment.end_time) {
+  if (experiment.end_time && experiment.progress) {
     return formatDurationStartEnd(Number(experiment.end_time), Number(experiment.start_time));
   }
-  return experiment.start_time ? String(formatDurationFrom(Number(experiment.start_time))) : <Box></Box>;
+  return experiment.start_time ? String(formatDurationFrom(Number(experiment.start_time))) : '';
+}
+
+function timeLeft(experiment: ExperimentConfig) {
+  if (experiment.end_time && experiment.progress) {
+    return '';
+  }
+  if (experiment.progress) {
+    const estimatedEnd =
+      Number(experiment.start_time) +
+      (100 * (Number(new Date().getTime() / 1000) - Number(experiment.start_time))) / experiment.progress;
+    return experiment.start_time ? (
+      String(formatDurationStartEnd(estimatedEnd, Number(new Date().getTime() / 1000)))
+    ) : (
+      <Box></Box>
+    );
+  }
 }
 
 function toArgs(
@@ -231,6 +247,7 @@ export function Experiments() {
   const experimentHeader = [
     'Progress',
     'Runtime',
+    'Time Left',
     'Sweep Name',
     'Name',
     'Monitor',
@@ -263,6 +280,7 @@ export function Experiments() {
     return Object.entries(sweep.experiments).map(entry => [
       toProgress(entry[1]),
       runtimeTime(entry[1]),
+      timeLeft(entry[1]),
       sweep.sweep_id,
       entry[1].name,
       String(entry[1].monitor),
