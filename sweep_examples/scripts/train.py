@@ -105,7 +105,7 @@ if __name__ == "__main__":
         save_config_overwrite=True,
         run=False,
         trainer_defaults={
-            "max_epochs": 5,
+            "max_epochs": 100,
             "limit_train_batches": 50,
             "limit_val_batches": 10,
             "callbacks": [ModelCheckpoint(monitor="val_loss")],
