@@ -71,10 +71,10 @@ function toCompute(sweep: SweepConfig) {
 }
 
 function toProgress(experiment: ExperimentConfig) {
-  if (experiment.stage == 'pending') {
+  if (experiment.stage == 'pending' && !experiment.progress) {
     return (
       <Box sx={{ minWidth: 35 }}>
-        <Typography variant="caption" display="block">{`Pending`}</Typography>
+        <Typography variant="caption" display="block">{`Pending...`}</Typography>
       </Box>
     );
   } else if (experiment.stage == 'stopped') {
@@ -87,6 +87,12 @@ function toProgress(experiment: ExperimentConfig) {
     return (
       <Box sx={{ minWidth: 35 }}>
         <Typography variant="caption" display="block">{`Failed`}</Typography>
+      </Box>
+    );
+  } else if (experiment.stage == 'pruned') {
+    return (
+      <Box sx={{ minWidth: 35 }}>
+        <Typography variant="caption" display="block">{`Pruned`}</Typography>
       </Box>
     );
   } else if (experiment.stage == 'succeeded') {
@@ -118,10 +124,26 @@ function toProgress(experiment: ExperimentConfig) {
 }
 
 function runtimeTime(experiment: ExperimentConfig) {
-  if (experiment.end_time) {
+  if (experiment.end_time && experiment.progress) {
     return formatDurationStartEnd(Number(experiment.end_time), Number(experiment.start_time));
   }
-  return experiment.start_time ? String(formatDurationFrom(Number(experiment.start_time))) : <Box></Box>;
+  return experiment.start_time ? String(formatDurationFrom(Number(experiment.start_time))) : '';
+}
+
+function getTime() {
+  return Number(new Date().getTime() / 1000);
+}
+
+function timeLeft(experiment: ExperimentConfig) {
+  if (experiment.end_time || experiment.stage == 'stopped' || experiment.stage == 'failed') {
+    return '';
+  }
+  if (experiment.progress) {
+    const nowTime = getTime();
+    const estimatedEnd =
+      Number(experiment.start_time) + (100 * (nowTime - Number(experiment.start_time))) / experiment.progress;
+    return experiment.start_time ? String(formatDurationStartEnd(estimatedEnd, nowTime)) : '';
+  }
 }
 
 function toArgs(
@@ -225,6 +247,7 @@ export function Experiments() {
   const experimentHeader = [
     'Progress',
     'Runtime',
+    'Time Left',
     'Sweep Name',
     'Name',
     'Monitor',
@@ -257,6 +280,7 @@ export function Experiments() {
     return Object.entries(sweep.experiments).map(entry => [
       toProgress(entry[1]),
       runtimeTime(entry[1]),
+      timeLeft(entry[1]),
       sweep.sweep_id,
       entry[1].name,
       String(entry[1].monitor),

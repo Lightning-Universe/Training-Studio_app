@@ -98,7 +98,6 @@ class FailedMockObjective(Objective):
         self.best_model_path = params["best_model_path"]
         self.best_model_score = params["best_model_score"]
         self._backend = MagicMock()
-
         self.on_after_run()
 
     def on_after_run(self):

@@ -48,7 +48,8 @@ class Tensorboard(LightningWork, ControllerResource):
                         if not parent.exists():
                             parent.mkdir(exist_ok=True, parents=True)
                     fs.get(source_path, str(Path(target_path).resolve()))
-                    self.downloaded_file = True
+                    if not self.downloaded_file:
+                        self.downloaded_file = True
             if self.downloaded_file and self._process is None:
                 cmd = f"tensorboard --logdir={local_folder} --host {self.host} --port {self.port} {extras}"
                 self._process = Popen(cmd, shell=True, env=os.environ)

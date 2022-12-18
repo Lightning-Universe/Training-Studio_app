@@ -7,7 +7,7 @@ from lightning_training_studio.app.main import TrainingStudio
 
 description = "The Lightning PyTorch Training Studio App is an AI application that uses the Lightning framework to run experiments or sweep with state-of-the-art algorithms, locally or in the cloud."
 
-on_after_connect = dedent(
+on_connect_end = dedent(
     """
 Run these commands to run your first Sweep:
 
@@ -25,6 +25,8 @@ lightning run sweep train.py --model.lr "[0.001, 0.01]" --data.batch "[32, 64]" 
 app = LightningApp(
     TrainingStudio(),
     info=frontend.AppInfo(
-        title="Lightning PyTorch Training Studio", description=description  # , on_after_connect=on_after_connect
+        title="Lightning PyTorch Training Studio",
+        description=description,
+        on_connect_end=on_connect_end,
     ),
 )

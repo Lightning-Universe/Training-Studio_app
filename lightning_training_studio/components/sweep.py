@@ -4,7 +4,7 @@ import uuid
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
 from uuid import uuid4
 
-from lightning import BuildConfig, CloudCompute, LightningFlow
+from lightning import BuildConfig, CloudCompute, LightningFlow, LightningWork
 from lightning.app.components.python.tracer import Code
 from lightning.app.frontend import StaticWebFrontend
 from lightning.app.storage.mount import Mount
@@ -163,16 +163,22 @@ class Sweep(LightningFlow, ControllerResource):
                 if logger_url is not None and self.logger_url != logger_url:
                     self.logger_url = logger_url
 
-                if _check_stage(objective, Stage.FAILED):
-                    self.experiments[experiment_id]["stage"] = Stage.FAILED
-                    if getattr(objective, "start_time", None):
-                        self.experiments[experiment_id]["end_time"] = str(time.time())
-                    continue
-
                 objective.run(
                     params=self._algorithm.get_params(experiment_id),
                     restart_count=self.restart_count,
                 )
+
+                if _check_stage(objective, Stage.PENDING):
+                    self.experiments[experiment_id]["stage"] = Stage.PENDING
+                    continue
+
+                if self.experiments[experiment_id]["stage"] in (
+                    Stage.FAILED,
+                    Stage.PRUNED,
+                    Stage.STOPPED,
+                    Stage.SUCCEEDED,
+                ):
+                    continue
 
                 self.experiments[experiment_id]["progress"] = objective.progress
                 self.experiments[experiment_id]["total_parameters"] = getattr(objective, "total_parameters", None)
@@ -185,38 +191,31 @@ class Sweep(LightningFlow, ControllerResource):
                 if _check_stage(objective, Stage.FAILED):
                     self.experiments[experiment_id]["stage"] = Stage.FAILED
                     self.experiments[experiment_id]["exception"] = objective.status.message
+                    self.experiments[experiment_id]["end_time"] = str(time.time())
                     objective.stop()
 
-                if objective.reports and not self.experiments[experiment_id]["stage"] == "pruned":
+                if objective.reports:
                     if self._algorithm.should_prune(experiment_id, objective.reports):
                         self.experiments[experiment_id]["stage"] = Stage.PRUNED
                         objective.stop()
                         self.total_experiments_done += 1
                         continue
 
-                if self.stage != Stage.FAILED and self.experiments[experiment_id]["stage"] == Stage.PENDING:
-                    if self.experiments[experiment_id]["stage"] != objective.status:
-                        self.stage = Stage.RUNNING
-                        self.experiments[experiment_id]["stage"] = Stage.RUNNING
-
                 if self.check_finished_experiment(objective):
-                    if self.experiments[experiment_id]["stage"] == Stage.SUCCEEDED:
-                        pass
-                    elif self.experiments[experiment_id]["stage"] not in (Stage.PRUNED, Stage.STOPPED, Stage.FAILED):
-                        self._algorithm.experiment_end(experiment_id, objective.best_model_score)
-                        self._logger.on_after_experiment_end(
-                            sweep_id=self.sweep_id,
-                            experiment_id=objective.experiment_id,
-                            monitor=objective.monitor,
-                            score=objective.best_model_score,
-                            params=self._algorithm.get_params(experiment_id),
-                        )
-                        self.experiments[experiment_id]["best_model_score"] = objective.best_model_score
-                        self.experiments[experiment_id]["best_model_path"] = str(objective.best_model_path)
-                        self.experiments[experiment_id]["monitor"] = objective.monitor
-                        self.experiments[experiment_id]["stage"] = Stage.SUCCEEDED
-                        self.total_experiments_done += 1
-                        objective.stop()
+                    self._algorithm.experiment_end(experiment_id, objective.best_model_score)
+                    self._logger.on_after_experiment_end(
+                        sweep_id=self.sweep_id,
+                        experiment_id=objective.experiment_id,
+                        monitor=objective.monitor,
+                        score=objective.best_model_score,
+                        params=self._algorithm.get_params(experiment_id),
+                    )
+                    self.experiments[experiment_id]["best_model_score"] = objective.best_model_score
+                    self.experiments[experiment_id]["best_model_path"] = str(objective.best_model_path)
+                    self.experiments[experiment_id]["monitor"] = objective.monitor
+                    self.experiments[experiment_id]["stage"] = Stage.SUCCEEDED
+                    self.total_experiments_done += 1
+                    objective.stop()
 
         if all(
             self.experiments[experiment_id]["stage"] == Stage.FAILED for experiment_id in range(self.num_experiments)
@@ -300,6 +299,19 @@ class Sweep(LightningFlow, ControllerResource):
             )
             setattr(self, f"w_{experiment_id}", objective)
             self.experiments[experiment_id]["stage"] = Stage.PENDING
+
+            # TODO: Remove when display name is merged
+            if hasattr(LightningWork, "_display_name"):
+                if isinstance(objective, LightningFlow):
+                    num_works = len([work for work in objective.works()])
+                    if num_works == 1:
+                        objective.works()[0].display_name = f"{self.sweep_id}/{experiment_config['name']}"
+                    else:
+                        for idx, work in enumerate(objective.works()):
+                            work.display_name = f"{self.sweep_id}/{experiment_config['name']}.{idx}"
+                else:
+                    objective.display_name = f"{self.sweep_id}/{experiment_config['name']}"
+
         return objective
 
     @classmethod
