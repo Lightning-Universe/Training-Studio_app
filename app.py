@@ -29,5 +29,4 @@ app = LightningApp(
         description=description,
         on_connect_end=on_connect_end,
     ),
-    log_level="info",
 )
