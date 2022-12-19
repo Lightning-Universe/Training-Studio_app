@@ -135,6 +135,7 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
             def __init__(self, work):
                 self.work = work
                 self.work.start_time = time.time()
+                self.progress_delta = 0.5
 
             def setup(
                 self,
@@ -148,10 +149,14 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
             @rank_zero_only
             def on_train_batch_end(self, trainer, pl_module, *args) -> None:
                 progress = 100 * (trainer.fit_loop.total_batch_idx + 1) / float(trainer.estimated_stepping_batches)
-                if progress > 100:
-                    self.work.progress = 100
-                else:
-                    self.work.progress = round(progress, 4)
+                if self.work.progress is None:
+                    if progress > self.progress_delta:
+                        self.work.progress = round(progress, 4)
+                elif round(progress, 4) - self.work.progress >= self.progress_delta:
+                    if progress > 100:
+                        self.work.progress = 100
+                    else:
+                        self.work.progress = round(progress, 4)
 
                 if not self.work.total_parameters:
                     if isinstance(trainer.strategy, strategies) and trainer.strategy.zero_stage_3:
@@ -167,12 +172,13 @@ class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
 
                 ckpt = trainer.checkpoint_callback
 
+                # Note: Don't store paths for now to reduce delta sizes.
                 if ckpt.best_model_score and ckpt.best_model_score != self.work.best_model_score:
-                    self.work.best_model_path = Path(ckpt.best_model_path)
+                    # self.work.best_model_path = Path(ckpt.best_model_path)
                     self.work.best_model_score = float(ckpt.best_model_score)
 
-                if ckpt.last_model_path:
-                    self.work.last_model_path = Path(ckpt.last_model_path)
+                # if ckpt.last_model_path and self.work.last_model_path is None:
+                #     self.work.last_model_path = Path(ckpt.last_model_path)
 
         def trainer_pre_fn(trainer, *args, **kwargs):
             callbacks = kwargs.get("callbacks", [])
