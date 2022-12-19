@@ -1,3 +1,4 @@
+import os
 from textwrap import dedent
 
 import lightning as L
@@ -21,6 +22,9 @@ curl -o train.py https://raw.githubusercontent.com/Lightning-AI/lightning-hpo/ma
 lightning run sweep train.py --model.lr "[0.001, 0.01]" --data.batch "[32, 64]" --algorithm="grid_search"
 """
 )
+
+# TODO: Use redis queue for now. Http Queue aren't scaling as well.
+os.environ["LIGHTNING_CLOUD_QUEUE_TYPE"] = "redis"
 
 app = L.LightningApp(
     TrainingStudio(),
