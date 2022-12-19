@@ -30,7 +30,8 @@ const statusToEnum = {
 
 const ComputeToMachines = {
   'cpu': '1 CPU',
-  'cpu-medium': '2 CPU',
+  'cpu-small': '2 CPU',
+  'cpu-medium': '8 CPU',
   'gpu': '1 T4',
   'gpu-fast': '1 V100',
   'gpu-fast-multi': '4 V100',
@@ -247,7 +248,7 @@ export function Experiments() {
   const experimentHeader = [
     'Progress',
     'Runtime',
-    'Time Left',
+    //'Time Left',
     'Sweep Name',
     'Name',
     'Monitor',
@@ -280,7 +281,7 @@ export function Experiments() {
     return Object.entries(sweep.experiments).map(entry => [
       toProgress(entry[1]),
       runtimeTime(entry[1]),
-      timeLeft(entry[1]),
+      //timeLeft(entry[1]),
       sweep.sweep_id,
       entry[1].name,
       String(entry[1].monitor),

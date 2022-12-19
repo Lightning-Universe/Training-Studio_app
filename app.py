@@ -1,6 +1,6 @@
 from textwrap import dedent
 
-from lightning import LightningApp
+import lightning as L
 from lightning.app.utilities import frontend
 
 from lightning_training_studio.app.main import TrainingStudio
@@ -22,11 +22,12 @@ lightning run sweep train.py --model.lr "[0.001, 0.01]" --data.batch "[32, 64]" 
 """
 )
 
-app = LightningApp(
+app = L.LightningApp(
     TrainingStudio(),
     info=frontend.AppInfo(
         title="Lightning PyTorch Training Studio",
         description=description,
         on_connect_end=on_connect_end,
     ),
+    flow_cloud_compute=L.CloudCompute("cpu-small"),
 )
