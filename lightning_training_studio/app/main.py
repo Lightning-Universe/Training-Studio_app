@@ -48,7 +48,7 @@ class TrainingStudio(LightningFlow):
                 DataConfig,
             ]
         )
-        self.db.cloud_compute = CloudCompute("cpu", disk_size=80)
+        self.db.cloud_compute = CloudCompute("cpu-small")
 
         self.has_setup = False
         self._db_client = None
