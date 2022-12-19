@@ -1,12 +1,22 @@
 import os
 import shutil
 import threading
+from threading import _shutdown, Thread
 
 import psutil
 import pytest
 from lightning.app.storage.path import _storage_root_dir
 from lightning.app.utilities.component import _set_context
 from lightning.app.utilities.packaging.app_config import _APP_CONFIG_FILENAME
+
+original_method = Thread._wait_for_tstate_lock
+
+
+def fn(self, *args, timeout=None, **kwargs):
+    original_method(self, *args, timeout=1, **kwargs)
+
+
+Thread._wait_for_tstate_lock = fn
 
 
 def pytest_sessionfinish(session, exitstatus):
@@ -31,6 +41,11 @@ def pytest_sessionfinish(session, exitstatus):
     for t in threading.enumerate():
         if t is not main_thread:
             t.join(0)
+
+    _shutdown()
+
+    # import signal
+    # os.kill(os.getpid(), signal.SIGTERM)
 
 
 @pytest.fixture(scope="function", autouse=True)

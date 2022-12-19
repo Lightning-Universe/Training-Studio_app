@@ -12,9 +12,9 @@ def test_tensorboard_controller(monkeypatch):
     tensorboard_controller = TensorboardController()
     monkeypatch.setattr(controller, "DatabaseClient", MockDatabaseClient)
     run = MagicMock()
-    stop = MagicMock()
+    delete = MagicMock()
     monkeypatch.setattr(tensorboard.Tensorboard, "run", run)
-    monkeypatch.setattr(tensorboard.Tensorboard, "stop", stop)
+    monkeypatch.setattr(tensorboard.Tensorboard, "delete", delete)
     monkeypatch.setattr(tensorboard.Tensorboard, "_check_run_is_implemented", lambda x: None)
     tensorboard_controller.run("a", "b")
     assert tensorboard_controller.db.data == {}
@@ -30,6 +30,7 @@ def test_tensorboard_controller(monkeypatch):
     run.assert_not_called()
     tensorboard_controller.run("a", "b")
     run.assert_called()
+    tensorboard_controller.r["a"]._backend = MagicMock()
     tensorboard_obj_1 = tensorboard_controller.r["a"]
     assert isinstance(tensorboard_obj_1, tensorboard.Tensorboard)
     assert tensorboard_obj_1.collect_model() != config
@@ -39,9 +40,9 @@ def test_tensorboard_controller(monkeypatch):
     tensorboard_controller.run("a", "b")
     assert tensorboard_obj_1.stage == Stage.PENDING
 
-    stop.assert_not_called()
+    delete.assert_not_called()
     response = tensorboard_controller.stop_tensorboard(config)
-    stop.assert_called()
+    delete.assert_called()
     assert response == "Tensorboard `a` was stopped."
     assert tensorboard_controller.r == {}
     config = tensorboard_controller.db.select_all()[0]
