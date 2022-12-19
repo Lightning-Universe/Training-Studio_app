@@ -301,7 +301,7 @@ class Sweep(LightningFlow, ControllerResource):
             self.experiments[experiment_id]["stage"] = Stage.PENDING
 
             # TODO: Remove when display name is merged
-            if hasattr(LightningWork, "_display_name"):
+            if getattr(LightningWork, "display_name", None):
                 if isinstance(objective, LightningFlow):
                     num_works = len([work for work in objective.works()])
                     if num_works == 1:

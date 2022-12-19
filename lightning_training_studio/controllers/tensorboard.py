@@ -26,7 +26,7 @@ class TensorboardController(Controller):
                         cloud_compute=L.CloudCompute("cpu-small"),
                     )
                     # TODO: Remove when display name is merged
-                    if hasattr(L.LightningWork, "_display_name"):
+                    if getattr(L.LightningWork, "display_name", None):
                         self.r[work_name].display_name = f"{config.sweep_id}/tensorboard"
                     self.r[work_name].stage = Stage.PENDING
             elif config.desired_stage == Stage.STOPPED:
@@ -62,8 +62,8 @@ class TensorboardController(Controller):
         return f"Launched a Tensorboard `{config.sweep_id}`."
 
     def _stop_tensorboard(self, work_name):
-        # TODO: Move to delete once ready.
-        if hasattr(self.r[work_name], "delete"):
+        # TODO: Move to delete once merged.
+        if getattr(L.LightningWork, "delete", None):
             self.r[work_name].delete()
         else:
             self.r[work_name].stop()
