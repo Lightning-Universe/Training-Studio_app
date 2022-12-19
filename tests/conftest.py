@@ -1,7 +1,7 @@
 import os
 import shutil
 import threading
-from threading import _shutdown, Thread
+from threading import Thread
 
 import psutil
 import pytest
@@ -41,11 +41,6 @@ def pytest_sessionfinish(session, exitstatus):
     for t in threading.enumerate():
         if t is not main_thread:
             t.join(0)
-
-    _shutdown()
-
-    # import signal
-    # os.kill(os.getpid(), signal.SIGTERM)
 
 
 @pytest.fixture(scope="function", autouse=True)
