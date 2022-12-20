@@ -1,6 +1,6 @@
 jsonargparse[signatures]
 pytorch_lightning
-lightning>=1.8.5
+git+https://github.com/Lightning-AI/lightning.git@bbf57249f5aaac1664304194dc97f8349cdc4ef8
 lightning-jupyter
 torchvision
 optuna

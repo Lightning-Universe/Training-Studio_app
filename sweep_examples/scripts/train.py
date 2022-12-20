@@ -7,7 +7,7 @@ import torch.nn.functional as F
 import torchvision.transforms as T
 from lightning import LightningDataModule, LightningModule
 from lightning.pytorch.callbacks import ModelCheckpoint
-from lightning.pytorch.utilities.cli import LightningCLI
+from lightning.pytorch.cli import LightningCLI
 from torchvision.datasets import MNIST
 
 
