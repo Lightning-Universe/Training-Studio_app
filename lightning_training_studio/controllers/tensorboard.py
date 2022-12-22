@@ -63,7 +63,8 @@ class TensorboardController(Controller):
 
     def _stop_tensorboard(self, work_name):
         # TODO: Move to delete once merged.
-        if getattr(L.LightningWork, "delete", None):
+        work = self.r[work_name]
+        if getattr(work._backend, "delete_work", None):
             self.r[work_name].delete()
         else:
             self.r[work_name].stop()
