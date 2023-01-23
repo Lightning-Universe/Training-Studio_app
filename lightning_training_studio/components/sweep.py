@@ -69,6 +69,7 @@ class Sweep(LightningFlow, ControllerResource):
         pip_install_source: bool = False,
         artifacts_path: Optional[str] = None,
         data: Optional[List[Tuple[str, str]]] = None,
+        logger_kwargs: Optional[Dict[str, Any]] = None,
         **objective_kwargs: Any,
     ):
         """The Sweep class enables to easily run a Python Script with Lightning
