@@ -8,7 +8,6 @@ from tests.helpers import MockDatabaseClient
 
 
 def test_tensorboard_controller(monkeypatch):
-
     tensorboard_controller = TensorboardController()
     monkeypatch.setattr(controller, "DatabaseClient", MockDatabaseClient)
     run = MagicMock()

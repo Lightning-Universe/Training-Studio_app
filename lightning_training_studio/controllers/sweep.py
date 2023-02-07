@@ -21,7 +21,6 @@ from lightning_training_studio.utilities.enum import Stage
 
 
 class SweepController(Controller):
-
     model = SweepConfig
 
     def __init__(self, *args, **kwargs):

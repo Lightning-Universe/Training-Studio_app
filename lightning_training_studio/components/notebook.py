@@ -20,7 +20,6 @@ from lightning_training_studio.utilities.enum import Stage
 
 
 class JupyterLab(JupyterLab, ControllerResource):
-
     model = NotebookConfig
 
     def __init__(self, config: NotebookConfig, **kwargs):

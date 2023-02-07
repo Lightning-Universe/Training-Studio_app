@@ -75,7 +75,6 @@ class DownloadArtifactsConfigResponse(BaseModel):
 
 
 class DownloadArtifactsCommand(ClientCommand):
-
     description = "Download artifacts for experiments or sweeps."
 
     def run(self) -> None:

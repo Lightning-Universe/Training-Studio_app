@@ -71,7 +71,6 @@ class TrainingStudio(LightningFlow):
 
         # Run every seconds.
         if self.schedule(f"* * * * * {self.seconds}"):
-
             # 3: Run the controllers
             self.sweep_controller.run(self.db.db_url, token=self._token)
             # self.notebook_controller.run(self.db.db_url)

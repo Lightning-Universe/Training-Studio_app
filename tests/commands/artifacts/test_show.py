@@ -12,11 +12,9 @@ from lightning_training_studio.commands.artifacts.show import ShowArtifactsComma
 
 
 def test_show_artifacts(monkeypatch, tmpdir):
-
     original_sys_argv = sys.argv
 
     with tempfile.TemporaryDirectory() as tmp:
-
         # 1: Create some shared files.
         path = Path(osp.join(tmp, "a/b/c/d/example.txt"))
         os.makedirs(path.parent, exist_ok=True)

@@ -214,7 +214,6 @@ def parse_args(args):
             new_args.append(a)
 
     for arg_candidate in new_args:
-
         # only look at --keys
         if "--" not in arg_candidate:
             parsed[last_arg].append(arg_candidate)
@@ -313,7 +312,6 @@ def parse_hydra(script_args, args):
 
 
 class RunSweepCommand(ClientCommand):
-
     description = """
         To run a sweep, provide a script, the cloud compute to use, and an optional data.
         Hyperparameters can be provided as lists or using distributions. Hydra multirun syntax is also supported.

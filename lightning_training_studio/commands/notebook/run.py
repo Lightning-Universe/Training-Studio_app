@@ -13,7 +13,6 @@ from lightning_training_studio.utilities.utils import pydantic_column_type
 
 
 class NotebookConfig(SQLModel, table=True):
-
     __table_args__ = {"extend_existing": True}
 
     notebook_name: str = Field(primary_key=True)

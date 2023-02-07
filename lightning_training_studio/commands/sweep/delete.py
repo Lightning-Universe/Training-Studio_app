@@ -9,7 +9,6 @@ class DeleteSweepConfig(BaseModel):
 
 
 class DeleteSweepCommand(ClientCommand):
-
     description = "To delete a sweep, note that the artifacts will still be available after the operation is complete."
 
     def run(self) -> None:

@@ -2,7 +2,6 @@ from unittest.mock import MagicMock
 
 
 def test_tensorboard_logger(monkeypatch):
-
     from lightning_training_studio.loggers import tensorboard
 
     pytorch_lightning = MagicMock()

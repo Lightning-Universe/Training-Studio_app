@@ -20,7 +20,6 @@ def objective(trial: optuna.Trial):
 
     # 4. Optimize for 100 steps
     for step in range(100):
-
         # 4.1 Fit the classifier on the training data
         clf.partial_fit(train_x, train_y, classes=classes)
 

@@ -10,7 +10,6 @@ from lightning_training_studio.commands.sweep.run import CustomLocalSourceCodeDi
 
 
 class RunExperimentCommand(ClientCommand):
-
     description = """To run an experiment, provide a script, the cloud compute to use, and optional data."""
 
     def run(self) -> None:

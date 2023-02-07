@@ -9,7 +9,6 @@ class StopExperimentConfig(BaseModel):
 
 
 class StopExperimentCommand(ClientCommand):
-
     description = "To stop an experiment, note that currently experiments cannot be resumed."
 
     def run(self) -> None:

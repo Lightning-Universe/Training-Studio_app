@@ -4,7 +4,6 @@ from lightning_training_studio.commands.data.create import DataConfig
 
 
 def test_create_drive():
-
     with pytest.raises(Exception, match='The `source` needs to start with "s3://"'):
         DataConfig(name="str", source="a", mount_path="b")
 
