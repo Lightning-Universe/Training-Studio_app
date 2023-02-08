@@ -2,6 +2,7 @@ import os
 from typing import Any, Dict, Optional
 
 from lightning import LightningFlow
+from lightning.pytorch.loggers import WandbLogger as _WandbLogger
 
 from lightning_training_studio.loggers.logger import Logger
 from lightning_training_studio.utilities.imports import _IS_PYTORCH_LIGHTNING_AVAILABLE, _IS_WANDB_AVAILABLE
@@ -15,7 +16,7 @@ if _IS_WANDB_AVAILABLE:
     import wandb
 
 
-class WandbLogger(Logger):
+class WandbLogger(_WandbLogger, Logger):
     def __init__(self):
         super().__init__()
         self._validate_auth()
