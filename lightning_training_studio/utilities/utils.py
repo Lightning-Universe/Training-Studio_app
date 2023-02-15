@@ -69,7 +69,7 @@ def pydantic_column_type(pydantic_type):
             json_encoder=json,
         ):
             self.json_encoder = json_encoder
-            super(PydanticJSONType, self).__init__()
+            super().__init__()
 
         def bind_processor(self, dialect):
             impl_processor = self.impl.bind_processor(dialect)

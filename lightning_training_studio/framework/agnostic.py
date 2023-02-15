@@ -20,7 +20,7 @@ class ObjectiveResult(TypedDict):
 
 class Objective(TracerPythonScript, ABC):
     def objective(self, *args, **kwargs):
-        """Override with your own objective logic"""
+        """Override with your own objective logic."""
 
     def __init__(
         self,

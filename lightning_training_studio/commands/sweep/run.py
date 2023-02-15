@@ -125,7 +125,7 @@ class UniformDistributionParser(DistributionParser):
     @staticmethod
     def parse(argument: str):
         name, value = argument.split("=")
-        regex = "[0-9]*\.[0-9]*"  # noqa W605
+        regex = r"[0-9]*\.[0-9]*"  # noqa W605
         low, high = re.findall(regex, value)
         return {name: {"distribution": "uniform", "params": {"low": float(low), "high": float(high)}}}
 
@@ -138,7 +138,7 @@ class LogUniformDistributionParser(DistributionParser):
     @staticmethod
     def parse(argument: str):
         name, value = argument.split("=")
-        regex = "[0-9]+\.[0-9]+|[0-9]+"  # noqa W605
+        regex = r"[0-9]+\.[0-9]+|[0-9]+"  # noqa W605
         low, high = re.findall(regex, value)
         return {name: {"distribution": "log_uniform", "params": {"low": float(low), "high": float(high)}}}
 
@@ -459,7 +459,7 @@ class RunSweepCommand(ClientCommand):
             and Path(hparams.requirements[0]).resolve().exists()  # noqa: W503
         ):
             requirements_path = Path(hparams.requirements[0]).resolve()
-            with open(requirements_path, "r") as f:
+            with open(requirements_path) as f:
                 hparams.requirements = [line.replace("\n", "") for line in f.readlines() if line.strip()]
 
         repo = CustomLocalSourceCodeDir(path=Path(hparams.script_path).parent.resolve())
