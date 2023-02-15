@@ -152,3 +152,7 @@ node_modules/
 docs/build
 docs/_build
 cifar-10-batches-py
+
+
+lightning_training_studio/app/ui/src/generated
+lightning_training_studio/app/ui/build
