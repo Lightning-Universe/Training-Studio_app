@@ -12,7 +12,6 @@ from lightning_training_studio.utilities.utils import get_primary_key
 
 
 class ControllerResource:
-
     model: Type[SQLModel]
 
     def on_collect_model(self, model_dict):
@@ -26,7 +25,6 @@ class ControllerResource:
 
 
 class Controller(LightningFlow):
-
     model: Type[SQLModel]
 
     def __init__(self, drive: Optional[Drive] = None):

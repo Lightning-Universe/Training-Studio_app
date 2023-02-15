@@ -18,7 +18,6 @@ from tests.helpers import MockDatabaseClient, MockObjective
 
 
 def test_sweep_controller(monkeypatch):
-
     sweep = Sweep(
         sweep_id="a",
         script_path=__file__,

@@ -7,7 +7,6 @@ from lightning_training_studio.loggers.streamlit.hyperplot import HiPlotFlow, re
 
 
 def test_hiplot(monkeypatch):
-
     hiplot = MagicMock()
     monkeypatch.setitem(sys.modules, "hiplot", hiplot)
 

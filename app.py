@@ -6,7 +6,10 @@ from lightning.app.utilities import frontend
 
 from lightning_training_studio.app.main import TrainingStudio
 
-description = "The Lightning PyTorch Training Studio App is an AI application that uses the Lightning framework to run experiments or sweep with state-of-the-art algorithms, locally or in the cloud."
+description = (
+    "The Lightning PyTorch Training Studio App is an AI application that uses the Lightning framework"
+    " to run experiments or sweep with state-of-the-art algorithms, locally or in the cloud."
+)
 
 on_connect_end = dedent(
     """

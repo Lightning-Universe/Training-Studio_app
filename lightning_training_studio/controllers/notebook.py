@@ -10,7 +10,6 @@ from lightning_training_studio.utilities.enum import Stage
 
 
 class NotebookController(Controller):
-
     model = NotebookConfig
 
     def on_reconcile_start(self, configs: List[NotebookConfig]):

@@ -13,7 +13,6 @@ from lightning_training_studio.utilities.enum import Stage
 
 
 class Tensorboard(LightningWork, ControllerResource):
-
     model = TensorboardConfig
 
     def __init__(self, *args, drive: Drive, config: TensorboardConfig, **kwargs):

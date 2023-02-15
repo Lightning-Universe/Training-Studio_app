@@ -13,7 +13,6 @@ from lightning_training_studio.utilities.enum import Stage
 
 
 def test_stop_sweeps_experiment(monkeypatch):
-
     with open(os.path.join(os.path.dirname(__file__), "../sweep/sweep_1.json"), "rb") as f:
         data = json.load(f)
 

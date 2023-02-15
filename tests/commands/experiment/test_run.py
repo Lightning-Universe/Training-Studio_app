@@ -10,7 +10,6 @@ from tests.helpers import _create_client_command_mock
 
 
 def test_experiment_run_parsing_file_absent(monkeypatch):
-
     monkeypatch.setattr(sys, "argv", ["", "a"])
 
     with pytest.raises(FileNotFoundError, match="The provided script doesn't exist"):
@@ -19,7 +18,6 @@ def test_experiment_run_parsing_file_absent(monkeypatch):
 
 
 def test_experiment_run_parsing_no_arguments(monkeypatch):
-
     monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
 
     monkeypatch.setattr(sys, "argv", ["", __file__])
@@ -74,7 +72,6 @@ def test_experiment_run_parsing_no_arguments(monkeypatch):
 
 
 def test_experiment_run_parsing_arguments(monkeypatch):
-
     monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
 
     monkeypatch.setattr(
@@ -145,7 +142,6 @@ def test_experiment_run_parsing_arguments(monkeypatch):
 
 
 def test_experiment_run_multiple_requirements(monkeypatch):
-
     monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
 
     monkeypatch.setattr(
@@ -168,7 +164,6 @@ def test_experiment_run_multiple_requirements(monkeypatch):
 
 
 def test_experiment_run_multiple_packages(monkeypatch):
-
     monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
 
     monkeypatch.setattr(
@@ -191,7 +186,6 @@ def test_experiment_run_multiple_packages(monkeypatch):
 
 
 def test_experiment_run_parsing_requirements(monkeypatch):
-
     monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
 
     requirements_file = os.path.join(os.path.dirname(__file__), "test_requirements")
@@ -247,7 +241,6 @@ def test_experiment_run_parsing_requirements(monkeypatch):
 
 
 def test_experiment_run_parsing_pip_install(monkeypatch):
-
     monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
 
     monkeypatch.setattr(sys, "argv", ["", __file__, "--pip-install-source"])

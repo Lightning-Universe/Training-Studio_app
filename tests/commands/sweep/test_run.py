@@ -15,7 +15,6 @@ def run_sweep_command(monkeypatch, argv, check):
 
 
 def test_sweep_run_parsing_file_absent(monkeypatch):
-
     monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
 
     with pytest.raises(ValueError, match="The provided script doesn't exist: train2.py"):
@@ -25,7 +24,6 @@ def test_sweep_run_parsing_file_absent(monkeypatch):
 
 
 def test_sweep_run_parsing_file_no_arguments(monkeypatch):
-
     monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
 
     def check_0(config):
@@ -42,7 +40,6 @@ def test_sweep_run_parsing_file_no_arguments(monkeypatch):
 
 
 def test_sweep_run_parsing_file_single_list(monkeypatch):
-
     monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
 
     def check_0(config):
@@ -56,7 +53,6 @@ def test_sweep_run_parsing_file_single_list(monkeypatch):
 
 
 def test_sweep_run_parsing_file_two_lists(monkeypatch):
-
     monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
 
     def check_0(config):
@@ -71,7 +67,6 @@ def test_sweep_run_parsing_file_two_lists(monkeypatch):
 
 
 def test_sweep_run_parsing_file_two_lists_hydra(monkeypatch):
-
     monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
 
     def check_0(config):
@@ -86,7 +81,6 @@ def test_sweep_run_parsing_file_two_lists_hydra(monkeypatch):
 
 
 def test_sweep_run_parsing_file_list_and_script_arguments(monkeypatch):
-
     monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
 
     def check_0(config):
@@ -100,7 +94,6 @@ def test_sweep_run_parsing_file_list_and_script_arguments(monkeypatch):
 
 
 def test_sweep_run_parsing_range(monkeypatch):
-
     monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
 
     def check_0(config):
@@ -116,7 +109,6 @@ def test_sweep_run_parsing_range(monkeypatch):
 
 
 def test_sweep_run_parsing_range_hydra(monkeypatch):
-
     monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
 
     def check_0(config):
@@ -132,7 +124,6 @@ def test_sweep_run_parsing_range_hydra(monkeypatch):
 
 
 def test_sweep_run_parsing_random_search(monkeypatch):
-
     monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
 
     def check_0(config):
@@ -203,7 +194,6 @@ def test_sweep_run_parsing_random_search(monkeypatch):
 
 
 def test_sweep_run_parsing_random_search_hydra(monkeypatch):
-
     monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
 
     def check_0(config):
@@ -273,7 +263,6 @@ def test_sweep_run_parsing_random_search_hydra(monkeypatch):
 
 
 def test_sweep_run_parsing_random_search_further_distributions(monkeypatch):
-
     monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
 
     def check_1(config):
@@ -306,7 +295,6 @@ def test_sweep_run_parsing_random_search_further_distributions(monkeypatch):
 
 
 def test_parsing(monkeypatch):
-
     monkeypatch.setattr(run, "CustomLocalSourceCodeDir", MagicMock())
 
     def check(config):

@@ -4,7 +4,6 @@ from rich.table import Table
 
 
 class ShowDatasetsCommand(ClientCommand):
-
     description = "To list all dataset associations."
 
     def run(self) -> None:

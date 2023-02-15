@@ -15,7 +15,6 @@ from lightning_training_studio.controllers.sweep import SweepController
 
 
 def test_show_sweeps_client(monkeypatch):
-
     ori_sys_argv = sys.argv
 
     with open(os.path.join(os.path.dirname(__file__), "sweep_1.json"), "rb") as f:

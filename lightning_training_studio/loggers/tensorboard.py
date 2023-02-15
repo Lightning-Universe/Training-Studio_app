@@ -49,7 +49,6 @@ class DriveTensorBoardLogger(TensorBoardLogger):
         destination_path = self.drive._to_shared_path(self.log_dir, component_name=self.drive.component_name)
 
         def _copy(from_path: Path, to_path: Path) -> Optional[Exception]:
-
             try:
                 # NOTE: S3 does not have a concept of directories, so we do not need to create one.
                 if isinstance(fs, LocalFileSystem):

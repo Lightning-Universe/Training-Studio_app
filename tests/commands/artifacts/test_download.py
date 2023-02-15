@@ -14,11 +14,9 @@ from lightning_training_studio.commands.artifacts.download import (
 
 
 def test_download_artifacts(monkeypatch, tmpdir):
-
     original_sys_argv = sys.argv
 
     with tempfile.TemporaryDirectory() as tmp:
-
         path = Path(osp.join(tmp, "a/something/drive/c/example.txt"))
         os.makedirs(path.parent, exist_ok=True)
         with open(path, "w") as f:

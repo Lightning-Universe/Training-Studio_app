@@ -59,7 +59,7 @@ Now, you can optimize it locally.
 python -m lightning run app 1_app_agnostic.py
 ```
 
-or with ``--cloud`` to run it in the cloud.
+or with `--cloud` to run it in the cloud.
 
 ```bash
 python -m lightning run app 1_app_agnostic.py --cloud
@@ -83,7 +83,12 @@ import os.path as ops
 from lightning import LightningApp
 from lightning_training_studio.algorithm import OptunaAlgorithm
 from lightning_training_studio import Sweep, CloudCompute
-from lightning_training_studio.distributions import Uniform, IntUniform, Categorical, LogUniform
+from lightning_training_studio.distributions import (
+    Uniform,
+    IntUniform,
+    Categorical,
+    LogUniform,
+)
 
 app = LightningApp(
     Sweep(
@@ -133,7 +138,10 @@ Below is an example of how you can train a 1.6B parameter GPT2 transformer model
 
 ```python
 import pytorch_lightning as pl
-from lightning_transformers.task.nlp.language_modeling import LanguageModelingDataModule, LanguageModelingTransformer
+from lightning_transformers.task.nlp.language_modeling import (
+    LanguageModelingDataModule,
+    LanguageModelingTransformer,
+)
 from transformers import AutoTokenizer
 
 model_name = "gpt2-xl"
@@ -169,16 +177,15 @@ Run the following command to run a multi node training (2 nodes of 4 V100 GPUS e
 lightning run experiment big_model.py --requirements deepspeed lightning-transformers==0.2.3 --num_nodes=2 --cloud_compute=gpu-fast-multi --disk_size=80
 ```
 
-
 ______________________________________________________________________
 
 ### 3. App Sklearn
 
 This example shows you how to use Lightning HPO with sklearn and advanced pruning example.
 
-Below, we are going to convert [Optuna Efficient Optimization Algorithms](https://optuna.readthedocs.io/en/stable/tutorial/10_key_features/003_efficient_optimization_algorithms.html#sphx-glr-tutorial-10-key-features-003-efficient-optimization-algorithms-py>) into a Lightning App.
+Below, we are going to convert [Optuna Efficient Optimization Algorithms](https://optuna.readthedocs.io/en/stable/tutorial/10_key_features/003_efficient_optimization_algorithms.html#sphx-glr-tutorial-10-key-features-003-efficient-optimization-algorithms-py%3E) into a Lightning App.
 
-The Optuna example optimize the value (e.g learning-rate) of a ``SGDClassifier`` from ``sklearn`` trained over the [Iris Dataset](https://archive.ics.uci.edu/ml/datasets/iris).
+The Optuna example optimize the value (e.g learning-rate) of a `SGDClassifier` from `sklearn` trained over the [Iris Dataset](https://archive.ics.uci.edu/ml/datasets/iris).
 
 The example above has been re-organized below in order to run as Lightning App.
 

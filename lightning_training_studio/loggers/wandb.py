@@ -33,7 +33,6 @@ class WandbLogger(Logger):
         title: Optional[str] = None,
         desc: Optional[str] = None,
     ):
-
         from wandb.apis import reports  # noqa F401
 
         if self.sweep_id:
