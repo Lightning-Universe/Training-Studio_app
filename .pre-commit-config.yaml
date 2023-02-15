@@ -62,6 +62,7 @@ repos:
       - id: prettier
         exclude: |
           (?x)(
+              ^lightning_training_studio/app/ui/build|
               README.md|
               ^tests|
               ^docs
