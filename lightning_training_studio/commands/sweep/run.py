@@ -401,7 +401,8 @@ class RunSweepCommand(ClientCommand):
             "--dataset",
             nargs="+",
             default=[],
-            help="Provide a list of datasets (and optionally the mount_path in the format `<name>:<mount_path>`) to mount to the experiments.",
+            help="Provide a list of datasets (and optionally the mount_path"
+            " in the format `<name>:<mount_path>`) to mount to the experiments.",
         )
         parser.add_argument(
             "--syntax",

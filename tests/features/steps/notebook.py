@@ -21,7 +21,7 @@ def step_impl(context):
 
 
 @when("I execute lightning stop notebook")
-def step_impl(context):
+def step_impl(context):  # noqa: F811
     cmd = [sys.executable, "-m", "lightning", "stop", "notebook", f"--name={context.notebook_name}"]
 
     process = subprocess.Popen(
@@ -32,7 +32,7 @@ def step_impl(context):
 
 
 @when("I execute lightning show notebooks")
-def step_impl(context):
+def step_impl(context):  # noqa: F811
     cmd = [sys.executable, "-m", "lightning", "show", "notebooks"]
 
     process = subprocess.Popen(
@@ -48,7 +48,7 @@ def step_impl(context):
 
 
 @given("a notebook is running")
-def step_impl(context):
+def step_impl(context):  # noqa: F811
     context.execute_steps(
         """
         When I execute lightning run notebook
@@ -63,7 +63,7 @@ def step_impl(context):
 
 
 @then("I can see a notebook in the UI")
-def step_impl(context):
+def step_impl(context):  # noqa: F811
     page: Page = context.page
 
     locator = page.frame_locator("iframe").locator(f"text={context.notebook_name}")
@@ -71,7 +71,7 @@ def step_impl(context):
 
 
 @then("I can open the notebook")
-def step_impl(context):
+def step_impl(context):  # noqa: F811
     page: Page = context.page
 
     locator = page.frame_locator("iframe").locator("table tbody tr", has_text=context.notebook_name)
@@ -89,17 +89,17 @@ def check_notebook_status_ui(context, status):
 
 
 @then("the notebook status in the UI is stopped")
-def step_impl(context):
+def step_impl(context):  # noqa: F811
     check_notebook_status_ui(context, "Stopped")
 
 
 @then("the notebook status in the UI is running")
-def step_impl(context):
+def step_impl(context):  # noqa: F811  # noqa: F811
     check_notebook_status_ui(context, "Running")
 
 
 @then("I can see a notebook in the terminal")
-def step_impl(context):
+def step_impl(context):  # noqa: F811
     # Notebook name can be clipped so just look for first 8 characters
     assert context.notebook_name[:8] in context.stdout
 
@@ -116,10 +116,10 @@ def check_notebook_status_terminal(context, status):
 
 
 @then("the notebook status in the terminal is stopped")
-def step_impl(context):
+def step_impl(context):  # noqa: F811
     check_notebook_status_terminal(context, "stopped")
 
 
 @then("the notebook status in the terminal is running")
-def step_impl(context):
+def step_impl(context):  # noqa: F811
     check_notebook_status_terminal(context, "running")

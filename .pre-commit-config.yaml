@@ -65,6 +65,7 @@ repos:
               ^lightning_training_studio/app/ui/build|
               ^lightning_training_studio/app/ui/src/generated|
               README.md|
+              ^.github|
               ^tests|
               ^docs
           )
