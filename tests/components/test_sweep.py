@@ -11,7 +11,6 @@ from tests.helpers import FailedMockObjective, MockObjective
 
 
 def test_sweep_with_failed_experiments():
-
     sweep = Sweep(
         5,
         parallel_experiments=3,
@@ -54,7 +53,6 @@ class PrunedMockObjectiveSuperRun(MockObjective):
 
 
 def test_sweep_pruned():
-
     sweep = Sweep(
         total_experiments=25,
         objective_cls=PrunedMockObjectiveSuperRun,

@@ -34,7 +34,6 @@ def _show_sweeps(sweeps: List[SweepConfig]):
 
 
 class ShowSweepsCommand(ClientCommand):
-
     description = "To show all sweeps and their statuses, or the experiments for a given sweep."
 
     # TODO: (tchaton) Upstream to Lightning

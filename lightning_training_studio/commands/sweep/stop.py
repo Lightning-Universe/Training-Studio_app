@@ -9,7 +9,6 @@ class StopSweepConfig(BaseModel):
 
 
 class StopSweepCommand(ClientCommand):
-
     description = "To stop all experiments in a sweep, note that currently sweeps cannot be resumed."
 
     def run(self) -> None:

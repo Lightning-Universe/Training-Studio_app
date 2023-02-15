@@ -37,7 +37,7 @@ def step_impl(context):
 
 
 @when("I execute lightning stop sweep")
-def step_impl(context):
+def step_impl(context):  # noqa: F811
     cmd = [sys.executable, "-m", "lightning", "stop", "sweep", f"--name={context.sweep_name}"]
 
     process = subprocess.Popen(
@@ -48,7 +48,7 @@ def step_impl(context):
 
 
 @when("I execute lightning show sweeps")
-def step_impl(context):
+def step_impl(context):  # noqa: F811
     cmd = [sys.executable, "-m", "lightning", "show", "sweeps"]
 
     process = subprocess.Popen(
@@ -64,7 +64,7 @@ def step_impl(context):
 
 
 @then("I can see a sweep in the UI")
-def step_impl(context):
+def step_impl(context):  # noqa: F811
     page: Page = context.page
     page.frame_locator("iframe").locator("text=Sweeps & Experiments").click()
 
@@ -73,7 +73,7 @@ def step_impl(context):
 
 
 @then("I can open the logger")
-def step_impl(context):
+def step_impl(context):  # noqa: F811
     page: Page = context.page
 
     locator = page.frame_locator("iframe").locator("table tbody tr", has_text=context.sweep_name)
@@ -92,17 +92,17 @@ def check_sweep_status_ui(context, status):
 
 
 @then("the sweep status in the UI is stopped")
-def step_impl(context):
+def step_impl(context):  # noqa: F811
     check_sweep_status_ui(context, "Stopped")
 
 
 @then("the sweep status in the UI is running")
-def step_impl(context):
+def step_impl(context):  # noqa: F811
     check_sweep_status_ui(context, "Running")
 
 
 @then("I can see a sweep in the terminal")
-def step_impl(context):
+def step_impl(context):  # noqa: F811
     # Sweep name can be clipped so just look for first 8 characters
     assert context.sweep_name[:8] in context.stdout
 
@@ -119,17 +119,17 @@ def check_sweep_status_terminal(context, status):
 
 
 @then("the sweep status in the terminal is stopped")
-def step_impl(context):
+def step_impl(context):  # noqa: F811
     check_sweep_status_terminal(context, "stopped")
 
 
 @then("the sweep status in the terminal is running")
-def step_impl(context):
+def step_impl(context):  # noqa: F811
     check_sweep_status_terminal(context, "running")
 
 
 @given("a sweep is running")
-def step_impl(context):
+def step_impl(context):  # noqa: F811
     context.execute_steps(
         """
         When I execute lightning run sweep

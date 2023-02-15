@@ -18,7 +18,6 @@ class LightningHPOTestApp(LightningTestApp):
 @mock.patch.dict(os.environ, {"WANDB_ENTITY": "thomas-chaton"})
 @mock.patch.dict(os.environ, {"WANDB_API_KEY": "eabe6ced59f74db139187745544572f81ef76162"})
 def test_custom_objective_sweep_streamlit():
-
     command_line = [
         os.path.join(os.getcwd(), "sweep_examples/1_app_agnostic.py"),
         "--open-ui",
@@ -31,7 +30,6 @@ def test_custom_objective_sweep_streamlit():
 @mock.patch.dict(os.environ, {"WANDB_ENTITY": "thomas-chaton"})
 @mock.patch.dict(os.environ, {"WANDB_API_KEY": "eabe6ced59f74db139187745544572f81ef76162"})
 def test_pytorch_lightning_objective_sweep_wandb():
-
     command_line = [
         os.path.join(os.getcwd(), "sweep_examples/2_app_pytorch_lightning.py"),
         "--open-ui",
@@ -42,7 +40,6 @@ def test_pytorch_lightning_objective_sweep_wandb():
 
 
 def test_pytorch_lightning_custom_objective_sweep():
-
     command_line = [
         os.path.join(os.getcwd(), "sweep_examples/3_app_sklearn.py"),
         "--open-ui",

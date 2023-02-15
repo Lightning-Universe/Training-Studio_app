@@ -41,7 +41,6 @@ class CustomBuildConfig(BuildConfig):
 
 
 class Sweep(LightningFlow, ControllerResource):
-
     model = SweepConfig
 
     def __init__(
@@ -147,11 +146,9 @@ class Sweep(LightningFlow, ControllerResource):
             return
 
         for experiment_id in range(self.num_experiments):
-
             objective = self._get_objective(experiment_id)
 
             if objective:
-
                 if _check_stage(objective, Stage.NOT_STARTED):
                     self._algorithm.experiment_start(experiment_id)
                     self._logger.on_after_experiment_start(self.sweep_id)
@@ -319,7 +316,6 @@ class Sweep(LightningFlow, ControllerResource):
     def from_config(
         cls, config: SweepConfig, code: Optional[Code] = None, data: Optional[List[Tuple[str, str]]] = None
     ):
-
         if config.algorithm == "grid_search":
             algorithm = GridSearch({k: v.dict()["params"]["choices"] for k, v in config.distributions.items()})
             config.total_experiments = algorithm.total_experiments

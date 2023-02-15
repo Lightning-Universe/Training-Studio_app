@@ -11,7 +11,6 @@ from lightning_training_studio.distributions.distributions import LogUniform
 
 class MyObjective(Objective):
     def objective(self, alpha: float):
-
         iris = datasets.load_iris()
         classes = list(set(iris.target))
         train_x, valid_x, train_y, valid_y = train_test_split(

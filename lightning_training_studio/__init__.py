@@ -26,7 +26,7 @@ from lightning_training_studio.utilities.utils import HPOCloudCompute  # noqa: E
 _PACKAGE_ROOT = os.path.dirname(__file__)
 _PROJECT_ROOT = os.path.dirname(_PACKAGE_ROOT)
 
-from optuna.storages._in_memory import _logger
+from optuna.storages._in_memory import _logger  # noqa: E501 E402
 
 _logger.disabled = True
 _logger.propagate = False

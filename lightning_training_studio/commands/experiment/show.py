@@ -35,7 +35,6 @@ def _show_experiments(sweeps: List[SweepConfig]):
 
 
 class ShowExperimentsCommand(ClientCommand):
-
     description = "To show experiments and their statuses."
 
     def run(self) -> None:

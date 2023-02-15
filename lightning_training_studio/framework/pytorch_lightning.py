@@ -12,9 +12,8 @@ from lightning_training_studio.framework.agnostic import Objective
 
 
 class PyTorchLightningObjective(Objective, PyTorchLightningScriptRunner):
-
-    """This component executes a PyTorch Lightning script
-    and injects a callback in the Trainer at runtime in order to start tensorboard server."""
+    """This component executes a PyTorch Lightning script and injects a callback in the Trainer at runtime in order to
+    start tensorboard server."""
 
     def __init__(
         self,

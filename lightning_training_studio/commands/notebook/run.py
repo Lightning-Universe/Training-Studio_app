@@ -13,7 +13,6 @@ from lightning_training_studio.utilities.utils import pydantic_column_type
 
 
 class NotebookConfig(SQLModel, table=True):
-
     __table_args__ = {"extend_existing": True}
 
     notebook_name: str = Field(primary_key=True)
@@ -47,7 +46,7 @@ class RunNotebookCommand(ClientCommand):
         hparams, _ = parser.parse_known_args()
 
         if isinstance(hparams.requirements, str) and os.path.exists(hparams.requirements):
-            with open(hparams.requirements, "r") as f:
+            with open(hparams.requirements) as f:
                 hparams.requirements = [line.replace("\n", "") for line in f.readlines()]
 
         id = str(uuid4()).split("-")[0]

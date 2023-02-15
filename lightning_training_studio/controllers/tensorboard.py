@@ -12,7 +12,6 @@ from lightning_training_studio.utilities.enum import Stage
 
 
 class TensorboardController(Controller):
-
     model = TensorboardConfig
 
     def on_reconcile_start(self, configs: List[TensorboardConfig]):

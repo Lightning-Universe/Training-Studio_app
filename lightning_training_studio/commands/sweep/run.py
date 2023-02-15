@@ -125,7 +125,7 @@ class UniformDistributionParser(DistributionParser):
     @staticmethod
     def parse(argument: str):
         name, value = argument.split("=")
-        regex = "[0-9]*\.[0-9]*"  # noqa W605
+        regex = r"[0-9]*\.[0-9]*"  # noqa W605
         low, high = re.findall(regex, value)
         return {name: {"distribution": "uniform", "params": {"low": float(low), "high": float(high)}}}
 
@@ -138,7 +138,7 @@ class LogUniformDistributionParser(DistributionParser):
     @staticmethod
     def parse(argument: str):
         name, value = argument.split("=")
-        regex = "[0-9]+\.[0-9]+|[0-9]+"  # noqa W605
+        regex = r"[0-9]+\.[0-9]+|[0-9]+"  # noqa W605
         low, high = re.findall(regex, value)
         return {name: {"distribution": "log_uniform", "params": {"low": float(low), "high": float(high)}}}
 
@@ -214,7 +214,6 @@ def parse_args(args):
             new_args.append(a)
 
     for arg_candidate in new_args:
-
         # only look at --keys
         if "--" not in arg_candidate:
             parsed[last_arg].append(arg_candidate)
@@ -313,7 +312,6 @@ def parse_hydra(script_args, args):
 
 
 class RunSweepCommand(ClientCommand):
-
     description = """
         To run a sweep, provide a script, the cloud compute to use, and an optional data.
         Hyperparameters can be provided as lists or using distributions. Hydra multirun syntax is also supported.
@@ -403,7 +401,8 @@ class RunSweepCommand(ClientCommand):
             "--dataset",
             nargs="+",
             default=[],
-            help="Provide a list of datasets (and optionally the mount_path in the format `<name>:<mount_path>`) to mount to the experiments.",
+            help="Provide a list of datasets (and optionally the mount_path"
+            " in the format `<name>:<mount_path>`) to mount to the experiments.",
         )
         parser.add_argument(
             "--syntax",
@@ -461,7 +460,7 @@ class RunSweepCommand(ClientCommand):
             and Path(hparams.requirements[0]).resolve().exists()  # noqa: W503
         ):
             requirements_path = Path(hparams.requirements[0]).resolve()
-            with open(requirements_path, "r") as f:
+            with open(requirements_path) as f:
                 hparams.requirements = [line.replace("\n", "") for line in f.readlines() if line.strip()]
 
         repo = CustomLocalSourceCodeDir(path=Path(hparams.script_path).parent.resolve())

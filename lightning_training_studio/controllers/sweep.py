@@ -21,7 +21,6 @@ from lightning_training_studio.utilities.enum import Stage
 
 
 class SweepController(Controller):
-
     model = SweepConfig
 
     def __init__(self, *args, **kwargs):
@@ -129,7 +128,11 @@ class SweepController(Controller):
             for experiment in sweep.experiments.values():
                 if config.name == experiment.name:
                     if config.name != sweep.sweep_id:
-                        return f"The experiment `{config.name}` is part of sweep `{sweep.sweep_id}`, which includes multiple experiments. Deleting individual experiments of a sweep is currently unsupported."
+                        return (
+                            f"The experiment `{config.name}` is part of sweep `{sweep.sweep_id}`,"
+                            f" which includes multiple experiments."
+                            f" Deleting individual experiments of a sweep is currently unsupported."
+                        )
                     if config.name in self.r:
                         sweep: Sweep = self.r[config.name]
                         for w in sweep.works():

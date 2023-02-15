@@ -7,7 +7,6 @@ from lightning_training_studio.loggers import wandb as wandb_logger
 
 
 def test_wandb_logger(monkeypatch):
-
     wandb = MagicMock()
     pytorch_lightning = MagicMock()
     api = MagicMock()
